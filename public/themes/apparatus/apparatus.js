@@ -78,22 +78,12 @@
       gsap.set(".apparatus-login-card", { autoAlpha: 0, y: 50 });
       gsap.set(".parallax-container", { scale: 1.1, opacity: 0 });
 
-      // Earth shake keyframes
-      const shakeKeyframes = Array.from({ length: 20 }).map(() => ({
-        x: Math.random() * 40 - 20,
-        y: Math.random() * 40 - 20,
-        rotation: Math.random() * 4 - 2,
-        duration: 0.05
-      }));
-      shakeKeyframes.push({ x: 0, y: 0, rotation: 0, duration: 0.05 });
-
-      // Cinematic sequence
-      tl.to(".parallax-container", { opacity: 1, duration: 2.5, ease: "power2.inOut" })
+      // Smooth Cinematic sequence without shaking
+      tl.to(".parallax-container", { opacity: 1, duration: 2.2, ease: "power2.inOut" })
         .to(".desert-wrapper", { backgroundColor: "#F7ABAE", duration: 1.5 }, "-=1.5")
-        .to(".parallax-container", { scale: 1.3, transformOrigin: "center 35%", duration: 2.5, ease: "power2.inOut" }, "-=1")
-        .to(".parallax-container", { scale: 1, duration: 0.5, ease: "power4.inOut" })
-        .to(".parallax-container", { keyframes: shakeKeyframes, ease: "none" })
-        .to(".apparatus-login-card", { autoAlpha: 1, y: 0, duration: 1.1, ease: "power3.out" }, "+=0.2");
+        .to(".parallax-container", { scale: 1.15, transformOrigin: "center 35%", duration: 2.2, ease: "power2.inOut" }, "-=1")
+        .to(".parallax-container", { scale: 1, duration: 1.2, ease: "power3.out" })
+        .to(".apparatus-login-card", { autoAlpha: 1, y: 0, duration: 1.1, ease: "power3.out" }, "-=0.4");
 
       // Floating wave animation for layers
       const layers = [1, 2, 3, 4, 5, 6, 7];
