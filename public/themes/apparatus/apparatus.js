@@ -595,7 +595,7 @@
       sidebar.innerHTML = `
         <div class="apparatus-sidebar-header">
           <div class="apparatus-sidebar-brand">
-            <span class="brand-text">ARIXBYTE</span>
+            <span class="brand-text">ARIXBYTE <span class="brand-cloud">CLOUD</span></span>
           </div>
         </div>
 

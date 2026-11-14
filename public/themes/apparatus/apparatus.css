@@ -571,10 +571,17 @@ body.apparatus-auth .apparatus-sidebar {
 }
 
 .apparatus-sidebar-brand .brand-text {
-  font-size: 1.25rem !important;
+  font-size: 1.15rem !important;
   font-weight: 800 !important;
-  letter-spacing: 0.06em !important;
+  letter-spacing: 0.05em !important;
   color: #fff !important;
+  white-space: nowrap !important;
+}
+
+.apparatus-sidebar-brand .brand-cloud {
+  background: linear-gradient(135deg, #ffffff 40%, #f472b6 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
 }
 
 .apparatus-sidebar-brand .brand-badge {
