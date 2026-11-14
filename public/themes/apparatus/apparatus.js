@@ -104,18 +104,19 @@
     const serverLink = document.querySelector('.apparatus-nav-link[data-tab="servers"]');
 
     if (window.location.pathname === '/') {
+      if (hero) hero.style.display = 'block';
       if (isServerTab) {
         if (dashLink) dashLink.classList.remove('active');
         if (serverLink) serverLink.classList.add('active');
-        if (hero) hero.style.display = 'none';
-        document.body.classList.add('apparatus-view-servers');
-        document.body.classList.remove('apparatus-view-dashboard');
+        const sArea = document.getElementById('apparatus-area-4');
+        if (sArea) {
+          setTimeout(function () {
+            sArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 50);
+        }
       } else {
         if (dashLink) dashLink.classList.add('active');
         if (serverLink) serverLink.classList.remove('active');
-        if (hero) hero.style.display = 'block';
-        document.body.classList.add('apparatus-view-dashboard');
-        document.body.classList.remove('apparatus-view-servers');
       }
     } else {
       if (dashLink) dashLink.classList.remove('active');
@@ -213,6 +214,451 @@
     });
   }
 
+  // Event formatters for Recent Activity
+  function formatEventName(event) {
+    if (!event) return 'Account Event';
+    const map = {
+      'auth:login': 'Account Logged In',
+      'auth:checkpoint': '2FA Verification Passed',
+      'auth:password': 'Password Changed',
+      'auth:recovery': 'Recovery Code Used',
+      'server:console.command': 'Console Command Sent',
+      'server:power.start': 'Server Started',
+      'server:power.stop': 'Server Stopped',
+      'server:power.restart': 'Server Restarted',
+      'server:file.upload': 'File Uploaded',
+      'server:file.delete': 'File Deleted',
+      'server:backup.create': 'Backup Created',
+      'server:backup.delete': 'Backup Deleted',
+      'account:api-key.create': 'API Key Created',
+      'account:api-key.delete': 'API Key Revoked',
+      'account:ssh-key.create': 'SSH Key Added',
+      'account:ssh-key.delete': 'SSH Key Removed'
+    };
+    if (map[event]) return map[event];
+    return event.replace(/[:._]/g, ' ').replace(/\b\w/g, function (l) { return l.toUpperCase(); });
+  }
+
+  function getEventIcon(event) {
+    if (!event) return 'ri-pulse-line';
+    if (event.includes('login') || event.includes('auth')) return 'ri-login-box-line';
+    if (event.includes('command')) return 'ri-terminal-box-line';
+    if (event.includes('power')) return 'ri-shut-down-line';
+    if (event.includes('file')) return 'ri-folder-line';
+    if (event.includes('backup')) return 'ri-archive-line';
+    if (event.includes('key')) return 'ri-key-2-line';
+    return 'ri-pulse-line';
+  }
+
+  function timeAgo(dateString) {
+    if (!dateString) return 'Just now';
+    const now = new Date();
+    const past = new Date(dateString);
+    const diffSec = Math.floor((now - past) / 1000);
+    if (diffSec < 60) return 'Just now';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return diffMin + 'm ago';
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return diffHr + 'h ago';
+    const diffDay = Math.floor(diffHr / 24);
+    if (diffDay < 30) return diffDay + 'd ago';
+    return past.toLocaleDateString();
+  }
+
+  // Load API Data for Dashboard (Servers, Activities, Account Details)
+  async function loadDashboardApiData() {
+    // 1. Fetch user data if not fully provided
+    try {
+      const accRes = await fetch('/api/client/account', { headers: { Accept: 'application/json' } });
+      if (accRes.ok) {
+        const accData = await accRes.json();
+        const attr = accData.attributes || accData;
+        if (attr.username) {
+          const uEl = document.getElementById('apparatus-welcome-username');
+          if (uEl) uEl.textContent = attr.username;
+        }
+        if (attr.email) {
+          const eEl = document.getElementById('apparatus-email-real');
+          if (eEl) eEl.textContent = attr.email;
+        }
+        if (attr.admin !== undefined) {
+          const rEl = document.getElementById('apparatus-stat-role');
+          if (rEl) rEl.innerHTML = attr.admin ? '<span class="apparatus-role-admin">Root Administrator</span>' : 'Standard Customer';
+        }
+      }
+    } catch (e) {}
+
+    // 2. Fetch Servers
+    try {
+      const srvRes = await fetch('/api/client', { headers: { Accept: 'application/json' } });
+      const container = document.getElementById('apparatus-servers-list');
+      const countBadge = document.getElementById('apparatus-server-badge');
+      const ownedStat = document.getElementById('apparatus-stat-servers-owned');
+
+      if (srvRes.ok) {
+        const srvData = await srvRes.json();
+        const servers = srvData.data || [];
+        const total = (srvData.meta && srvData.meta.pagination && srvData.meta.pagination.total !== undefined)
+          ? srvData.meta.pagination.total
+          : servers.length;
+
+        if (countBadge) countBadge.textContent = total + (total === 1 ? ' Server' : ' Servers');
+        if (ownedStat) ownedStat.textContent = total + (total === 1 ? ' Server' : ' Servers');
+
+        if (servers.length === 0) {
+          if (container) {
+            container.innerHTML = `
+              <div class="apparatus-empty-servers">
+                <div class="apparatus-empty-icon"><i class="ri-server-line"></i></div>
+                <h3 class="apparatus-empty-title">No Servers Found</h3>
+                <p class="apparatus-empty-desc">
+                  You don't have any active servers yet. Elevate your performance with cloud hosting and gaming servers powered by ArixByte.
+                </p>
+                <div class="apparatus-empty-actions">
+                  <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn-purchase">
+                    <i class="ri-shopping-cart-2-line"></i> Purchase Now from our Website
+                    <i class="ri-external-link-line"></i>
+                  </a>
+                  <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn-discord">
+                    <i class="ri-discord-fill"></i> Join Discord
+                  </a>
+                </div>
+              </div>
+            `;
+          }
+        } else {
+          if (container) {
+            let html = '<div class="apparatus-servers-grid">';
+            servers.forEach(function (s) {
+              const attr = s.attributes || {};
+              const id = attr.identifier || attr.uuid || '';
+              const name = attr.name || 'Game Server';
+              const node = attr.node || 'ArixByte Cloud';
+              const mem = attr.limits && attr.limits.memory !== undefined ? (attr.limits.memory === 0 ? 'Unlimited' : attr.limits.memory + ' MB') : 'Standard';
+              const cpu = attr.limits && attr.limits.cpu !== undefined ? (attr.limits.cpu === 0 ? 'Unlimited' : attr.limits.cpu + '%') : 'Standard';
+              const disk = attr.limits && attr.limits.disk !== undefined ? (attr.limits.disk === 0 ? 'Unlimited' : attr.limits.disk + ' MB') : 'Standard';
+
+              html += `
+                <div class="apparatus-server-item">
+                  <div>
+                    <div class="apparatus-server-head">
+                      <h4 class="apparatus-server-name">${name}</h4>
+                      <span class="apparatus-server-node">${node}</span>
+                    </div>
+                    <div class="apparatus-server-stats">
+                      <span><i class="ri-cpu-line"></i> ${cpu}</span>
+                      <span><i class="ri-database-2-line"></i> ${mem}</span>
+                      <span><i class="ri-hard-drive-line"></i> ${disk}</span>
+                    </div>
+                  </div>
+                  <a href="/server/${id}" class="apparatus-server-btn">
+                    <i class="ri-dashboard-line"></i> Manage Server
+                  </a>
+                </div>
+              `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+          }
+        }
+      } else {
+        renderDefaultEmptyServers();
+      }
+    } catch (e) {
+      renderDefaultEmptyServers();
+    }
+
+    // 3. Fetch Recent Activities
+    try {
+      const actRes = await fetch('/api/client/account/activity?page=1', { headers: { Accept: 'application/json' } });
+      const actContainer = document.getElementById('apparatus-activity-list');
+      if (actRes.ok) {
+        const actData = await actRes.json();
+        const activities = actData.data || [];
+        if (activities.length === 0) {
+          if (actContainer) actContainer.innerHTML = '<div class="apparatus-empty-activity">No recent activities recorded.</div>';
+        } else {
+          let html = '';
+          activities.slice(0, 5).forEach(function (item) {
+            const attr = item.attributes || {};
+            const event = attr.event || 'activity';
+            const timestamp = attr.timestamp || '';
+            const ip = attr.ip || '';
+            const title = formatEventName(event);
+            const time = timeAgo(timestamp);
+            const icon = getEventIcon(event);
+
+            html += `
+              <div class="apparatus-activity-item">
+                <div class="apparatus-act-left">
+                  <div class="apparatus-act-icon"><i class="${icon}"></i></div>
+                  <div class="apparatus-act-text">
+                    <div class="apparatus-act-title">${title}</div>
+                    <div class="apparatus-act-sub">${ip ? 'IP: ' + ip : 'Account Event'}</div>
+                  </div>
+                </div>
+                <div class="apparatus-act-time">${time}</div>
+              </div>
+            `;
+          });
+          if (actContainer) actContainer.innerHTML = html;
+        }
+      } else {
+        if (actContainer) actContainer.innerHTML = '<div class="apparatus-empty-activity">No recent activities recorded.</div>';
+      }
+    } catch (e) {
+      const actContainer = document.getElementById('apparatus-activity-list');
+      if (actContainer) actContainer.innerHTML = '<div class="apparatus-empty-activity">No recent activities recorded.</div>';
+    }
+  }
+
+  function renderDefaultEmptyServers() {
+    const container = document.getElementById('apparatus-servers-list');
+    const countBadge = document.getElementById('apparatus-server-badge');
+    if (countBadge) countBadge.textContent = '0 Servers';
+    if (container) {
+      container.innerHTML = `
+        <div class="apparatus-empty-servers">
+          <div class="apparatus-empty-icon"><i class="ri-server-line"></i></div>
+          <h3 class="apparatus-empty-title">No Servers Found</h3>
+          <p class="apparatus-empty-desc">
+            You don't have any active servers yet. Elevate your performance with cloud hosting and gaming servers powered by ArixByte.
+          </p>
+          <div class="apparatus-empty-actions">
+            <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn-purchase">
+              <i class="ri-shopping-cart-2-line"></i> Purchase Now from our Website
+              <i class="ri-external-link-line"></i>
+            </a>
+            <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn-discord">
+              <i class="ri-discord-fill"></i> Join Discord
+            </a>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // Initialize the 4-Card Transparent Dashboard
+  function initDashboardView() {
+    let dash = document.getElementById('apparatus-dashboard-view');
+    if (dash) return;
+
+    dash = document.createElement('div');
+    dash.id = 'apparatus-dashboard-view';
+    dash.className = 'apparatus-dashboard-view';
+
+    const user = window.PterodactylUser || {};
+    const username = user.username || 'User';
+    const email = user.email || 'user@arixbyte.com';
+    const isRootAdmin = !!user.root_admin;
+    const useTotp = !!user.use_totp;
+    const createdAt = user.created_at
+      ? new Date(user.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+      : 'Active Member';
+
+    dash.innerHTML = `
+      <div class="apparatus-dashboard-container">
+        <!-- Left Column: Area 1 (Welcome) & Area 4 (Servers) -->
+        <div class="apparatus-dash-col apparatus-dash-left">
+          <!-- 1 - Welcome Hero Card -->
+          <div class="apparatus-card apparatus-welcome-card" id="apparatus-area-1">
+            <div class="apparatus-welcome-header">
+              <div class="apparatus-hero-badge"><i class="ri-sparkling-fill"></i> ArixByte Cloud</div>
+              <div class="apparatus-status-indicator"><span class="status-dot"></span> All Systems Operational</div>
+            </div>
+            <h1 class="apparatus-welcome-title">Hello, <span class="apparatus-user-name" id="apparatus-welcome-username">${username}</span>! 👋</h1>
+            <p class="apparatus-welcome-desc">
+              Welcome back to your high-performance game servers and cloud infrastructure panel. Everything is monitored, protected, and running at peak performance.
+            </p>
+            <div class="apparatus-welcome-actions">
+              <a href="#servers" class="apparatus-dash-btn apparatus-dash-btn-primary" id="apparatus-btn-to-servers">
+                <i class="ri-server-line"></i> View My Servers
+              </a>
+              <a href="/account" class="apparatus-dash-btn apparatus-dash-btn-secondary">
+                <i class="ri-user-settings-line"></i> Account Settings
+              </a>
+              <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-dash-btn apparatus-dash-btn-discord">
+                <i class="ri-discord-fill"></i> Join Discord
+              </a>
+            </div>
+          </div>
+
+          <!-- 4 - Servers Section -->
+          <div class="apparatus-card apparatus-servers-section" id="apparatus-area-4">
+            <div class="apparatus-card-header">
+              <div class="apparatus-card-title-group">
+                <div class="apparatus-card-header-icon"><i class="ri-server-line"></i></div>
+                <div>
+                  <h2 class="apparatus-card-title">Your Servers</h2>
+                  <p class="apparatus-card-subtitle">Active server instances and compute resources</p>
+                </div>
+              </div>
+              <span class="apparatus-badge-count" id="apparatus-server-badge">Loading...</span>
+            </div>
+            <div class="apparatus-servers-content" id="apparatus-servers-list">
+              <div class="apparatus-servers-loading" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.6);">
+                <i class="ri-loader-4-line ri-spin" style="font-size: 1.5rem;"></i>
+                <p style="margin: 0.5rem 0 0 0;">Loading servers...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Area 2 (Recent Activities) & Area 3 (Account Credentials) -->
+        <div class="apparatus-dash-col apparatus-dash-right">
+          <!-- 2 - Recent Activities Card -->
+          <div class="apparatus-card apparatus-activity-card" id="apparatus-area-2">
+            <div class="apparatus-card-header">
+              <div class="apparatus-card-title-group">
+                <div class="apparatus-card-header-icon"><i class="ri-history-line"></i></div>
+                <div>
+                  <h2 class="apparatus-card-title">Recent Activities</h2>
+                  <p class="apparatus-card-subtitle">Audit log &amp; recent account actions</p>
+                </div>
+              </div>
+              <a href="/account/activity" class="apparatus-card-link-sm">View All <i class="ri-arrow-right-s-line"></i></a>
+            </div>
+            <div class="apparatus-activity-list" id="apparatus-activity-list">
+              <div class="apparatus-empty-activity">
+                <i class="ri-loader-4-line ri-spin" style="font-size: 1.3rem;"></i>
+                <p style="margin: 0.5rem 0 0 0;">Loading recent activities...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 - Account Credentials Card -->
+          <div class="apparatus-card apparatus-credentials-card" id="apparatus-area-3">
+            <div class="apparatus-card-header">
+              <div class="apparatus-card-title-group">
+                <div class="apparatus-card-header-icon"><i class="ri-shield-user-line"></i></div>
+                <div>
+                  <h2 class="apparatus-card-title">Account Credentials</h2>
+                  <p class="apparatus-card-subtitle">Personal info &amp; security overview</p>
+                </div>
+              </div>
+              <span class="apparatus-badge-pill apparatus-badge-verified"><i class="ri-checkbox-circle-fill"></i> Verified</span>
+            </div>
+
+            <div class="apparatus-credentials-list">
+              <!-- Gmail (Hidden, revealed on hover) -->
+              <div class="apparatus-cred-item">
+                <div class="apparatus-cred-icon"><i class="ri-mail-line"></i></div>
+                <div class="apparatus-cred-details">
+                  <div class="apparatus-cred-label">Gmail / Email</div>
+                  <div class="apparatus-email-reveal-box" id="apparatus-email-box" title="Move cursor here to reveal">
+                    <span class="apparatus-email-masked" id="apparatus-email-masked">••••••••••••••••••••</span>
+                    <span class="apparatus-email-real" id="apparatus-email-real">${email}</span>
+                    <i class="ri-eye-off-line apparatus-email-eye"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Servers Owned -->
+              <div class="apparatus-cred-item">
+                <div class="apparatus-cred-icon"><i class="ri-hard-drive-2-line"></i></div>
+                <div class="apparatus-cred-details">
+                  <div class="apparatus-cred-label">Servers Owned</div>
+                  <div class="apparatus-cred-value" id="apparatus-stat-servers-owned">0 Servers</div>
+                </div>
+              </div>
+
+              <!-- Active Tickets -->
+              <div class="apparatus-cred-item">
+                <div class="apparatus-cred-icon"><i class="ri-customer-service-2-line"></i></div>
+                <div class="apparatus-cred-details">
+                  <div class="apparatus-cred-label">Active Tickets</div>
+                  <div class="apparatus-cred-value">
+                    <span>0 Active</span>
+                    <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-ticket-sublink">
+                      Open Ticket <i class="ri-external-link-line"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Two-Factor Authentication -->
+              <div class="apparatus-cred-item">
+                <div class="apparatus-cred-icon"><i class="ri-shield-keyhole-line"></i></div>
+                <div class="apparatus-cred-details">
+                  <div class="apparatus-cred-label">Two-Factor Authentication</div>
+                  <div class="apparatus-cred-value" id="apparatus-stat-2fa">
+                    ${useTotp ? '<span class="text-success"><i class="ri-check-line"></i> Enabled</span>' : '<span class="text-warning"><i class="ri-close-line"></i> Disabled</span>'}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Account Role -->
+              <div class="apparatus-cred-item">
+                <div class="apparatus-cred-icon"><i class="ri-admin-line"></i></div>
+                <div class="apparatus-cred-details">
+                  <div class="apparatus-cred-label">Account Role</div>
+                  <div class="apparatus-cred-value" id="apparatus-stat-role">
+                    ${isRootAdmin ? '<span class="apparatus-role-admin">Root Administrator</span>' : 'Standard Customer'}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Member Since -->
+              <div class="apparatus-cred-item">
+                <div class="apparatus-cred-icon"><i class="ri-calendar-check-line"></i></div>
+                <div class="apparatus-cred-details">
+                  <div class="apparatus-cred-label">Member Since</div>
+                  <div class="apparatus-cred-value" id="apparatus-stat-joined">${createdAt}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="apparatus-credentials-footer">
+              <a href="/account" class="apparatus-dash-btn apparatus-dash-btn-secondary apparatus-btn-full">
+                <i class="ri-key-2-line"></i> Manage Account Credentials
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const app = document.getElementById('app');
+    if (app) {
+      app.prepend(dash);
+    } else {
+      document.body.appendChild(dash);
+    }
+
+    const toServersBtn = document.getElementById('apparatus-btn-to-servers');
+    if (toServersBtn) {
+      toServersBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const sArea = document.getElementById('apparatus-area-4');
+        if (sArea) {
+          sArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+
+    // Toggle reveal for mobile touch
+    const emailBox = document.getElementById('apparatus-email-box');
+    if (emailBox) {
+      emailBox.addEventListener('click', function () {
+        const masked = document.getElementById('apparatus-email-masked');
+        const real = document.getElementById('apparatus-email-real');
+        if (masked && real) {
+          const isRealVisible = window.getComputedStyle(real).display !== 'none';
+          if (isRealVisible) {
+            real.style.display = 'none';
+            masked.style.display = 'inline-block';
+          } else {
+            real.style.display = 'inline-block';
+            masked.style.display = 'none';
+          }
+        }
+      });
+    }
+
+    // Load dynamic data
+    loadDashboardApiData();
+  }
+
   function initSidebar() {
     if (isAuthPage()) {
       const existing = document.getElementById('apparatus-sidebar');
@@ -224,46 +670,8 @@
       return;
     }
 
-    // Insert Dashboard Hero if on dashboard and not already created
-    let hero = document.getElementById('apparatus-dashboard-view');
-    if (!hero) {
-      hero = document.createElement('div');
-      hero.id = 'apparatus-dashboard-view';
-      hero.className = 'apparatus-dashboard-hero';
-      hero.innerHTML = `
-        <div class="apparatus-hero-card">
-          <div class="apparatus-hero-badge">ArixByte Cloud</div>
-          <h1 class="apparatus-hero-title">Welcome to <span>ArixByte</span></h1>
-          <p class="apparatus-hero-desc">Your high-performance gaming servers and cloud infrastructure are powered and ready.</p>
-          <div class="apparatus-hero-actions">
-            <a href="#servers" class="apparatus-hero-btn apparatus-hero-btn-primary" id="apparatus-hero-to-servers">
-              <i class="ri-server-line"></i> View My Servers
-            </a>
-            <a href="/account" class="apparatus-hero-btn apparatus-hero-btn-secondary">
-              <i class="ri-user-settings-line"></i> Account Settings
-            </a>
-            <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-hero-btn apparatus-hero-btn-discord">
-              <i class="ri-discord-fill"></i> Join Discord
-            </a>
-          </div>
-        </div>
-      `;
-      const app = document.getElementById('app');
-      if (app) {
-        app.prepend(hero);
-      } else {
-        document.body.appendChild(hero);
-      }
-
-      const toServersBtn = document.getElementById('apparatus-hero-to-servers');
-      if (toServersBtn) {
-        toServersBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          window.location.hash = '#servers';
-          applyViewMode();
-        });
-      }
-    }
+    // Initialize 4-card transparent dashboard
+    initDashboardView();
 
     let sidebar = document.getElementById('apparatus-sidebar');
     if (!sidebar) {
