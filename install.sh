@@ -32,7 +32,7 @@ echo -e "${CYAN}================================================================
 # Verify Root Privileges
 if [ "$EUID" -ne 0 ]; then
   echo -e "${RED}[ERROR] Please run this script as root:${NC}"
-  echo -e "${YELLOW}sudo bash <(curl -s https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/main/install.sh)${NC}"
+  echo -e "${YELLOW}sudo bash <(curl -s https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/release/install.sh)${NC}"
   exit 1
 fi
 
@@ -44,7 +44,7 @@ fi
 
 WRAPPER_FILE="$PTERO_DIR/resources/views/templates/wrapper.blade.php"
 ASSET_DIR="$PTERO_DIR/public/themes/apparatus"
-RAW_BASE="https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/main"
+RAW_BASE="https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/release"
 
 # Function: Install
 install_theme() {
@@ -83,7 +83,6 @@ install_theme() {
     sed -i '/<!-- BEGIN apparatus-theme-loader -->/,/<!-- END apparatus-theme-loader -->/d' "$WRAPPER_FILE"
   fi
 
-  # Safe Python/awk/sed insertion before </head>
   python3 -c "
 with open('$WRAPPER_FILE', 'r') as f:
     content = f.read()
@@ -100,7 +99,6 @@ if '</head>' in content:
     with open('$WRAPPER_FILE', 'w') as f:
         f.write(content)
 " 2>/dev/null || {
-    # Fallback to awk if python3 is not present
     awk '/<\/head>/{print "<!-- BEGIN apparatus-theme-loader -->\n<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>\n<script src=\"/themes/apparatus/apparatus.js\" defer></script>\n<!-- END apparatus-theme-loader -->"}1' "$WRAPPER_FILE" > "$WRAPPER_FILE.tmp" && mv "$WRAPPER_FILE.tmp" "$WRAPPER_FILE"
   }
 
@@ -113,11 +111,12 @@ if '</head>' in content:
   php artisan cache:clear
   php artisan config:clear
 
-  # Blueprint Check
+  # Blueprint Check & Install (Blueprint requires cwd to be inside pterodactyl and relative path)
   if command -v blueprint &> /dev/null; then
-    echo -e "${YELLOW}Blueprint detected. Downloading and installing .blueprint extension...${NC}"
-    curl -s -L "$RAW_BASE/apparatus-theme.blueprint" -o "$PTERO_DIR/apparatus-theme.blueprint"
-    blueprint -i "$PTERO_DIR/apparatus-theme.blueprint" || true
+    echo -e "${YELLOW}Blueprint detected. Installing extension...${NC}"
+    cd "$PTERO_DIR"
+    curl -s -L "$RAW_BASE/apparatus-theme.blueprint" -o "apparatus-theme.blueprint"
+    blueprint -i apparatus-theme.blueprint || true
   fi
 
   echo -e "\n${GREEN}========================================================================${NC}"
@@ -154,6 +153,12 @@ remove_theme() {
   if [ -d "$ASSET_DIR" ]; then
     rm -rf "$ASSET_DIR"
     echo -e "${GREEN}✓ Theme assets removed.${NC}"
+  fi
+
+  # Blueprint extension removal if applicable
+  if command -v blueprint &> /dev/null; then
+    cd "$PTERO_DIR"
+    blueprint -r apparatus-theme 2>/dev/null || true
   fi
 
   # Clear Cache
