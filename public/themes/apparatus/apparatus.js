@@ -11,6 +11,40 @@
            document.querySelector('form[action*="login"]') !== null;
   }
 
+  // Toast / Popup Notification System
+  function showToast(type, title, message) {
+    const existing = document.getElementById('apparatus-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'apparatus-toast';
+    toast.className = 'apparatus-toast apparatus-toast-' + type;
+
+    const iconSvg = type === 'success' 
+      ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
+      : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+
+    toast.innerHTML = 
+      '<div class="apparatus-toast-icon">' + iconSvg + '</div>' +
+      '<div class="apparatus-toast-content">' +
+        '<div class="apparatus-toast-title">' + title + '</div>' +
+        '<div class="apparatus-toast-msg">' + message + '</div>' +
+      '</div>';
+
+    document.body.appendChild(toast);
+
+    setTimeout(function () {
+      toast.classList.add('apparatus-toast-show');
+    }, 20);
+
+    if (type !== 'success') {
+      setTimeout(function () {
+        toast.classList.remove('apparatus-toast-show');
+        setTimeout(function () { toast.remove(); }, 400);
+      }, 5000);
+    }
+  }
+
   function initApparatus() {
     if (!isAuthPage()) {
       const existing = document.getElementById('apparatus-desert-wrapper');
@@ -25,9 +59,8 @@
     wrapper.id = 'apparatus-desert-wrapper';
     wrapper.className = 'desert-wrapper';
 
-    // SVG icon helper
-    const userSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
-    const lockSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+    const userSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+    const lockSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
 
     wrapper.innerHTML = `
       <div class="parallax-container" id="apparatus-parallax">
@@ -60,8 +93,7 @@
             </span>
             <input 
               type="text" 
-              name="username" 
-              id="apparatus-username"
+              id="apparatus-user-field"
               required 
               placeholder="Username or Email" 
               class="login-input" 
@@ -75,8 +107,7 @@
             </span>
             <input 
               type="password" 
-              name="password" 
-              id="apparatus-password"
+              id="apparatus-pass-field"
               required 
               placeholder="Password" 
               class="login-input" 
@@ -98,13 +129,13 @@
 
     document.body.appendChild(wrapper);
 
-    // Fallback if RemixIcon font isn't loaded: show SVG icons
+    // Fallback SVG icons
     const iconSpans = wrapper.querySelectorAll('.input-icon');
     if (iconSpans[0]) iconSpans[0].innerHTML = userSvg;
     if (iconSpans[1]) iconSpans[1].innerHTML = lockSvg;
 
     // React synthetic input dispatcher helper
-    function setReactInput(input, val) {
+    function setReactValue(input, val) {
       if (!input) return;
       const lastVal = input.value;
       input.value = val;
@@ -114,18 +145,21 @@
       input.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
-    // Connect custom form with Pterodactyl React Formik handler
+    // Connect form submission
     const loginForm = document.getElementById('apparatus-login-form');
     if (loginForm) {
       loginForm.addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        const userVal = document.getElementById('apparatus-username').value.trim();
-        const passVal = document.getElementById('apparatus-password').value;
+        const userVal = document.getElementById('apparatus-user-field').value.trim();
+        const passVal = document.getElementById('apparatus-pass-field').value;
         const errorBox = document.getElementById('apparatus-login-error');
         const submitBtn = document.getElementById('apparatus-submit-btn');
 
-        if (!userVal || !passVal) return;
+        if (!userVal || !passVal) {
+          showToast('error', 'Missing Information', 'Please enter your username and password.');
+          return;
+        }
 
         submitBtn.disabled = true;
         submitBtn.textContent = 'Authenticating...';
@@ -134,67 +168,65 @@
           errorBox.textContent = '';
         }
 
-        // Check if native Pterodactyl inputs exist in DOM
-        const nativeUser = document.querySelector('input[name="username"]') || document.querySelector('input[type="text"]');
-        const nativePass = document.querySelector('input[name="password"]') || document.querySelector('input[type="password"]');
-        const nativeSubmit = document.querySelector('form button[type="submit"]');
+        // 1. Try filling Pterodactyl React Formik inputs if present in #app
+        const pteroForm = document.querySelector('#app form');
+        const pteroUser = pteroForm ? (pteroForm.querySelector('input[name="username"]') || pteroForm.querySelector('input[type="text"]')) : null;
+        const pteroPass = pteroForm ? (pteroForm.querySelector('input[name="password"]') || pteroForm.querySelector('input[type="password"]')) : null;
+        const pteroSubmit = pteroForm ? pteroForm.querySelector('button[type="submit"]') : null;
 
-        if (nativeUser && nativePass && nativeSubmit) {
-          setReactInput(nativeUser, userVal);
-          setReactInput(nativePass, passVal);
-          nativeSubmit.click();
+        if (pteroUser && pteroPass && pteroSubmit) {
+          setReactValue(pteroUser, userVal);
+          setReactValue(pteroPass, passVal);
+          pteroSubmit.click();
+        }
 
-          // Monitor for response / redirection / errors
-          let attempts = 0;
-          const pollTimer = setInterval(function () {
-            attempts++;
+        // 2. Perform direct API authentication with CSRF token
+        try {
+          const metaCsrf = document.querySelector('meta[name="csrf-token"]');
+          const token = metaCsrf ? metaCsrf.getAttribute('content') : '';
 
-            // Detect native flash error
-            const flash = document.querySelector('div[class*="FlashMessage"], div[class*="Alert"], .text-red-500, .bg-red-500, div[role="alert"]');
-            if (flash && flash.textContent.trim()) {
-              clearInterval(pollTimer);
-              submitBtn.disabled = false;
-              submitBtn.textContent = 'Sign In';
-              if (errorBox) {
-                errorBox.textContent = flash.textContent.trim();
-                errorBox.style.display = 'block';
-              }
-              return;
+          // Check if reCAPTCHA token is required
+          let recaptchaToken = null;
+          if (window.grecaptcha && window.SiteConfiguration && window.SiteConfiguration.recaptcha && window.SiteConfiguration.recaptcha.enabled) {
+            try {
+              recaptchaToken = await new Promise(function(resolve) {
+                window.grecaptcha.ready(function() {
+                  window.grecaptcha.execute(window.SiteConfiguration.recaptcha.siteKey, { action: 'login' })
+                    .then(resolve)
+                    .catch(function() { resolve(null); });
+                });
+                setTimeout(function() { resolve(null); }, 1200);
+              });
+            } catch(e) {
+              recaptchaToken = null;
             }
+          }
 
-            // Redirected or authenticated
-            if (window.location.pathname.includes('/checkpoint') || !window.location.pathname.startsWith('/auth/login')) {
-              clearInterval(pollTimer);
-              window.location.reload();
-              return;
-            }
+          const payload = {
+            user: userVal,
+            password: passVal
+          };
+          if (recaptchaToken) {
+            payload.recaptcha_token = recaptchaToken;
+          }
 
-            if (attempts > 30) {
-              clearInterval(pollTimer);
-              submitBtn.disabled = false;
-              submitBtn.textContent = 'Sign In';
-            }
-          }, 200);
+          const resp = await fetch('/auth/login', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': token,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(payload)
+          });
 
-        } else {
-          // Direct API fallback to /auth/login
-          try {
-            const metaCsrf = document.querySelector('meta[name="csrf-token"]');
-            const token = metaCsrf ? metaCsrf.getAttribute('content') : '';
+          const data = await resp.json();
 
-            const resp = await fetch('/auth/login', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': token,
-                'X-Requested-With': 'XMLHttpRequest'
-              },
-              body: JSON.stringify({ user: userVal, password: passVal })
-            });
-
-            const data = await resp.json();
-            if (resp.ok) {
+          if (resp.ok) {
+            showToast('success', 'Login Successful!', 'Welcome back! Redirecting to panel...');
+            setTimeout(function () {
               if (data.data && data.data.complete) {
                 window.location.href = data.data.intended || '/';
               } else if (data.data && data.data.confirmation_token) {
@@ -202,22 +234,39 @@
               } else {
                 window.location.href = '/';
               }
-            } else {
-              submitBtn.disabled = false;
-              submitBtn.textContent = 'Sign In';
-              const detail = (data.errors && data.errors[0] && data.errors[0].detail) || data.message || 'The credentials provided are invalid.';
-              if (errorBox) {
-                errorBox.textContent = detail;
-                errorBox.style.display = 'block';
-              }
-            }
-          } catch (err) {
+            }, 800);
+          } else {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Sign In';
+
+            let errorDetail = 'Invalid username or password.';
+            if (data.errors && data.errors[0] && data.errors[0].detail) {
+              errorDetail = data.errors[0].detail;
+            } else if (data.message) {
+              errorDetail = data.message;
+            }
+
+            if (resp.status === 429) {
+              errorDetail = 'Too many login attempts. Please wait a few moments.';
+            } else if (resp.status === 500) {
+              errorDetail = 'Panel error: reCAPTCHA quota exceeded or server misconfigured.';
+            }
+
+            showToast('error', 'Login Failed', errorDetail);
+
             if (errorBox) {
-              errorBox.textContent = 'Unable to communicate with the panel. Please try again.';
+              errorBox.textContent = errorDetail;
               errorBox.style.display = 'block';
             }
+          }
+        } catch (err) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign In';
+          const netMsg = 'Network error communicating with panel.';
+          showToast('error', 'Error', netMsg);
+          if (errorBox) {
+            errorBox.textContent = netMsg;
+            errorBox.style.display = 'block';
           }
         }
       });
@@ -230,7 +279,6 @@
         return;
       }
 
-      // Floating wave animation for layers
       const layers = [1, 2, 3, 4, 5, 6, 7];
       layers.forEach(function (layerNum) {
         gsap.to('.layer-' + layerNum, {
@@ -250,7 +298,6 @@
         repeat: -1
       });
 
-      // Mouse parallax tracking
       window.addEventListener('mousemove', function (e) {
         const x = (e.clientX / window.innerWidth - 0.5) * 2;
         layers.forEach(function (layerNum) {
@@ -275,7 +322,7 @@
     setupParallax();
   }
 
-  // Handle SPA transitions
+  // Handle Initial Load and SPA Transitions
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApparatus);
   } else {

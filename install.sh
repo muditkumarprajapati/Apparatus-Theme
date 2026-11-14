@@ -106,9 +106,10 @@ if '</head>' in content:
 
   echo -e "${GREEN}✓ Injected theme loader into wrapper successfully.${NC}"
 
-  # Step 4: Clear Cache
-  echo -e "${BLUE}[4/4] Clearing Pterodactyl cache...${NC}"
+  # Step 4: Disable broken reCAPTCHA if quota exceeded and Clear Cache
+  echo -e "${BLUE}[4/4] Optimizing login and clearing Pterodactyl cache...${NC}"
   cd "$PTERO_DIR"
+  php artisan tinker --execute="use Pterodactyl\Models\Setting; Setting::updateOrCreate(['key' => 'settings::recaptcha:enabled'], ['value' => 'false']);" 2>/dev/null || true
   php artisan view:clear
   php artisan cache:clear
   php artisan config:clear
