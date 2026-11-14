@@ -794,7 +794,7 @@ body.apparatus-auth #apparatus-mobile-toggle {
 
 .apparatus-dashboard-container {
   display: grid;
-  grid-template-columns: 1.35fr 1fr;
+  grid-template-columns: 1.7fr 1fr;
   gap: 1.25rem;
   max-width: 1380px;
   margin: 1.5rem auto 3rem auto;
@@ -817,6 +817,10 @@ body.apparatus-auth #apparatus-mobile-toggle {
   flex-direction: column;
   gap: 1.25rem;
   min-width: 0;
+}
+
+.apparatus-dash-right .apparatus-card {
+  padding: 1.4rem 1.5rem !important;
 }
 
 /* Truly Transparent Glass Card */
