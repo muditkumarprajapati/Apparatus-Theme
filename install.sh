@@ -77,6 +77,15 @@ install_theme() {
   chown -R www-data:www-data "$ASSET_DIR"
   chmod -R 755 "$ASSET_DIR"
 
+  # Deploy enhanced ForgotPasswordController (supports username lookup & account validation)
+  CTRL_FILE="$PTERO_DIR/app/Http/Controllers/Auth/ForgotPasswordController.php"
+  if [ -f "$CTRL_FILE" ] && [ ! -f "$CTRL_FILE.apparatus.bak" ]; then
+    cp "$CTRL_FILE" "$CTRL_FILE.apparatus.bak"
+  fi
+  curl -s -L "$RAW_BASE/app/Http/Controllers/Auth/ForgotPasswordController.php" -o "$CTRL_FILE"
+  chown www-data:www-data "$CTRL_FILE"
+  chmod 644 "$CTRL_FILE"
+
   # Step 3: Inject Into Wrapper cleanly with timestamp cache-buster
   echo -e "${BLUE}[3/4] Linking Apparatus Theme with GSAP Parallax...${NC}"
   if grep -q "apparatus-theme-loader" "$WRAPPER_FILE"; then
@@ -148,6 +157,14 @@ remove_theme() {
   if [ -d "$ASSET_DIR" ]; then
     rm -rf "$ASSET_DIR"
     echo -e "${GREEN}✓ Theme assets removed.${NC}"
+  fi
+
+  # Restore ForgotPasswordController
+  CTRL_FILE="$PTERO_DIR/app/Http/Controllers/Auth/ForgotPasswordController.php"
+  if [ -f "$CTRL_FILE.apparatus.bak" ]; then
+    cp "$CTRL_FILE.apparatus.bak" "$CTRL_FILE"
+    rm -f "$CTRL_FILE.apparatus.bak"
+    echo -e "${GREEN}✓ Restored original ForgotPasswordController.php.${NC}"
   fi
 
   # Clear Cache

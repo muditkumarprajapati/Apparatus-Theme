@@ -295,18 +295,18 @@
         <div id="apparatus-forgot-msg" style="display: none;"></div>
 
         <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem; color: rgba(255, 255, 255, 0.85); line-height: 1.4;">
-          Enter your account email address to receive instructions on resetting your password.
+          Enter your account username or email to receive instructions on resetting your password.
         </p>
 
         <div class="input-group">
-          <span class="input-icon"><i class="ri-mail-line"></i></span>
+          <span class="input-icon"><i class="ri-user-line"></i></span>
           <input 
-            type="email" 
+            type="text" 
             id="apparatus-email-field"
             required 
-            placeholder="Account Email Address" 
+            placeholder="Username or Email Address" 
             class="login-input" 
-            autocomplete="email"
+            autocomplete="username"
           />
         </div>
 
@@ -322,7 +322,7 @@
 
     // Fallback SVG icon
     const icons = card.querySelectorAll('.input-icon');
-    if (icons[0]) icons[0].innerHTML = mailSvg;
+    if (icons[0]) icons[0].innerHTML = userSvg;
 
     // Handle Back to Login click
     const loginLink = document.getElementById('apparatus-to-login');
@@ -345,7 +345,7 @@
         const sendBtn = document.getElementById('apparatus-send-email-btn');
 
         if (!emailVal) {
-          showToast('error', 'Missing Email', 'Please enter your account email address.');
+          showToast('error', 'Missing Information', 'Please enter your account username or email.');
           return;
         }
 
@@ -359,7 +359,7 @@
 
         // Bridge to native Pterodactyl Forgot Password Form in #app if present
         const pteroForm = document.querySelector('#app form');
-        const pteroEmail = pteroForm ? pteroForm.querySelector('input[name="email"], input[type="email"]') : null;
+        const pteroEmail = pteroForm ? pteroForm.querySelector('input[name="email"], input[type="email"], input[type="text"]') : null;
         const pteroSubmit = pteroForm ? pteroForm.querySelector('button[type="submit"]') : null;
 
         if (pteroEmail && pteroSubmit) {
@@ -400,16 +400,22 @@
             sendBtn.disabled = false;
             sendBtn.textContent = 'Send Email';
 
-            let errorDetail = 'Unable to send password reset email. Please try again.';
-            if (data.errors && data.errors[0] && data.errors[0].detail) {
+            let errorDetail = 'We cannot find an account with that email or username.';
+            let errorTitle = 'Account Not Found';
+
+            if (resp.status === 404 || resp.status === 422) {
+              errorTitle = 'Account Not Found';
+              errorDetail = 'We cannot find an account with that email or username.';
+            } else if (resp.status === 429) {
+              errorTitle = 'Too Many Attempts';
+              errorDetail = 'Too many password reset attempts. Please wait a few moments.';
+            } else if (data.errors && data.errors[0] && data.errors[0].detail) {
               errorDetail = data.errors[0].detail;
             } else if (data.status) {
               errorDetail = data.status;
-            } else if (data.message) {
-              errorDetail = data.message;
             }
 
-            showToast('error', 'Request Failed', errorDetail);
+            showToast('error', errorTitle, errorDetail);
 
             if (msgBox) {
               msgBox.className = 'login-error';
