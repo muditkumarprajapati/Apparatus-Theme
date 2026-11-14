@@ -101,33 +101,44 @@ body, html {
   text-transform: uppercase;
 }
 
-/* Glassmorphism Login Card - Centered in Viewport */
+/* Pterodactyl Core Auth Page Alignment */
+.pt-8,
+div[class*="LoginFormContainer"] {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  min-height: 85vh !important;
+  width: 100% !important;
+  position: relative !important;
+  z-index: 50 !important;
+}
+
+/* Glassmorphism Login Card Wrapper */
 .apparatus-login-card {
   position: relative !important;
   z-index: 50 !important;
   margin: 0 auto !important;
-  background: rgba(15, 17, 26, 0.45) !important;
+  background: rgba(15, 17, 26, 0.5) !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  padding: 2.5rem 2rem !important;
-  border-radius: 26px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  padding: 2.5rem !important;
+  border-radius: 24px !important;
   width: 100% !important;
-  max-width: 440px !important;
+  max-width: 700px !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
   color: #fff !important;
-  text-align: center !important;
   opacity: 1 !important;
   visibility: visible !important;
 }
 
-div[class*="LoginFormContainer"] {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  min-height: 80vh !important;
-  position: relative !important;
-  z-index: 50 !important;
+/* Make inner white card transparent and properly laid out */
+.apparatus-login-card > div,
+.apparatus-login-card div[class*="rounded"] {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 .login-title {
