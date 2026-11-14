@@ -44,7 +44,14 @@ fi
 
 WRAPPER_FILE="$PTERO_DIR/resources/views/templates/wrapper.blade.php"
 ASSET_DIR="$PTERO_DIR/public/themes/apparatus"
-RAW_BASE="https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/main"
+
+# Resolve latest commit SHA to completely bypass GitHub CDN edge caching
+LATEST_SHA=$(curl -s "https://api.github.com/repos/muditkumarprajapati/Apparatus-Theme/commits/main" | grep '"sha"' | head -n 1 | cut -d '"' -f 4)
+if [ -n "$LATEST_SHA" ]; then
+  RAW_BASE="https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/$LATEST_SHA"
+else
+  RAW_BASE="https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/main"
+fi
 
 # Function: Install
 install_theme() {
