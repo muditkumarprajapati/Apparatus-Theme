@@ -81,7 +81,6 @@
         <div class="apparatus-sidebar-header">
           <div class="apparatus-sidebar-brand">
             <span class="brand-text">ARIXBYTE</span>
-            <span class="brand-badge">PANEL</span>
           </div>
         </div>
 
@@ -100,6 +99,12 @@
                 <a href="/" class="apparatus-nav-link" data-path="/servers">
                   <i class="ri-server-line apparatus-nav-icon"></i>
                   <span>Servers</span>
+                </a>
+              </li>
+              <li>
+                <a href="#search" class="apparatus-nav-link apparatus-search-link">
+                  <i class="ri-search-line apparatus-nav-icon"></i>
+                  <span>Search Servers</span>
                 </a>
               </li>
             </ul>
@@ -131,6 +136,19 @@
                 <a href="/account/activity" class="apparatus-nav-link" data-path="/account/activity">
                   <i class="ri-history-line apparatus-nav-icon"></i>
                   <span>Recent Activity</span>
+                </a>
+              </li>
+              <li>
+                <a href="/admin" class="apparatus-nav-link" data-path="/admin">
+                  <i class="ri-settings-4-line apparatus-nav-icon"></i>
+                  <span>Admin Panel</span>
+                  <span class="apparatus-tag-admin">Admin</span>
+                </a>
+              </li>
+              <li>
+                <a href="#logout" class="apparatus-nav-link apparatus-logout-link">
+                  <i class="ri-logout-box-r-line apparatus-nav-icon"></i>
+                  <span>Sign Out</span>
                 </a>
               </li>
             </ul>
@@ -195,6 +213,45 @@
         ticketBtn.addEventListener('click', function (e) {
           e.preventDefault();
           showToast('success', 'Tickets', 'Ticket support system is coming soon!');
+        });
+      }
+
+      // Search servers handler
+      const searchBtn = sidebar.querySelector('.apparatus-search-link');
+      if (searchBtn) {
+        searchBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          window.dispatchEvent(new KeyboardEvent('keydown', {
+            key: 'k',
+            code: 'KeyK',
+            keyCode: 75,
+            which: 75,
+            ctrlKey: true,
+            bubbles: true
+          }));
+          const nativeSearch = document.querySelector('button[aria-label="Search"], [class*="Search"] button');
+          if (nativeSearch) nativeSearch.click();
+        });
+      }
+
+      // Logout handler
+      const logoutBtn = sidebar.querySelector('.apparatus-logout-link');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async function (e) {
+          e.preventDefault();
+          showToast('info', 'Signing Out', 'Logging out of your account...');
+          try {
+            const csrf = getCsrfToken();
+            await fetch('/auth/logout', {
+              method: 'POST',
+              headers: {
+                'X-CSRF-TOKEN': csrf,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+              }
+            });
+          } catch (err) {}
+          window.location.href = '/auth/login';
         });
       }
 

@@ -71,6 +71,13 @@ body:not(.apparatus-auth) #app {
     margin-left: 250px !important;
     width: calc(100% - 250px) !important;
     box-sizing: border-box !important;
+    padding-top: 1.5rem !important;
+  }
+}
+
+@media (max-width: 991px) {
+  body:not(.apparatus-auth) #app {
+    padding-top: 3.5rem !important;
   }
 }
 
@@ -85,14 +92,18 @@ body:not(.apparatus-auth) .bg-neutral-700 {
   background: transparent !important;
 }
 
-/* Glassmorphic Navigation Bar */
+/* Completely hide native top navbar since all controls are in the left sidebar */
 body:not(.apparatus-auth) nav,
 body:not(.apparatus-auth) div[class*="NavigationBar___StyledDiv"],
 body:not(.apparatus-auth) [class*="NavigationBar"] {
-  background: rgba(18, 18, 24, 0.72) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
 }
 
 body:not(.apparatus-auth) div[class*="SubNavigation"] {
@@ -707,4 +718,25 @@ body.apparatus-auth .apparatus-sidebar {
     transform: translateX(0) !important;
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5) !important;
   }
+}
+.apparatus-nav-link.apparatus-logout-link {
+  color: #fca5a5 !important;
+  margin-top: 0.25rem !important;
+}
+
+.apparatus-nav-link.apparatus-logout-link:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: #ef4444 !important;
+}
+
+.apparatus-tag-admin {
+  margin-left: auto !important;
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  background: rgba(59, 130, 246, 0.25) !important;
+  color: #60a5fa !important;
+  padding: 0.15rem 0.45rem !important;
+  border-radius: 6px !important;
+  text-transform: uppercase !important;
 }
