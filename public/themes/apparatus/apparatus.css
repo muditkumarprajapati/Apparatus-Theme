@@ -1065,58 +1065,25 @@ body:not(.apparatus-auth) span.apparatus-user-name {
   gap: 0.45rem;
 }
 
-/* Email Hover Reveal */
-.apparatus-email-reveal {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  cursor: pointer;
-  padding: 0.2rem 0.55rem;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease;
-  user-select: none;
-}
-
-.apparatus-email-reveal:hover {
-  background: rgba(236, 72, 153, 0.18);
-  border-color: rgba(236, 72, 153, 0.4);
-}
-
-.apparatus-email-masked {
-  font-family: monospace;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 0.82rem;
-}
-
-.apparatus-email-real {
-  display: none;
-  font-weight: 600;
+/* Email Blurred (no box, smooth blur reveal) */
+.apparatus-email-blurred {
   color: #fff;
-  font-size: 0.82rem;
-}
-
-.apparatus-email-reveal:hover .apparatus-email-masked {
-  display: none;
-}
-
-.apparatus-email-reveal:hover .apparatus-email-real {
+  font-weight: 600;
+  font-size: 0.88rem;
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
+  cursor: pointer;
+  user-select: none;
+  transition: filter 0.25s ease, -webkit-filter 0.25s ease;
   display: inline-block;
 }
 
-.apparatus-email-eye {
-  font-size: 0.88rem;
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.apparatus-email-reveal:hover .apparatus-email-eye::before {
-  content: "\ecbd"; /* ri-eye-line */
-}
-
-.apparatus-email-reveal:hover .apparatus-email-eye {
-  color: #f472b6;
+.apparatus-email-blurred:hover,
+.apparatus-email-blurred.revealed,
+.apparatus-row:hover .apparatus-email-blurred {
+  filter: blur(0px) !important;
+  -webkit-filter: blur(0px) !important;
+  user-select: text;
 }
 
 .status-on {

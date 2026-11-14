@@ -278,7 +278,7 @@
           if (uEl) uEl.textContent = attr.username;
         }
         if (attr.email) {
-          const eEl = document.getElementById('apparatus-email-real');
+          const eEl = document.getElementById('apparatus-email-val') || document.getElementById('apparatus-email-real');
           if (eEl) eEl.textContent = attr.email;
         }
         if (attr.admin !== undefined) {
@@ -491,14 +491,10 @@
             </div>
 
             <div class="apparatus-account-rows">
-              <!-- Email (Hidden, hover reveals) -->
+              <!-- Email (Blurred, cursor hover reveals) -->
               <div class="apparatus-row">
                 <span class="apparatus-row-label">Email</span>
-                <div class="apparatus-email-reveal" id="apparatus-email-box" title="Hover to reveal email">
-                  <span class="apparatus-email-masked" id="apparatus-email-masked">••••••••••••••••</span>
-                  <span class="apparatus-email-real" id="apparatus-email-real">${email}</span>
-                  <i class="ri-eye-off-line apparatus-email-eye"></i>
-                </div>
+                <span class="apparatus-email-blurred" id="apparatus-email-val" title="Hover to reveal">${email}</span>
               </div>
 
               <!-- Servers Owned -->
@@ -561,21 +557,10 @@
     }
 
     // Toggle reveal for mobile touch
-    const emailBox = document.getElementById('apparatus-email-box');
-    if (emailBox) {
-      emailBox.addEventListener('click', function () {
-        const masked = document.getElementById('apparatus-email-masked');
-        const real = document.getElementById('apparatus-email-real');
-        if (masked && real) {
-          const isRealVisible = window.getComputedStyle(real).display !== 'none';
-          if (isRealVisible) {
-            real.style.display = 'none';
-            masked.style.display = 'inline-block';
-          } else {
-            real.style.display = 'inline-block';
-            masked.style.display = 'none';
-          }
-        }
+    const emailEl = document.getElementById('apparatus-email-val');
+    if (emailEl) {
+      emailEl.addEventListener('click', function () {
+        emailEl.classList.toggle('revealed');
       });
     }
 
