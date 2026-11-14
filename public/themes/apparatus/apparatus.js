@@ -61,6 +61,177 @@
     return metaCsrf ? metaCsrf.getAttribute('content') : '';
   }
 
+
+  function initSidebar() {
+    if (isAuthPage()) {
+      const existing = document.getElementById('apparatus-sidebar');
+      if (existing) existing.style.display = 'none';
+      const toggle = document.getElementById('apparatus-mobile-toggle');
+      if (toggle) toggle.style.display = 'none';
+      return;
+    }
+
+    let sidebar = document.getElementById('apparatus-sidebar');
+    if (!sidebar) {
+      sidebar = document.createElement('aside');
+      sidebar.id = 'apparatus-sidebar';
+      sidebar.className = 'apparatus-sidebar';
+
+      sidebar.innerHTML = `
+        <div class="apparatus-sidebar-header">
+          <div class="apparatus-sidebar-brand">
+            <span class="brand-text">ARIXBYTE</span>
+            <span class="brand-badge">PANEL</span>
+          </div>
+        </div>
+
+        <div class="apparatus-sidebar-scroll">
+          <!-- Home -->
+          <div class="apparatus-nav-category">
+            <div class="apparatus-category-title">Home</div>
+            <ul class="apparatus-nav-list">
+              <li>
+                <a href="/" class="apparatus-nav-link" data-path="/">
+                  <i class="ri-dashboard-3-line apparatus-nav-icon"></i>
+                  <span>Dashboard</span>
+                </a>
+              </li>
+              <li>
+                <a href="/" class="apparatus-nav-link" data-path="/servers">
+                  <i class="ri-server-line apparatus-nav-icon"></i>
+                  <span>Servers</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Account -->
+          <div class="apparatus-nav-category">
+            <div class="apparatus-category-title">Account</div>
+            <ul class="apparatus-nav-list">
+              <li>
+                <a href="/account" class="apparatus-nav-link" data-path="/account">
+                  <i class="ri-user-settings-line apparatus-nav-icon"></i>
+                  <span>Account Credentials</span>
+                </a>
+              </li>
+              <li>
+                <a href="/account/api" class="apparatus-nav-link" data-path="/account/api">
+                  <i class="ri-key-2-line apparatus-nav-icon"></i>
+                  <span>API Credentials</span>
+                </a>
+              </li>
+              <li>
+                <a href="/account/ssh" class="apparatus-nav-link" data-path="/account/ssh">
+                  <i class="ri-terminal-window-line apparatus-nav-icon"></i>
+                  <span>SSH Keys</span>
+                </a>
+              </li>
+              <li>
+                <a href="/account/activity" class="apparatus-nav-link" data-path="/account/activity">
+                  <i class="ri-history-line apparatus-nav-icon"></i>
+                  <span>Recent Activity</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Ticket -->
+          <div class="apparatus-nav-category">
+            <div class="apparatus-category-title">Ticket</div>
+            <ul class="apparatus-nav-list">
+              <li>
+                <a href="#ticket" class="apparatus-nav-link apparatus-ticket-link">
+                  <i class="ri-customer-service-2-line apparatus-nav-icon"></i>
+                  <span>Ticket</span>
+                  <span class="apparatus-tag-soon">Soon</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Socials -->
+          <div class="apparatus-nav-category">
+            <div class="apparatus-category-title">Socials</div>
+            <ul class="apparatus-nav-list">
+              <li>
+                <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-nav-link">
+                  <i class="ri-global-line apparatus-nav-icon"></i>
+                  <span>Website</span>
+                  <i class="ri-external-link-line apparatus-external-icon"></i>
+                </a>
+              </li>
+              <li>
+                <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-nav-link">
+                  <i class="ri-discord-fill apparatus-nav-icon" style="color: #5865F2;"></i>
+                  <span>Discord</span>
+                  <i class="ri-external-link-line apparatus-external-icon"></i>
+                </a>
+              </li>
+              <li>
+                <a href="https://instagram.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-nav-link">
+                  <i class="ri-instagram-line apparatus-nav-icon" style="color: #E1306C;"></i>
+                  <span>Instagram</span>
+                  <i class="ri-external-link-line apparatus-external-icon"></i>
+                </a>
+              </li>
+              <li>
+                <a href="https://wa.me/918218444633" target="_blank" rel="noopener noreferrer" class="apparatus-nav-link">
+                  <i class="ri-whatsapp-line apparatus-nav-icon" style="color: #25D366;"></i>
+                  <span>Whatsapp</span>
+                  <i class="ri-external-link-line apparatus-external-icon"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(sidebar);
+
+      // Ticket placeholder click handler
+      const ticketBtn = sidebar.querySelector('.apparatus-ticket-link');
+      if (ticketBtn) {
+        ticketBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          showToast('success', 'Tickets', 'Ticket support system is coming soon!');
+        });
+      }
+
+      // Mobile toggle button
+      let toggle = document.getElementById('apparatus-mobile-toggle');
+      if (!toggle) {
+        toggle = document.createElement('button');
+        toggle.id = 'apparatus-mobile-toggle';
+        toggle.className = 'apparatus-mobile-toggle';
+        toggle.setAttribute('aria-label', 'Toggle Navigation');
+        toggle.innerHTML = '<i class="ri-menu-2-line"></i>';
+        toggle.addEventListener('click', function () {
+          sidebar.classList.toggle('open');
+        });
+        document.body.appendChild(toggle);
+      }
+    } else {
+      sidebar.style.display = 'flex';
+      const toggle = document.getElementById('apparatus-mobile-toggle');
+      if (toggle) toggle.style.display = '';
+    }
+
+    // Update active link
+    const currentPath = window.location.pathname;
+    const links = document.querySelectorAll('.apparatus-nav-link[data-path]');
+    links.forEach(function (link) {
+      const p = link.getAttribute('data-path');
+      if (p === '/' && currentPath === '/') {
+        link.classList.add('active');
+      } else if (p !== '/' && currentPath.startsWith(p)) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  }
+
   function initApparatus() {
     const isAuth = isAuthPage();
 
@@ -120,6 +291,8 @@
         gsap.set(".parallax-container", { scale: 1, opacity: 1 });
       }
     }
+
+    initSidebar();
   }
 
   // Icons
