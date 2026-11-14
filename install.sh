@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==============================================================================
-# Apparatus Theme - Interactive One-Liner Installer for Pterodactyl Panel
+# Apparatus Theme - 100% Script-Based Installer for Pterodactyl Panel
 # 1 - Install Theme
 # 2 - Update Theme
 # 3 - Remove Theme
@@ -32,7 +32,7 @@ echo -e "${CYAN}================================================================
 # Verify Root Privileges
 if [ "$EUID" -ne 0 ]; then
   echo -e "${RED}[ERROR] Please run this script as root:${NC}"
-  echo -e "${YELLOW}sudo bash <(curl -s https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/release/install.sh)${NC}"
+  echo -e "${YELLOW}sudo bash <(curl -s https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/main/install.sh)${NC}"
   exit 1
 fi
 
@@ -44,7 +44,7 @@ fi
 
 WRAPPER_FILE="$PTERO_DIR/resources/views/templates/wrapper.blade.php"
 ASSET_DIR="$PTERO_DIR/public/themes/apparatus"
-RAW_BASE="https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/release"
+RAW_BASE="https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/main"
 
 # Function: Install
 install_theme() {
@@ -77,7 +77,7 @@ install_theme() {
   chown -R www-data:www-data "$ASSET_DIR"
   chmod -R 755 "$ASSET_DIR"
 
-  # Step 3: Inject Into Wrapper cleanly
+  # Step 3: Inject Into Wrapper
   echo -e "${BLUE}[3/4] Linking Apparatus Theme with GSAP Parallax...${NC}"
   if grep -q "apparatus-theme-loader" "$WRAPPER_FILE"; then
     sed -i '/<!-- BEGIN apparatus-theme-loader -->/,/<!-- END apparatus-theme-loader -->/d' "$WRAPPER_FILE"
@@ -110,14 +110,6 @@ if '</head>' in content:
   php artisan view:clear
   php artisan cache:clear
   php artisan config:clear
-
-  # Blueprint Check & Install (Blueprint requires cwd to be inside pterodactyl and relative path)
-  if command -v blueprint &> /dev/null; then
-    echo -e "${YELLOW}Blueprint detected. Installing extension...${NC}"
-    cd "$PTERO_DIR"
-    curl -s -L "$RAW_BASE/apparatus-theme.blueprint" -o "apparatus-theme.blueprint"
-    blueprint -i apparatus-theme.blueprint || true
-  fi
 
   echo -e "\n${GREEN}========================================================================${NC}"
   echo -e "${GREEN}✓ APPARATUS THEME SUCCESSFULLY INSTALLED!${NC}"
@@ -153,12 +145,6 @@ remove_theme() {
   if [ -d "$ASSET_DIR" ]; then
     rm -rf "$ASSET_DIR"
     echo -e "${GREEN}✓ Theme assets removed.${NC}"
-  fi
-
-  # Blueprint extension removal if applicable
-  if command -v blueprint &> /dev/null; then
-    cd "$PTERO_DIR"
-    blueprint -r apparatus-theme 2>/dev/null || true
   fi
 
   # Clear Cache
