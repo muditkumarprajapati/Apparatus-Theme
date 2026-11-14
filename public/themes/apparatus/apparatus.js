@@ -61,12 +61,23 @@
           titleEl.dataset.apparatusModified = "true";
         }
 
-        // Replace Blueprint text with Apparatus Theme v1.0
-        const footerLinks = document.querySelectorAll('p, span, div, a');
-        footerLinks.forEach(el => {
-          if (el.textContent && el.textContent.includes('Blueprint') && !el.dataset.apparatusFooterModified) {
-            el.innerHTML = el.innerHTML.replace(/Blueprint\s*©?\s*[0-9\-–]*/gi, 'Apparatus Theme v1.0');
-            el.dataset.apparatusFooterModified = "true";
+        // Replace Blueprint text, copyright year, and link with https://arixbyte.com/
+        const links = document.querySelectorAll('a');
+        links.forEach(a => {
+          if (a.textContent && (a.textContent.includes('Blueprint') || a.textContent.includes('Apparatus'))) {
+            a.href = "https://arixbyte.com/";
+            a.textContent = "Apparatus Theme v1.0";
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+          }
+        });
+
+        const footerTexts = document.querySelectorAll('p, span, div');
+        footerTexts.forEach(el => {
+          if (el.children.length <= 3 && el.textContent && el.textContent.includes('Blueprint')) {
+            el.innerHTML = el.innerHTML
+              .replace(/Blueprint\s*©?\s*[0-9\-–\s]*/gi, '<a href="https://arixbyte.com/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Apparatus Theme v1.0</a> © 2026')
+              .replace(/©\s*2023\s*[-–]\s*2026/g, '© 2026');
           }
         });
       }
