@@ -60,7 +60,7 @@ install_theme() {
   fi
 
   # Step 2: Download Assets
-  echo -e "${BLUE}[2/4] Downloading theme assets (Desert Parallax SVGs, CSS, JS)...${NC}"
+  echo -e "${BLUE}[2/4] Deploying theme assets (Desert Parallax SVGs, CSS, JS)...${NC}"
   mkdir -p "$ASSET_DIR/desert"
 
   for file in img-bg.svg img-1.svg img-2.svg img-3.svg img-4.svg img-5.svg img-6.svg img-7.svg favicon.png; do
@@ -77,21 +77,34 @@ install_theme() {
   chown -R www-data:www-data "$ASSET_DIR"
   chmod -R 755 "$ASSET_DIR"
 
-  # Step 3: Inject Into Wrapper
+  # Step 3: Inject Into Wrapper cleanly
   echo -e "${BLUE}[3/4] Linking Apparatus Theme with GSAP Parallax...${NC}"
   if grep -q "apparatus-theme-loader" "$WRAPPER_FILE"; then
     sed -i '/<!-- BEGIN apparatus-theme-loader -->/,/<!-- END apparatus-theme-loader -->/d' "$WRAPPER_FILE"
   fi
 
-  INJECTION=$(cat << 'EOF'
-<!-- BEGIN apparatus-theme-loader -->
-<link rel="stylesheet" href="/themes/apparatus/apparatus.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="/themes/apparatus/apparatus.js" defer></script>
+  # Safe Python/awk/sed insertion before </head>
+  python3 -c "
+with open('$WRAPPER_FILE', 'r') as f:
+    content = f.read()
+
+snippet = '''<!-- BEGIN apparatus-theme-loader -->
+<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css\">
+<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>
+<script src=\"/themes/apparatus/apparatus.js\" defer></script>
 <!-- END apparatus-theme-loader -->
-EOF
-)
-  sed -i "s|</head>|${INJECTION}\n</head>|g" "$WRAPPER_FILE"
+</head>'''
+
+if '</head>' in content:
+    content = content.replace('</head>', snippet, 1)
+    with open('$WRAPPER_FILE', 'w') as f:
+        f.write(content)
+" 2>/dev/null || {
+    # Fallback to awk if python3 is not present
+    awk '/<\/head>/{print "<!-- BEGIN apparatus-theme-loader -->\n<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>\n<script src=\"/themes/apparatus/apparatus.js\" defer></script>\n<!-- END apparatus-theme-loader -->"}1' "$WRAPPER_FILE" > "$WRAPPER_FILE.tmp" && mv "$WRAPPER_FILE.tmp" "$WRAPPER_FILE"
+  }
+
+  echo -e "${GREEN}✓ Injected theme loader into wrapper successfully.${NC}"
 
   # Step 4: Clear Cache
   echo -e "${BLUE}[4/4] Clearing Pterodactyl cache...${NC}"
