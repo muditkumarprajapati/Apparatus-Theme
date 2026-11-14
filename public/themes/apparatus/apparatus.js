@@ -97,6 +97,15 @@
   function cleanPterodactylElements() {
     if (isAuthPage()) return;
 
+    // 0. Completely remove native progress bar / cyan glowing line
+    document.querySelectorAll('div[class*="ProgressBar"], div[class*="ProgressBar__BarFill"], div[class*="ProgressBar___StyledDiv"], .sc-14ayc3f-0, .sc-14ayc3f-1, [class*="sc-14ayc3f"]').forEach(function (el) {
+      el.style.setProperty('display', 'none', 'important');
+      el.style.setProperty('visibility', 'hidden', 'important');
+      el.style.setProperty('height', '0', 'important');
+      el.style.setProperty('box-shadow', 'none', 'important');
+      el.style.setProperty('opacity', '0', 'important');
+    });
+
     // 1. Hide native top navigation bar completely
     const navSelectors = [
       'nav',

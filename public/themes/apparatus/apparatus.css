@@ -810,7 +810,7 @@ body.apparatus-auth #apparatus-mobile-toggle {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+  background: linear-gradient(90deg, #ec4899, #d946ef, #c084fc);
 }
 
 .apparatus-hero-badge {
@@ -956,4 +956,26 @@ div[class*="sc-cyh04c-7"] {
   height: 0 !important;
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+
+/* ==============================================================================
+   REMOVE PTERODACTYL NATIVE PROGRESS BAR / CYAN GLOWING LINE
+   ============================================================================== */
+div[class*="ProgressBar"],
+div[class*="ProgressBar__BarFill"],
+div[class*="ProgressBar___StyledDiv"],
+.sc-14ayc3f-0,
+.sc-14ayc3f-1,
+[class*="sc-14ayc3f"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  opacity: 0 !important;
+  box-shadow: none !important;
+  pointer-events: none !important;
+  border: none !important;
+  overflow: hidden !important;
 }
