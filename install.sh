@@ -62,17 +62,18 @@ install_theme() {
   # Step 2: Download Assets
   echo -e "${BLUE}[2/4] Deploying theme assets (Desert Parallax SVGs, CSS, JS)...${NC}"
   mkdir -p "$ASSET_DIR/desert"
+  TS=$(date +%s)
 
   for file in img-bg.svg img-1.svg img-2.svg img-3.svg img-4.svg img-5.svg img-6.svg img-7.svg favicon.png; do
     echo -e "  -> Downloading $file..."
-    curl -s -L "$RAW_BASE/public/desert/$file" -o "$ASSET_DIR/desert/$file"
+    curl -s -L "$RAW_BASE/public/desert/$file?v=$TS" -o "$ASSET_DIR/desert/$file"
   done
 
   echo -e "  -> Downloading apparatus.css..."
-  curl -s -L "$RAW_BASE/public/themes/apparatus/apparatus.css" -o "$ASSET_DIR/apparatus.css"
+  curl -s -L "$RAW_BASE/public/themes/apparatus/apparatus.css?v=$TS" -o "$ASSET_DIR/apparatus.css"
 
   echo -e "  -> Downloading apparatus.js..."
-  curl -s -L "$RAW_BASE/public/themes/apparatus/apparatus.js" -o "$ASSET_DIR/apparatus.js"
+  curl -s -L "$RAW_BASE/public/themes/apparatus/apparatus.js?v=$TS" -o "$ASSET_DIR/apparatus.js"
 
   chown -R www-data:www-data "$ASSET_DIR"
   chmod -R 755 "$ASSET_DIR"
