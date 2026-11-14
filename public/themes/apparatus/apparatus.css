@@ -967,15 +967,34 @@ div[class*="ProgressBar__BarFill"],
 div[class*="ProgressBar___StyledDiv"],
 .sc-14ayc3f-0,
 .sc-14ayc3f-1,
-[class*="sc-14ayc3f"] {
+[class*="sc-14ayc3f"],
+div[style*="hsl(178"],
+div[style*="hsl(178,78%,57%)"],
+div[style*="211, 238"],
+div[style*="rgba(34, 211, 238"],
+#app > div[style*="height: 2px"],
+#app > div[style*="height:2px"],
+div[style*="height: 2px"][style*="position: fixed"],
+div[style*="height:2px"][style*="position:fixed"],
+div[style*="height: 2px"][style*="position: absolute"],
+div[style*="height:2px"][style*="position:absolute"],
+div[style*="height: 2px"],
+div[style*="height:2px"] {
   display: none !important;
   visibility: hidden !important;
   height: 0 !important;
   min-height: 0 !important;
   max-height: 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
   opacity: 0 !important;
   box-shadow: none !important;
   pointer-events: none !important;
   border: none !important;
   overflow: hidden !important;
+  position: absolute !important;
+  top: -99999px !important;
+  left: -99999px !important;
+  clip: rect(0, 0, 0, 0) !important;
 }

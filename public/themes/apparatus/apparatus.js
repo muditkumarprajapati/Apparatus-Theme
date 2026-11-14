@@ -5,6 +5,39 @@
 (function () {
   'use strict';
 
+  // Inject instant global CSS to permanently hide Pterodactyl progress bar / cyan glowing line
+  (function injectInstantProgressBarKiller() {
+    if (document.getElementById('apparatus-kill-progressbar')) return;
+    const s = document.createElement('style');
+    s.id = 'apparatus-kill-progressbar';
+    s.textContent = `
+      div[class*="ProgressBar"],
+      div[class*="ProgressBar__BarFill"],
+      div[class*="ProgressBar___StyledDiv"],
+      .sc-14ayc3f-0,
+      .sc-14ayc3f-1,
+      [class*="sc-14ayc3f"],
+      div[style*="hsl(178"],
+      div[style*="211, 238"],
+      div[style*="height: 2px"],
+      div[style*="height:2px"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+        width: 0 !important;
+        opacity: 0 !important;
+        box-shadow: none !important;
+        pointer-events: none !important;
+        position: absolute !important;
+        top: -99999px !important;
+        left: -99999px !important;
+      }
+    `;
+    (document.head || document.documentElement).appendChild(s);
+  })();
+
   function isAuthPage() {
     return window.location.pathname.startsWith('/auth') || 
            window.location.pathname === '/login';
@@ -98,12 +131,29 @@
     if (isAuthPage()) return;
 
     // 0. Completely remove native progress bar / cyan glowing line
-    document.querySelectorAll('div[class*="ProgressBar"], div[class*="ProgressBar__BarFill"], div[class*="ProgressBar___StyledDiv"], .sc-14ayc3f-0, .sc-14ayc3f-1, [class*="sc-14ayc3f"]').forEach(function (el) {
+    const progressSelectors = [
+      'div[class*="ProgressBar"]',
+      'div[class*="ProgressBar__BarFill"]',
+      'div[class*="ProgressBar___StyledDiv"]',
+      '.sc-14ayc3f-0',
+      '.sc-14ayc3f-1',
+      '[class*="sc-14ayc3f"]',
+      'div[style*="hsl(178"]',
+      'div[style*="211, 238"]',
+      'div[style*="height: 2px"]',
+      'div[style*="height:2px"]'
+    ];
+    document.querySelectorAll(progressSelectors.join(',')).forEach(function (el) {
       el.style.setProperty('display', 'none', 'important');
       el.style.setProperty('visibility', 'hidden', 'important');
       el.style.setProperty('height', '0', 'important');
+      el.style.setProperty('min-height', '0', 'important');
+      el.style.setProperty('max-height', '0', 'important');
       el.style.setProperty('box-shadow', 'none', 'important');
       el.style.setProperty('opacity', '0', 'important');
+      el.style.setProperty('position', 'absolute', 'important');
+      el.style.setProperty('top', '-99999px', 'important');
+      el.style.setProperty('pointer-events', 'none', 'important');
     });
 
     // 1. Hide native top navigation bar completely
