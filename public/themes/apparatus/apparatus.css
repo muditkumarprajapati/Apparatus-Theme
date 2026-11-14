@@ -784,11 +784,7 @@ body.apparatus-auth #apparatus-mobile-toggle {
 }
 
 /* ==============================================================================
-   APPARATUS 4-CARD TRANSPARENT DASHBOARD
-   Area 1: Welcome Hero Card (Hello {Username}!)
-   Area 2: Recent Activities Card
-   Area 3: Account Credentials Card (Gmail Hover Reveal, Servers, Tickets, 2FA)
-   Area 4: Servers Section (List or "No Server Found - Purchase Now")
+   PREMIUM ULTRA-TRANSPARENT GLASS DASHBOARD (MINIMALIST & CLEAN)
    ============================================================================== */
 .apparatus-dashboard-view {
   position: relative;
@@ -799,215 +795,125 @@ body.apparatus-auth #apparatus-mobile-toggle {
 .apparatus-dashboard-container {
   display: grid;
   grid-template-columns: 1.35fr 1fr;
-  gap: 1.5rem;
-  max-width: 1440px;
-  margin: 1.25rem auto 3rem auto;
+  gap: 1.25rem;
+  max-width: 1380px;
+  margin: 1.5rem auto 3rem auto;
   padding: 0 1.5rem;
   position: relative;
   z-index: 30;
   box-sizing: border-box;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1080px) {
   .apparatus-dashboard-container {
     grid-template-columns: 1fr;
-    gap: 1.25rem;
+    gap: 1rem;
     padding: 0 1rem;
-    margin-top: 0.5rem;
   }
 }
 
 .apparatus-dash-col {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
   min-width: 0;
 }
 
-/* Base Card Styling (All Transparent Frosted Glass) */
+/* Truly Transparent Glass Card */
 .apparatus-card {
-  background: rgba(18, 18, 24, 0.58) !important;
-  backdrop-filter: blur(18px) !important;
-  -webkit-backdrop-filter: blur(18px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 20px !important;
-  padding: 1.75rem !important;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3) !important;
+  background: rgba(14, 10, 22, 0.3) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 18px !important;
+  padding: 1.6rem 1.75rem !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25) !important;
   color: #fff !important;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .apparatus-card:hover {
-  border-color: rgba(255, 255, 255, 0.22) !important;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4) !important;
+  background: rgba(14, 10, 22, 0.38) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
 }
 
-.apparatus-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #ec4899, #d946ef, #c084fc);
-  opacity: 0.9;
-}
-
-/* Card Headers */
+/* Card Header */
 .apparatus-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.25rem;
-  padding-bottom: 1rem;
+  margin-bottom: 1.15rem;
+  padding-bottom: 0.85rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.apparatus-card-title-group {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-.apparatus-card-header-icon {
-  font-size: 1.4rem;
-  color: #f472b6;
-  background: rgba(236, 72, 153, 0.15);
-  border: 1px solid rgba(236, 72, 153, 0.3);
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  flex-shrink: 0;
 }
 
 .apparatus-card-title {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 700;
   margin: 0;
   color: #fff;
   letter-spacing: -0.01em;
 }
 
-.apparatus-card-subtitle {
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.65);
-  margin: 0.2rem 0 0 0;
+.apparatus-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #f472b6;
+  background: rgba(236, 72, 153, 0.15);
+  border: 1px solid rgba(236, 72, 153, 0.3);
+  padding: 0.25rem 0.7rem;
+  border-radius: 9999px;
+  display: inline-block;
+  margin-bottom: 0.85rem;
 }
 
-.apparatus-card-link-sm {
-  font-size: 0.85rem;
+.apparatus-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.apparatus-pill-green {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.apparatus-link {
+  font-size: 0.82rem;
   font-weight: 600;
   color: #f472b6 !important;
   text-decoration: none !important;
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  transition: all 0.2s ease;
+  gap: 0.25rem;
+  transition: opacity 0.15s ease;
 }
 
-.apparatus-card-link-sm:hover {
-  color: #fff !important;
-  transform: translateX(2px);
+.apparatus-link:hover {
+  opacity: 0.8;
 }
 
-.apparatus-badge-count {
-  font-size: 0.78rem;
-  font-weight: 700;
-  background: rgba(236, 72, 153, 0.2);
-  color: #f472b6;
-  border: 1px solid rgba(236, 72, 153, 0.35);
-  padding: 0.3rem 0.8rem;
-  border-radius: 9999px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.apparatus-badge-pill {
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 0.3rem 0.8rem;
-  border-radius: 9999px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.apparatus-badge-verified {
-  background: rgba(34, 197, 94, 0.15);
-  color: #4ade80;
-  border: 1px solid rgba(34, 197, 94, 0.3);
-}
-
-/* ------------------------------------------------------------------------------
-   AREA 1: WELCOME HERO CARD
-   ------------------------------------------------------------------------------ */
-.apparatus-welcome-card {
-  padding: 2.25rem 2rem !important;
-}
-
-.apparatus-welcome-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.25rem;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.apparatus-hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: rgba(236, 72, 153, 0.18);
-  color: #f472b6;
-  border: 1px solid rgba(236, 72, 153, 0.35);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  padding: 0.4rem 0.9rem;
-  border-radius: 9999px;
-}
-
-.apparatus-status-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 500;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
-  animation: apparatusPulse 2s infinite;
-}
-
-@keyframes apparatusPulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+/* Area 1: Welcome Card */
+.apparatus-card-welcome {
+  padding: 2rem 2rem !important;
 }
 
 .apparatus-welcome-title {
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 800;
   color: #fff;
-  margin: 0 0 0.85rem 0;
+  margin: 0 0 0.5rem 0;
   letter-spacing: -0.02em;
-  line-height: 1.2;
 }
 
 .apparatus-user-name {
@@ -1017,68 +923,53 @@ body.apparatus-auth #apparatus-mobile-toggle {
 }
 
 .apparatus-welcome-desc {
-  font-size: 1.02rem;
-  color: rgba(255, 255, 255, 0.82);
-  line-height: 1.6;
-  margin: 0 0 1.75rem 0;
-  max-width: 680px;
+  font-size: 0.96rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0 0 1.5rem 0;
+  line-height: 1.5;
 }
 
 .apparatus-welcome-actions {
   display: flex;
-  align-items: center;
-  gap: 0.9rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
-.apparatus-dash-btn {
+/* Buttons */
+.apparatus-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.75rem 1.4rem;
-  border-radius: 12px;
+  gap: 0.45rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 10px;
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   text-decoration: none !important;
-  transition: all 0.22s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
   box-sizing: border-box;
 }
 
-.apparatus-dash-btn-primary {
+.apparatus-btn-primary {
   background: linear-gradient(135deg, #ec4899, #db2777);
   color: #fff !important;
-  box-shadow: 0 8px 20px rgba(236, 72, 153, 0.35);
+  box-shadow: 0 4px 18px rgba(236, 72, 153, 0.35);
 }
 
-.apparatus-dash-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(236, 72, 153, 0.5);
-  filter: brightness(1.08);
+.apparatus-btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
-.apparatus-dash-btn-secondary {
-  background: rgba(255, 255, 255, 0.08);
+.apparatus-btn-glass {
+  background: rgba(255, 255, 255, 0.07);
   color: #fff !important;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-.apparatus-dash-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
-}
-
-.apparatus-dash-btn-discord {
-  background: rgba(88, 101, 242, 0.2);
-  color: #858ff7 !important;
-  border: 1px solid rgba(88, 101, 242, 0.35);
-}
-
-.apparatus-dash-btn-discord:hover {
-  background: rgba(88, 101, 242, 0.35);
-  transform: translateY(-2px);
+.apparatus-btn-glass:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
 .apparatus-btn-full {
@@ -1086,425 +977,239 @@ body.apparatus-auth #apparatus-mobile-toggle {
   justify-content: center;
 }
 
-/* ------------------------------------------------------------------------------
-   AREA 2: RECENT ACTIVITIES CARD
-   ------------------------------------------------------------------------------ */
+/* Area 2: Recent Activity List */
 .apparatus-activity-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  max-height: 290px;
+  gap: 0.55rem;
+  max-height: 250px;
   overflow-y: auto;
-  padding-right: 0.25rem;
 }
 
-.apparatus-activity-list::-webkit-scrollbar {
-  width: 5px;
-}
-.apparatus-activity-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
-  border-radius: 10px;
-}
-
-.apparatus-activity-item {
+.apparatus-act-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 0.9rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  gap: 0.75rem;
-}
-
-.apparatus-activity-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateX(2px);
-}
-
-.apparatus-act-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  min-width: 0;
-}
-
-.apparatus-act-icon {
-  width: 34px;
-  height: 34px;
+  padding: 0.7rem 0.9rem;
   border-radius: 10px;
-  background: rgba(244, 114, 182, 0.15);
-  color: #f472b6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.86rem;
+  transition: background 0.15s ease;
 }
 
-.apparatus-act-text {
-  min-width: 0;
+.apparatus-act-row:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.apparatus-act-title {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.apparatus-act-sub {
-  font-size: 0.76rem;
-  color: rgba(255, 255, 255, 0.55);
+.apparatus-act-name {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
 }
 
 .apparatus-act-time {
-  font-size: 0.76rem;
-  color: rgba(255, 255, 255, 0.6);
-  white-space: nowrap;
-  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.78rem;
 }
 
-.apparatus-empty-activity {
+.apparatus-empty-msg {
   text-align: center;
-  padding: 2rem 1rem;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
+  padding: 1.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.86rem;
 }
 
-/* ------------------------------------------------------------------------------
-   AREA 3: ACCOUNT CREDENTIALS CARD
-   ------------------------------------------------------------------------------ */
-.apparatus-credentials-list {
+/* Area 3: Account Rows */
+.apparatus-account-rows {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.65rem;
 }
 
-.apparatus-cred-item {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.8rem 1rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 12px;
-  transition: all 0.2s ease;
-}
-
-.apparatus-cred-item:hover {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.14);
-}
-
-.apparatus-cred-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: rgba(192, 132, 252, 0.15);
-  color: #c084fc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  flex-shrink: 0;
-}
-
-.apparatus-cred-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-width: 0;
-  flex: 1;
-}
-
-.apparatus-cred-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.55);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.apparatus-cred-value {
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: #fff;
+.apparatus-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  padding: 0.75rem 0.95rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.88rem;
 }
 
-/* Gmail / Email Cursor Hover Reveal */
-.apparatus-email-reveal-box {
+.apparatus-row-label {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.apparatus-row-val {
+  color: #fff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* Email Hover Reveal */
+.apparatus-email-reveal {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.65rem;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
+  gap: 0.45rem;
   cursor: pointer;
-  transition: all 0.25s ease;
-  width: fit-content;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
   user-select: none;
 }
 
-.apparatus-email-reveal-box:hover {
-  background: rgba(236, 72, 153, 0.15);
+.apparatus-email-reveal:hover {
+  background: rgba(236, 72, 153, 0.18);
   border-color: rgba(236, 72, 153, 0.4);
 }
 
 .apparatus-email-masked {
-  display: inline-block;
-  color: rgba(255, 255, 255, 0.6);
   font-family: monospace;
-  font-size: 0.88rem;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.82rem;
 }
 
 .apparatus-email-real {
   display: none;
-  color: #fff;
   font-weight: 600;
-  font-size: 0.88rem;
-  word-break: break-all;
+  color: #fff;
+  font-size: 0.82rem;
 }
 
-.apparatus-email-reveal-box:hover .apparatus-email-masked {
+.apparatus-email-reveal:hover .apparatus-email-masked {
   display: none;
 }
 
-.apparatus-email-reveal-box:hover .apparatus-email-real {
+.apparatus-email-reveal:hover .apparatus-email-real {
   display: inline-block;
 }
 
-.apparatus-email-reveal-box:hover .apparatus-email-eye {
-  color: #f472b6;
+.apparatus-email-eye {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.55);
 }
 
-.apparatus-email-reveal-box:hover .apparatus-email-eye::before {
+.apparatus-email-reveal:hover .apparatus-email-eye::before {
   content: "\ecbd"; /* ri-eye-line */
 }
 
-.apparatus-ticket-sublink {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #858ff7 !important;
-  text-decoration: none !important;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
+.apparatus-email-reveal:hover .apparatus-email-eye {
+  color: #f472b6;
 }
 
-.apparatus-ticket-sublink:hover {
+.status-on {
+  color: #4ade80;
+}
+
+.status-off {
+  color: #fbbf24;
+}
+
+.apparatus-inline-link {
+  color: #858ff7 !important;
+  text-decoration: none !important;
+  font-size: 0.8rem;
+}
+
+.apparatus-inline-link:hover {
   text-decoration: underline !important;
 }
 
-.text-success {
-  color: #4ade80 !important;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
+.apparatus-account-footer {
+  margin-top: 1rem;
 }
 
-.text-warning {
-  color: #fbbf24 !important;
-  display: inline-flex;
+/* Area 4: Empty Servers State */
+.apparatus-empty-servers {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
 }
 
-.apparatus-role-admin {
-  background: rgba(236, 72, 153, 0.2);
-  color: #f472b6;
-  border: 1px solid rgba(236, 72, 153, 0.35);
-  font-size: 0.75rem;
-  padding: 0.2rem 0.55rem;
-  border-radius: 6px;
+.apparatus-empty-icon {
+  font-size: 2.25rem;
+  color: rgba(244, 114, 182, 0.85);
+  margin-bottom: 0.75rem;
+}
+
+.apparatus-empty-title {
+  font-size: 1.25rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: #fff;
+  margin: 0 0 0.35rem 0;
 }
 
-.apparatus-credentials-footer {
-  margin-top: 1.25rem;
+.apparatus-empty-desc {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 440px;
+  line-height: 1.5;
+  margin: 0 0 1.35rem 0;
 }
 
-/* ------------------------------------------------------------------------------
-   AREA 4: SERVERS SECTION & EMPTY STATE
-   ------------------------------------------------------------------------------ */
 .apparatus-servers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.1rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.85rem;
 }
 
 .apparatus-server-item {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 1.25rem;
-  transition: all 0.25s ease;
+  border-radius: 12px;
+  padding: 1.1rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 0.85rem;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .apparatus-server-item:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(236, 72, 153, 0.35);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-}
-
-.apparatus-server-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
 }
 
 .apparatus-server-name {
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   font-weight: 700;
+  margin: 0 0 0.25rem 0;
   color: #fff;
-  margin: 0;
-}
-
-.apparatus-server-node {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.55);
-  background: rgba(255, 255, 255, 0.06);
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
 }
 
 .apparatus-server-stats {
   display: flex;
-  gap: 0.85rem;
-  margin: 0.75rem 0 1.1rem 0;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.75);
+  gap: 0.65rem;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .apparatus-server-btn {
   background: linear-gradient(135deg, #ec4899, #db2777);
   color: #fff !important;
   text-decoration: none !important;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
   text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  transition: all 0.2s ease;
-}
-
-.apparatus-server-btn:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-}
-
-/* Empty State: No Server Found */
-.apparatus-empty-servers {
-  text-align: center;
-  padding: 3rem 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed rgba(255, 255, 255, 0.14);
-  border-radius: 16px;
-}
-
-.apparatus-empty-icon {
-  width: 76px;
-  height: 76px;
-  border-radius: 20px;
-  background: rgba(236, 72, 153, 0.12);
-  border: 1px solid rgba(236, 72, 153, 0.25);
-  color: #f472b6;
-  font-size: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.25rem;
-  box-shadow: 0 10px 25px rgba(236, 72, 153, 0.15);
-}
-
-.apparatus-empty-title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #fff;
-  margin: 0 0 0.5rem 0;
-  letter-spacing: -0.01em;
-}
-
-.apparatus-empty-desc {
-  font-size: 0.98rem;
-  color: rgba(255, 255, 255, 0.75);
-  max-width: 520px;
-  line-height: 1.55;
-  margin: 0 0 1.75rem 0;
-}
-
-.apparatus-empty-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.9rem;
-  flex-wrap: wrap;
-}
-
-.apparatus-btn-purchase {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.85rem 1.6rem;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 0.96rem;
-  background: linear-gradient(135deg, #ec4899, #d946ef);
-  color: #fff !important;
-  text-decoration: none !important;
-  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
-  transition: all 0.25s ease;
-}
-
-.apparatus-btn-purchase:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(236, 72, 153, 0.55);
-  filter: brightness(1.1);
-}
-
-.apparatus-btn-discord {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.85rem 1.4rem;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.94rem;
-  background: rgba(88, 101, 242, 0.2);
-  color: #858ff7 !important;
-  border: 1px solid rgba(88, 101, 242, 0.35);
-  text-decoration: none !important;
-  transition: all 0.22s ease;
-}
-
-.apparatus-btn-discord:hover {
-  background: rgba(88, 101, 242, 0.35);
-  transform: translateY(-2px);
+  justify-content: center;
+  gap: 0.35rem;
 }
 
 /* ==============================================================================

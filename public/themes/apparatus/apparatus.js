@@ -283,7 +283,7 @@
         }
         if (attr.admin !== undefined) {
           const rEl = document.getElementById('apparatus-stat-role');
-          if (rEl) rEl.innerHTML = attr.admin ? '<span class="apparatus-role-admin">Root Administrator</span>' : 'Standard Customer';
+          if (rEl) rEl.textContent = attr.admin ? 'Administrator' : 'User';
         }
       }
     } catch (e) {}
@@ -303,7 +303,7 @@
           : servers.length;
 
         if (countBadge) countBadge.textContent = total + (total === 1 ? ' Server' : ' Servers');
-        if (ownedStat) ownedStat.textContent = total + (total === 1 ? ' Server' : ' Servers');
+        if (ownedStat) ownedStat.textContent = total;
 
         if (servers.length === 0) {
           if (container) {
@@ -312,15 +312,11 @@
                 <div class="apparatus-empty-icon"><i class="ri-server-line"></i></div>
                 <h3 class="apparatus-empty-title">No Servers Found</h3>
                 <p class="apparatus-empty-desc">
-                  You don't have any active servers yet. Elevate your performance with cloud hosting and gaming servers powered by ArixByte.
+                  You don't have any active servers. Purchase one from our website to get started.
                 </p>
                 <div class="apparatus-empty-actions">
-                  <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn-purchase">
-                    <i class="ri-shopping-cart-2-line"></i> Purchase Now from our Website
-                    <i class="ri-external-link-line"></i>
-                  </a>
-                  <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn-discord">
-                    <i class="ri-discord-fill"></i> Join Discord
+                  <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
+                    Purchase Now from our Website <i class="ri-external-link-line"></i>
                   </a>
                 </div>
               </div>
@@ -332,8 +328,8 @@
             servers.forEach(function (s) {
               const attr = s.attributes || {};
               const id = attr.identifier || attr.uuid || '';
-              const name = attr.name || 'Game Server';
-              const node = attr.node || 'ArixByte Cloud';
+              const name = attr.name || 'Server';
+              const node = attr.node || 'ArixByte';
               const mem = attr.limits && attr.limits.memory !== undefined ? (attr.limits.memory === 0 ? 'Unlimited' : attr.limits.memory + ' MB') : 'Standard';
               const cpu = attr.limits && attr.limits.cpu !== undefined ? (attr.limits.cpu === 0 ? 'Unlimited' : attr.limits.cpu + '%') : 'Standard';
               const disk = attr.limits && attr.limits.disk !== undefined ? (attr.limits.disk === 0 ? 'Unlimited' : attr.limits.disk + ' MB') : 'Standard';
@@ -341,10 +337,7 @@
               html += `
                 <div class="apparatus-server-item">
                   <div>
-                    <div class="apparatus-server-head">
-                      <h4 class="apparatus-server-name">${name}</h4>
-                      <span class="apparatus-server-node">${node}</span>
-                    </div>
+                    <h4 class="apparatus-server-name">${name}</h4>
                     <div class="apparatus-server-stats">
                       <span><i class="ri-cpu-line"></i> ${cpu}</span>
                       <span><i class="ri-database-2-line"></i> ${mem}</span>
@@ -352,7 +345,7 @@
                     </div>
                   </div>
                   <a href="/server/${id}" class="apparatus-server-btn">
-                    <i class="ri-dashboard-line"></i> Manage Server
+                    Manage <i class="ri-arrow-right-s-line"></i>
                   </a>
                 </div>
               `;
@@ -376,39 +369,31 @@
         const actData = await actRes.json();
         const activities = actData.data || [];
         if (activities.length === 0) {
-          if (actContainer) actContainer.innerHTML = '<div class="apparatus-empty-activity">No recent activities recorded.</div>';
+          if (actContainer) actContainer.innerHTML = '<div class="apparatus-empty-msg">No recent activity.</div>';
         } else {
           let html = '';
           activities.slice(0, 5).forEach(function (item) {
             const attr = item.attributes || {};
             const event = attr.event || 'activity';
             const timestamp = attr.timestamp || '';
-            const ip = attr.ip || '';
             const title = formatEventName(event);
             const time = timeAgo(timestamp);
-            const icon = getEventIcon(event);
 
             html += `
-              <div class="apparatus-activity-item">
-                <div class="apparatus-act-left">
-                  <div class="apparatus-act-icon"><i class="${icon}"></i></div>
-                  <div class="apparatus-act-text">
-                    <div class="apparatus-act-title">${title}</div>
-                    <div class="apparatus-act-sub">${ip ? 'IP: ' + ip : 'Account Event'}</div>
-                  </div>
-                </div>
-                <div class="apparatus-act-time">${time}</div>
+              <div class="apparatus-act-row">
+                <span class="apparatus-act-name">${title}</span>
+                <span class="apparatus-act-time">${time}</span>
               </div>
             `;
           });
           if (actContainer) actContainer.innerHTML = html;
         }
       } else {
-        if (actContainer) actContainer.innerHTML = '<div class="apparatus-empty-activity">No recent activities recorded.</div>';
+        if (actContainer) actContainer.innerHTML = '<div class="apparatus-empty-msg">No recent activity.</div>';
       }
     } catch (e) {
       const actContainer = document.getElementById('apparatus-activity-list');
-      if (actContainer) actContainer.innerHTML = '<div class="apparatus-empty-activity">No recent activities recorded.</div>';
+      if (actContainer) actContainer.innerHTML = '<div class="apparatus-empty-msg">No recent activity.</div>';
     }
   }
 
@@ -422,15 +407,11 @@
           <div class="apparatus-empty-icon"><i class="ri-server-line"></i></div>
           <h3 class="apparatus-empty-title">No Servers Found</h3>
           <p class="apparatus-empty-desc">
-            You don't have any active servers yet. Elevate your performance with cloud hosting and gaming servers powered by ArixByte.
+            You don't have any active servers. Purchase one from our website to get started.
           </p>
           <div class="apparatus-empty-actions">
-            <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn-purchase">
-              <i class="ri-shopping-cart-2-line"></i> Purchase Now from our Website
-              <i class="ri-external-link-line"></i>
-            </a>
-            <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn-discord">
-              <i class="ri-discord-fill"></i> Join Discord
+            <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
+              Purchase Now from our Website <i class="ri-external-link-line"></i>
             </a>
           </div>
         </div>
@@ -452,165 +433,110 @@
     const email = user.email || 'user@arixbyte.com';
     const isRootAdmin = !!user.root_admin;
     const useTotp = !!user.use_totp;
-    const createdAt = user.created_at
-      ? new Date(user.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-      : 'Active Member';
 
     dash.innerHTML = `
       <div class="apparatus-dashboard-container">
         <!-- Left Column: Area 1 (Welcome) & Area 4 (Servers) -->
         <div class="apparatus-dash-col apparatus-dash-left">
-          <!-- 1 - Welcome Hero Card -->
-          <div class="apparatus-card apparatus-welcome-card" id="apparatus-area-1">
-            <div class="apparatus-welcome-header">
-              <div class="apparatus-hero-badge"><i class="ri-sparkling-fill"></i> ArixByte Cloud</div>
-              <div class="apparatus-status-indicator"><span class="status-dot"></span> All Systems Operational</div>
+          
+          <!-- Area 1: Welcome -->
+          <div class="apparatus-card apparatus-card-welcome" id="apparatus-area-1">
+            <div class="apparatus-welcome-top">
+              <span class="apparatus-tag">ArixByte</span>
             </div>
-            <h1 class="apparatus-welcome-title">Hello, <span class="apparatus-user-name" id="apparatus-welcome-username">${username}</span>! 👋</h1>
-            <p class="apparatus-welcome-desc">
-              Welcome back to your high-performance game servers and cloud infrastructure panel. Everything is monitored, protected, and running at peak performance.
-            </p>
+            <h1 class="apparatus-welcome-title">Hello, <span class="apparatus-user-name" id="apparatus-welcome-username">${username}</span></h1>
+            <p class="apparatus-welcome-desc">Welcome to your server control panel.</p>
             <div class="apparatus-welcome-actions">
-              <a href="#servers" class="apparatus-dash-btn apparatus-dash-btn-primary" id="apparatus-btn-to-servers">
-                <i class="ri-server-line"></i> View My Servers
+              <a href="#servers" class="apparatus-btn apparatus-btn-primary" id="apparatus-btn-to-servers">
+                <i class="ri-server-line"></i> View Servers
               </a>
-              <a href="/account" class="apparatus-dash-btn apparatus-dash-btn-secondary">
+              <a href="/account" class="apparatus-btn apparatus-btn-glass">
                 <i class="ri-user-settings-line"></i> Account Settings
               </a>
-              <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-dash-btn apparatus-dash-btn-discord">
-                <i class="ri-discord-fill"></i> Join Discord
+              <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass">
+                <i class="ri-discord-fill"></i> Discord
               </a>
             </div>
           </div>
 
-          <!-- 4 - Servers Section -->
-          <div class="apparatus-card apparatus-servers-section" id="apparatus-area-4">
+          <!-- Area 4: Servers -->
+          <div class="apparatus-card apparatus-card-servers" id="apparatus-area-4">
             <div class="apparatus-card-header">
-              <div class="apparatus-card-title-group">
-                <div class="apparatus-card-header-icon"><i class="ri-server-line"></i></div>
-                <div>
-                  <h2 class="apparatus-card-title">Your Servers</h2>
-                  <p class="apparatus-card-subtitle">Active server instances and compute resources</p>
-                </div>
-              </div>
-              <span class="apparatus-badge-count" id="apparatus-server-badge">Loading...</span>
+              <h2 class="apparatus-card-title">Servers</h2>
+              <span class="apparatus-pill" id="apparatus-server-badge">0 Servers</span>
             </div>
             <div class="apparatus-servers-content" id="apparatus-servers-list">
-              <div class="apparatus-servers-loading" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.6);">
-                <i class="ri-loader-4-line ri-spin" style="font-size: 1.5rem;"></i>
-                <p style="margin: 0.5rem 0 0 0;">Loading servers...</p>
-              </div>
+              <div class="apparatus-empty-msg">Loading servers...</div>
             </div>
           </div>
         </div>
 
-        <!-- Right Column: Area 2 (Recent Activities) & Area 3 (Account Credentials) -->
+        <!-- Right Column: Area 2 (Recent Activity) & Area 3 (Account) -->
         <div class="apparatus-dash-col apparatus-dash-right">
-          <!-- 2 - Recent Activities Card -->
-          <div class="apparatus-card apparatus-activity-card" id="apparatus-area-2">
+          
+          <!-- Area 2: Recent Activity -->
+          <div class="apparatus-card apparatus-card-activity" id="apparatus-area-2">
             <div class="apparatus-card-header">
-              <div class="apparatus-card-title-group">
-                <div class="apparatus-card-header-icon"><i class="ri-history-line"></i></div>
-                <div>
-                  <h2 class="apparatus-card-title">Recent Activities</h2>
-                  <p class="apparatus-card-subtitle">Audit log &amp; recent account actions</p>
-                </div>
-              </div>
-              <a href="/account/activity" class="apparatus-card-link-sm">View All <i class="ri-arrow-right-s-line"></i></a>
+              <h2 class="apparatus-card-title">Recent Activity</h2>
+              <a href="/account/activity" class="apparatus-link">View All <i class="ri-arrow-right-s-line"></i></a>
             </div>
             <div class="apparatus-activity-list" id="apparatus-activity-list">
-              <div class="apparatus-empty-activity">
-                <i class="ri-loader-4-line ri-spin" style="font-size: 1.3rem;"></i>
-                <p style="margin: 0.5rem 0 0 0;">Loading recent activities...</p>
-              </div>
+              <div class="apparatus-empty-msg">Loading activity...</div>
             </div>
           </div>
 
-          <!-- 3 - Account Credentials Card -->
-          <div class="apparatus-card apparatus-credentials-card" id="apparatus-area-3">
+          <!-- Area 3: Account Credentials -->
+          <div class="apparatus-card apparatus-card-account" id="apparatus-area-3">
             <div class="apparatus-card-header">
-              <div class="apparatus-card-title-group">
-                <div class="apparatus-card-header-icon"><i class="ri-shield-user-line"></i></div>
-                <div>
-                  <h2 class="apparatus-card-title">Account Credentials</h2>
-                  <p class="apparatus-card-subtitle">Personal info &amp; security overview</p>
-                </div>
-              </div>
-              <span class="apparatus-badge-pill apparatus-badge-verified"><i class="ri-checkbox-circle-fill"></i> Verified</span>
+              <h2 class="apparatus-card-title">Account</h2>
+              <span class="apparatus-pill apparatus-pill-green">Active</span>
             </div>
 
-            <div class="apparatus-credentials-list">
-              <!-- Gmail (Hidden, revealed on hover) -->
-              <div class="apparatus-cred-item">
-                <div class="apparatus-cred-icon"><i class="ri-mail-line"></i></div>
-                <div class="apparatus-cred-details">
-                  <div class="apparatus-cred-label">Gmail / Email</div>
-                  <div class="apparatus-email-reveal-box" id="apparatus-email-box" title="Move cursor here to reveal">
-                    <span class="apparatus-email-masked" id="apparatus-email-masked">••••••••••••••••••••</span>
-                    <span class="apparatus-email-real" id="apparatus-email-real">${email}</span>
-                    <i class="ri-eye-off-line apparatus-email-eye"></i>
-                  </div>
+            <div class="apparatus-account-rows">
+              <!-- Email (Hidden, hover reveals) -->
+              <div class="apparatus-row">
+                <span class="apparatus-row-label">Email</span>
+                <div class="apparatus-email-reveal" id="apparatus-email-box" title="Hover to reveal email">
+                  <span class="apparatus-email-masked" id="apparatus-email-masked">••••••••••••••••</span>
+                  <span class="apparatus-email-real" id="apparatus-email-real">${email}</span>
+                  <i class="ri-eye-off-line apparatus-email-eye"></i>
                 </div>
               </div>
 
               <!-- Servers Owned -->
-              <div class="apparatus-cred-item">
-                <div class="apparatus-cred-icon"><i class="ri-hard-drive-2-line"></i></div>
-                <div class="apparatus-cred-details">
-                  <div class="apparatus-cred-label">Servers Owned</div>
-                  <div class="apparatus-cred-value" id="apparatus-stat-servers-owned">0 Servers</div>
-                </div>
+              <div class="apparatus-row">
+                <span class="apparatus-row-label">Servers Owned</span>
+                <span class="apparatus-row-val" id="apparatus-stat-servers-owned">0</span>
               </div>
 
               <!-- Active Tickets -->
-              <div class="apparatus-cred-item">
-                <div class="apparatus-cred-icon"><i class="ri-customer-service-2-line"></i></div>
-                <div class="apparatus-cred-details">
-                  <div class="apparatus-cred-label">Active Tickets</div>
-                  <div class="apparatus-cred-value">
-                    <span>0 Active</span>
-                    <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-ticket-sublink">
-                      Open Ticket <i class="ri-external-link-line"></i>
-                    </a>
-                  </div>
-                </div>
+              <div class="apparatus-row">
+                <span class="apparatus-row-label">Active Tickets</span>
+                <span class="apparatus-row-val">
+                  0 Active &middot; <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-inline-link">Support</a>
+                </span>
               </div>
 
-              <!-- Two-Factor Authentication -->
-              <div class="apparatus-cred-item">
-                <div class="apparatus-cred-icon"><i class="ri-shield-keyhole-line"></i></div>
-                <div class="apparatus-cred-details">
-                  <div class="apparatus-cred-label">Two-Factor Authentication</div>
-                  <div class="apparatus-cred-value" id="apparatus-stat-2fa">
-                    ${useTotp ? '<span class="text-success"><i class="ri-check-line"></i> Enabled</span>' : '<span class="text-warning"><i class="ri-close-line"></i> Disabled</span>'}
-                  </div>
-                </div>
+              <!-- 2FA -->
+              <div class="apparatus-row">
+                <span class="apparatus-row-label">Two-Factor Auth</span>
+                <span class="apparatus-row-val" id="apparatus-stat-2fa">
+                  ${useTotp ? '<span class="status-on">Enabled</span>' : '<span class="status-off">Disabled</span>'}
+                </span>
               </div>
 
-              <!-- Account Role -->
-              <div class="apparatus-cred-item">
-                <div class="apparatus-cred-icon"><i class="ri-admin-line"></i></div>
-                <div class="apparatus-cred-details">
-                  <div class="apparatus-cred-label">Account Role</div>
-                  <div class="apparatus-cred-value" id="apparatus-stat-role">
-                    ${isRootAdmin ? '<span class="apparatus-role-admin">Root Administrator</span>' : 'Standard Customer'}
-                  </div>
-                </div>
-              </div>
-
-              <!-- Member Since -->
-              <div class="apparatus-cred-item">
-                <div class="apparatus-cred-icon"><i class="ri-calendar-check-line"></i></div>
-                <div class="apparatus-cred-details">
-                  <div class="apparatus-cred-label">Member Since</div>
-                  <div class="apparatus-cred-value" id="apparatus-stat-joined">${createdAt}</div>
-                </div>
+              <!-- Role -->
+              <div class="apparatus-row">
+                <span class="apparatus-row-label">Role</span>
+                <span class="apparatus-row-val" id="apparatus-stat-role">
+                  ${isRootAdmin ? 'Administrator' : 'User'}
+                </span>
               </div>
             </div>
 
-            <div class="apparatus-credentials-footer">
-              <a href="/account" class="apparatus-dash-btn apparatus-dash-btn-secondary apparatus-btn-full">
-                <i class="ri-key-2-line"></i> Manage Account Credentials
+            <div class="apparatus-account-footer">
+              <a href="/account" class="apparatus-btn apparatus-btn-glass apparatus-btn-full">
+                Manage Account
               </a>
             </div>
           </div>
