@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==============================================================================
-# Apparatus Theme - Interactive Management Script for Pterodactyl Panel
+# Apparatus Theme - Interactive One-Liner Installer for Pterodactyl Panel
 # 1 - Install Theme
 # 2 - Update Theme
 # 3 - Remove Theme
@@ -31,7 +31,8 @@ echo -e "${CYAN}================================================================
 
 # Verify Root Privileges
 if [ "$EUID" -ne 0 ]; then
-  echo -e "${RED}[ERROR] Please run this script as root (sudo bash install.sh)${NC}"
+  echo -e "${RED}[ERROR] Please run this script as root:${NC}"
+  echo -e "${YELLOW}sudo bash <(curl -s https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/main/install.sh)${NC}"
   exit 1
 fi
 
@@ -43,7 +44,7 @@ fi
 
 WRAPPER_FILE="$PTERO_DIR/resources/views/templates/wrapper.blade.php"
 ASSET_DIR="$PTERO_DIR/public/themes/apparatus"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RAW_BASE="https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/main"
 
 # Function: Install
 install_theme() {
@@ -58,19 +59,20 @@ install_theme() {
     echo -e "${YELLOW}[1/4] Existing backup detected. Keeping original safe.${NC}"
   fi
 
-  # Step 2: Deploy Assets
-  echo -e "${BLUE}[2/4] Deploying theme assets (Desert Parallax SVGs, CSS, JS)...${NC}"
+  # Step 2: Download Assets
+  echo -e "${BLUE}[2/4] Downloading theme assets (Desert Parallax SVGs, CSS, JS)...${NC}"
   mkdir -p "$ASSET_DIR/desert"
 
-  if [ -d "$SCRIPT_DIR/public/desert" ]; then
-    cp -r "$SCRIPT_DIR/public/desert/"* "$ASSET_DIR/desert/"
-  fi
-  if [ -f "$SCRIPT_DIR/public/themes/apparatus/apparatus.css" ]; then
-    cp "$SCRIPT_DIR/public/themes/apparatus/apparatus.css" "$ASSET_DIR/apparatus.css"
-  fi
-  if [ -f "$SCRIPT_DIR/public/themes/apparatus/apparatus.js" ]; then
-    cp "$SCRIPT_DIR/public/themes/apparatus/apparatus.js" "$ASSET_DIR/apparatus.js"
-  fi
+  for file in img-bg.svg img-1.svg img-2.svg img-3.svg img-4.svg img-5.svg img-6.svg img-7.svg favicon.png; do
+    echo -e "  -> Downloading $file..."
+    curl -s -L "$RAW_BASE/public/desert/$file" -o "$ASSET_DIR/desert/$file"
+  done
+
+  echo -e "  -> Downloading apparatus.css..."
+  curl -s -L "$RAW_BASE/public/themes/apparatus/apparatus.css" -o "$ASSET_DIR/apparatus.css"
+
+  echo -e "  -> Downloading apparatus.js..."
+  curl -s -L "$RAW_BASE/public/themes/apparatus/apparatus.js" -o "$ASSET_DIR/apparatus.js"
 
   chown -R www-data:www-data "$ASSET_DIR"
   chmod -R 755 "$ASSET_DIR"
@@ -99,9 +101,9 @@ EOF
   php artisan config:clear
 
   # Blueprint Check
-  if [ -f "$SCRIPT_DIR/apparatus-theme.blueprint" ] && command -v blueprint &> /dev/null; then
-    echo -e "${YELLOW}Blueprint detected. Installing Blueprint extension...${NC}"
-    cp "$SCRIPT_DIR/apparatus-theme.blueprint" "$PTERO_DIR/"
+  if command -v blueprint &> /dev/null; then
+    echo -e "${YELLOW}Blueprint detected. Downloading and installing .blueprint extension...${NC}"
+    curl -s -L "$RAW_BASE/apparatus-theme.blueprint" -o "$PTERO_DIR/apparatus-theme.blueprint"
     blueprint -i "$PTERO_DIR/apparatus-theme.blueprint" || true
   fi
 
@@ -114,14 +116,6 @@ EOF
 # Function: Update
 update_theme() {
   echo -e "\n${BLUE}>>> Updating Apparatus Theme...${NC}"
-  
-  if [ -d "$SCRIPT_DIR/.git" ]; then
-    echo -e "${BLUE}Pulling latest changes from repository...${NC}"
-    cd "$SCRIPT_DIR"
-    git pull origin main || true
-  fi
-
-  # Re-run installation with updated files
   install_theme
   echo -e "${GREEN}✓ Apparatus Theme has been successfully updated!${NC}\n"
 }
@@ -167,7 +161,7 @@ echo -e " [2] Update Theme"
 echo -e " [3] Remove Theme"
 echo -e " [4] Exit"
 echo ""
-read -p "Select option [1-4]: " OPTION
+read -p "Select option [1-4]: " OPTION </dev/tty || read -p "Select option [1-4]: " OPTION
 
 case "$OPTION" in
   1)
