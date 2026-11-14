@@ -574,14 +574,10 @@ body.apparatus-auth .apparatus-sidebar {
   font-size: 1.15rem !important;
   font-weight: 800 !important;
   letter-spacing: 0.05em !important;
-  color: #fff !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
   white-space: nowrap !important;
-}
-
-.apparatus-sidebar-brand .brand-cloud {
-  background: linear-gradient(135deg, #ffffff 40%, #f472b6 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
 }
 
 .apparatus-sidebar-brand .brand-badge {
