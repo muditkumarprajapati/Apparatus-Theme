@@ -137,9 +137,16 @@ body:not(.apparatus-auth) a[class*="ServerRow"]:hover {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Hide Login Card Slot on Dashboard */
+/* Hide Login Card Slot on Dashboard, Show on Auth */
 body:not(.apparatus-auth) #apparatus-card-slot {
   display: none !important;
+}
+
+body.apparatus-auth #apparatus-card-slot,
+body.apparatus-auth .login-card {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 /* Hide reCAPTCHA badge completely */
