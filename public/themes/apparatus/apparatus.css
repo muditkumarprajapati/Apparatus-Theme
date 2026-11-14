@@ -909,20 +909,33 @@ body.apparatus-auth #apparatus-mobile-toggle {
 
 /* Area 1: Welcome Card */
 .apparatus-card-welcome {
-  padding: 1.85rem 2rem !important;
+  position: relative;
+  padding: 2rem 2.25rem !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 88% 45%, rgba(236, 72, 153, 0.12), transparent 60%), rgba(14, 10, 22, 0.3) !important;
+}
+
+.apparatus-welcome-content {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
 }
 
 .apparatus-welcome-title {
-  font-size: 2rem;
+  font-size: 2.15rem;
   font-weight: 800;
   color: #fff;
   margin: 0 0 0.45rem 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
 }
 
 .apparatus-user-name {
   color: #fff !important;
-  background: linear-gradient(135deg, #ffffff 35%, #f472b6 100%) !important;
+  background: linear-gradient(135deg, #ffffff 30%, #f472b6 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   text-shadow: none !important;
@@ -938,8 +951,8 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 
 .apparatus-welcome-desc {
   font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.75);
-  margin: 0 0 1.35rem 0;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 0 1.5rem 0;
   line-height: 1.5;
 }
 
@@ -947,19 +960,51 @@ body:not(.apparatus-auth) span.apparatus-user-name {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.apparatus-welcome-decor {
+  position: absolute;
+  right: 1.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 6.5rem;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.apparatus-card-welcome:hover .apparatus-welcome-decor {
+  color: rgba(244, 114, 182, 0.09);
+  transform: translateY(-50%) scale(1.06);
+}
+
+@media (max-width: 768px) {
+  .apparatus-welcome-decor {
+    display: none;
+  }
+  .apparatus-card-welcome {
+    padding: 1.5rem 1.4rem !important;
+  }
+  .apparatus-welcome-title {
+    font-size: 1.75rem;
+  }
 }
 
 /* Buttons */
 .apparatus-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.5rem;
   padding: 0.65rem 1.25rem;
   border-radius: 10px;
   font-weight: 600;
   font-size: 0.88rem;
   text-decoration: none !important;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   box-sizing: border-box;
 }
@@ -967,23 +1012,28 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 .apparatus-btn-primary {
   background: linear-gradient(135deg, #ec4899, #db2777);
   color: #fff !important;
-  box-shadow: 0 4px 18px rgba(236, 72, 153, 0.35);
+  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .apparatus-btn-primary:hover {
   filter: brightness(1.1);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.45);
 }
 
 .apparatus-btn-glass {
   background: rgba(255, 255, 255, 0.07);
-  color: #fff !important;
+  color: rgba(255, 255, 255, 0.92) !important;
   border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
 }
 
 .apparatus-btn-glass:hover {
   background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff !important;
+  transform: translateY(-2px);
 }
 
 .apparatus-btn-full {
