@@ -24,7 +24,7 @@
         
         <div class="parallax-layer layer-text">
            <h1 class="background-title">ARIXBYTE</h1>
-           <p class="background-subtitle">CLOUD &amp; INFRASTRUCTURE</p>
+           <p class="background-subtitle">CLOUD &amp; INFRASTRUCTURES</p>
         </div>
 
         <img src="/themes/apparatus/desert/img-4.svg" alt="" class="parallax-layer layer-4" />
