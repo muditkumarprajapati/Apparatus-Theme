@@ -1,16 +1,13 @@
 /**
- * Apparatus-Theme Parallax & Cinematic Animation Controller
- * Custom built for Pterodactyl v1.15.x / v1.11.x
+ * Apparatus-Theme Parallax Engine
+ * Custom built for Pterodactyl Panel (1.11.x - 1.15.x)
  */
 (function() {
   function initApparatusLogin() {
-    // Only run on login / auth pages
     if (!window.location.pathname.startsWith('/auth')) return;
-
-    // Check if container already injected
     if (document.getElementById('apparatus-desert-wrapper')) return;
 
-    // Build the Desert Parallax Layers
+    // Inject Desert Sunset Layers Behind Login
     const wrapper = document.createElement('div');
     wrapper.id = 'apparatus-desert-wrapper';
     wrapper.className = 'desert-wrapper';
@@ -36,74 +33,48 @@
 
     document.body.prepend(wrapper);
 
-    // Style the actual Pterodactyl Login Container
-    function adaptPteroLoginForm() {
-      const loginFormContainer = document.querySelector('div[class*="LoginFormContainer"]') || 
-                                 document.querySelector('form') ||
-                                 document.querySelector('.pt-8');
-      
-      const card = loginFormContainer ? (loginFormContainer.closest('div[class*="rounded"]') || loginFormContainer) : null;
-
-      if (card) {
-        card.classList.add('apparatus-login-card');
-        
-        // Hide the white inner box background if nested
-        const innerBox = card.querySelector('div[class*="bg-white"]') || card.querySelector('.bg-white');
-        if (innerBox) {
-          innerBox.style.background = 'transparent';
-          innerBox.style.boxShadow = 'none';
-        }
-
-        // Update Title if present
-        const titleEl = card.querySelector('h2') || card.querySelector('h1');
-        if (titleEl && !titleEl.dataset.apparatusModified) {
-          titleEl.innerHTML = '<span class="login-title">ArixByte Login</span>';
-          titleEl.dataset.apparatusModified = "true";
-        }
-
-        // Replace Blueprint text, copyright year, and link with https://arixbyte.com/
-        const links = document.querySelectorAll('a');
-        links.forEach(a => {
-          if (a.textContent && (a.textContent.includes('Blueprint') || a.textContent.includes('Apparatus'))) {
-            a.href = "https://arixbyte.com/";
-            a.textContent = "Apparatus Theme v1.0";
-            a.target = "_blank";
-            a.rel = "noopener noreferrer";
-          }
-        });
-
-        const footerTexts = document.querySelectorAll('p, span, div');
-        footerTexts.forEach(el => {
-          if (el.children.length <= 3 && el.textContent && el.textContent.includes('Blueprint')) {
-            el.innerHTML = el.innerHTML
-              .replace(/Blueprint\s*©?\s*[0-9\-–\s]*/gi, '<a href="https://arixbyte.com/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Apparatus Theme v1.0</a> © 2026')
-              .replace(/©\s*2023\s*[-–]\s*2026/g, '© 2026');
-          }
-        });
+    // Adapt Header and Footer cleanly
+    function adaptContent() {
+      // Set Login Card Title to ArixByte Login
+      const headerTitle = document.querySelector('h1, h2');
+      if (headerTitle && !headerTitle.dataset.apparatusTitle) {
+        headerTitle.innerHTML = 'ArixByte Login';
+        headerTitle.dataset.apparatusTitle = 'true';
       }
+
+      // Replace Blueprint Footer with Apparatus Theme v1.0 & link
+      const links = document.querySelectorAll('a');
+      links.forEach(a => {
+        if (a.textContent && (a.textContent.includes('Blueprint') || a.textContent.includes('Apparatus'))) {
+          a.href = "https://arixbyte.com/";
+          a.textContent = "Apparatus Theme v1.0";
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+        }
+      });
+
+      const footerNodes = document.querySelectorAll('p, span, div');
+      footerNodes.forEach(el => {
+        if (el.children.length <= 3 && el.textContent && el.textContent.includes('Blueprint')) {
+          el.innerHTML = el.innerHTML
+            .replace(/Blueprint\s*©?\s*[0-9\-–\s]*/gi, '<a href="https://arixbyte.com/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Apparatus Theme v1.0</a> © 2026')
+            .replace(/©\s*2023\s*[-–]\s*2026/g, '© 2026');
+        }
+      });
     }
 
-    adaptPteroLoginForm();
-    const observer = new MutationObserver(adaptPteroLoginForm);
+    adaptContent();
+    const observer = new MutationObserver(adaptContent);
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // GSAP Parallax & Floating Layer Handling
+    // GSAP Wave Motion & Mouse Parallax
     function startAnimations() {
       if (typeof gsap === 'undefined') {
         setTimeout(startAnimations, 100);
         return;
       }
 
-      let introDone = false;
-      const tl = gsap.timeline({
-        onComplete: () => { introDone = true; }
-      });
-
-      // Smooth background fade-in
-      tl.to(".desert-wrapper", { backgroundColor: "#F7ABAE", duration: 1.2, ease: "power2.out" })
-        .fromTo(".parallax-container", { scale: 1.08, opacity: 0.8 }, { scale: 1, opacity: 1, duration: 1.2, ease: "power2.out" }, "-=1.0");
-
-      // Floating wave animation for layers
+      // Wave floating animation on desert layers
       const layers = [1, 2, 3, 4, 5, 6, 7];
       layers.forEach((layerNum) => {
         gsap.to(`.layer-${layerNum}`, {
@@ -125,7 +96,6 @@
 
       // Mouse Parallax
       window.addEventListener('mousemove', (e) => {
-        if (!introDone) return;
         const x = (e.clientX / window.innerWidth - 0.5) * 2;
         layers.forEach((layerNum) => {
           const depth = layerNum * 10;
