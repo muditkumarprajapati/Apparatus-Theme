@@ -89,6 +89,7 @@ with open('$WRAPPER_FILE', 'r') as f:
     content = f.read()
 
 snippet = '''<!-- BEGIN apparatus-theme-loader -->
+<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css\">
 <link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css?v=$TS\">
 <script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>
 <script src=\"/themes/apparatus/apparatus.js?v=$TS\" defer></script>
@@ -100,7 +101,7 @@ if '</head>' in content:
     with open('$WRAPPER_FILE', 'w') as f:
         f.write(content)
 " 2>/dev/null || {
-    awk -v ts=\"$TS\" '/<\/head>/{print \"<!-- BEGIN apparatus-theme-loader -->\\n<link rel=\\\"stylesheet\\\" href=\\\"/themes/apparatus/apparatus.css?v=\" ts \"\\\">\\n<script src=\\\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\\\"></script>\\n<script src=\\\"/themes/apparatus/apparatus.js?v=\" ts \"\\\" defer></script>\\n<!-- END apparatus-theme-loader -->\"}1' \"$WRAPPER_FILE\" > \"$WRAPPER_FILE.tmp\" && mv \"$WRAPPER_FILE.tmp\" \"$WRAPPER_FILE\"
+    awk -v ts="$TS" '/<\/head>/{print "<!-- BEGIN apparatus-theme-loader -->\n<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css\">\n<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css?v=" ts "\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>\n<script src=\"/themes/apparatus/apparatus.js?v=" ts "\" defer></script>\n<!-- END apparatus-theme-loader -->"}1' "$WRAPPER_FILE" > "$WRAPPER_FILE.tmp" && mv "$WRAPPER_FILE.tmp" "$WRAPPER_FILE"
   }
 
   echo -e "${GREEN}✓ Injected theme loader into wrapper successfully.${NC}"
