@@ -7,8 +7,7 @@
 
   function isAuthPage() {
     return window.location.pathname.startsWith('/auth') || 
-           window.location.pathname === '/login' ||
-           document.querySelector('form') !== null;
+           window.location.pathname === '/login';
   }
 
   // Toast / Popup Notification System
@@ -116,6 +115,10 @@
       }
     } else {
       if (cardSlot) cardSlot.style.display = 'none';
+      if (typeof gsap !== 'undefined') {
+        gsap.set(".desert-wrapper", { backgroundColor: "#F7ABAE" });
+        gsap.set(".parallax-container", { scale: 1, opacity: 1 });
+      }
     }
   }
 
