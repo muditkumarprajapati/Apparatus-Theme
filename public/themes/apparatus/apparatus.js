@@ -441,21 +441,39 @@
           
           <!-- Area 1: Welcome -->
           <div class="apparatus-card apparatus-card-welcome" id="apparatus-area-1">
-            <div class="apparatus-welcome-top">
-              <span class="apparatus-tag">ArixByte</span>
-            </div>
-            <h1 class="apparatus-welcome-title">Hello, <span class="apparatus-user-name" id="apparatus-welcome-username">${username}</span></h1>
-            <p class="apparatus-welcome-desc">Welcome to your server control panel.</p>
-            <div class="apparatus-welcome-actions">
-              <a href="#servers" class="apparatus-btn apparatus-btn-primary" id="apparatus-btn-to-servers">
-                <i class="ri-server-line"></i> View Servers
-              </a>
-              <a href="/account" class="apparatus-btn apparatus-btn-glass">
-                <i class="ri-user-settings-line"></i> Account Settings
-              </a>
-              <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass">
-                <i class="ri-discord-fill"></i> Discord
-              </a>
+            <div class="apparatus-welcome-main">
+              <div class="apparatus-welcome-left">
+                <span class="apparatus-tag">ArixByte Cloud</span>
+                <h1 class="apparatus-welcome-title">Hello, <span class="apparatus-user-name" id="apparatus-welcome-username">${username}</span></h1>
+                <p class="apparatus-welcome-desc">Welcome to your server control panel.</p>
+                <div class="apparatus-welcome-actions">
+                  <a href="#servers" class="apparatus-btn apparatus-btn-primary" id="apparatus-btn-to-servers">
+                    <i class="ri-server-line"></i> View Servers
+                  </a>
+                  <a href="/account" class="apparatus-btn apparatus-btn-glass">
+                    <i class="ri-user-settings-line"></i> Account Settings
+                  </a>
+                  <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass">
+                    <i class="ri-discord-fill"></i> Discord
+                  </a>
+                </div>
+              </div>
+              <div class="apparatus-welcome-right">
+                <div class="apparatus-welcome-stat-chip">
+                  <div class="stat-chip-icon"><i class="ri-pulse-line"></i></div>
+                  <div class="stat-chip-info">
+                    <span class="stat-chip-label">System Status</span>
+                    <span class="stat-chip-val"><span class="status-dot-sm"></span> Operational</span>
+                  </div>
+                </div>
+                <div class="apparatus-welcome-stat-chip">
+                  <div class="stat-chip-icon"><i class="ri-shield-check-line"></i></div>
+                  <div class="stat-chip-info">
+                    <span class="stat-chip-label">Protection</span>
+                    <span class="stat-chip-val">DDoS Protected</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
