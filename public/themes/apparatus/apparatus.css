@@ -100,21 +100,30 @@ body, html {
   text-transform: uppercase;
 }
 
-/* Glassmorphism Login Card */
+/* Glassmorphism Login Card - Perfectly Centered */
+div[class*="LoginFormContainer"],
+form[action*="login"] {
+  margin: 0 auto !important;
+}
+
 .apparatus-login-card {
-  position: relative;
-  z-index: 20;
-  background: rgba(15, 17, 26, 0.45);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  padding: 3rem 2.5rem;
-  border-radius: 26px;
-  width: 100%;
-  max-width: 440px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-  color: #fff;
-  text-align: center;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  z-index: 20 !important;
+  background: rgba(15, 17, 26, 0.45) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  padding: 2.5rem 2rem !important;
+  border-radius: 26px !important;
+  width: 90% !important;
+  max-width: 440px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+  text-align: center !important;
 }
 
 .login-title {

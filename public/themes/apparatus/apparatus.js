@@ -102,7 +102,7 @@
 
       // Initial states
       gsap.set(".desert-wrapper", { backgroundColor: "#000" });
-      gsap.set(".apparatus-login-card", { autoAlpha: 0, y: 50 });
+      gsap.set(".apparatus-login-card", { autoAlpha: 0, scale: 0.95 });
       gsap.set(".parallax-container", { scale: 1.1, opacity: 0 });
 
       // Smooth Cinematic sequence without shaking
@@ -110,7 +110,7 @@
         .to(".desert-wrapper", { backgroundColor: "#F7ABAE", duration: 1.5 }, "-=1.5")
         .to(".parallax-container", { scale: 1.15, transformOrigin: "center 35%", duration: 2.2, ease: "power2.inOut" }, "-=1")
         .to(".parallax-container", { scale: 1, duration: 1.2, ease: "power3.out" })
-        .to(".apparatus-login-card", { autoAlpha: 1, y: 0, duration: 1.1, ease: "power3.out" }, "-=0.4");
+        .to(".apparatus-login-card", { autoAlpha: 1, scale: 1, duration: 1.1, ease: "power3.out" }, "-=0.4");
 
       // Floating wave animation for layers
       const layers = [1, 2, 3, 4, 5, 6, 7];
