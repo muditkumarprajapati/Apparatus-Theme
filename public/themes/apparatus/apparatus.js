@@ -87,10 +87,9 @@
     const observer = new MutationObserver(adaptPteroLoginForm);
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // GSAP Cinematic Entrance & Parallax Handling
+    // GSAP Parallax & Floating Layer Handling
     function startAnimations() {
       if (typeof gsap === 'undefined') {
-        // Fallback if GSAP script is still loading
         setTimeout(startAnimations, 100);
         return;
       }
@@ -100,17 +99,9 @@
         onComplete: () => { introDone = true; }
       });
 
-      // Initial states
-      gsap.set(".desert-wrapper", { backgroundColor: "#000" });
-      gsap.set(".apparatus-login-card", { autoAlpha: 0, scale: 0.95 });
-      gsap.set(".parallax-container", { scale: 1.1, opacity: 0 });
-
-      // Smooth Cinematic sequence without shaking
-      tl.to(".parallax-container", { opacity: 1, duration: 2.2, ease: "power2.inOut" })
-        .to(".desert-wrapper", { backgroundColor: "#F7ABAE", duration: 1.5 }, "-=1.5")
-        .to(".parallax-container", { scale: 1.15, transformOrigin: "center 35%", duration: 2.2, ease: "power2.inOut" }, "-=1")
-        .to(".parallax-container", { scale: 1, duration: 1.2, ease: "power3.out" })
-        .to(".apparatus-login-card", { autoAlpha: 1, scale: 1, duration: 1.1, ease: "power3.out" }, "-=0.4");
+      // Smooth background fade-in
+      tl.to(".desert-wrapper", { backgroundColor: "#F7ABAE", duration: 1.2, ease: "power2.out" })
+        .fromTo(".parallax-container", { scale: 1.08, opacity: 0.8 }, { scale: 1, opacity: 1, duration: 1.2, ease: "power2.out" }, "-=1.0");
 
       // Floating wave animation for layers
       const layers = [1, 2, 3, 4, 5, 6, 7];
