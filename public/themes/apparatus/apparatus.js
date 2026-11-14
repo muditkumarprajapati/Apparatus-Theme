@@ -98,31 +98,34 @@
   function applyViewMode() {
     if (isAuthPage()) return;
 
-    const isServerTab = window.location.hash === '#servers' || window.location.pathname.startsWith('/servers');
+    const currentPath = window.location.pathname;
+    const isServerTab = currentPath === '/servers' || currentPath.startsWith('/servers') || window.location.hash === '#servers';
+    const isDashboardTab = (currentPath === '/' || currentPath === '/dashboard') && !isServerTab;
+    const isHomeRoute = isDashboardTab || isServerTab;
+
     const hero = document.getElementById('apparatus-dashboard-view');
     const dashLink = document.querySelector('.apparatus-nav-link[data-tab="dashboard"]');
     const serverLink = document.querySelector('.apparatus-nav-link[data-tab="servers"]');
 
-    if (window.location.pathname === '/') {
+    if (isHomeRoute) {
       if (hero) hero.style.display = 'block';
+
       if (isServerTab) {
         if (dashLink) dashLink.classList.remove('active');
         if (serverLink) serverLink.classList.add('active');
-        const sArea = document.getElementById('apparatus-area-4');
-        if (sArea) {
-          setTimeout(function () {
-            sArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 50);
-        }
+        document.body.classList.add('apparatus-page-servers');
+        document.body.classList.remove('apparatus-page-dashboard');
       } else {
         if (dashLink) dashLink.classList.add('active');
         if (serverLink) serverLink.classList.remove('active');
+        document.body.classList.add('apparatus-page-dashboard');
+        document.body.classList.remove('apparatus-page-servers');
       }
     } else {
       if (dashLink) dashLink.classList.remove('active');
       if (serverLink) serverLink.classList.remove('active');
       if (hero) hero.style.display = 'none';
-      document.body.classList.remove('apparatus-view-dashboard', 'apparatus-view-servers');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-view-dashboard', 'apparatus-view-servers');
     }
 
     cleanPterodactylElements();
@@ -445,7 +448,7 @@
               <h1 class="apparatus-welcome-title">Hello, <span class="apparatus-user-name" id="apparatus-welcome-username">${username}</span></h1>
               <p class="apparatus-welcome-desc">Welcome to your server control panel.</p>
               <div class="apparatus-welcome-actions">
-                <a href="#servers" class="apparatus-btn apparatus-btn-primary" id="apparatus-btn-to-servers">
+                <a href="/servers" class="apparatus-btn apparatus-btn-primary" id="apparatus-btn-to-servers">
                   <i class="ri-server-line"></i> View Servers
                 </a>
                 <a href="/account" class="apparatus-btn apparatus-btn-glass">
@@ -553,10 +556,11 @@
     if (toServersBtn) {
       toServersBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        const sArea = document.getElementById('apparatus-area-4');
-        if (sArea) {
-          sArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (window.location.pathname !== '/servers') {
+          history.pushState(null, '', '/servers');
         }
+        applyViewMode();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     }
 
@@ -605,13 +609,13 @@
             <div class="apparatus-category-title">Home</div>
             <ul class="apparatus-nav-list">
               <li>
-                <a href="/" class="apparatus-nav-link" data-tab="dashboard">
+                <a href="/" class="apparatus-nav-link" data-tab="dashboard" data-path="/">
                   <i class="ri-dashboard-3-line apparatus-nav-icon"></i>
                   <span>Dashboard</span>
                 </a>
               </li>
               <li>
-                <a href="#servers" class="apparatus-nav-link" data-tab="servers">
+                <a href="/servers" class="apparatus-nav-link" data-tab="servers" data-path="/servers">
                   <i class="ri-server-line apparatus-nav-icon"></i>
                   <span>Servers</span>
                 </a>
@@ -760,23 +764,19 @@
         tabLink.addEventListener('click', function (e) {
           const tab = this.getAttribute('data-tab');
           if (tab === 'servers') {
-            if (window.location.pathname !== '/') {
-              window.location.href = '/#servers';
-              return;
-            }
             e.preventDefault();
-            window.location.hash = '#servers';
+            if (window.location.pathname !== '/servers') {
+              history.pushState(null, '', '/servers');
+            }
             applyViewMode();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           } else if (tab === 'dashboard') {
-            if (window.location.pathname !== '/') {
-              window.location.href = '/';
-              return;
-            }
             e.preventDefault();
-            if (window.location.hash) {
-              history.pushState(null, '', window.location.pathname);
+            if (window.location.pathname !== '/') {
+              history.pushState(null, '', '/');
             }
             applyViewMode();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }
         });
       });

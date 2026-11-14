@@ -750,29 +750,39 @@ body.apparatus-auth .apparatus-sidebar {
 
 
 /* ==============================================================================
-   VIEW MODE SWITCHER: DASHBOARD VS SERVERS
+   VIEW MODE SWITCHER: DASHBOARD (/) VS SERVERS (/servers)
    ============================================================================== */
-body.apparatus-view-dashboard main,
-body.apparatus-view-dashboard div[class*="DashboardContainer"] {
+body.apparatus-page-dashboard main,
+body.apparatus-page-dashboard div[class*="DashboardContainer"],
+body.apparatus-page-servers main,
+body.apparatus-page-servers div[class*="DashboardContainer"] {
   display: none !important;
   visibility: hidden !important;
   height: 0 !important;
   overflow: hidden !important;
 }
 
-body.apparatus-view-dashboard #apparatus-dashboard-view {
+body.apparatus-page-dashboard #apparatus-dashboard-view,
+body.apparatus-page-servers #apparatus-dashboard-view {
   display: block !important;
 }
 
-body.apparatus-view-servers main,
-body.apparatus-view-servers div[class*="DashboardContainer"] {
-  display: block !important;
-  visibility: visible !important;
-  height: auto !important;
+/* Dedicated Servers Page Layout (/servers) */
+body.apparatus-page-servers .apparatus-dashboard-container {
+  grid-template-columns: 1fr !important;
+  max-width: 1200px !important;
 }
 
-body.apparatus-view-servers #apparatus-dashboard-view {
+body.apparatus-page-servers .apparatus-dash-right {
   display: none !important;
+}
+
+body.apparatus-page-servers #apparatus-area-1 {
+  display: none !important;
+}
+
+body.apparatus-page-servers #apparatus-area-4 {
+  width: 100% !important;
 }
 
 #apparatus-dashboard-view {
