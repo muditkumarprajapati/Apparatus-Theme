@@ -740,3 +740,220 @@ body.apparatus-auth .apparatus-sidebar {
   border-radius: 6px !important;
   text-transform: uppercase !important;
 }
+
+
+/* ==============================================================================
+   VIEW MODE SWITCHER: DASHBOARD VS SERVERS
+   ============================================================================== */
+body.apparatus-view-dashboard main,
+body.apparatus-view-dashboard div[class*="DashboardContainer"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+body.apparatus-view-dashboard #apparatus-dashboard-view {
+  display: block !important;
+}
+
+body.apparatus-view-servers main,
+body.apparatus-view-servers div[class*="DashboardContainer"] {
+  display: block !important;
+  visibility: visible !important;
+  height: auto !important;
+}
+
+body.apparatus-view-servers #apparatus-dashboard-view {
+  display: none !important;
+}
+
+#apparatus-dashboard-view {
+  display: none;
+}
+
+/* Auth isolation */
+body.apparatus-auth #apparatus-dashboard-view,
+body.apparatus-auth #apparatus-sidebar,
+body.apparatus-auth #apparatus-mobile-toggle {
+  display: none !important;
+}
+
+/* ==============================================================================
+   DASHBOARD HERO VIEW
+   ============================================================================== */
+.apparatus-dashboard-hero {
+  max-width: 900px;
+  margin: 3.5rem auto 2rem auto;
+  padding: 0 1.5rem;
+  position: relative;
+  z-index: 30;
+}
+
+.apparatus-hero-card {
+  background: rgba(18, 18, 24, 0.75) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 24px !important;
+  padding: 3.5rem 2.5rem !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.apparatus-hero-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+}
+
+.apparatus-hero-badge {
+  display: inline-block;
+  background: rgba(236, 72, 153, 0.2);
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.35);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  margin-bottom: 1.5rem;
+}
+
+.apparatus-hero-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 1rem 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.apparatus-hero-title span {
+  background: linear-gradient(135deg, #f472b6, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.apparatus-hero-desc {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 620px;
+  margin: 0 auto 2.25rem auto;
+  line-height: 1.6;
+}
+
+.apparatus-hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.apparatus-hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.96rem;
+  text-decoration: none !important;
+  transition: all 0.22s ease;
+  cursor: pointer;
+}
+
+.apparatus-hero-btn-primary {
+  background: linear-gradient(135deg, #ec4899, #db2777);
+  color: #fff !important;
+  box-shadow: 0 8px 22px rgba(236, 72, 153, 0.4);
+}
+
+.apparatus-hero-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(236, 72, 153, 0.55);
+  filter: brightness(1.1);
+}
+
+.apparatus-hero-btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(10px);
+}
+
+.apparatus-hero-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-2px);
+}
+
+.apparatus-hero-btn-discord {
+  background: rgba(88, 101, 242, 0.2);
+  color: #858ff7 !important;
+  border: 1px solid rgba(88, 101, 242, 0.35);
+}
+
+.apparatus-hero-btn-discord:hover {
+  background: rgba(88, 101, 242, 0.35);
+  transform: translateY(-2px);
+}
+
+/* ==============================================================================
+   SIDEBAR DOWNSIDE OPTIONS & SPACER
+   ============================================================================== */
+.apparatus-downside-spacer {
+  height: 2.5rem !important;
+  min-height: 2.5rem !important;
+  width: 100% !important;
+}
+
+.apparatus-downside-options {
+  padding-top: 0.6rem !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ==============================================================================
+   FORCE HIDE PTERODACTYL TOP NAVBAR & ALL BLUEPRINT / PTERODACTYL FOOTERS
+   ============================================================================== */
+body:not(.apparatus-auth) nav,
+body:not(.apparatus-auth) header,
+body:not(.apparatus-auth) [role="navigation"],
+body:not(.apparatus-auth) [class*="NavigationBar"],
+body:not(.apparatus-auth) [class*="Navigation___"],
+body:not(.apparatus-auth) div[class*="NavigationBar___StyledDiv"],
+body:not(.apparatus-auth) #app > div > div.bg-neutral-900:first-child,
+body:not(.apparatus-auth) #app > div > div.shadow-md:first-child {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+footer,
+[class*="Blueprint"],
+p[class*="Blueprint"],
+div[class*="Blueprint"],
+[class*="Footer"],
+p[class*="LoginFormContainer___StyledP"],
+div[class*="sc-cyh04c-7"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

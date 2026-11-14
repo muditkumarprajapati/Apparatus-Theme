@@ -62,13 +62,148 @@
   }
 
 
+  function applyViewMode() {
+    if (isAuthPage()) return;
+
+    const isServerTab = window.location.hash === '#servers' || window.location.pathname.startsWith('/servers');
+    const hero = document.getElementById('apparatus-dashboard-view');
+    const dashLink = document.querySelector('.apparatus-nav-link[data-tab="dashboard"]');
+    const serverLink = document.querySelector('.apparatus-nav-link[data-tab="servers"]');
+
+    if (window.location.pathname === '/') {
+      if (isServerTab) {
+        if (dashLink) dashLink.classList.remove('active');
+        if (serverLink) serverLink.classList.add('active');
+        if (hero) hero.style.display = 'none';
+        document.body.classList.add('apparatus-view-servers');
+        document.body.classList.remove('apparatus-view-dashboard');
+      } else {
+        if (dashLink) dashLink.classList.add('active');
+        if (serverLink) serverLink.classList.remove('active');
+        if (hero) hero.style.display = 'block';
+        document.body.classList.add('apparatus-view-dashboard');
+        document.body.classList.remove('apparatus-view-servers');
+      }
+    } else {
+      if (dashLink) dashLink.classList.remove('active');
+      if (serverLink) serverLink.classList.remove('active');
+      if (hero) hero.style.display = 'none';
+      document.body.classList.remove('apparatus-view-dashboard', 'apparatus-view-servers');
+    }
+
+    cleanPterodactylElements();
+  }
+
+  function cleanPterodactylElements() {
+    if (isAuthPage()) return;
+
+    // 1. Hide native top navigation bar completely
+    const navSelectors = [
+      'nav',
+      'header',
+      '[role="navigation"]',
+      '[class*="NavigationBar"]',
+      '[class*="Navigation___"]',
+      'div[class*="NavigationBar___StyledDiv"]'
+    ];
+    document.querySelectorAll(navSelectors.join(',')).forEach(function (el) {
+      el.style.setProperty('display', 'none', 'important');
+      el.style.setProperty('visibility', 'hidden', 'important');
+      el.style.setProperty('height', '0', 'important');
+      el.style.setProperty('min-height', '0', 'important');
+      el.style.setProperty('max-height', '0', 'important');
+      el.style.setProperty('margin', '0', 'important');
+      el.style.setProperty('padding', '0', 'important');
+      el.style.setProperty('border', 'none', 'important');
+    });
+
+    // 2. Hide top bar inside #app if rendered without standard nav tag
+    const app = document.getElementById('app');
+    if (app) {
+      const topDivs = app.querySelectorAll('& > div > div, & > div > header, & > div > nav');
+      topDivs.forEach(function (el) {
+        if (
+          el.querySelector('a[href="/admin"]') ||
+          el.querySelector('button[aria-label="Search"]') ||
+          (el.textContent.includes('Pterodactyl') && !el.classList.contains('apparatus-sidebar') && el.tagName.toLowerCase() !== 'main')
+        ) {
+          el.style.setProperty('display', 'none', 'important');
+          el.style.setProperty('visibility', 'hidden', 'important');
+          el.style.setProperty('height', '0', 'important');
+          el.style.setProperty('margin', '0', 'important');
+          el.style.setProperty('padding', '0', 'important');
+          el.style.setProperty('border', 'none', 'important');
+        }
+      });
+    }
+
+    // 3. Hide Pterodactyl and Blueprint footers & copyright
+    document.querySelectorAll('footer, [class*="Blueprint"], [class*="Footer"], p, div, span').forEach(function (el) {
+      if (el.children.length === 0 && (
+        el.textContent.includes('Blueprint') ||
+        el.textContent.includes('Pterodactyl ©') ||
+        el.textContent.includes('Pterodactyl®')
+      )) {
+        el.style.setProperty('display', 'none', 'important');
+        el.style.setProperty('visibility', 'hidden', 'important');
+        if (el.parentElement && (el.parentElement.tagName.toLowerCase() === 'p' || el.parentElement.tagName.toLowerCase() === 'footer')) {
+          el.parentElement.style.setProperty('display', 'none', 'important');
+          el.parentElement.style.setProperty('visibility', 'hidden', 'important');
+        }
+      }
+    });
+  }
+
   function initSidebar() {
     if (isAuthPage()) {
       const existing = document.getElementById('apparatus-sidebar');
       if (existing) existing.style.display = 'none';
       const toggle = document.getElementById('apparatus-mobile-toggle');
       if (toggle) toggle.style.display = 'none';
+      const hero = document.getElementById('apparatus-dashboard-view');
+      if (hero) hero.style.display = 'none';
       return;
+    }
+
+    // Insert Dashboard Hero if on dashboard and not already created
+    let hero = document.getElementById('apparatus-dashboard-view');
+    if (!hero) {
+      hero = document.createElement('div');
+      hero.id = 'apparatus-dashboard-view';
+      hero.className = 'apparatus-dashboard-hero';
+      hero.innerHTML = `
+        <div class="apparatus-hero-card">
+          <div class="apparatus-hero-badge">ArixByte Cloud</div>
+          <h1 class="apparatus-hero-title">Welcome to <span>ArixByte</span></h1>
+          <p class="apparatus-hero-desc">Your high-performance gaming servers and cloud infrastructure are powered and ready.</p>
+          <div class="apparatus-hero-actions">
+            <a href="#servers" class="apparatus-hero-btn apparatus-hero-btn-primary" id="apparatus-hero-to-servers">
+              <i class="ri-server-line"></i> View My Servers
+            </a>
+            <a href="/account" class="apparatus-hero-btn apparatus-hero-btn-secondary">
+              <i class="ri-user-settings-line"></i> Account Settings
+            </a>
+            <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-hero-btn apparatus-hero-btn-discord">
+              <i class="ri-discord-fill"></i> Join Discord
+            </a>
+          </div>
+        </div>
+      `;
+      const app = document.getElementById('app');
+      if (app) {
+        app.prepend(hero);
+      } else {
+        document.body.appendChild(hero);
+      }
+
+      const toServersBtn = document.getElementById('apparatus-hero-to-servers');
+      if (toServersBtn) {
+        toServersBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          window.location.hash = '#servers';
+          applyViewMode();
+        });
+      }
     }
 
     let sidebar = document.getElementById('apparatus-sidebar');
@@ -90,21 +225,15 @@
             <div class="apparatus-category-title">Home</div>
             <ul class="apparatus-nav-list">
               <li>
-                <a href="/" class="apparatus-nav-link" data-path="/">
+                <a href="/" class="apparatus-nav-link" data-tab="dashboard">
                   <i class="ri-dashboard-3-line apparatus-nav-icon"></i>
                   <span>Dashboard</span>
                 </a>
               </li>
               <li>
-                <a href="/" class="apparatus-nav-link" data-path="/servers">
+                <a href="#servers" class="apparatus-nav-link" data-tab="servers">
                   <i class="ri-server-line apparatus-nav-icon"></i>
                   <span>Servers</span>
-                </a>
-              </li>
-              <li>
-                <a href="#search" class="apparatus-nav-link apparatus-search-link">
-                  <i class="ri-search-line apparatus-nav-icon"></i>
-                  <span>Search Servers</span>
                 </a>
               </li>
             </ul>
@@ -136,19 +265,6 @@
                 <a href="/account/activity" class="apparatus-nav-link" data-path="/account/activity">
                   <i class="ri-history-line apparatus-nav-icon"></i>
                   <span>Recent Activity</span>
-                </a>
-              </li>
-              <li>
-                <a href="/admin" class="apparatus-nav-link" data-path="/admin">
-                  <i class="ri-settings-4-line apparatus-nav-icon"></i>
-                  <span>Admin Panel</span>
-                  <span class="apparatus-tag-admin">Admin</span>
-                </a>
-              </li>
-              <li>
-                <a href="#logout" class="apparatus-nav-link apparatus-logout-link">
-                  <i class="ri-logout-box-r-line apparatus-nav-icon"></i>
-                  <span>Sign Out</span>
                 </a>
               </li>
             </ul>
@@ -202,6 +318,28 @@
               </li>
             </ul>
           </div>
+
+          <!-- Empty space after socials -->
+          <div class="apparatus-downside-spacer"></div>
+
+          <!-- Downside Options (Admin Panel & Sign Out) -->
+          <div class="apparatus-nav-category apparatus-downside-options">
+            <ul class="apparatus-nav-list">
+              <li>
+                <a href="/admin" class="apparatus-nav-link" data-path="/admin">
+                  <i class="ri-settings-4-line apparatus-nav-icon"></i>
+                  <span>Admin Panel</span>
+                  <span class="apparatus-tag-admin">Admin</span>
+                </a>
+              </li>
+              <li>
+                <a href="#logout" class="apparatus-nav-link apparatus-logout-link">
+                  <i class="ri-logout-box-r-line apparatus-nav-icon"></i>
+                  <span>Sign Out</span>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       `;
 
@@ -213,24 +351,6 @@
         ticketBtn.addEventListener('click', function (e) {
           e.preventDefault();
           showToast('success', 'Tickets', 'Ticket support system is coming soon!');
-        });
-      }
-
-      // Search servers handler
-      const searchBtn = sidebar.querySelector('.apparatus-search-link');
-      if (searchBtn) {
-        searchBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          window.dispatchEvent(new KeyboardEvent('keydown', {
-            key: 'k',
-            code: 'KeyK',
-            keyCode: 75,
-            which: 75,
-            ctrlKey: true,
-            bubbles: true
-          }));
-          const nativeSearch = document.querySelector('button[aria-label="Search"], [class*="Search"] button');
-          if (nativeSearch) nativeSearch.click();
         });
       }
 
@@ -255,6 +375,32 @@
         });
       }
 
+      // Tab switcher handlers for Dashboard vs Servers
+      sidebar.querySelectorAll('a[data-tab]').forEach(function (tabLink) {
+        tabLink.addEventListener('click', function (e) {
+          const tab = this.getAttribute('data-tab');
+          if (tab === 'servers') {
+            if (window.location.pathname !== '/') {
+              window.location.href = '/#servers';
+              return;
+            }
+            e.preventDefault();
+            window.location.hash = '#servers';
+            applyViewMode();
+          } else if (tab === 'dashboard') {
+            if (window.location.pathname !== '/') {
+              window.location.href = '/';
+              return;
+            }
+            e.preventDefault();
+            if (window.location.hash) {
+              history.pushState(null, '', window.location.pathname);
+            }
+            applyViewMode();
+          }
+        });
+      });
+
       // Mobile toggle button
       let toggle = document.getElementById('apparatus-mobile-toggle');
       if (!toggle) {
@@ -274,19 +420,19 @@
       if (toggle) toggle.style.display = '';
     }
 
-    // Update active link
+    // Update active route link
     const currentPath = window.location.pathname;
     const links = document.querySelectorAll('.apparatus-nav-link[data-path]');
     links.forEach(function (link) {
       const p = link.getAttribute('data-path');
-      if (p === '/' && currentPath === '/') {
-        link.classList.add('active');
-      } else if (p !== '/' && currentPath.startsWith(p)) {
+      if (p !== '/' && currentPath.startsWith(p)) {
         link.classList.add('active');
       } else {
         link.classList.remove('active');
       }
     });
+
+    applyViewMode();
   }
 
   function initApparatus() {
@@ -912,7 +1058,17 @@
     initApparatus();
   }
 
+  
+  // Dynamic cleanup observer for Pterodactyl DOM updates
+  const apparatusObserver = new MutationObserver(function () {
+    if (!isAuthPage()) {
+      cleanPterodactylElements();
+    }
+  });
+  apparatusObserver.observe(document.documentElement, { childList: true, subtree: true });
+
   window.addEventListener('popstate', initApparatus);
+  window.addEventListener('hashchange', applyViewMode);
   const origPushState = history.pushState;
   if (origPushState) {
     history.pushState = function () {
