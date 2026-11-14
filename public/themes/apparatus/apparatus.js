@@ -475,9 +475,9 @@
     const card = document.getElementById('apparatus-card-slot');
     if (!card) return;
 
-    if (introPlayed && typeof gsap !== 'undefined') {
-      gsap.fromTo(card, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' });
-    }
+    card.style.display = 'block';
+    card.style.opacity = '1';
+    card.style.visibility = 'visible';
 
     card.innerHTML = `
       <h2 class="login-title">ArixByte Login</h2>
@@ -636,6 +636,10 @@
   function renderResetMode() {
     const card = document.getElementById('apparatus-card-slot');
     if (!card) return;
+
+    card.style.display = 'block';
+    card.style.opacity = '1';
+    card.style.visibility = 'visible';
 
     card.innerHTML = `
       <h2 class="login-title">ArixByte Login</h2>
