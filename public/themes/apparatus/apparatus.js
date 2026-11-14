@@ -35,11 +35,14 @@
 
     // Adapt Header and Footer cleanly
     function adaptContent() {
-      // Set Login Card Title to ArixByte Login
-      const headerTitle = document.querySelector('h1, h2');
-      if (headerTitle && !headerTitle.dataset.apparatusTitle) {
-        headerTitle.innerHTML = 'ArixByte Login';
-        headerTitle.dataset.apparatusTitle = 'true';
+      // Find the card's inner title (inside #app only)
+      const appRoot = document.getElementById('app');
+      if (appRoot) {
+        const headerTitle = appRoot.querySelector('h1, h2');
+        if (headerTitle && !headerTitle.dataset.apparatusTitle) {
+          headerTitle.innerHTML = 'ArixByte Login';
+          headerTitle.dataset.apparatusTitle = 'true';
+        }
       }
 
       // Replace Blueprint Footer with Apparatus Theme v1.0 & link

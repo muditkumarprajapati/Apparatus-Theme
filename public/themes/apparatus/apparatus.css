@@ -77,6 +77,23 @@ body, html {
   left: 0;
 }
 
+/* Ensure Pterodactyl React #app renders above background */
+#app {
+  position: relative !important;
+  z-index: 50 !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* Make Pterodactyl body transparent to reveal desert */
+body {
+  background: transparent !important;
+}
+
+/* Background Title Behind Layers */
 .background-title {
   font-size: 13vw;
   font-weight: 800;
