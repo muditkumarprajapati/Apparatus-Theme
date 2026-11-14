@@ -77,14 +77,14 @@ body, html {
 }
 
 .background-title {
-  font-size: 15vw;
+  font-size: 13vw;
   font-weight: 800;
   color: #fff;
   opacity: 0.85;
   line-height: 1;
   text-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   margin: 0;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.03em;
   user-select: none;
 }
 

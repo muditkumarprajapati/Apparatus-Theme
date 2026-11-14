@@ -23,7 +23,7 @@
         <img src="/themes/apparatus/desert/img-3.svg" alt="" class="parallax-layer layer-3" />
         
         <div class="parallax-layer layer-text">
-           <h1 class="background-title">JTGPANEL</h1>
+           <h1 class="background-title">ARIXBYTE</h1>
            <p class="background-subtitle">CLOUD &amp; INFRASTRUCTURE</p>
         </div>
 
@@ -47,12 +47,28 @@
       if (card) {
         card.classList.add('apparatus-login-card');
         
+        // Hide the white inner box background if nested
+        const innerBox = card.querySelector('div[class*="bg-white"]') || card.querySelector('.bg-white');
+        if (innerBox) {
+          innerBox.style.background = 'transparent';
+          innerBox.style.boxShadow = 'none';
+        }
+
         // Update Title if present
         const titleEl = card.querySelector('h2') || card.querySelector('h1');
         if (titleEl && !titleEl.dataset.apparatusModified) {
           titleEl.innerHTML = '<span class="login-title">ArixByte Login</span>';
           titleEl.dataset.apparatusModified = "true";
         }
+
+        // Replace Blueprint text with Apparatus Theme v1.0
+        const footerLinks = document.querySelectorAll('p, span, div, a');
+        footerLinks.forEach(el => {
+          if (el.textContent && el.textContent.includes('Blueprint') && !el.dataset.apparatusFooterModified) {
+            el.innerHTML = el.innerHTML.replace(/Blueprint\s*©?\s*[0-9\-–]*/gi, 'Apparatus Theme v1.0');
+            el.dataset.apparatusFooterModified = "true";
+          }
+        });
       }
     }
 
