@@ -35,14 +35,14 @@
 
     // Adapt Header and Footer cleanly
     function adaptContent() {
-      // Find the card's inner title (inside #app only)
-      const appRoot = document.getElementById('app');
-      if (appRoot) {
-        const headerTitle = appRoot.querySelector('h1, h2');
-        if (headerTitle && !headerTitle.dataset.apparatusTitle) {
-          headerTitle.innerHTML = 'ArixByte Login';
-          headerTitle.dataset.apparatusTitle = 'true';
-        }
+      // Find the login container
+      const container = document.querySelector('div[class*="LoginFormContainer"]');
+      if (container && !document.getElementById('apparatus-header-title')) {
+        const titleEl = document.createElement('div');
+        titleEl.id = 'apparatus-header-title';
+        titleEl.className = 'apparatus-card-header';
+        titleEl.innerText = 'ArixByte Login';
+        container.prepend(titleEl);
       }
 
       // Replace Blueprint Footer with Apparatus Theme v1.0 & link

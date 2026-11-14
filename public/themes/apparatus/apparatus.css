@@ -10,6 +10,7 @@
 
 body, html {
   font-family: var(--apparatus-font) !important;
+  background-color: transparent !important;
 }
 
 /* ------------------------------------------
@@ -77,23 +78,6 @@ body, html {
   left: 0;
 }
 
-/* Ensure Pterodactyl React #app renders above background */
-#app {
-  position: relative !important;
-  z-index: 50 !important;
-  min-height: 100vh !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
-}
-
-/* Make Pterodactyl body transparent to reveal desert */
-body {
-  background: transparent !important;
-}
-
-/* Background Title Behind Layers */
 .background-title {
   font-size: 13vw;
   font-weight: 800;
@@ -119,46 +103,48 @@ body {
 }
 
 /* ------------------------------------------
-   ORIGINAL PTERODACTYL LOGIN FORM OVERLAY
+   ORIGINAL PTERODACTYL LOGIN FORM - RESTORE CLEAN SHAPE
 ------------------------------------------- */
-/* Center the form container */
-div[class*="LoginFormContainer"],
-form[action*="login"] {
+#app {
   position: relative !important;
   z-index: 50 !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 
-/* Turn the outer card into Glassmorphism */
-div[class*="LoginFormContainer"] > div,
-form[action*="login"] {
-  background: rgba(15, 17, 26, 0.55) !important;
+/* Glassmorphism Outer Card Frame without breaking layout */
+div[class*="LoginFormContainer"] {
+  background: rgba(15, 17, 26, 0.5) !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
   border: 1px solid rgba(255, 255, 255, 0.18) !important;
   border-radius: 24px !important;
+  padding: 1.5rem !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
 }
 
-/* Turn inner card transparent if nested */
-div[class*="LoginFormContainer"] .bg-white,
-div[class*="LoginFormContainer"] div[class*="bg-neutral"],
-div[class*="LoginFormContainer"] div[class*="bg-gray"] {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-radius: 18px !important;
+/* Restore the white box inside to its natural roundness and padding */
+div[class*="LoginFormContainer"] > div {
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
 }
 
-/* Pterodactyl logo / dinosaur icon styling */
-div[class*="LoginFormContainer"] img {
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+/* Top login title */
+.apparatus-card-header {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 1.2rem;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  letter-spacing: -0.02em;
 }
 
-/* Footer copyright styling */
-.apparatus-footer-text {
-  color: rgba(255, 255, 255, 0.85) !important;
-  font-size: 0.85rem !important;
-  margin-top: 1rem !important;
-  text-align: center !important;
-}
+/* Footer copyright */
 .apparatus-footer-text a {
   color: #ffffff !important;
   font-weight: 600 !important;
