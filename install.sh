@@ -77,20 +77,21 @@ install_theme() {
   chown -R www-data:www-data "$ASSET_DIR"
   chmod -R 755 "$ASSET_DIR"
 
-  # Step 3: Inject Into Wrapper
+  # Step 3: Inject Into Wrapper cleanly with timestamp cache-buster
   echo -e "${BLUE}[3/4] Linking Apparatus Theme with GSAP Parallax...${NC}"
   if grep -q "apparatus-theme-loader" "$WRAPPER_FILE"; then
     sed -i '/<!-- BEGIN apparatus-theme-loader -->/,/<!-- END apparatus-theme-loader -->/d' "$WRAPPER_FILE"
   fi
 
+  TS=$(date +%s)
   python3 -c "
 with open('$WRAPPER_FILE', 'r') as f:
     content = f.read()
 
 snippet = '''<!-- BEGIN apparatus-theme-loader -->
-<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css\">
+<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css?v=$TS\">
 <script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>
-<script src=\"/themes/apparatus/apparatus.js\" defer></script>
+<script src=\"/themes/apparatus/apparatus.js?v=$TS\" defer></script>
 <!-- END apparatus-theme-loader -->
 </head>'''
 
@@ -99,7 +100,7 @@ if '</head>' in content:
     with open('$WRAPPER_FILE', 'w') as f:
         f.write(content)
 " 2>/dev/null || {
-    awk '/<\/head>/{print "<!-- BEGIN apparatus-theme-loader -->\n<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>\n<script src=\"/themes/apparatus/apparatus.js\" defer></script>\n<!-- END apparatus-theme-loader -->"}1' "$WRAPPER_FILE" > "$WRAPPER_FILE.tmp" && mv "$WRAPPER_FILE.tmp" "$WRAPPER_FILE"
+    awk -v ts=\"$TS\" '/<\/head>/{print \"<!-- BEGIN apparatus-theme-loader -->\\n<link rel=\\\"stylesheet\\\" href=\\\"/themes/apparatus/apparatus.css?v=\" ts \"\\\">\\n<script src=\\\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\\\"></script>\\n<script src=\\\"/themes/apparatus/apparatus.js?v=\" ts \"\\\" defer></script>\\n<!-- END apparatus-theme-loader -->\"}1' \"$WRAPPER_FILE\" > \"$WRAPPER_FILE.tmp\" && mv \"$WRAPPER_FILE.tmp\" \"$WRAPPER_FILE\"
   }
 
   echo -e "${GREEN}✓ Injected theme loader into wrapper successfully.${NC}"
