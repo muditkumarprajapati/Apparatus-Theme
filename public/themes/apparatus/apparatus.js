@@ -63,10 +63,12 @@
   }
 
   function initApparatus() {
-    if (!isAuthPage()) {
-      const existing = document.getElementById('apparatus-desert-wrapper');
-      if (existing) existing.remove();
-      return;
+    const isAuth = isAuthPage();
+
+    if (isAuth) {
+      document.body.classList.add('apparatus-auth');
+    } else {
+      document.body.classList.remove('apparatus-auth');
     }
 
     let wrapper = document.getElementById('apparatus-desert-wrapper');
@@ -96,18 +98,24 @@
         <div class="login-card" id="apparatus-card-slot"></div>
       `;
 
-      document.body.appendChild(wrapper);
+      document.body.prepend(wrapper);
       setupParallax();
     }
 
-    // Determine initial view mode based on URL
-    const path = window.location.pathname;
-    if (path.startsWith('/auth/password/reset')) {
-      renderResetMode();
-    } else if (path.startsWith('/auth/password')) {
-      renderForgotMode();
+    const cardSlot = document.getElementById('apparatus-card-slot');
+
+    if (isAuth) {
+      if (cardSlot) cardSlot.style.display = 'block';
+      const path = window.location.pathname;
+      if (path.startsWith('/auth/password/reset')) {
+        renderResetMode();
+      } else if (path.startsWith('/auth/password')) {
+        renderForgotMode();
+      } else {
+        renderLoginMode();
+      }
     } else {
-      renderLoginMode();
+      if (cardSlot) cardSlot.style.display = 'none';
     }
   }
 
@@ -607,7 +615,7 @@
       return;
     }
 
-    if (!introPlayed) {
+    if (!introPlayed && isAuthPage()) {
       introPlayed = true;
 
       // Initial state: Black background, hidden card, scaled parallax
@@ -627,6 +635,13 @@
         .to(".parallax-container", { scale: 1.25, transformOrigin: "center 35%", duration: 2.2, ease: "power2.inOut" }, "-=1")
         .to(".parallax-container", { scale: 1, duration: 0.9, ease: "power3.inOut" })
         .to(".login-card", { autoAlpha: 1, y: 0, duration: 1.2, ease: "power3.out" }, "+=0.1");
+    } else {
+      gsap.set(".desert-wrapper", { backgroundColor: "#F7ABAE" });
+      gsap.set(".parallax-container", { scale: 1, opacity: 1 });
+      if (!isAuthPage()) {
+        const slot = document.getElementById('apparatus-card-slot');
+        if (slot) slot.style.display = 'none';
+      }
     }
 
     // Continuous floating wave motion on layers
