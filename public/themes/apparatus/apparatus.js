@@ -123,6 +123,10 @@
     const card = document.getElementById('apparatus-card-slot');
     if (!card) return;
 
+    if (introPlayed && typeof gsap !== 'undefined') {
+      gsap.fromTo(card, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' });
+    }
+
     card.innerHTML = `
       <h2 class="login-title">ArixByte Login</h2>
       <p class="login-subtitle">Welcome to ArixByte Panel</p>
@@ -286,6 +290,10 @@
   function renderForgotMode() {
     const card = document.getElementById('apparatus-card-slot');
     if (!card) return;
+
+    if (introPlayed && typeof gsap !== 'undefined') {
+      gsap.fromTo(card, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' });
+    }
 
     card.innerHTML = `
       <h2 class="login-title">ArixByte Login</h2>
@@ -589,14 +597,39 @@
   }
 
   // ----------------------------------------------------------------------------
-  // GSAP PARALLAX ANIMATION
+  // GSAP PARALLAX & CINEMATIC INTRO ANIMATION
   // ----------------------------------------------------------------------------
+  let introPlayed = false;
+
   function setupParallax() {
     if (typeof gsap === 'undefined') {
       setTimeout(setupParallax, 100);
       return;
     }
 
+    if (!introPlayed) {
+      introPlayed = true;
+
+      // Initial state: Black background, hidden card, scaled parallax
+      gsap.set(".desert-wrapper", { backgroundColor: "#000" });
+      gsap.set(".login-card", { autoAlpha: 0, y: 60 });
+      gsap.set(".parallax-container", { scale: 1.15, opacity: 0 });
+
+      const tl = gsap.timeline();
+
+      // Cinematic Intro Sequence:
+      // 1. Desert Parallax & ARIXBYTE text emerge
+      // 2. Background transitions from darkness to sunset pink
+      // 3. Camera zooms to highlight the scenery, then settles
+      // 4. Glassmorphism Login Card glides up smoothly into center
+      tl.to(".parallax-container", { opacity: 1, duration: 2.2, ease: "power2.inOut" })
+        .to(".desert-wrapper", { backgroundColor: "#F7ABAE", duration: 1.5 }, "-=1.2")
+        .to(".parallax-container", { scale: 1.25, transformOrigin: "center 35%", duration: 2.2, ease: "power2.inOut" }, "-=1")
+        .to(".parallax-container", { scale: 1, duration: 0.9, ease: "power3.inOut" })
+        .to(".login-card", { autoAlpha: 1, y: 0, duration: 1.2, ease: "power3.out" }, "+=0.1");
+    }
+
+    // Continuous floating wave motion on layers
     const layers = [1, 2, 3, 4, 5, 6, 7];
     layers.forEach(function (layerNum) {
       gsap.to('.layer-' + layerNum, {
@@ -616,6 +649,7 @@
       repeat: -1
     });
 
+    // Mouse parallax tracking
     window.addEventListener('mousemove', function (e) {
       const x = (e.clientX / window.innerWidth - 0.5) * 2;
       layers.forEach(function (layerNum) {
