@@ -1034,7 +1034,7 @@
       dailyBtn.disabled = true;
       dailyBtn.innerHTML = '<i class="ri-check-line"></i> Claimed (24h left)';
       dailyBtn.classList.add('apparatus-btn-disabled');
-      showToast('success', 'Daily Reward Claimed!', '🎉 +2 Coins added! Your total is now ' + coins + ' 🪙');
+      showToast('success', 'Daily Reward Claimed!', '🎉 +2 Points added! Your total is now ' + coins + ' Points.');
     });
   }
 
@@ -1123,7 +1123,7 @@
         if (span) span.textContent = 'Copied!';
         copyBtn.classList.add('copied');
 
-        showToast('success', 'Referral Code Copied!', 'Your code ' + textToCopy + ' was copied! Share it to earn 10 Coins per referral.');
+        showToast('success', 'Referral Code Copied!', 'Your code ' + textToCopy + ' was copied! Share it to earn 10 Points per referral.');
 
         setTimeout(function () {
           if (icon) icon.className = 'ri-file-copy-line';
@@ -1742,7 +1742,7 @@
                       </div>
                       <div class="apparatus-referral-titles">
                         <span class="apparatus-referral-title">Referral Program</span>
-                        <span class="apparatus-referral-subtitle">Earn 10 coins per friend invited</span>
+                        <span class="apparatus-referral-subtitle">Earn 10 points per friend invited</span>
                       </div>
                     </div>
                   </div>
@@ -1759,7 +1759,7 @@
 
                   <div class="apparatus-referral-note">
                     <i class="ri-sparkling-fill" style="color: #fbbf24; font-size: 0.72rem; margin-right: 4px;"></i>
-                    Earn <strong style="color: #fbbf24; margin: 0 3px;">10 Coins</strong> for each friend who joins using your code
+                    Earn <strong style="color: #fbbf24; margin: 0 3px;">10 Points</strong> for each friend who joins using your code
                   </div>
                 </div>
               </div>
@@ -2324,7 +2324,7 @@
               </div>
             </div>
 
-            <!-- Card 3: Reward Coins -->
+            <!-- Card 3: Reward Points -->
             <div class="apparatus-card apparatus-resource-card apparatus-res-coins-card">
               <div class="apparatus-card-header apparatus-res-card-header">
                 <div class="apparatus-res-card-title-group">
@@ -2332,18 +2332,19 @@
                     <i class="ri-copper-coin-line"></i>
                   </div>
                   <div>
-                    <h2 class="apparatus-card-title">Reward Coins</h2>
+                    <h2 class="apparatus-card-title">Reward Points</h2>
                     <span class="apparatus-res-card-sub">Available Balance &amp; Earnings</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Main Coin Balance Box -->
+              <!-- Main Point Balance Box -->
               <div class="apparatus-res-coins-box">
                 <div class="apparatus-res-coins-meta">
-                  <span class="apparatus-res-coins-lbl">AVAILABLE COINS</span>
+                  <span class="apparatus-res-coins-lbl">AVAILABLE POINTS</span>
                   <div class="apparatus-res-coins-num">
                     <span id="res-coin-count">0</span>
+                    <span class="apparatus-res-points-unit">Points</span>
                   </div>
                 </div>
               </div>
@@ -2360,7 +2361,7 @@
                     </div>
                   </div>
                   <div class="apparatus-res-row-right">
-                    <span class="apparatus-res-badge-val" style="color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);">+10 Coins</span>
+                    <span class="apparatus-res-badge-val" style="color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);">+10 Points</span>
                   </div>
                 </div>
 
@@ -2370,7 +2371,7 @@
                     <div class="apparatus-res-row-icon" style="color: rgba(255, 255, 255, 0.4);"><i class="ri-calendar-check-line"></i></div>
                     <div class="apparatus-res-row-info">
                       <span class="apparatus-res-row-title">DAILY BONUS</span>
-                      <span class="apparatus-res-row-desc">Claim free bonus coins every 24 hours</span>
+                      <span class="apparatus-res-row-desc">Claim free bonus points every 24 hours</span>
                     </div>
                   </div>
                   <div class="apparatus-res-row-right">
@@ -2378,13 +2379,13 @@
                   </div>
                 </div>
 
-                <!-- Coin Redemption -->
+                <!-- Point Redemption -->
                 <div class="apparatus-res-row">
                   <div class="apparatus-res-row-left">
                     <div class="apparatus-res-row-icon" style="color: #f472b6;"><i class="ri-exchange-funds-line"></i></div>
                     <div class="apparatus-res-row-info">
                       <span class="apparatus-res-row-title">REDEMPTION</span>
-                      <span class="apparatus-res-row-desc">Redeem coins for RAM, CPU &amp; discounts</span>
+                      <span class="apparatus-res-row-desc">Redeem points for RAM, CPU &amp; discounts</span>
                     </div>
                   </div>
                   <div class="apparatus-res-row-right">
@@ -2396,7 +2397,7 @@
 
               <div class="apparatus-res-card-footer">
                 <i class="ri-information-line"></i>
-                <span>Coins can be earned through daily logins and referrals to upgrade server limits.</span>
+                <span>Points can be earned through daily logins and referrals to upgrade server limits.</span>
               </div>
             </div>
 

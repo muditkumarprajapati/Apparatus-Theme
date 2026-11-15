@@ -3814,9 +3814,16 @@ body.apparatus-page-resource #apparatus-dashboard-view {
   color: #fff;
   letter-spacing: -0.02em;
   display: flex;
-  align-items: center;
-  gap: 0.45rem;
+  align-items: baseline;
+  gap: 0.35rem;
   line-height: 1.2;
+}
+
+.apparatus-res-points-unit {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: normal;
 }
 
 .apparatus-coin-icon-gold {
