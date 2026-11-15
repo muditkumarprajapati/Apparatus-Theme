@@ -445,29 +445,27 @@ body.apparatus-auth .desert-wrapper {
 }
 
 /* ------------------------------------------------------------------------------
-   FLOATING POPUP TOAST NOTIFICATIONS (ERROR / SUCCESS)
+   FLOATING POPUP TOAST NOTIFICATIONS (Login-Success Frosted Glass Aesthetic)
    ------------------------------------------------------------------------------ */
 .apparatus-toast {
   position: fixed !important;
-  top: 2rem !important;
-  right: 2rem !important;
+  top: 2.25rem !important;
+  right: 2.25rem !important;
   z-index: 9999999 !important;
   display: flex !important;
   align-items: center !important;
-  gap: 1rem !important;
-  padding: 1.1rem 1.5rem !important;
-  border-radius: 18px !important;
-  background: rgba(18, 18, 24, 0.88) !important;
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.12) !important;
+  gap: 1.15rem !important;
+  padding: 1rem 1.6rem !important;
+  border-radius: 16px !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
   color: #fff !important;
   font-family: var(--apparatus-font) !important;
-  transform: translateY(-40px) scale(0.95) !important;
+  transform: translateY(-24px) scale(0.96) !important;
   opacity: 0 !important;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.38s cubic-bezier(0.16, 1, 0.3, 1) !important;
   pointer-events: auto !important;
-  max-width: 420px !important;
+  max-width: 440px !important;
   box-sizing: border-box !important;
 }
 
@@ -477,41 +475,69 @@ body.apparatus-auth .desert-wrapper {
 }
 
 .apparatus-toast-success {
-  border-left: 5px solid #22c55e !important;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.22), rgba(16, 185, 129, 0.12)), rgba(18, 24, 20, 0.82) !important;
+  border: 1px solid rgba(34, 197, 94, 0.45) !important;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.4), 0 0 30px rgba(34, 197, 94, 0.25) !important;
 }
 
 .apparatus-toast-error {
-  border-left: 5px solid #ef4444 !important;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(220, 38, 38, 0.12)), rgba(24, 18, 18, 0.82) !important;
+  border: 1px solid rgba(239, 68, 68, 0.45) !important;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.4), 0 0 30px rgba(239, 68, 68, 0.25) !important;
 }
 
 .apparatus-toast-info {
-  border-left: 5px solid #38bdf8 !important;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(14, 165, 233, 0.12)), rgba(18, 20, 26, 0.82) !important;
+  border: 1px solid rgba(56, 189, 248, 0.45) !important;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.4), 0 0 30px rgba(56, 189, 248, 0.25) !important;
 }
 
 .apparatus-toast-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   flex-shrink: 0 !important;
 }
 
+.apparatus-toast-success .apparatus-toast-icon {
+  background: rgba(34, 197, 94, 0.25) !important;
+  border: 1px solid rgba(34, 197, 94, 0.6) !important;
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.45) !important;
+}
+
+.apparatus-toast-error .apparatus-toast-icon {
+  background: rgba(239, 68, 68, 0.25) !important;
+  border: 1px solid rgba(239, 68, 68, 0.6) !important;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.45) !important;
+}
+
+.apparatus-toast-info .apparatus-toast-icon {
+  background: rgba(56, 189, 248, 0.25) !important;
+  border: 1px solid rgba(56, 189, 248, 0.6) !important;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.45) !important;
+}
+
 .apparatus-toast-content {
   display: flex !important;
   flex-direction: column !important;
-  gap: 2px !important;
+  gap: 3px !important;
   text-align: left !important;
 }
 
 .apparatus-toast-title {
   font-weight: 700 !important;
-  font-size: 1rem !important;
+  font-size: 1.02rem !important;
   line-height: 1.2 !important;
   color: #fff !important;
+  letter-spacing: -0.01em;
 }
 
 .apparatus-toast-msg {
-  font-size: 0.88rem !important;
-  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 0.86rem !important;
+  color: rgba(255, 255, 255, 0.9) !important;
   line-height: 1.4 !important;
 }
 
@@ -4734,7 +4760,16 @@ html.lenis body {
    Account View: User Profile Studio (Full-Width, Non-Capsule Luxury Layout)
    ============================================================================== */
 
-/* Ensure Account Overview container is a clean vertical column */
+/* Account View Page Spacing: Generous top padding so card never hugs top bar */
+div[class*="AccountOverviewContainer"],
+div[class*="PageContentBlock"] {
+  padding-top: 3.5rem !important;
+  padding-bottom: 4rem !important;
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+  box-sizing: border-box !important;
+}
+
 div[class*="AccountOverviewContainer"],
 div[class*="PageContentBlock"] > div {
   display: flex !important;
@@ -4742,7 +4777,7 @@ div[class*="PageContentBlock"] > div {
   width: 100% !important;
   max-width: 1200px !important;
   margin: 0 auto !important;
-  gap: 1.75rem !important;
+  gap: 2rem !important;
 }
 
 /* Ensure the native cards row sits in a clean 3-column grid under User Profile */
@@ -4764,19 +4799,22 @@ div[class*="AccountOverviewContainer"] > div:not(.apparatus-user-profile-section
   width: 100% !important;
   display: block !important;
   box-sizing: border-box !important;
+  margin-top: 1rem !important;
+  margin-bottom: 2rem !important;
   animation: apparatusViewEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Luminous Translucent Pink/Purple Glass Card (NO Black Boxes!) */
 .apparatus-user-profile-card {
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 1.75rem 2rem !important;
-  background: rgba(18, 18, 24, 0.5) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 18px !important;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35) !important;
+  padding: 2rem 2.25rem !important;
+  background: radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.16), transparent 55%), rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(24px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
 }
 
 /* Top Identity Bar */
@@ -4946,18 +4984,30 @@ div[class*="AccountOverviewContainer"] > div:not(.apparatus-user-profile-section
   pointer-events: none;
 }
 
-.apparatus-prof-input {
+/* Luminous Frosted Glass Inputs (NO Black Boxes!) */
+.apparatus-prof-input,
+div[class*="AccountOverviewContainer"] input,
+div[class*="AccountOverviewContainer"] select {
   width: 100%;
-  height: 42px;
-  background: rgba(0, 0, 0, 0.25) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 10px !important;
-  color: #fff !important;
-  padding: 0 0.85rem;
-  font-size: 0.88rem;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  padding: 0 1rem;
+  font-size: 0.9rem;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
   box-sizing: border-box !important;
+}
+
+.apparatus-prof-input:focus,
+div[class*="AccountOverviewContainer"] input:focus {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(236, 72, 153, 0.7) !important;
+  box-shadow: 0 0 16px rgba(236, 72, 153, 0.3) !important;
 }
 
 .apparatus-prof-input.with-icon {

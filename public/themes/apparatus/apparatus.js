@@ -425,7 +425,7 @@
     // 4. Proper Transparency & Styling for ContentBox cards (.sc-mjlt6f-2) across /account, /account/api, /account/ssh
     const contentCards = document.querySelectorAll('.sc-mjlt6f-2, [class*="sc-mjlt6f-2"], div[class*="ContentBox___StyledDiv"]');
     contentCards.forEach(function (card) {
-      card.style.setProperty('background', 'rgba(26, 16, 38, 0.28)', 'important');
+      card.style.setProperty('background', 'radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.15), transparent 55%), rgba(255, 255, 255, 0.04)', 'important');
       card.style.setProperty('backdrop-filter', 'blur(20px) saturate(180%)', 'important');
       card.style.setProperty('-webkit-backdrop-filter', 'blur(20px) saturate(180%)', 'important');
       card.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.18)', 'important');
@@ -475,7 +475,8 @@
 
     // 5. Ensure inputs and textareas on account pages are properly translucent
     document.querySelectorAll('.sc-19rce1w-0, .sc-19rce1w-1, .sc-lcvdq4-0, .sc-plts88-0').forEach(function (inp) {
-      inp.style.setProperty('background', 'rgba(0, 0, 0, 0.2)', 'important');
+      inp.style.setProperty('background', 'rgba(255, 255, 255, 0.06)', 'important');
+      inp.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.14)', 'important');
       inp.style.setProperty('backdrop-filter', 'blur(8px)', 'important');
       inp.style.setProperty('-webkit-backdrop-filter', 'blur(8px)', 'important');
       inp.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.16)', 'important');
