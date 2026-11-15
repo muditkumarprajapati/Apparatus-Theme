@@ -785,7 +785,7 @@
         if (span) span.textContent = 'Copied!';
         copyBtn.classList.add('copied');
 
-        showToast('success', 'Referral Code Copied!', 'Your code ' + textToCopy + ' was copied. Share it with friends to earn points!');
+        showToast('success', 'Referral Code Copied!', 'Your code ' + textToCopy + ' was copied! Share it to earn 10 Coins per referral.');
 
         setTimeout(function () {
           if (icon) icon.className = 'ri-file-copy-line';
@@ -1269,16 +1269,21 @@
                 <!-- User Unique Referral Code Box -->
                 <div class="apparatus-referral-card">
                   <div class="apparatus-referral-top">
-                    <span class="apparatus-referral-title"><i class="ri-user-shared-line"></i> Referral Code</span>
-                    <span class="apparatus-referral-badge">+50 pts / invite</span>
+                    <span class="apparatus-referral-title"><i class="ri-vip-crown-line"></i> Referral Program</span>
+                    <span class="apparatus-referral-badge"><i class="ri-copper-coin-line"></i> +10 Coins / referral</span>
                   </div>
                   <div class="apparatus-referral-box">
-                    <code class="apparatus-referral-code" id="apparatus-user-ref-code">${referralCode}</code>
+                    <div class="apparatus-referral-code-label">
+                      <span class="apparatus-code-subtag">YOUR CODE</span>
+                      <code class="apparatus-referral-code" id="apparatus-user-ref-code">${referralCode}</code>
+                    </div>
                     <button type="button" class="apparatus-copy-ref-btn" id="apparatus-copy-ref-btn" title="Copy Referral Code">
                       <i class="ri-file-copy-line"></i> <span>Copy</span>
                     </button>
                   </div>
-                  <span class="apparatus-referral-note">Share your unique code to earn referral points</span>
+                  <div class="apparatus-referral-note">
+                    <i class="ri-sparkling-fill" style="color: #fbbf24;"></i> Earn <strong style="color: #fbbf24;">10 Coins</strong> for each friend who joins using your code
+                  </div>
                 </div>
               </div>
 
