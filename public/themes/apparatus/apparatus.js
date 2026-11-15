@@ -711,7 +711,7 @@
       dailyBtn.disabled = true;
       dailyBtn.innerHTML = '<i class="ri-check-line"></i> Claimed (24h left)';
       dailyBtn.classList.add('apparatus-btn-disabled');
-      showToast('success', 'Daily Reward Claimed!', '🎉 +25 Coins added! Your total is now ' + coins + ' 🪙');
+      showToast('success', 'Daily Reward Claimed!', '🎉 +25 Referral Points added! Your total is now ' + coins + ' 🪙');
     });
   }
 
@@ -1042,7 +1042,7 @@
                 <span class="apparatus-metric-unit">INR</span>
               </div>
               <span class="apparatus-metric-sub">
-                <span id="apparatus-metric-coins">100</span> Coins &bull; <a href="javascript:void(0)" class="apparatus-metric-sublink" id="apparatus-ribbon-topup">Top Up</a>
+                <span id="apparatus-metric-coins">100</span> Referral Points &bull; <a href="javascript:void(0)" class="apparatus-metric-sublink" id="apparatus-ribbon-topup">Top Up</a>
               </span>
             </div>
           </div>
@@ -1194,13 +1194,13 @@
                   <span class="apparatus-balance-note">Instant UPI / NetBanking / Cards</span>
                 </div>
 
-                <!-- Coins Balance -->
+                <!-- Referral Points Balance -->
                 <div class="apparatus-balance-box apparatus-balance-coins">
-                  <span class="apparatus-balance-label">Reward Coins</span>
+                  <span class="apparatus-balance-label">Referral Points</span>
                   <div class="apparatus-balance-value">
                     <span id="apparatus-coin-count">100</span> <span class="apparatus-coin-symbol">🪙</span>
                   </div>
-                  <span class="apparatus-balance-note">Redeem for discounts &amp; upgrades</span>
+                  <span class="apparatus-balance-note">Redeem points for discounts &amp; upgrades</span>
                 </div>
               </div>
 
@@ -1209,7 +1209,7 @@
                   <i class="ri-add-circle-line"></i> Top Up Balance (INR ₹)
                 </button>
                 <button type="button" class="apparatus-btn apparatus-btn-glass apparatus-btn-full" id="apparatus-daily-reward-btn">
-                  <i class="ri-gift-line"></i> Claim Daily Reward (+25 🪙)
+                  <i class="ri-gift-line"></i> Claim Daily Points (+25 pts)
                 </button>
               </div>
 
@@ -1604,7 +1604,7 @@
             dailyBtn.scrollIntoView({ behavior: 'smooth' });
             dailyBtn.click();
           } else {
-            showToast('info', 'Daily Earn', 'Claim daily reward coins and redeem for server discounts!');
+            showToast('info', 'Referral & Earn', 'Claim daily referral points and redeem for server discounts!');
           }
         });
       }
