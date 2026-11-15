@@ -99,49 +99,26 @@ body:not(.apparatus-auth) .bg-neutral-700 {
   border-radius: 12px !important;
 }
 
-/* Completely hide native top navbar since all controls are in the left sidebar */
-body:not(.apparatus-auth) nav:not([class*="SubNavigation"]),
+/* Completely hide native top navbar and SubNavigation tab bar since all controls are in the left sidebar */
+body:not(.apparatus-auth) nav,
+body:not(.apparatus-auth) header,
+body:not(.apparatus-auth) [role="navigation"],
 body:not(.apparatus-auth) div[class*="NavigationBar___StyledDiv"],
-body:not(.apparatus-auth) [class*="NavigationBar"] {
+body:not(.apparatus-auth) [class*="NavigationBar"],
+body:not(.apparatus-auth) div[class*="SubNavigation"],
+body:not(.apparatus-auth) nav[class*="SubNavigation"],
+body:not(.apparatus-auth) [class*="SubNavigation"] {
   display: none !important;
   visibility: hidden !important;
   height: 0 !important;
   min-height: 0 !important;
+  max-height: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
   overflow: hidden !important;
-}
-
-body:not(.apparatus-auth) div[class*="SubNavigation"] {
-  background: rgba(14, 10, 22, 0.55) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 30 !important;
-}
-
-body:not(.apparatus-auth) div[class*="SubNavigation"] a {
-  color: rgba(255, 255, 255, 0.7) !important;
-  font-weight: 500 !important;
-  font-size: 0.92rem !important;
-  padding: 0.85rem 1.25rem !important;
-  transition: all 0.2s ease !important;
-  text-decoration: none !important;
-}
-
-body:not(.apparatus-auth) div[class*="SubNavigation"] a:hover {
-  color: #fff !important;
-  background: rgba(255, 255, 255, 0.04) !important;
-}
-
-body:not(.apparatus-auth) div[class*="SubNavigation"] a.active,
-body:not(.apparatus-auth) div[class*="SubNavigation"] a[aria-current="page"] {
-  color: #fff !important;
-  border-bottom: 2px solid #ec4899 !important;
-  font-weight: 600 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* Enhance text contrast on dashboard */
@@ -1316,13 +1293,16 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 }
 
 /* ==============================================================================
-   FORCE HIDE PTERODACTYL TOP NAVBAR & ALL BLUEPRINT / PTERODACTYL FOOTERS
+   FORCE HIDE PTERODACTYL TOP NAVBAR, SUBNAVIGATION & FOOTER COPYRIGHT
    ============================================================================== */
-body:not(.apparatus-auth) nav:not([class*="SubNavigation"]),
-body:not(.apparatus-auth) header:not([class*="SubNavigation"]),
-body:not(.apparatus-auth) [role="navigation"]:not([class*="SubNavigation"]),
+body:not(.apparatus-auth) nav,
+body:not(.apparatus-auth) header,
+body:not(.apparatus-auth) [role="navigation"],
 body:not(.apparatus-auth) [class*="NavigationBar"],
 body:not(.apparatus-auth) div[class*="NavigationBar___StyledDiv"],
+body:not(.apparatus-auth) div[class*="SubNavigation"],
+body:not(.apparatus-auth) nav[class*="SubNavigation"],
+body:not(.apparatus-auth) [class*="SubNavigation"],
 body:not(.apparatus-auth) #app > div > div.bg-neutral-900:first-child,
 body:not(.apparatus-auth) #app > div > div.shadow-md:first-child {
   display: none !important;
@@ -1338,16 +1318,35 @@ body:not(.apparatus-auth) #app > div > div.shadow-md:first-child {
   pointer-events: none !important;
 }
 
+/* Completely remove Pterodactyl® & Blueprint copyright and footer elements */
 footer,
 [class*="Blueprint"],
 p[class*="Blueprint"],
 div[class*="Blueprint"],
 [class*="Footer"],
+div[class*="Footer"],
+p[class*="Footer"],
+a[href*="pterodactyl.io"],
+a[href*="blueprint.zip"],
+p:has(a[href*="pterodactyl.io"]),
+p:has(a[href*="blueprint.zip"]),
+div:has(> p > a[href*="pterodactyl.io"]),
+div:has(> p > a[href*="blueprint.zip"]),
+div:has(> a[href*="pterodactyl.io"]),
+div:has(> a[href*="blueprint.zip"]),
+div[class*="ContentContainer"]:has(a[href*="pterodactyl"]),
+div[class*="ContentContainer"]:has(a[href*="blueprint"]),
 p[class*="LoginFormContainer___StyledP"],
 div[class*="sc-cyh04c-7"] {
   display: none !important;
   visibility: hidden !important;
   height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
 }
@@ -1398,24 +1397,64 @@ div[style*="height:2px"] {
    NATIVE PTERODACTYL ACCOUNT & PAGE CONTENT GLASSMORPHISM
    ============================================================================== */
 
-/* TitledGreyBox & Content Cards */
-body:not(.apparatus-auth) div[class*="TitledGreyBox"],
-body:not(.apparatus-auth) div[class*="ContentBox"],
-body:not(.apparatus-auth) div[class*="Card"] {
-  background: rgba(14, 10, 22, 0.42) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2) !important;
-  overflow: hidden !important;
-  margin-bottom: 1.5rem !important;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+/* Section / ContentBox Titles */
+body:not(.apparatus-auth) div[class*="ContentBox"] h2,
+body:not(.apparatus-auth) h2.text-2xl,
+body:not(.apparatus-auth) h2[class*="text-neutral-300"] {
+  font-family: var(--apparatus-font) !important;
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35) !important;
+  margin-bottom: 0.85rem !important;
+  padding-left: 0.25rem !important;
 }
 
+/* Flex alignments for equal card heights */
+body:not(.apparatus-auth) div[class*="AccountOverviewContainer"] > div,
+body:not(.apparatus-auth) div[class*="AccountApiContainer"] > div,
+body:not(.apparatus-auth) div[class*="AccountSSHContainer"] > div {
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+body:not(.apparatus-auth) div:has(> h2 + div.bg-neutral-700),
+body:not(.apparatus-auth) div:has(> div.bg-neutral-700) {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+body:not(.apparatus-auth) div:has(> h2 + div.bg-neutral-700) > div.bg-neutral-700,
+body:not(.apparatus-auth) div:has(> div.bg-neutral-700) > div.bg-neutral-700 {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+
+/* Glassmorphic native panels, TitledGreyBox, ContentBox containers */
+body:not(.apparatus-auth) .bg-neutral-800,
+body:not(.apparatus-auth) .bg-neutral-700,
+body:not(.apparatus-auth) div[class*="TitledGreyBox"],
+body:not(.apparatus-auth) div[class*="ContentBox"] > div:not([class*="FlashMessage"]),
+body:not(.apparatus-auth) div[class*="Card"] {
+  background: rgba(14, 10, 24, 0.45) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.08) !important;
+  overflow: hidden !important;
+  margin-bottom: 1.5rem !important;
+  transition: all 0.25s ease !important;
+}
+
+body:not(.apparatus-auth) .bg-neutral-800:hover,
+body:not(.apparatus-auth) .bg-neutral-700:hover,
 body:not(.apparatus-auth) div[class*="TitledGreyBox"]:hover {
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.32), inset 0 1px 0 0 rgba(255, 255, 255, 0.12) !important;
 }
 
 /* Card Header in TitledGreyBox */
@@ -1441,9 +1480,23 @@ body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:last-child {
   padding: 1.25rem !important;
 }
 
+/* Empty state message boxes (API Keys, SSH Keys) */
+body:not(.apparatus-auth) div.bg-neutral-700 > p.text-center,
+body:not(.apparatus-auth) div[class*="ContentBox"] p.text-center {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px dashed rgba(255, 255, 255, 0.16) !important;
+  border-radius: 12px !important;
+  padding: 1.75rem 1.25rem !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  font-size: 0.92rem !important;
+  font-weight: 500 !important;
+  margin: 0.5rem 0 !important;
+}
+
 /* GreyRowBox (API Keys, SSH Keys, Activity Log rows) */
-body:not(.apparatus-auth) div[class*="GreyRowBox"] {
-  background: rgba(18, 14, 28, 0.5) !important;
+body:not(.apparatus-auth) div[class*="GreyRowBox"],
+body:not(.apparatus-auth) .bg-neutral-600 {
+  background: rgba(255, 255, 255, 0.04) !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -1453,18 +1506,16 @@ body:not(.apparatus-auth) div[class*="GreyRowBox"] {
   transition: all 0.2s ease !important;
 }
 
-body:not(.apparatus-auth) div[class*="GreyRowBox"]:hover {
-  background: rgba(18, 14, 28, 0.7) !important;
+body:not(.apparatus-auth) div[class*="GreyRowBox"]:hover,
+body:not(.apparatus-auth) .bg-neutral-600:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
   border-color: rgba(236, 72, 153, 0.4) !important;
   transform: translateY(-1px) !important;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* Form Inputs & Textareas */
-body:not(.apparatus-auth) input[type="text"],
-body:not(.apparatus-auth) input[type="password"],
-body:not(.apparatus-auth) input[type="email"],
-body:not(.apparatus-auth) input[type="number"],
+/* Form Inputs, Textareas & Selects - universal translucent glassmorphism */
+body:not(.apparatus-auth) input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]),
 body:not(.apparatus-auth) textarea,
 body:not(.apparatus-auth) select,
 body:not(.apparatus-auth) div[class*="Input"] input,
@@ -1472,19 +1523,20 @@ body:not(.apparatus-auth) div[class*="Input___StyledInput"] {
   background: rgba(0, 0, 0, 0.35) !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
   border-radius: 10px !important;
-  color: #fff !important;
+  color: #ffffff !important;
   padding: 0.75rem 1rem !important;
   font-family: var(--apparatus-font) !important;
   font-size: 0.92rem !important;
   transition: all 0.2s ease !important;
+  outline: none !important;
 }
 
-body:not(.apparatus-auth) input:focus,
+body:not(.apparatus-auth) input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):focus,
 body:not(.apparatus-auth) textarea:focus,
 body:not(.apparatus-auth) select:focus {
-  background: rgba(0, 0, 0, 0.55) !important;
+  background: rgba(0, 0, 0, 0.5) !important;
   border-color: #ec4899 !important;
   box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25) !important;
   outline: none !important;
@@ -1492,72 +1544,92 @@ body:not(.apparatus-auth) select:focus {
 
 /* Form Labels & Help Texts */
 body:not(.apparatus-auth) label {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: rgba(255, 255, 255, 0.92) !important;
   font-weight: 600 !important;
   font-size: 0.88rem !important;
   margin-bottom: 0.4rem !important;
   display: block;
 }
 
-/* Buttons in Forms and Cards */
-body:not(.apparatus-auth) button[class*="Button"] {
+body:not(.apparatus-auth) .input-help {
+  color: rgba(255, 255, 255, 0.65) !important;
+  font-size: 0.82rem !important;
+  margin-top: 0.35rem !important;
+}
+
+/* Primary Action Buttons (Update Password, Update Email, Enable Two-Step, Create, Save) */
+body:not(.apparatus-auth) button.bg-blue-600,
+body:not(.apparatus-auth) button[class*="primary"],
+body:not(.apparatus-auth) button[class*="Button--primary"],
+body:not(.apparatus-auth) button[type="submit"],
+body:not(.apparatus-auth) .bg-primary-500,
+body:not(.apparatus-auth) button[class*="Button"]:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]),
+body:not(.apparatus-auth) button[class*="button"]:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):not([aria-label="close"]),
+body:not(.apparatus-auth) div[class*="ContentBox"] button:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):not([aria-label="close"]) {
+  background: linear-gradient(135deg, #ec4899, #db2777) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
   border-radius: 10px !important;
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35) !important;
   font-family: var(--apparatus-font) !important;
   font-weight: 600 !important;
   font-size: 0.9rem !important;
   padding: 0.7rem 1.4rem !important;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
   cursor: pointer !important;
 }
 
-/* Primary Action Buttons */
-body:not(.apparatus-auth) button[class*="Button--primary"],
-body:not(.apparatus-auth) button[type="submit"],
-body:not(.apparatus-auth) .bg-primary-500,
-body:not(.apparatus-auth) button[class*="Button"]:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]) {
-  background: linear-gradient(135deg, #ec4899, #db2777) !important;
-  border: none !important;
-  color: #fff !important;
-  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35) !important;
-}
-
+body:not(.apparatus-auth) button.bg-blue-600:hover,
+body:not(.apparatus-auth) button[class*="primary"]:hover,
 body:not(.apparatus-auth) button[class*="Button--primary"]:hover,
 body:not(.apparatus-auth) button[type="submit"]:hover,
 body:not(.apparatus-auth) .bg-primary-500:hover,
-body:not(.apparatus-auth) button[class*="Button"]:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):hover {
-  filter: brightness(1.1) !important;
+body:not(.apparatus-auth) button[class*="Button"]:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):hover,
+body:not(.apparatus-auth) button[class*="button"]:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):not([aria-label="close"]):hover,
+body:not(.apparatus-auth) div[class*="ContentBox"] button:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):not([aria-label="close"]):hover {
+  filter: brightness(1.12) !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5) !important;
+  box-shadow: 0 6px 22px rgba(236, 72, 153, 0.5) !important;
 }
 
 /* Secondary / Ghost Buttons */
 body:not(.apparatus-auth) button[class*="Button--secondary"],
-body:not(.apparatus-auth) button[class*="Button--ghost"] {
+body:not(.apparatus-auth) button[class*="Button--ghost"],
+body:not(.apparatus-auth) button[class*="secondary"] {
   background: rgba(255, 255, 255, 0.08) !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
   color: #fff !important;
+  border-radius: 10px !important;
+  font-family: var(--apparatus-font) !important;
+  font-weight: 600 !important;
 }
 
 body:not(.apparatus-auth) button[class*="Button--secondary"]:hover,
-body:not(.apparatus-auth) button[class*="Button--ghost"]:hover {
+body:not(.apparatus-auth) button[class*="Button--ghost"]:hover,
+body:not(.apparatus-auth) button[class*="secondary"]:hover {
   background: rgba(255, 255, 255, 0.16) !important;
   transform: translateY(-1px) !important;
 }
 
 /* Danger Buttons */
 body:not(.apparatus-auth) button[class*="Button--danger"],
-body:not(.apparatus-auth) button.bg-red-500 {
+body:not(.apparatus-auth) button[class*="danger"],
+body:not(.apparatus-auth) button.bg-red-500,
+body:not(.apparatus-auth) button.bg-red-600 {
   background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-  border: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
   color: #fff !important;
+  border-radius: 10px !important;
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+  font-family: var(--apparatus-font) !important;
+  font-weight: 600 !important;
 }
 
 /* Modal Dialogs / Popup Windows */
 body:not(.apparatus-auth) div[class*="Modal"],
 body:not(.apparatus-auth) div[class*="Dialog"],
 body:not(.apparatus-auth) div[class*="ModalMask"] > div {
-  background: rgba(14, 10, 22, 0.88) !important;
+  background: rgba(14, 10, 24, 0.9) !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -1565,12 +1637,59 @@ body:not(.apparatus-auth) div[class*="ModalMask"] > div {
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6) !important;
 }
 
-/* Activity Log table / list styling */
-body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div[class*="GreyRowBox"],
-body:not(.apparatus-auth) table {
-  background: rgba(14, 10, 22, 0.45) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 12px !important;
+/* ==============================================================================
+   ACTIVITY LOG PAGE GLASSMORPHISM & IMPROVEMENTS
+   ============================================================================== */
+body:not(.apparatus-auth) div.bg-gray-700,
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.bg-gray-700,
+body:not(.apparatus-auth) .bg-gray-700 {
+  background: rgba(14, 10, 24, 0.45) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Activity rows */
+body:not(.apparatus-auth) div.bg-gray-700 > div.grid,
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid,
+body:not(.apparatus-auth) div[class*="ActivityLogEntry"] {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 1.1rem 1.25rem !important;
+  transition: background 0.2s ease !important;
+  background: transparent !important;
+}
+
+body:not(.apparatus-auth) div.bg-gray-700 > div.grid:hover,
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid:hover,
+body:not(.apparatus-auth) div[class*="ActivityLogEntry"]:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+body:not(.apparatus-auth) div.bg-gray-700 > div.grid:last-child,
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid:last-child {
+  border-bottom: none !important;
+}
+
+/* Activity Log Avatar icon container */
+body:not(.apparatus-auth) .bg-gray-600 {
+  background: rgba(236, 72, 153, 0.2) !important;
+  border: 1px solid rgba(236, 72, 153, 0.4) !important;
+}
+
+/* Activity Log event links */
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] a,
+body:not(.apparatus-auth) div.bg-gray-700 a {
+  color: #f472b6 !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] a:hover,
+body:not(.apparatus-auth) div.bg-gray-700 a:hover {
+  color: #ec4899 !important;
+  text-shadow: 0 0 8px rgba(236, 72, 153, 0.4) !important;
 }

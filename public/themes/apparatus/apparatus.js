@@ -192,13 +192,16 @@
       el.style.setProperty('pointer-events', 'none', 'important');
     });
 
-    // 1. Hide native top navigation bar completely (excluding SubNavigation)
+    // 1. Hide native top navigation bar & SubNavigation completely
     const navSelectors = [
-      'nav:not([class*="SubNavigation"])',
-      'header:not([class*="SubNavigation"])',
-      '[role="navigation"]:not([class*="SubNavigation"])',
+      'nav',
+      'header',
+      '[role="navigation"]',
       '[class*="NavigationBar"]',
-      'div[class*="NavigationBar___StyledDiv"]'
+      'div[class*="NavigationBar___StyledDiv"]',
+      'div[class*="SubNavigation"]',
+      'nav[class*="SubNavigation"]',
+      '[class*="SubNavigation"]'
     ];
     document.querySelectorAll(navSelectors.join(',')).forEach(function (el) {
       el.style.setProperty('display', 'none', 'important');
@@ -209,6 +212,9 @@
       el.style.setProperty('margin', '0', 'important');
       el.style.setProperty('padding', '0', 'important');
       el.style.setProperty('border', 'none', 'important');
+      if (el.matches('[class*="SubNavigation"]') || el.closest('[class*="SubNavigation"]')) {
+        try { el.remove(); } catch(e) {}
+      }
     });
 
     // 2. Hide top bar inside #app if rendered without standard nav tag
@@ -219,8 +225,8 @@
         if (
           el.classList.contains('apparatus-sidebar') ||
           el.id === 'apparatus-dashboard-view' ||
-          el.matches('[class*="DashboardContainer"], [class*="SubNavigation"], main') ||
-          el.closest('[class*="DashboardContainer"], [class*="SubNavigation"]')
+          el.matches('[class*="DashboardContainer"], main') ||
+          el.closest('[class*="DashboardContainer"]')
         ) {
           return;
         }
@@ -228,7 +234,9 @@
           el.querySelector('a[href="/admin"]') ||
           el.querySelector('button[aria-label="Search"]') ||
           el.matches('[class*="NavigationBar"]') ||
-          el.querySelector('[class*="NavigationBar"]')
+          el.querySelector('[class*="NavigationBar"]') ||
+          el.matches('[class*="SubNavigation"]') ||
+          el.querySelector('[class*="SubNavigation"]')
         ) {
           el.style.setProperty('display', 'none', 'important');
           el.style.setProperty('visibility', 'hidden', 'important');
@@ -236,23 +244,47 @@
           el.style.setProperty('margin', '0', 'important');
           el.style.setProperty('padding', '0', 'important');
           el.style.setProperty('border', 'none', 'important');
+          try { el.remove(); } catch(e) {}
         }
       });
     }
 
-    // 3. Hide Pterodactyl and Blueprint footers & copyright
-    document.querySelectorAll('footer, [class*="Blueprint"], [class*="Footer"], p, div, span').forEach(function (el) {
-      if (el.children.length === 0 && (
-        el.textContent.includes('Blueprint') ||
-        el.textContent.includes('Pterodactyl ©') ||
-        el.textContent.includes('Pterodactyl®')
-      )) {
+    // 3. Remove Pterodactyl and Blueprint footers & copyright completely
+    document.querySelectorAll('a[href*="pterodactyl.io"], a[href*="blueprint.zip"]').forEach(function (a) {
+      const container = a.closest('p, footer, div[class*="ContentContainer"], div');
+      if (container && !container.classList.contains('apparatus-sidebar') && !container.closest('.apparatus-sidebar')) {
+        container.style.setProperty('display', 'none', 'important');
+        try { container.remove(); } catch (e) {}
+      } else {
+        try { a.remove(); } catch (e) {}
+      }
+    });
+
+    document.querySelectorAll('footer, [class*="Blueprint"], [class*="Footer"], p, div[class*="ContentContainer"]').forEach(function (el) {
+      if (el.classList.contains('apparatus-sidebar') || el.closest('.apparatus-sidebar')) return;
+      const text = (el.textContent || '').trim();
+      if (
+        (text.includes('Blueprint') && text.includes('©')) ||
+        (text.includes('Pterodactyl') && text.includes('©')) ||
+        text.includes('Pterodactyl®') ||
+        text.includes('2015 - 2026') ||
+        text.includes('2023 - 2026') ||
+        text.includes('blueprint.zip')
+      ) {
         el.style.setProperty('display', 'none', 'important');
         el.style.setProperty('visibility', 'hidden', 'important');
-        if (el.parentElement && (el.parentElement.tagName.toLowerCase() === 'p' || el.parentElement.tagName.toLowerCase() === 'footer')) {
-          el.parentElement.style.setProperty('display', 'none', 'important');
-          el.parentElement.style.setProperty('visibility', 'hidden', 'important');
-        }
+        el.style.setProperty('height', '0', 'important');
+        try { el.remove(); } catch (e) {}
+      }
+    });
+
+    // 4. Equal height & layout improvements for Account cards
+    const accountCards = document.querySelectorAll('div[class*="AccountOverviewContainer"] div.bg-neutral-700, div[class*="AccountApiContainer"] div.bg-neutral-700, div[class*="AccountSSHContainer"] div.bg-neutral-700');
+    accountCards.forEach(function (card) {
+      if (card.parentElement && !card.parentElement.style.height) {
+        card.parentElement.style.display = 'flex';
+        card.parentElement.style.flexDirection = 'column';
+        card.style.flex = '1 1 auto';
       }
     });
   }
