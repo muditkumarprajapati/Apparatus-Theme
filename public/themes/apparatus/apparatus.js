@@ -2263,6 +2263,12 @@
                 </a>
               </li>
               <li>
+                <a href="#apparatus-settings" class="apparatus-nav-link apparatus-settings-link" data-tab="apparatus-settings">
+                  <i class="ri-settings-4-line apparatus-nav-icon"></i>
+                  <span>Apparatus Settings</span>
+                </a>
+              </li>
+              <li>
                 <a href="#addon-settings" class="apparatus-nav-link apparatus-addon-settings-link" data-tab="addon-settings">
                   <i class="ri-stack-line apparatus-nav-icon"></i>
                   <span>Addon Settings</span>
@@ -2390,6 +2396,7 @@
       const panelSettingsLinks = [
         { selector: '.apparatus-panel-settings-link', title: 'Panel Settings', msg: 'Opening Panel Settings configuration...' },
         { selector: '.apparatus-panel-editor-link', title: 'Panel Editor', msg: 'Opening Panel Editor customization module...' },
+        { selector: '.apparatus-settings-link', title: 'Apparatus Settings', msg: 'Opening Apparatus Theme configuration...' },
         { selector: '.apparatus-addon-settings-link', title: 'Addon Settings', msg: 'Opening Addon Settings configuration...' }
       ];
 
