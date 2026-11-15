@@ -553,6 +553,7 @@
         actContainer.style.setProperty('max-width', '100%', 'important');
         actContainer.style.setProperty('margin-left', '0', 'important');
         actContainer.style.setProperty('margin-right', '0', 'important');
+        actContainer.style.setProperty('padding', '0', 'important');
       }
 
       // 8. Enhance Activity Log IP addresses with Flag, Blur, and Clickable Location Lookup

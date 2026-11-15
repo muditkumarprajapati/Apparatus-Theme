@@ -1055,9 +1055,8 @@ body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-ser
   opacity: 1 !important;
   width: 90% !important;
   max-width: 1380px !important;
-  margin: 0 auto !important;
-  padding-top: 2.25rem !important;
-  padding-bottom: 3.5rem !important;
+  margin: 1.5rem auto 3.5rem auto !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
 }
 
@@ -3061,11 +3060,9 @@ body:not(.apparatus-auth) div[class*="ActivityLogEntry"] {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  gap: 1.35rem !important;
+  gap: 1.25rem !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  padding: 1.25rem 2rem !important;
-  padding-left: 2rem !important;
-  padding-right: 2rem !important;
+  padding: 1.25rem 1.75rem !important;
   transition: all 0.2s ease !important;
   background: transparent !important;
   width: 100% !important;
@@ -4904,13 +4901,20 @@ html.lenis body {
    Account View: User Profile Studio (Full-Width, Non-Capsule Luxury Layout)
    ============================================================================== */
 
-/* Account View Page Spacing (Refined Balanced Gap - No Excess Spacing!) */
-div[class*="AccountOverviewContainer"],
-div[class*="PageContentBlock"] {
+/* Account View Page Spacing */
+div[class*="AccountOverviewContainer"] {
   padding-top: 1.5rem !important;
   padding-bottom: 3rem !important;
-  padding-left: 2rem !important;
-  padding-right: 2rem !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+div[class*="PageContentBlock"] {
+  padding-top: 0 !important;
+  padding-bottom: 3rem !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
   box-sizing: border-box !important;
 }
 
@@ -4918,8 +4922,8 @@ div[class*="AccountOverviewContainer"],
 div[class*="PageContentBlock"] > div:not([class*="ActivityLogContainer"]) {
   display: flex !important;
   flex-direction: column !important;
-  width: 90% !important;
-  max-width: 90% !important;
+  width: 100% !important;
+  max-width: 100% !important;
   margin: 0 auto !important;
   gap: 1.25rem !important;
 }
