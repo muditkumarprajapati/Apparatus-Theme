@@ -826,6 +826,45 @@ body.apparatus-page-servers #apparatus-area-4 {
   width: 100% !important;
 }
 
+/* On /servers: show ONLY Game Servers (hide Cloud VPS tab completely) */
+body.apparatus-page-servers #apparatus-tab-btn-vps {
+  display: none !important;
+}
+
+/* Transform tabs nav into a bold, clean page title on /servers */
+body.apparatus-page-servers .apparatus-tabs-nav {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  gap: 0 !important;
+}
+
+body.apparatus-page-servers #apparatus-tab-btn-servers {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  cursor: default !important;
+  pointer-events: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+body.apparatus-page-servers #apparatus-tab-btn-servers i {
+  font-size: 1.35rem !important;
+  color: #f472b6 !important;
+}
+
+body.apparatus-page-servers .apparatus-hub-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding-bottom: 1rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
 /* Visible Content on Non-Dashboard/Non-Servers Pages (Account, API Keys, SSH Keys, Activity, Server details, etc.) */
 body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="DashboardContainer"] {
   display: flex !important;
@@ -1363,49 +1402,91 @@ body:not(.apparatus-auth) span.apparatus-user-name {
   margin-top: 1rem;
 }
 
-/* Area 4: Empty Servers State - Clean Standard View */
+/* Area 4: Empty Servers State - Clean Transparent Glass View */
 .apparatus-empty-servers {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 3rem 1.5rem;
+  padding: 3.5rem 1.5rem 2.5rem 1.5rem;
 }
 
 .apparatus-empty-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  background: rgba(244, 114, 182, 0.1);
+  border: 1px solid rgba(244, 114, 182, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 1.6rem;
-  margin-bottom: 1rem;
+  color: #f472b6;
+  font-size: 2rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 0 24px rgba(244, 114, 182, 0.15);
+  transition: all 0.3s ease;
+}
+
+.apparatus-empty-servers:hover .apparatus-empty-icon {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 0 32px rgba(244, 114, 182, 0.28);
 }
 
 .apparatus-empty-title {
-  font-size: 1.05rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #fff;
-  margin: 0 0 0.35rem 0;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.01em;
 }
 
 .apparatus-empty-desc {
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   color: rgba(255, 255, 255, 0.55);
-  max-width: 380px;
-  line-height: 1.5;
-  margin: 0 0 1.25rem 0;
+  max-width: 440px;
+  line-height: 1.55;
+  margin: 0 0 1.5rem 0;
 }
 
 .apparatus-empty-actions {
   display: flex;
   align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.apparatus-empty-features {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+  max-width: 520px;
+}
+
+.apparatus-feature-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.apparatus-feature-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
 }
 
 .apparatus-servers-grid {

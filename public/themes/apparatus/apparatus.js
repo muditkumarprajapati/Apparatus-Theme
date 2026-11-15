@@ -189,6 +189,14 @@
       if (isServerTab) {
         document.body.classList.add('apparatus-page-servers');
         document.body.classList.remove('apparatus-page-dashboard');
+        const sPane = document.getElementById('apparatus-pane-servers');
+        const vPane = document.getElementById('apparatus-pane-vps');
+        if (sPane) sPane.style.display = 'block';
+        if (vPane) vPane.style.display = 'none';
+        const sBtn = document.getElementById('apparatus-tab-btn-servers');
+        const vBtn = document.getElementById('apparatus-tab-btn-vps');
+        if (sBtn) sBtn.classList.add('active');
+        if (vBtn) vBtn.classList.remove('active');
       } else {
         document.body.classList.add('apparatus-page-dashboard');
         document.body.classList.remove('apparatus-page-servers');
@@ -1086,15 +1094,29 @@
           if (container) {
             container.innerHTML = `
               <div class="apparatus-empty-servers">
-                <div class="apparatus-empty-icon"><i class="ri-gamepad-line"></i></div>
-                <h4 class="apparatus-empty-title">No Game Servers Found</h4>
+                <div class="apparatus-empty-icon"><i class="ri-server-line"></i></div>
+                <h4 class="apparatus-empty-title">No Game Servers Active</h4>
                 <p class="apparatus-empty-desc">
-                  You don't have any active game servers associated with your account.
+                  You do not have any active game servers yet. Deploy high-performance Minecraft, Rust, CS2, or bot instances with instant setup.
                 </p>
                 <div class="apparatus-empty-actions">
                   <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
-                    <i class="ri-add-line"></i> Deploy Server
+                    <i class="ri-rocket-line"></i> Deploy Server
                   </a>
+                  <a href="#resource" class="apparatus-btn apparatus-btn-glass" id="apparatus-empty-view-res-btn">
+                    <i class="ri-cpu-line"></i> View Resources
+                  </a>
+                </div>
+                <div class="apparatus-empty-features">
+                  <div class="apparatus-feature-chip">
+                    <i class="ri-flashlight-line" style="color: #fbbf24;"></i> Instant Setup
+                  </div>
+                  <div class="apparatus-feature-chip">
+                    <i class="ri-shield-check-line" style="color: #34d399;"></i> 3.2 Tbps DDoS Defense
+                  </div>
+                  <div class="apparatus-feature-chip">
+                    <i class="ri-cpu-line" style="color: #38bdf8;"></i> AMD EPYC &bull; Gen4 NVMe
+                  </div>
                 </div>
               </div>
             `;
@@ -1193,15 +1215,29 @@
     if (container) {
       container.innerHTML = `
         <div class="apparatus-empty-servers">
-          <div class="apparatus-empty-icon"><i class="ri-gamepad-line"></i></div>
-          <h4 class="apparatus-empty-title">No Game Servers Found</h4>
+          <div class="apparatus-empty-icon"><i class="ri-server-line"></i></div>
+          <h4 class="apparatus-empty-title">No Game Servers Active</h4>
           <p class="apparatus-empty-desc">
-            You don't have any active game servers associated with your account.
+            You do not have any active game servers yet. Deploy high-performance Minecraft, Rust, CS2, or bot instances with instant setup.
           </p>
           <div class="apparatus-empty-actions">
             <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
-              <i class="ri-add-line"></i> Deploy Server
+              <i class="ri-rocket-line"></i> Deploy Server
             </a>
+            <a href="#resource" class="apparatus-btn apparatus-btn-glass" id="apparatus-empty-view-res-btn">
+              <i class="ri-cpu-line"></i> View Resources
+            </a>
+          </div>
+          <div class="apparatus-empty-features">
+            <div class="apparatus-feature-chip">
+              <i class="ri-flashlight-line" style="color: #fbbf24;"></i> Instant Setup
+            </div>
+            <div class="apparatus-feature-chip">
+              <i class="ri-shield-check-line" style="color: #34d399;"></i> 3.2 Tbps DDoS Defense
+            </div>
+            <div class="apparatus-feature-chip">
+              <i class="ri-cpu-line" style="color: #38bdf8;"></i> AMD EPYC &bull; Gen4 NVMe
+            </div>
           </div>
         </div>
       `;
