@@ -39,8 +39,8 @@
   })();
 
   function isAuthPage() {
-    return window.location.pathname.startsWith('/auth') || 
-           window.location.pathname === '/login';
+    return window.location.pathname.startsWith('/auth') ||
+      window.location.pathname === '/login';
   }
 
   function isUnauthorizedAdminAttempt() {
@@ -78,7 +78,7 @@
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.04);
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // Toast / Popup Notification System
@@ -98,11 +98,11 @@
       iconSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
     }
 
-    toast.innerHTML = 
+    toast.innerHTML =
       '<div class="apparatus-toast-icon">' + iconSvg + '</div>' +
       '<div class="apparatus-toast-content">' +
-        '<div class="apparatus-toast-title">' + title + '</div>' +
-        '<div class="apparatus-toast-msg">' + message + '</div>' +
+      '<div class="apparatus-toast-title">' + title + '</div>' +
+      '<div class="apparatus-toast-msg">' + message + '</div>' +
       '</div>';
 
     document.body.appendChild(toast);
@@ -341,7 +341,7 @@
       el.style.setProperty('padding', '0', 'important');
       el.style.setProperty('border', 'none', 'important');
       if (el.id === 'SubNavigation' || el.matches('[class*="SubNavigation"]') || el.closest('[class*="SubNavigation"], #SubNavigation')) {
-        try { el.remove(); } catch(e) {}
+        try { el.remove(); } catch (e) { }
       }
     });
 
@@ -374,7 +374,7 @@
           el.style.setProperty('margin', '0', 'important');
           el.style.setProperty('padding', '0', 'important');
           el.style.setProperty('border', 'none', 'important');
-          try { el.remove(); } catch(e) {}
+          try { el.remove(); } catch (e) { }
         }
       });
     }
@@ -384,9 +384,9 @@
       const container = a.closest('p, footer, div[class*="ContentContainer"], div');
       if (container && !container.classList.contains('apparatus-sidebar') && !container.closest('.apparatus-sidebar')) {
         container.style.setProperty('display', 'none', 'important');
-        try { container.remove(); } catch (e) {}
+        try { container.remove(); } catch (e) { }
       } else {
-        try { a.remove(); } catch (e) {}
+        try { a.remove(); } catch (e) { }
       }
     });
 
@@ -404,7 +404,7 @@
         el.style.setProperty('display', 'none', 'important');
         el.style.setProperty('visibility', 'hidden', 'important');
         el.style.setProperty('height', '0', 'important');
-        try { el.remove(); } catch (e) {}
+        try { el.remove(); } catch (e) { }
       }
     });
 
@@ -537,7 +537,7 @@
         }
         return;
       }
-    } catch (e) {}
+    } catch (e) { }
 
     try {
       const res = await fetch('https://api.country.is/' + ip);
@@ -546,7 +546,7 @@
         if (data && data.country) {
           const code = data.country.toLowerCase();
           ipCountryCache.set(ip, code);
-          try { localStorage.setItem('apparatus_geo_' + ip, code); } catch (e) {}
+          try { localStorage.setItem('apparatus_geo_' + ip, code); } catch (e) { }
           if (imgEl) {
             imgEl.src = 'https://flagcdn.com/20x15/' + code + '.png';
             imgEl.style.display = 'inline-block';
@@ -554,7 +554,7 @@
           }
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // Activity Log IP Blur & Flag enhancement (Clean inline layout, no box badge, no globe icon)
@@ -1021,7 +1021,7 @@
           vps: Object.assign({}, defaults.vps, parsed.vps || {})
         };
       }
-    } catch (e) {}
+    } catch (e) { }
     return defaults;
   }
   window.getApparatusResources = getApparatusResources;
@@ -1029,7 +1029,7 @@
     try {
       localStorage.setItem('apparatus_allocated_resources', JSON.stringify(data));
       renderResourcePage();
-    } catch (e) {}
+    } catch (e) { }
   };
 
   function renderResourcePage() {
@@ -1125,7 +1125,7 @@
           }
         }
       }
-    } catch (e) {}
+    } catch (e) { }
 
     // 2. Fetch Servers & aggregate capacity
     try {
@@ -1324,8 +1324,8 @@
         <!-- Top Section: Dynamic Hero Banner -->
         <div class="apparatus-card apparatus-card-welcome" id="apparatus-area-1">
           <div class="apparatus-welcome-content">
-            <h1 class="apparatus-welcome-title">${greeting}, <span class="apparatus-user-name" id="apparatus-welcome-username">${username}</span></h1>
-            <p class="apparatus-welcome-desc">ArixByte Cloud Console &bull; High Performance Game Servers &amp; KVM Cloud VPS</p>
+            <h1 class="apparatus-welcome-title">${greeting}, <span class="apparatus-user-name" id="apparatus-welcome-username">${username}</span>!</h1>
+            <p class="apparatus-welcome-desc">Deploy and manage your game servers, cloud VPS, and infrastructure.</p>
             <div class="apparatus-welcome-actions">
               <a href="/servers" class="apparatus-btn apparatus-btn-primary" id="apparatus-btn-to-servers">
                 <i class="ri-server-line apparatus-btn-icon-servers"></i> View Servers
@@ -1334,7 +1334,7 @@
                 <i class="ri-hard-drive-3-line apparatus-btn-icon-vps"></i> Cloud VPS
               </button>
               <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-hero-store-btn">
-                <i class="ri-shopping-bag-3-line apparatus-btn-icon-store"></i> Billing &amp; Store
+                <i class="ri-wallet-3-line apparatus-btn-icon-store"></i> Billing &amp; Store
               </button>
               <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass">
                 <i class="ri-discord-fill apparatus-btn-icon-discord"></i> Discord Community
@@ -4322,7 +4322,7 @@
                 'X-Requested-With': 'XMLHttpRequest'
               }
             });
-          } catch (err) {}
+          } catch (err) { }
           window.location.href = '/auth/login';
         });
       }
@@ -5084,8 +5084,8 @@
     if (parallaxInitialized) return;
     parallaxInitialized = true;
 
-    gsap.fromTo(".login-card", 
-      { autoAlpha: 0, y: 35, scale: 0.96 }, 
+    gsap.fromTo(".login-card",
+      { autoAlpha: 0, y: 35, scale: 0.96 },
       { autoAlpha: 1, y: 0, scale: 1, duration: 0.75, ease: "power3.out", delay: 0.05 }
     );
 
@@ -5146,7 +5146,7 @@
     initApparatus();
   }
 
-  
+
   // Global click interception: block non-admins attempting to access /admin
   document.addEventListener('click', function (e) {
     const a = e.target.closest('a[href*="/admin"], a[data-path="/admin"]');
