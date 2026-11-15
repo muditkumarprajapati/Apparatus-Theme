@@ -1465,16 +1465,16 @@
             <p class="apparatus-welcome-desc">Deploy and manage your game servers, cloud VPS, and infrastructure.</p>
             <div class="apparatus-welcome-actions apparatus-welcome-socials">
               <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass apparatus-social-btn apparatus-social-web" title="ArixByte Official Website">
-                <i class="ri-global-line"></i> <span>Website</span> <i class="ri-arrow-right-up-line apparatus-btn-ext"></i>
+                <i class="ri-global-line"></i> <span>Website</span>
               </a>
               <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass apparatus-social-btn apparatus-social-discord" title="Discord Community">
-                <i class="ri-discord-fill"></i> <span>Discord</span> <i class="ri-arrow-right-up-line apparatus-btn-ext"></i>
+                <i class="ri-discord-fill"></i> <span>Discord</span>
               </a>
               <a href="https://instagram.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass apparatus-social-btn apparatus-social-insta" title="Instagram">
-                <i class="ri-instagram-line"></i> <span>Instagram</span> <i class="ri-arrow-right-up-line apparatus-btn-ext"></i>
+                <i class="ri-instagram-line"></i> <span>Instagram</span>
               </a>
               <a href="https://wa.me/918218444633" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass apparatus-social-btn apparatus-social-wa" title="WhatsApp Support">
-                <i class="ri-whatsapp-line"></i> <span>WhatsApp</span> <i class="ri-arrow-right-up-line apparatus-btn-ext"></i>
+                <i class="ri-whatsapp-line"></i> <span>WhatsApp</span>
               </a>
             </div>
           </div>
