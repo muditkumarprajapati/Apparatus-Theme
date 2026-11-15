@@ -726,7 +726,7 @@
         return;
       }
 
-      coins += 25;
+      coins += 2;
       localStorage.setItem('apparatus_coins', coins.toString());
       localStorage.setItem('apparatus_last_daily_claim', curNow.toString());
       refreshCoinDisplays();
@@ -734,7 +734,7 @@
       dailyBtn.disabled = true;
       dailyBtn.innerHTML = '<i class="ri-check-line"></i> Claimed (24h left)';
       dailyBtn.classList.add('apparatus-btn-disabled');
-      showToast('success', 'Daily Reward Claimed!', '🎉 +25 Referral Points added! Your total is now ' + coins + ' 🪙');
+      showToast('success', 'Daily Reward Claimed!', '🎉 +2 Coins added! Your total is now ' + coins + ' 🪙');
     });
   }
 
@@ -937,6 +937,16 @@
       const curCoins = parseInt(localStorage.getItem('apparatus_coins') || '100', 10);
       rCoins.textContent = (isNaN(curCoins) ? 100 : curCoins).toLocaleString();
     }
+
+    // Live Gauges Text
+    const gRam = document.getElementById('res-gauge-ram-text');
+    if (gRam) gRam.textContent = `0 MB / ${res.server.ram} (0%)`;
+    const gCpu = document.getElementById('res-gauge-cpu-text');
+    if (gCpu) gCpu.textContent = `0% / ${res.server.cpu} In Use`;
+    const gDisk = document.getElementById('res-gauge-disk-text');
+    if (gDisk) gDisk.textContent = `0 GB / ${res.server.disk} Used`;
+    const gPorts = document.getElementById('res-gauge-ports-text');
+    if (gPorts) gPorts.textContent = `0 / ${res.server.ports} Assigned`;
   }
 
   // Load API Data for Dashboard (Servers, Activities, Account Details)
@@ -1589,6 +1599,67 @@
           </div>
         </div>
 
+        <!-- Live Resource Usage Gauges (Used vs Allocated) -->
+        <div class="apparatus-card apparatus-resource-card apparatus-res-gauges-card">
+          <div class="apparatus-card-header apparatus-res-card-header">
+            <div class="apparatus-res-card-title-group">
+              <div class="apparatus-res-badge-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+                <i class="ri-pulse-line"></i>
+              </div>
+              <div>
+                <h2 class="apparatus-card-title">Live Resource Utilization</h2>
+                <span class="apparatus-res-card-sub">Real-time quota consumption across active instances</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="apparatus-res-gauges-grid">
+            <!-- Gauge 1: RAM -->
+            <div class="apparatus-res-gauge-tile">
+              <div class="apparatus-res-gauge-head">
+                <span class="apparatus-res-gauge-title"><i class="ri-database-2-line" style="color: #f472b6;"></i> Memory (RAM)</span>
+                <span class="apparatus-res-gauge-val" id="res-gauge-ram-text">0 MB / 0 MB (0%)</span>
+              </div>
+              <div class="apparatus-progress-track">
+                <div class="apparatus-progress-bar apparatus-progress-ram" id="res-gauge-ram-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Gauge 2: CPU Compute -->
+            <div class="apparatus-res-gauge-tile">
+              <div class="apparatus-res-gauge-head">
+                <span class="apparatus-res-gauge-title"><i class="ri-cpu-line" style="color: #38bdf8;"></i> CPU Compute</span>
+                <span class="apparatus-res-gauge-val" id="res-gauge-cpu-text">0% / 0% In Use</span>
+              </div>
+              <div class="apparatus-progress-track">
+                <div class="apparatus-progress-bar apparatus-progress-cpu" id="res-gauge-cpu-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Gauge 3: Disk Storage -->
+            <div class="apparatus-res-gauge-tile">
+              <div class="apparatus-res-gauge-head">
+                <span class="apparatus-res-gauge-title"><i class="ri-hard-drive-2-line" style="color: #34d399;"></i> NVMe Storage</span>
+                <span class="apparatus-res-gauge-val" id="res-gauge-disk-text">0 GB / 0 GB Used</span>
+              </div>
+              <div class="apparatus-progress-track">
+                <div class="apparatus-progress-bar apparatus-progress-disk" id="res-gauge-disk-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Gauge 4: Ports & Allocations -->
+            <div class="apparatus-res-gauge-tile">
+              <div class="apparatus-res-gauge-head">
+                <span class="apparatus-res-gauge-title"><i class="ri-share-network-line" style="color: #fbbf24;"></i> Allocations &amp; Ports</span>
+                <span class="apparatus-res-gauge-val" id="res-gauge-ports-text">0 / 0 Assigned</span>
+              </div>
+              <div class="apparatus-progress-track">
+                <div class="apparatus-progress-bar apparatus-progress-ports" id="res-gauge-ports-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Two-Column Main Resource Grid -->
         <div class="apparatus-resource-grid">
 
@@ -1890,7 +1961,7 @@
                     </div>
                   </div>
                   <div class="apparatus-res-row-right">
-                    <span class="apparatus-res-badge-val" style="color: #34d399; border-color: rgba(52, 211, 153, 0.3);">+25 Coins</span>
+                    <span class="apparatus-res-badge-val" style="color: #34d399; border-color: rgba(52, 211, 153, 0.3);">+2 Coins</span>
                   </div>
                 </div>
 
