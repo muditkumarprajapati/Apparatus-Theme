@@ -71,7 +71,7 @@ body:not(.apparatus-auth) #app {
     margin-left: 250px !important;
     width: calc(100% - 250px) !important;
     box-sizing: border-box !important;
-    padding-top: 1.5rem !important;
+    padding-top: 0 !important;
   }
 }
 
@@ -85,19 +85,22 @@ body:not(.apparatus-auth) #app {
 body:not(.apparatus-auth) #app > div,
 body:not(.apparatus-auth) main,
 body:not(.apparatus-auth) div.min-h-screen,
-body:not(.apparatus-auth) div.w-full.bg-neutral-900:not(nav):not([class*="NavigationBar"]),
-body:not(.apparatus-auth) .bg-neutral-800,
-body:not(.apparatus-auth) .bg-neutral-700 {
+body:not(.apparatus-auth) div.w-full.bg-neutral-900:not(nav):not([class*="NavigationBar"]) {
   background: transparent !important;
 }
 
-/* Hide native Pterodactyl DashboardContainer to feature our custom 4-card transparent dashboard */
-body:not(.apparatus-auth) div[class*="DashboardContainer"] {
-  display: none !important;
+/* Glassmorphic native Pterodactyl panels and containers */
+body:not(.apparatus-auth) .bg-neutral-800,
+body:not(.apparatus-auth) .bg-neutral-700 {
+  background: rgba(14, 10, 22, 0.42) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
 }
 
 /* Completely hide native top navbar since all controls are in the left sidebar */
-body:not(.apparatus-auth) nav,
+body:not(.apparatus-auth) nav:not([class*="SubNavigation"]),
 body:not(.apparatus-auth) div[class*="NavigationBar___StyledDiv"],
 body:not(.apparatus-auth) [class*="NavigationBar"] {
   display: none !important;
@@ -111,10 +114,34 @@ body:not(.apparatus-auth) [class*="NavigationBar"] {
 }
 
 body:not(.apparatus-auth) div[class*="SubNavigation"] {
-  background: rgba(18, 18, 24, 0.55) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(14, 10, 22, 0.55) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 30 !important;
+}
+
+body:not(.apparatus-auth) div[class*="SubNavigation"] a {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-weight: 500 !important;
+  font-size: 0.92rem !important;
+  padding: 0.85rem 1.25rem !important;
+  transition: all 0.2s ease !important;
+  text-decoration: none !important;
+}
+
+body:not(.apparatus-auth) div[class*="SubNavigation"] a:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+body:not(.apparatus-auth) div[class*="SubNavigation"] a.active,
+body:not(.apparatus-auth) div[class*="SubNavigation"] a[aria-current="page"] {
+  color: #fff !important;
+  border-bottom: 2px solid #ec4899 !important;
+  font-weight: 600 !important;
 }
 
 /* Enhance text contrast on dashboard */
@@ -785,6 +812,24 @@ body.apparatus-page-servers #apparatus-area-4 {
   width: 100% !important;
 }
 
+/* Visible Content on Non-Dashboard/Non-Servers Pages (Account, API Keys, SSH Keys, Activity, Server details, etc.) */
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="DashboardContainer"] {
+  display: flex !important;
+  visibility: visible !important;
+  height: auto !important;
+  min-height: calc(100vh - 120px) !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 1.5rem 1.5rem 4rem 1.5rem !important;
+  box-sizing: border-box !important;
+}
+
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="DashboardContainer"] > div {
+  width: 100% !important;
+}
+
 #apparatus-dashboard-view {
   display: none;
 }
@@ -1273,11 +1318,10 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 /* ==============================================================================
    FORCE HIDE PTERODACTYL TOP NAVBAR & ALL BLUEPRINT / PTERODACTYL FOOTERS
    ============================================================================== */
-body:not(.apparatus-auth) nav,
-body:not(.apparatus-auth) header,
-body:not(.apparatus-auth) [role="navigation"],
+body:not(.apparatus-auth) nav:not([class*="SubNavigation"]),
+body:not(.apparatus-auth) header:not([class*="SubNavigation"]),
+body:not(.apparatus-auth) [role="navigation"]:not([class*="SubNavigation"]),
 body:not(.apparatus-auth) [class*="NavigationBar"],
-body:not(.apparatus-auth) [class*="Navigation___"],
 body:not(.apparatus-auth) div[class*="NavigationBar___StyledDiv"],
 body:not(.apparatus-auth) #app > div > div.bg-neutral-900:first-child,
 body:not(.apparatus-auth) #app > div > div.shadow-md:first-child {
@@ -1347,4 +1391,186 @@ div[style*="height:2px"] {
   top: -99999px !important;
   left: -99999px !important;
   clip: rect(0, 0, 0, 0) !important;
+}
+
+
+/* ==============================================================================
+   NATIVE PTERODACTYL ACCOUNT & PAGE CONTENT GLASSMORPHISM
+   ============================================================================== */
+
+/* TitledGreyBox & Content Cards */
+body:not(.apparatus-auth) div[class*="TitledGreyBox"],
+body:not(.apparatus-auth) div[class*="ContentBox"],
+body:not(.apparatus-auth) div[class*="Card"] {
+  background: rgba(14, 10, 22, 0.42) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2) !important;
+  overflow: hidden !important;
+  margin-bottom: 1.5rem !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+body:not(.apparatus-auth) div[class*="TitledGreyBox"]:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28) !important;
+}
+
+/* Card Header in TitledGreyBox */
+body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:first-child {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 1rem 1.25rem !important;
+}
+
+body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:first-child p,
+body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:first-child h2,
+body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:first-child h3 {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: #fff !important;
+}
+
+/* Card Body */
+body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:last-child {
+  background: transparent !important;
+  padding: 1.25rem !important;
+}
+
+/* GreyRowBox (API Keys, SSH Keys, Activity Log rows) */
+body:not(.apparatus-auth) div[class*="GreyRowBox"] {
+  background: rgba(18, 14, 28, 0.5) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  margin-bottom: 0.75rem !important;
+  padding: 1rem 1.25rem !important;
+  transition: all 0.2s ease !important;
+}
+
+body:not(.apparatus-auth) div[class*="GreyRowBox"]:hover {
+  background: rgba(18, 14, 28, 0.7) !important;
+  border-color: rgba(236, 72, 153, 0.4) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Form Inputs & Textareas */
+body:not(.apparatus-auth) input[type="text"],
+body:not(.apparatus-auth) input[type="password"],
+body:not(.apparatus-auth) input[type="email"],
+body:not(.apparatus-auth) input[type="number"],
+body:not(.apparatus-auth) textarea,
+body:not(.apparatus-auth) select,
+body:not(.apparatus-auth) div[class*="Input"] input,
+body:not(.apparatus-auth) div[class*="Input___StyledInput"] {
+  background: rgba(0, 0, 0, 0.35) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 10px !important;
+  color: #fff !important;
+  padding: 0.75rem 1rem !important;
+  font-family: var(--apparatus-font) !important;
+  font-size: 0.92rem !important;
+  transition: all 0.2s ease !important;
+}
+
+body:not(.apparatus-auth) input:focus,
+body:not(.apparatus-auth) textarea:focus,
+body:not(.apparatus-auth) select:focus {
+  background: rgba(0, 0, 0, 0.55) !important;
+  border-color: #ec4899 !important;
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25) !important;
+  outline: none !important;
+}
+
+/* Form Labels & Help Texts */
+body:not(.apparatus-auth) label {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 600 !important;
+  font-size: 0.88rem !important;
+  margin-bottom: 0.4rem !important;
+  display: block;
+}
+
+/* Buttons in Forms and Cards */
+body:not(.apparatus-auth) button[class*="Button"] {
+  border-radius: 10px !important;
+  font-family: var(--apparatus-font) !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  padding: 0.7rem 1.4rem !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer !important;
+}
+
+/* Primary Action Buttons */
+body:not(.apparatus-auth) button[class*="Button--primary"],
+body:not(.apparatus-auth) button[type="submit"],
+body:not(.apparatus-auth) .bg-primary-500,
+body:not(.apparatus-auth) button[class*="Button"]:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]) {
+  background: linear-gradient(135deg, #ec4899, #db2777) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35) !important;
+}
+
+body:not(.apparatus-auth) button[class*="Button--primary"]:hover,
+body:not(.apparatus-auth) button[type="submit"]:hover,
+body:not(.apparatus-auth) .bg-primary-500:hover,
+body:not(.apparatus-auth) button[class*="Button"]:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):hover {
+  filter: brightness(1.1) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5) !important;
+}
+
+/* Secondary / Ghost Buttons */
+body:not(.apparatus-auth) button[class*="Button--secondary"],
+body:not(.apparatus-auth) button[class*="Button--ghost"] {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #fff !important;
+}
+
+body:not(.apparatus-auth) button[class*="Button--secondary"]:hover,
+body:not(.apparatus-auth) button[class*="Button--ghost"]:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Danger Buttons */
+body:not(.apparatus-auth) button[class*="Button--danger"],
+body:not(.apparatus-auth) button.bg-red-500 {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* Modal Dialogs / Popup Windows */
+body:not(.apparatus-auth) div[class*="Modal"],
+body:not(.apparatus-auth) div[class*="Dialog"],
+body:not(.apparatus-auth) div[class*="ModalMask"] > div {
+  background: rgba(14, 10, 22, 0.88) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Activity Log table / list styling */
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div[class*="GreyRowBox"],
+body:not(.apparatus-auth) table {
+  background: rgba(14, 10, 22, 0.45) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
 }

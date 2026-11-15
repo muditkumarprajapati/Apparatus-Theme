@@ -95,39 +95,71 @@
   }
 
 
+  // Accurate Active Sidebar Route Highlighting
+  function updateActiveSidebarLinks() {
+    const rawPath = window.location.pathname || '/';
+    // Normalize path by stripping trailing slash (unless root '/')
+    const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
+
+    const isServerTab = currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers';
+    const isDashboardTab = (currentPath === '/' || currentPath === '/dashboard') && !isServerTab;
+
+    const links = document.querySelectorAll('.apparatus-nav-link[data-path], .apparatus-nav-link[data-tab]');
+    links.forEach(function (link) {
+      const tab = link.getAttribute('data-tab');
+      const pAttr = link.getAttribute('data-path');
+      const p = pAttr ? ((pAttr.length > 1 && pAttr.endsWith('/')) ? pAttr.slice(0, -1) : pAttr) : '';
+
+      let isActive = false;
+
+      if (tab === 'dashboard' || p === '/') {
+        isActive = isDashboardTab;
+      } else if (tab === 'servers' || p === '/servers') {
+        isActive = isServerTab;
+      } else if (p === '/account') {
+        // Account Credentials should ONLY be active on exact /account, NOT on /account/api, /account/ssh, etc.
+        isActive = currentPath === '/account';
+      } else if (p) {
+        // Sub-routes such as /account/api, /account/ssh, /account/activity, /admin
+        isActive = currentPath === p || currentPath.startsWith(p + '/');
+      }
+
+      if (isActive) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  }
+
   function applyViewMode() {
     if (isAuthPage()) return;
 
-    const currentPath = window.location.pathname;
-    const isServerTab = currentPath === '/servers' || currentPath.startsWith('/servers') || window.location.hash === '#servers';
+    const rawPath = window.location.pathname || '/';
+    const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
+
+    const isServerTab = currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers';
     const isDashboardTab = (currentPath === '/' || currentPath === '/dashboard') && !isServerTab;
     const isHomeRoute = isDashboardTab || isServerTab;
 
     const hero = document.getElementById('apparatus-dashboard-view');
-    const dashLink = document.querySelector('.apparatus-nav-link[data-tab="dashboard"]');
-    const serverLink = document.querySelector('.apparatus-nav-link[data-tab="servers"]');
 
     if (isHomeRoute) {
       if (hero) hero.style.display = 'block';
 
       if (isServerTab) {
-        if (dashLink) dashLink.classList.remove('active');
-        if (serverLink) serverLink.classList.add('active');
         document.body.classList.add('apparatus-page-servers');
         document.body.classList.remove('apparatus-page-dashboard');
       } else {
-        if (dashLink) dashLink.classList.add('active');
-        if (serverLink) serverLink.classList.remove('active');
         document.body.classList.add('apparatus-page-dashboard');
         document.body.classList.remove('apparatus-page-servers');
       }
     } else {
-      if (dashLink) dashLink.classList.remove('active');
-      if (serverLink) serverLink.classList.remove('active');
       if (hero) hero.style.display = 'none';
       document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-view-dashboard', 'apparatus-view-servers');
     }
 
+    updateActiveSidebarLinks();
     cleanPterodactylElements();
   }
 
@@ -160,13 +192,12 @@
       el.style.setProperty('pointer-events', 'none', 'important');
     });
 
-    // 1. Hide native top navigation bar completely
+    // 1. Hide native top navigation bar completely (excluding SubNavigation)
     const navSelectors = [
-      'nav',
-      'header',
-      '[role="navigation"]',
+      'nav:not([class*="SubNavigation"])',
+      'header:not([class*="SubNavigation"])',
+      '[role="navigation"]:not([class*="SubNavigation"])',
       '[class*="NavigationBar"]',
-      '[class*="Navigation___"]',
       'div[class*="NavigationBar___StyledDiv"]'
     ];
     document.querySelectorAll(navSelectors.join(',')).forEach(function (el) {
@@ -186,9 +217,18 @@
       const topDivs = app.querySelectorAll('& > div > div, & > div > header, & > div > nav');
       topDivs.forEach(function (el) {
         if (
+          el.classList.contains('apparatus-sidebar') ||
+          el.id === 'apparatus-dashboard-view' ||
+          el.matches('[class*="DashboardContainer"], [class*="SubNavigation"], main') ||
+          el.closest('[class*="DashboardContainer"], [class*="SubNavigation"]')
+        ) {
+          return;
+        }
+        if (
           el.querySelector('a[href="/admin"]') ||
           el.querySelector('button[aria-label="Search"]') ||
-          (el.textContent.includes('Pterodactyl') && !el.classList.contains('apparatus-sidebar') && el.tagName.toLowerCase() !== 'main')
+          el.matches('[class*="NavigationBar"]') ||
+          el.querySelector('[class*="NavigationBar"]')
         ) {
           el.style.setProperty('display', 'none', 'important');
           el.style.setProperty('visibility', 'hidden', 'important');
@@ -799,18 +839,6 @@
       const toggle = document.getElementById('apparatus-mobile-toggle');
       if (toggle) toggle.style.display = '';
     }
-
-    // Update active route link
-    const currentPath = window.location.pathname;
-    const links = document.querySelectorAll('.apparatus-nav-link[data-path]');
-    links.forEach(function (link) {
-      const p = link.getAttribute('data-path');
-      if (p !== '/' && currentPath.startsWith(p)) {
-        link.classList.add('active');
-      } else {
-        link.classList.remove('active');
-      }
-    });
 
     applyViewMode();
   }
@@ -1439,21 +1467,43 @@
   }
 
   
-  // Dynamic cleanup observer for Pterodactyl DOM updates
+  // Dynamic cleanup and route sync observer for Pterodactyl SPA updates
+  let lastObservedPath = window.location.pathname;
   const apparatusObserver = new MutationObserver(function () {
     if (!isAuthPage()) {
       cleanPterodactylElements();
+      if (window.location.pathname !== lastObservedPath) {
+        lastObservedPath = window.location.pathname;
+        applyViewMode();
+      }
     }
   });
   apparatusObserver.observe(document.documentElement, { childList: true, subtree: true });
 
-  window.addEventListener('popstate', initApparatus);
+  window.addEventListener('popstate', function () {
+    initApparatus();
+    applyViewMode();
+  });
   window.addEventListener('hashchange', applyViewMode);
+
   const origPushState = history.pushState;
   if (origPushState) {
     history.pushState = function () {
       origPushState.apply(this, arguments);
-      setTimeout(initApparatus, 20);
+      setTimeout(function () {
+        initApparatus();
+        applyViewMode();
+      }, 20);
+    };
+  }
+
+  const origReplaceState = history.replaceState;
+  if (origReplaceState) {
+    history.replaceState = function () {
+      origReplaceState.apply(this, arguments);
+      setTimeout(function () {
+        applyViewMode();
+      }, 20);
     };
   }
 })();
