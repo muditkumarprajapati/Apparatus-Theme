@@ -1696,86 +1696,49 @@ body:not(.apparatus-auth) span.apparatus-user-name {
   font-size: 0.82rem !important;
 }
 
-/* Cloud VPS Showcase */
-.apparatus-vps-banner {
-  background: radial-gradient(ellipse at 90% 20%, rgba(168, 85, 247, 0.18), transparent 65%), rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(168, 85, 247, 0.25);
-  border-radius: 14px;
-  padding: 1.75rem;
-}
-
-.apparatus-vps-badge {
-  display: inline-flex;
+/* Cloud VPS Empty State - Clean Standard View */
+.apparatus-vps-empty {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.25rem 0.7rem;
-  border-radius: 9999px;
-  background: rgba(168, 85, 247, 0.18);
-  color: #d8b4fe;
-  border: 1px solid rgba(168, 85, 247, 0.35);
-  font-size: 0.76rem;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.apparatus-vps-empty-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.apparatus-vps-empty-title {
+  font-size: 1.05rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.75rem;
-}
-
-.apparatus-vps-title {
-  font-size: 1.35rem;
-  font-weight: 800;
   color: #fff;
-  margin: 0 0 0.4rem 0;
+  margin: 0 0 0.35rem 0;
 }
 
-.apparatus-vps-desc {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.75);
+.apparatus-vps-empty-desc {
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 380px;
   line-height: 1.5;
   margin: 0 0 1.25rem 0;
 }
 
-.apparatus-vps-specs-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 1.35rem;
-}
-
-.apparatus-vps-spec-item {
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 10px;
-  padding: 0.65rem 0.85rem;
+.apparatus-vps-empty-actions {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-}
-
-.apparatus-vps-spec-item i {
-  font-size: 1.25rem;
-  color: #c084fc;
-}
-
-.spec-label {
-  display: block;
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.55);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.spec-val {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-.apparatus-vps-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
 }
 
 /* ==============================================================================

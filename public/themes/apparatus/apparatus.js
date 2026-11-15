@@ -1172,59 +1172,18 @@
 
               <!-- Tab 2: Cloud VPS Hub -->
               <div class="apparatus-tab-pane" id="apparatus-pane-vps" style="display: none;">
-                <div class="apparatus-vps-showcase">
-                  <div class="apparatus-vps-banner">
-                    <div class="apparatus-vps-badge">
-                      <span class="apparatus-status-dot"></span> Next-Gen KVM Architecture
-                    </div>
-                    <h3 class="apparatus-vps-title">High-Performance Cloud VPS Instances</h3>
-                    <p class="apparatus-vps-desc">
-                      Deploy ultra-low latency Cloud VPS powered by AMD EPYC &amp; Intel Xeon NVMe storage with 10Gbps DDoS protection and full root SSH access.
-                    </p>
-                    
-                    <div class="apparatus-vps-specs-grid">
-                      <div class="apparatus-vps-spec-item">
-                        <i class="ri-cpu-line"></i>
-                        <div>
-                          <span class="spec-label">Processors</span>
-                          <span class="spec-val">Dedicated vCPU</span>
-                        </div>
-                      </div>
-                      <div class="apparatus-vps-spec-item">
-                        <i class="ri-flashlight-line"></i>
-                        <div>
-                          <span class="spec-label">Storage</span>
-                          <span class="spec-val">PCIe 4.0 NVMe SSD</span>
-                        </div>
-                      </div>
-                      <div class="apparatus-vps-spec-item">
-                        <i class="ri-shield-flash-line"></i>
-                        <div>
-                          <span class="spec-label">Protection</span>
-                          <span class="spec-val">3.2 Tbps DDoS Defense</span>
-                        </div>
-                      </div>
-                      <div class="apparatus-vps-spec-item">
-                        <i class="ri-global-line"></i>
-                        <div>
-                          <span class="spec-label">Regions</span>
-                          <span class="spec-val">India (Mumbai/Delhi) &amp; Global</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="apparatus-vps-actions">
-                      <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
-                        <i class="ri-rocket-line"></i> Deploy Cloud VPS (Starting ₹149/mo)
-                      </a>
-                      <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-vps-refresh-btn">
-                        <i class="ri-refresh-line"></i> Refresh VPS
-                      </button>
-                    </div>
+                <div class="apparatus-vps-empty">
+                  <div class="apparatus-vps-empty-icon">
+                    <i class="ri-server-line"></i>
                   </div>
-                  
-                  <div id="apparatus-vps-list">
-                    <!-- Dynamic VPS items placeholder -->
+                  <h4 class="apparatus-vps-empty-title">No Cloud VPS Found</h4>
+                  <p class="apparatus-vps-empty-desc">
+                    You don't have any active Cloud VPS instances associated with your account.
+                  </p>
+                  <div class="apparatus-vps-empty-actions">
+                    <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
+                      <i class="ri-add-line"></i> Deploy Cloud VPS
+                    </a>
                   </div>
                 </div>
               </div>
