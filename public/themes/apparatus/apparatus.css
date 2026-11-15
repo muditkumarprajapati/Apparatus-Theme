@@ -3872,6 +3872,36 @@ body.apparatus-page-settings .sc-1topkxf-3 {
   display: none !important;
 }
 
+/* Dedicated Apparatus Settings View (Root Admin Suite) */
+body.apparatus-page-apparatus-settings #apparatus-admin-settings-view {
+  display: block !important;
+}
+
+body.apparatus-page-apparatus-settings #apparatus-dashboard-view,
+body.apparatus-page-apparatus-settings #apparatus-resource-view,
+body.apparatus-page-apparatus-settings #apparatus-settings-view {
+  display: none !important;
+}
+
+body.apparatus-page-settings #apparatus-admin-settings-view,
+body.apparatus-page-resource #apparatus-admin-settings-view {
+  display: none !important;
+}
+
+body.apparatus-page-apparatus-settings div[class*="AccountOverviewContainer"],
+body.apparatus-page-apparatus-settings div[class*="AccountApiContainer"],
+body.apparatus-page-apparatus-settings div[class*="AccountSSHContainer"],
+body.apparatus-page-apparatus-settings div[class*="ActivityLogContainer"],
+body.apparatus-page-apparatus-settings .sc-12to0iy-1,
+body.apparatus-page-apparatus-settings .sc-1c4s3nm-0,
+body.apparatus-page-apparatus-settings .sc-yksipt-0,
+body.apparatus-page-apparatus-settings p[class*="DashboardContainer"],
+body.apparatus-page-apparatus-settings .sc-1topkxf-3,
+body.apparatus-page-apparatus-settings div.bg-gray-700,
+body.apparatus-page-apparatus-settings [class*="PageContentBlock"] {
+  display: none !important;
+}
+
 /* ------------------------------------------------------------------------------
    DYNAMIC WALLPAPER & GRAPHICS ENGINE
    ------------------------------------------------------------------------------ */
@@ -5380,4 +5410,71 @@ div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon {
   .apparatus-seo-form-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==============================================================================
+   SYSTEM NOTICE & MAINTENANCE ANNOUNCEMENT BANNER
+   ============================================================================== */
+.apparatus-system-announcement-banner {
+  position: relative;
+  z-index: 1000;
+  width: 100%;
+  padding: 0.65rem 1.5rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.3s ease;
+}
+
+.apparatus-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 1200px;
+}
+
+.apparatus-banner-icon {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.apparatus-banner-info {
+  background: rgba(14, 165, 233, 0.22);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #bae6fd;
+}
+
+.apparatus-banner-warning {
+  background: rgba(245, 158, 11, 0.22);
+  border-color: rgba(251, 191, 36, 0.4);
+  color: #fef08a;
+}
+
+.apparatus-banner-critical {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(248, 113, 113, 0.45);
+  color: #fecaca;
+}
+
+.apparatus-banner-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 0.78rem;
+  text-decoration: none;
+  transition: background 0.2s ease;
+  margin-left: 0.5rem;
+}
+
+.apparatus-banner-link:hover {
+  background: rgba(255, 255, 255, 0.28);
 }

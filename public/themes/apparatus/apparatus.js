@@ -155,7 +155,9 @@
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
     const isResourceTab = window.location.hash === '#resource' || currentPath === '/billing/resource' || currentPath === '/resource';
-    const isSettingsTab = !isResourceTab && (window.location.hash === '#panel-settings' || window.location.hash === '#apparatus-settings' || window.location.hash === '#settings' || currentPath === '/settings');
+    const isApparatusSettingsTab = !isResourceTab && (window.location.hash === '#apparatus-settings');
+    const isPanelSettingsTab = !isResourceTab && !isApparatusSettingsTab && (window.location.hash === '#panel-settings' || window.location.hash === '#settings' || currentPath === '/settings');
+    const isSettingsTab = isPanelSettingsTab || isApparatusSettingsTab;
     const isVpsTab = !isResourceTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
     const isServerTab = !isResourceTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
     const isDashboardTab = !isResourceTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
@@ -171,7 +173,9 @@
       if (tab === 'resource' || p === '/billing/resource' || p === '/resource') {
         isActive = isResourceTab;
       } else if (tab === 'panel-settings' || tab === 'settings' || p === '/settings') {
-        isActive = isSettingsTab;
+        isActive = isPanelSettingsTab;
+      } else if (tab === 'apparatus-settings') {
+        isActive = isApparatusSettingsTab;
       } else if (tab === 'dashboard' || p === '/') {
         isActive = isDashboardTab;
       } else if (tab === 'servers' || p === '/servers') {
@@ -180,10 +184,10 @@
         isActive = isVpsTab;
       } else if (p === '/account') {
         // Account Credentials should ONLY be active on exact /account, NOT on /account/api, /account/ssh, etc.
-        isActive = currentPath === '/account';
+        isActive = currentPath === '/account' && !window.location.hash;
       } else if (p) {
         // Sub-routes such as /account/api, /account/ssh, /account/activity, /admin
-        isActive = currentPath === p || currentPath.startsWith(p + '/');
+        isActive = (currentPath === p || currentPath.startsWith(p + '/')) && !window.location.hash;
       }
 
       if (isActive) {
@@ -201,7 +205,9 @@
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
     const isResourceTab = window.location.hash === '#resource' || currentPath === '/billing/resource' || currentPath === '/resource';
-    const isSettingsTab = !isResourceTab && (window.location.hash === '#panel-settings' || window.location.hash === '#apparatus-settings' || window.location.hash === '#settings' || currentPath === '/settings');
+    const isApparatusSettingsTab = !isResourceTab && (window.location.hash === '#apparatus-settings');
+    const isPanelSettingsTab = !isResourceTab && !isApparatusSettingsTab && (window.location.hash === '#panel-settings' || window.location.hash === '#settings' || currentPath === '/settings');
+    const isSettingsTab = isPanelSettingsTab || isApparatusSettingsTab;
     const isVpsTab = !isResourceTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
     const isServerTab = !isResourceTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
     const isDashboardTab = !isResourceTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
@@ -210,10 +216,12 @@
     const hero = document.getElementById('apparatus-dashboard-view');
     const resView = document.getElementById('apparatus-resource-view');
     const setView = document.getElementById('apparatus-settings-view');
+    const appSetView = document.getElementById('apparatus-admin-settings-view');
 
     if (isResourceTab) {
       if (hero) hero.style.display = 'none';
       if (setView) setView.style.display = 'none';
+      if (appSetView) appSetView.style.display = 'none';
       if (resView) {
         const wasHidden = resView.style.display === 'none';
         resView.style.display = 'block';
@@ -223,15 +231,16 @@
         if (typeof renderResourcePage === 'function') renderResourcePage();
       }
       document.body.classList.add('apparatus-page-resource');
-      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-settings');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
 
       // Hide all account containers and native server messages
-      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3').forEach(function (el) {
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"]').forEach(function (el) {
         el.style.setProperty('display', 'none', 'important');
       });
-    } else if (isSettingsTab) {
+    } else if (isPanelSettingsTab) {
       if (hero) hero.style.display = 'none';
       if (resView) resView.style.display = 'none';
+      if (appSetView) appSetView.style.display = 'none';
       if (setView) {
         const wasHidden = setView.style.display === 'none';
         setView.style.display = 'block';
@@ -241,17 +250,36 @@
         if (typeof renderSettingsPage === 'function') renderSettingsPage();
       }
       document.body.classList.add('apparatus-page-settings');
-      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-apparatus-settings');
 
       // Hide all account containers and native server messages
-      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3').forEach(function (el) {
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"]').forEach(function (el) {
+        el.style.setProperty('display', 'none', 'important');
+      });
+    } else if (isApparatusSettingsTab) {
+      if (hero) hero.style.display = 'none';
+      if (resView) resView.style.display = 'none';
+      if (setView) setView.style.display = 'none';
+      if (appSetView) {
+        const wasHidden = appSetView.style.display === 'none';
+        appSetView.style.display = 'block';
+        if (wasHidden && typeof gsap !== 'undefined') {
+          gsap.fromTo(appSetView, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+        }
+      }
+      document.body.classList.add('apparatus-page-apparatus-settings');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-settings');
+
+      // Hide all account containers and native server messages
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"]').forEach(function (el) {
         el.style.setProperty('display', 'none', 'important');
       });
     } else if (isHomeRoute) {
       if (resView) resView.style.display = 'none';
       if (setView) setView.style.display = 'none';
+      if (appSetView) appSetView.style.display = 'none';
       if (hero) hero.style.display = 'block';
-      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-settings');
+      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
 
       const sPane = document.getElementById('apparatus-pane-servers');
       const vPane = document.getElementById('apparatus-pane-vps');
@@ -291,8 +319,9 @@
     } else {
       if (resView) resView.style.display = 'none';
       if (setView) setView.style.display = 'none';
+      if (appSetView) appSetView.style.display = 'none';
       if (hero) hero.style.display = 'none';
-      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-settings', 'apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-view-dashboard', 'apparatus-view-servers', 'apparatus-view-vps');
+      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-settings', 'apparatus-page-apparatus-settings', 'apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-view-dashboard', 'apparatus-view-servers', 'apparatus-view-vps');
 
       // Restore display for account containers when on account routes
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, div.bg-gray-700, [class*="PageContentBlock"]').forEach(function (el) {
@@ -4120,102 +4149,6 @@
             </div>
           </div>
 
-          <!-- CARD 6: APPARATUS SETTINGS - SEO & METADATA SUITE -->
-          <div class="apparatus-card apparatus-setting-card" id="apparatus-seo-suite-card">
-            <div class="apparatus-setting-card-head">
-              <div class="apparatus-setting-icon-box" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8;">
-                <i class="ri-global-line"></i>
-              </div>
-              <div class="apparatus-setting-title-meta">
-                <div class="apparatus-setting-title-row">
-                  <h2 class="apparatus-setting-title">Apparatus SEO, Meta Data &amp; Branding</h2>
-                  <span class="apparatus-setting-badge apparatus-badge-privacy active">Production Suite</span>
-                </div>
-                <p class="apparatus-setting-desc">Configure search engine indexing, browser title branding, OpenGraph social cards, and favicon.</p>
-              </div>
-            </div>
-
-            <div class="apparatus-setting-body">
-              <div class="apparatus-seo-form-grid">
-                
-                <div class="apparatus-prof-field">
-                  <label class="apparatus-prof-label" for="apparatus-seo-title">Site Title / Browser Tab Title</label>
-                  <div class="apparatus-prof-input-wrap">
-                    <span class="apparatus-prof-input-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
-                    </span>
-                    <input type="text" id="apparatus-seo-title" class="apparatus-prof-input with-icon" placeholder="ArixByte Cloud — Game &amp; VPS Infrastructure">
-                  </div>
-                </div>
-
-                <div class="apparatus-prof-field">
-                  <label class="apparatus-prof-label" for="apparatus-seo-desc">Meta Description (Search &amp; Social Previews)</label>
-                  <div class="apparatus-prof-input-wrap">
-                    <span class="apparatus-prof-input-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                    </span>
-                    <input type="text" id="apparatus-seo-desc" class="apparatus-prof-input with-icon" placeholder="Deploy and manage high-performance game servers, Cloud VPS, and infrastructure with Apparatus Theme.">
-                  </div>
-                </div>
-
-                <div class="apparatus-prof-field">
-                  <label class="apparatus-prof-label" for="apparatus-seo-keywords">Meta Keywords (Comma Separated)</label>
-                  <div class="apparatus-prof-input-wrap">
-                    <span class="apparatus-prof-input-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-                    </span>
-                    <input type="text" id="apparatus-seo-keywords" class="apparatus-prof-input with-icon" placeholder="pterodactyl, game servers, cloud vps, hosting, arixbyte">
-                  </div>
-                </div>
-
-                <div class="apparatus-prof-field">
-                  <label class="apparatus-prof-label" for="apparatus-seo-ogimg">OpenGraph Social Banner URL (Discord / Twitter)</label>
-                  <div class="apparatus-prof-input-wrap">
-                    <span class="apparatus-prof-input-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    </span>
-                    <input type="text" id="apparatus-seo-ogimg" class="apparatus-prof-input with-icon" placeholder="https://arixbyte.com/banner.png">
-                  </div>
-                </div>
-
-                <div class="apparatus-prof-field">
-                  <label class="apparatus-prof-label" for="apparatus-seo-favicon">Custom Favicon URL</label>
-                  <div class="apparatus-prof-input-wrap">
-                    <span class="apparatus-prof-input-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-                    </span>
-                    <input type="text" id="apparatus-seo-favicon" class="apparatus-prof-input with-icon" placeholder="https://arixbyte.com/favicon.ico">
-                  </div>
-                </div>
-
-                <div class="apparatus-prof-field">
-                  <label class="apparatus-prof-label" for="apparatus-seo-robots">Search Engine Robots Policy</label>
-                  <div class="apparatus-prof-input-wrap">
-                    <span class="apparatus-prof-input-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </span>
-                    <select id="apparatus-seo-robots" class="apparatus-prof-input with-icon apparatus-prof-select">
-                      <option value="index, follow">Publicly Indexed (index, follow)</option>
-                      <option value="noindex, nofollow">Private Panel (noindex, nofollow)</option>
-                      <option value="noindex, follow">Unlisted (noindex, follow)</option>
-                    </select>
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="apparatus-seo-actions-bar" style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.85rem;">
-                <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-seo-reset-btn">
-                  <i class="ri-refresh-line"></i> Reset Defaults
-                </button>
-                <button type="button" class="apparatus-btn apparatus-btn-primary" id="apparatus-seo-save-btn">
-                  <i class="ri-check-line"></i> Save SEO &amp; Meta Data
-                </button>
-              </div>
-
-            </div>
-          </div>
-
         </div>
 
       </div>
@@ -4319,57 +4252,6 @@
           localStorage.setItem('apparatus_card_opacity', val);
           showToast('success', 'Transparency Updated', 'Applied ' + val + '% glass opacity.');
         }
-      });
-    }
-
-    // SEO & Metadata Form Handlers
-    const seoTitleInp = setView.querySelector('#apparatus-seo-title');
-    const seoDescInp = setView.querySelector('#apparatus-seo-desc');
-    const seoKwInp = setView.querySelector('#apparatus-seo-keywords');
-    const seoOgImgInp = setView.querySelector('#apparatus-seo-ogimg');
-    const seoFavInp = setView.querySelector('#apparatus-seo-favicon');
-    const seoRobotsInp = setView.querySelector('#apparatus-seo-robots');
-    const seoSaveBtn = setView.querySelector('#apparatus-seo-save-btn');
-    const seoResetBtn = setView.querySelector('#apparatus-seo-reset-btn');
-
-    try {
-      const storedSeo = JSON.parse(localStorage.getItem('apparatus_seo_settings') || '{}');
-      if (seoTitleInp) seoTitleInp.value = storedSeo.title || document.title || 'ArixByte Cloud — Game & VPS Infrastructure';
-      if (seoDescInp) seoDescInp.value = storedSeo.description || 'Deploy and manage high-performance game servers, Cloud VPS, and infrastructure with Apparatus Theme.';
-      if (seoKwInp) seoKwInp.value = storedSeo.keywords || 'pterodactyl, game servers, cloud vps, hosting, arixbyte';
-      if (seoOgImgInp) seoOgImgInp.value = storedSeo.ogImage || '';
-      if (seoFavInp) seoFavInp.value = storedSeo.favicon || '';
-      if (seoRobotsInp && storedSeo.robots) seoRobotsInp.value = storedSeo.robots;
-    } catch (e) {}
-
-    if (seoSaveBtn) {
-      seoSaveBtn.addEventListener('click', function () {
-        const seoData = {
-          title: seoTitleInp ? seoTitleInp.value.trim() : '',
-          description: seoDescInp ? seoDescInp.value.trim() : '',
-          keywords: seoKwInp ? seoKwInp.value.trim() : '',
-          ogTitle: seoTitleInp ? seoTitleInp.value.trim() : '',
-          ogImage: seoOgImgInp ? seoOgImgInp.value.trim() : '',
-          favicon: seoFavInp ? seoFavInp.value.trim() : '',
-          robots: seoRobotsInp ? seoRobotsInp.value : 'index, follow'
-        };
-        localStorage.setItem('apparatus_seo_settings', JSON.stringify(seoData));
-        applySeoMetadata();
-        showToast('success', 'SEO & Metadata Saved', 'Site meta tags and branding updated live!');
-      });
-    }
-
-    if (seoResetBtn) {
-      seoResetBtn.addEventListener('click', function () {
-        localStorage.removeItem('apparatus_seo_settings');
-        if (seoTitleInp) seoTitleInp.value = 'ArixByte Cloud — Game & VPS Infrastructure';
-        if (seoDescInp) seoDescInp.value = 'Deploy and manage high-performance game servers, Cloud VPS, and infrastructure with Apparatus Theme.';
-        if (seoKwInp) seoKwInp.value = 'pterodactyl, game servers, cloud vps, hosting, arixbyte';
-        if (seoOgImgInp) seoOgImgInp.value = '';
-        if (seoFavInp) seoFavInp.value = '';
-        if (seoRobotsInp) seoRobotsInp.value = 'index, follow';
-        applySeoMetadata();
-        showToast('info', 'SEO Reset', 'Default SEO values restored.');
       });
     }
 
@@ -4505,6 +4387,607 @@
     }
 
     renderSettingsPage();
+  }
+
+  // ==============================================================================
+  // APPARATUS SETTINGS: Dedicated Administration Suite
+  // Global metadata, SEO optimization, site branding, custom scripts, & system banner
+  // ==============================================================================
+  function applyBrandingSettings() {
+    try {
+      const saved = localStorage.getItem('apparatus_branding_settings');
+      const b = saved ? JSON.parse(saved) : {};
+      const bgTitle = document.getElementById('apparatus-bg-title');
+      const bgSubtitle = document.getElementById('apparatus-bg-subtitle');
+      const isHacking = isUnauthorizedAdminAttempt();
+      if (!isHacking) {
+        if (bgTitle) bgTitle.textContent = b.watermarkTitle || 'ARIXBYTE';
+        if (bgSubtitle) bgSubtitle.textContent = b.watermarkSubtitle || 'CLOUD & INFRASTRUCTURES';
+      }
+      const brandTextEls = document.querySelectorAll('.apparatus-sidebar-brand .brand-text');
+      brandTextEls.forEach(function (el) {
+        el.textContent = b.brandName || 'ARIXBYTE CLOUD';
+      });
+      const copyrightEls = document.querySelectorAll('.apparatus-footer-copyright, #apparatus-footer-copyright');
+      copyrightEls.forEach(function (el) {
+        el.textContent = b.footerText || '© 2026 ArixByte Cloud. All rights reserved.';
+      });
+    } catch (e) {}
+  }
+
+  function applyCustomCode() {
+    try {
+      const saved = localStorage.getItem('apparatus_custom_code');
+      const code = saved ? JSON.parse(saved) : {};
+      let customStyle = document.getElementById('apparatus-custom-css-injected');
+      if (code.css && code.css.trim()) {
+        if (!customStyle) {
+          customStyle = document.createElement('style');
+          customStyle.id = 'apparatus-custom-css-injected';
+          document.head.appendChild(customStyle);
+        }
+        customStyle.textContent = code.css;
+      } else if (customStyle) {
+        customStyle.remove();
+      }
+
+      let scriptContainer = document.getElementById('apparatus-custom-head-container');
+      if (code.head && code.head.trim()) {
+        if (!scriptContainer) {
+          scriptContainer = document.createElement('div');
+          scriptContainer.id = 'apparatus-custom-head-container';
+          scriptContainer.style.display = 'none';
+          document.head.appendChild(scriptContainer);
+        }
+        scriptContainer.innerHTML = code.head;
+      } else if (scriptContainer) {
+        scriptContainer.remove();
+      }
+    } catch (e) {}
+  }
+
+  function applySystemBanner() {
+    try {
+      const saved = localStorage.getItem('apparatus_system_banner');
+      const banner = saved ? JSON.parse(saved) : {};
+      let bannerEl = document.getElementById('apparatus-system-announcement-banner');
+      if (banner.enabled && banner.message && banner.message.trim()) {
+        if (!bannerEl) {
+          bannerEl = document.createElement('div');
+          bannerEl.id = 'apparatus-system-announcement-banner';
+          document.body.prepend(bannerEl);
+        }
+        const type = banner.type || 'info';
+        bannerEl.className = 'apparatus-system-announcement-banner apparatus-banner-' + type;
+        let icon = 'ri-information-line';
+        if (type === 'warning') icon = 'ri-alert-line';
+        if (type === 'critical') icon = 'ri-error-warning-line';
+        let linkHtml = '';
+        if (banner.statusUrl) {
+          linkHtml = `<a href="${banner.statusUrl}" target="_blank" rel="noopener noreferrer" class="apparatus-banner-link"><i class="ri-pulse-line"></i> Status Page</a>`;
+        }
+        bannerEl.innerHTML = `
+          <div class="apparatus-banner-content">
+            <i class="${icon} apparatus-banner-icon"></i>
+            <span class="apparatus-banner-text">${banner.message}</span>
+            ${linkHtml}
+          </div>
+        `;
+        bannerEl.style.display = 'flex';
+      } else if (bannerEl) {
+        bannerEl.style.display = 'none';
+      }
+    } catch (e) {}
+  }
+
+  function initApparatusSettingsView() {
+    let appSetView = document.getElementById('apparatus-admin-settings-view');
+    if (appSetView) return;
+
+    appSetView = document.createElement('div');
+    appSetView.id = 'apparatus-admin-settings-view';
+    appSetView.className = 'apparatus-settings-view apparatus-admin-settings-view';
+    appSetView.style.display = 'none';
+
+    appSetView.innerHTML = `
+      <div class="apparatus-dashboard-container">
+        
+        <!-- Top Apparatus Settings Header -->
+        <div class="apparatus-card apparatus-resource-header-card apparatus-settings-header-card">
+          <div class="apparatus-resource-header-left">
+            <div class="apparatus-resource-breadcrumbs">
+              <a href="/" class="apparatus-breadcrumb-link" id="apparatus-admin-set-back-btn">
+                <i class="ri-arrow-left-s-line"></i> Dashboard
+              </a>
+              <span class="apparatus-breadcrumb-sep">/</span>
+              <span class="apparatus-breadcrumb-current">Apparatus Settings</span>
+            </div>
+            <h1 class="apparatus-resource-main-title">
+              <i class="ri-settings-4-line" style="color: #ec4899;"></i> Apparatus Settings
+            </h1>
+            <p class="apparatus-resource-subtitle">
+              Configure global panel metadata, SEO optimization, site branding, custom scripts, and system integrations.
+            </p>
+          </div>
+
+          <div class="apparatus-resource-header-right">
+            <a href="/" class="apparatus-btn apparatus-btn-glass" id="apparatus-admin-set-back-btn-2">
+              <i class="ri-dashboard-line"></i> Back to Dashboard
+            </a>
+          </div>
+        </div>
+
+        <!-- Apparatus Settings Cards Grid -->
+        <div class="apparatus-settings-grid">
+          
+          <!-- CARD 1: SEARCH ENGINE OPTIMIZATION & METADATA -->
+          <div class="apparatus-card apparatus-setting-card" id="apparatus-admin-seo-card">
+            <div class="apparatus-setting-card-head">
+              <div class="apparatus-setting-icon-box" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8;">
+                <i class="ri-global-line"></i>
+              </div>
+              <div class="apparatus-setting-title-meta">
+                <div class="apparatus-setting-title-row">
+                  <h2 class="apparatus-setting-title">Apparatus SEO, Meta Data &amp; Social</h2>
+                  <span class="apparatus-setting-badge apparatus-badge-privacy active">Production Suite</span>
+                </div>
+                <p class="apparatus-setting-desc">Configure search engine indexing, browser title branding, OpenGraph social cards, and favicon.</p>
+              </div>
+            </div>
+
+            <div class="apparatus-setting-body">
+              <div class="apparatus-seo-form-grid">
+                
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-seo-title">Site Title / Browser Tab Title</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                    </span>
+                    <input type="text" id="app-set-seo-title" class="apparatus-prof-input with-icon" placeholder="ArixByte Cloud — Game &amp; VPS Infrastructure">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-seo-desc">Meta Description (Search &amp; Social Previews)</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    </span>
+                    <input type="text" id="app-set-seo-desc" class="apparatus-prof-input with-icon" placeholder="Deploy and manage high-performance game servers, Cloud VPS, and infrastructure with Apparatus Theme.">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-seo-keywords">Meta Keywords (Comma Separated)</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                    </span>
+                    <input type="text" id="app-set-seo-keywords" class="apparatus-prof-input with-icon" placeholder="pterodactyl, game servers, cloud vps, hosting, arixbyte">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-seo-ogimg">OpenGraph Social Banner URL (Discord / Twitter)</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </span>
+                    <input type="text" id="app-set-seo-ogimg" class="apparatus-prof-input with-icon" placeholder="https://arixbyte.com/banner.png">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-seo-favicon">Custom Favicon URL</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                    </span>
+                    <input type="text" id="app-set-seo-favicon" class="apparatus-prof-input with-icon" placeholder="https://arixbyte.com/favicon.ico">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-seo-robots">Search Engine Robots Policy</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </span>
+                    <select id="app-set-seo-robots" class="apparatus-prof-input with-icon apparatus-prof-select">
+                      <option value="index, follow">Publicly Indexed (index, follow)</option>
+                      <option value="noindex, nofollow">Private Panel (noindex, nofollow)</option>
+                      <option value="noindex, follow">Unlisted (noindex, follow)</option>
+                    </select>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="apparatus-seo-actions-bar" style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.85rem;">
+                <button type="button" class="apparatus-btn apparatus-btn-glass" id="app-set-seo-reset-btn">
+                  <i class="ri-refresh-line"></i> Reset Defaults
+                </button>
+                <button type="button" class="apparatus-btn apparatus-btn-primary" id="app-set-seo-save-btn">
+                  <i class="ri-check-line"></i> Save SEO &amp; Meta Data
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- CARD 2: SITE BRANDING & AMBIENT WATERMARK -->
+          <div class="apparatus-card apparatus-setting-card" id="apparatus-admin-brand-card">
+            <div class="apparatus-setting-card-head">
+              <div class="apparatus-setting-icon-box" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">
+                <i class="ri-shield-star-line"></i>
+              </div>
+              <div class="apparatus-setting-title-meta">
+                <div class="apparatus-setting-title-row">
+                  <h2 class="apparatus-setting-title">Site Branding &amp; Watermark Engine</h2>
+                  <span class="apparatus-setting-badge apparatus-badge-privacy active" style="background: rgba(236, 72, 153, 0.2); border-color: rgba(236, 72, 153, 0.4); color: #f472b6;">Visual Brand</span>
+                </div>
+                <p class="apparatus-setting-desc">Customize brand display name, sidebar branding, ambient background watermark, and copyright.</p>
+              </div>
+            </div>
+
+            <div class="apparatus-setting-body">
+              <div class="apparatus-seo-form-grid">
+                
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-brand-name">Brand Display Name (Sidebar &amp; Headers)</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    </span>
+                    <input type="text" id="app-set-brand-name" class="apparatus-prof-input with-icon" placeholder="ARIXBYTE CLOUD">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-watermark-title">Ambient Watermark Main Title</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                    </span>
+                    <input type="text" id="app-set-watermark-title" class="apparatus-prof-input with-icon" placeholder="ARIXBYTE">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-watermark-sub">Ambient Watermark Subtitle</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                    </span>
+                    <input type="text" id="app-set-watermark-sub" class="apparatus-prof-input with-icon" placeholder="CLOUD &amp; INFRASTRUCTURES">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-footer-text">Footer Copyright Notice</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M14.83 14.83a4 4 0 1 1 0-5.66"/></svg>
+                    </span>
+                    <input type="text" id="app-set-footer-text" class="apparatus-prof-input with-icon" placeholder="© 2026 ArixByte Cloud. All rights reserved.">
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="apparatus-seo-actions-bar" style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.85rem;">
+                <button type="button" class="apparatus-btn apparatus-btn-glass" id="app-set-brand-reset-btn">
+                  <i class="ri-refresh-line"></i> Reset Defaults
+                </button>
+                <button type="button" class="apparatus-btn apparatus-btn-primary" id="app-set-brand-save-btn">
+                  <i class="ri-check-line"></i> Save Branding
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- CARD 3: CUSTOM HEAD SCRIPTS & CSS INJECTION -->
+          <div class="apparatus-card apparatus-setting-card" id="apparatus-admin-code-card">
+            <div class="apparatus-setting-card-head">
+              <div class="apparatus-setting-icon-box" style="background: rgba(167, 139, 250, 0.15); color: #a78bfa;">
+                <i class="ri-code-s-slash-line"></i>
+              </div>
+              <div class="apparatus-setting-title-meta">
+                <div class="apparatus-setting-title-row">
+                  <h2 class="apparatus-setting-title">Custom Scripts &amp; CSS Injection</h2>
+                  <span class="apparatus-setting-badge apparatus-badge-privacy active" style="background: rgba(167, 139, 250, 0.2); border-color: rgba(167, 139, 250, 0.4); color: #c4b5fd;">Developer</span>
+                </div>
+                <p class="apparatus-setting-desc">Inject custom analytics, tracking tags, live chat widgets, or CSS overrides into the panel head dynamically.</p>
+              </div>
+            </div>
+
+            <div class="apparatus-setting-body">
+              <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-custom-head">Custom &lt;head&gt; HTML / Analytics Scripts</label>
+                  <textarea id="app-set-custom-head" class="apparatus-prof-input" style="height: 100px; resize: vertical; padding: 0.75rem 1rem; font-family: monospace; font-size: 0.85rem; line-height: 1.45;" placeholder="<!-- Google Tag Manager, Cloudflare Web Analytics, Crisp Chat, etc. -->"></textarea>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-custom-css">Custom CSS Overrides</label>
+                  <textarea id="app-set-custom-css" class="apparatus-prof-input" style="height: 100px; resize: vertical; padding: 0.75rem 1rem; font-family: monospace; font-size: 0.85rem; line-height: 1.45;" placeholder="/* Custom CSS rules to override theme styling */"></textarea>
+                </div>
+
+              </div>
+
+              <div class="apparatus-seo-actions-bar" style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.85rem;">
+                <button type="button" class="apparatus-btn apparatus-btn-glass" id="app-set-code-clear-btn">
+                  <i class="ri-delete-bin-line"></i> Clear Code
+                </button>
+                <button type="button" class="apparatus-btn apparatus-btn-primary" id="app-set-code-save-btn">
+                  <i class="ri-check-line"></i> Save &amp; Apply Code
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- CARD 4: SYSTEM NOTICE & MAINTENANCE BANNER -->
+          <div class="apparatus-card apparatus-setting-card" id="apparatus-admin-banner-card">
+            <div class="apparatus-setting-card-head">
+              <div class="apparatus-setting-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
+                <i class="ri-broadcast-line"></i>
+              </div>
+              <div class="apparatus-setting-title-meta">
+                <div class="apparatus-setting-title-row">
+                  <h2 class="apparatus-setting-title">System Notice &amp; Maintenance Banner</h2>
+                  <span class="apparatus-setting-badge apparatus-badge-privacy active" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.4); color: #fbbf24;">Announcement</span>
+                </div>
+                <p class="apparatus-setting-desc">Broadcast a high-visibility global announcement or maintenance notice to all users across the panel.</p>
+              </div>
+              <div class="apparatus-setting-toggle-wrap">
+                <label class="apparatus-switch">
+                  <input type="checkbox" id="app-set-banner-toggle">
+                  <span class="apparatus-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="apparatus-setting-body">
+              <div class="apparatus-seo-form-grid">
+                
+                <div class="apparatus-prof-field" style="grid-column: span 2;">
+                  <label class="apparatus-prof-label" for="app-set-banner-msg">Banner Notice Message</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </span>
+                    <input type="text" id="app-set-banner-msg" class="apparatus-prof-input with-icon" placeholder="Notice: Scheduled node upgrade tonight at 02:00 UTC.">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-banner-type">Banner Alert Accent</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </span>
+                    <select id="app-set-banner-type" class="apparatus-prof-input with-icon apparatus-prof-select">
+                      <option value="info">Information (Cyan / Blue Accent)</option>
+                      <option value="warning">Warning / Maintenance (Amber Accent)</option>
+                      <option value="critical">Critical Outage (Rose / Red Accent)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="app-set-status-url">Status Page URL (Optional Link)</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </span>
+                    <input type="text" id="app-set-status-url" class="apparatus-prof-input with-icon" placeholder="https://status.arixbyte.com">
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="apparatus-seo-actions-bar" style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.85rem;">
+                <button type="button" class="apparatus-btn apparatus-btn-primary" id="app-set-banner-save-btn">
+                  <i class="ri-check-line"></i> Save System Notice
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+    const app = document.getElementById('app') || document.body;
+    const setView = document.getElementById('apparatus-settings-view');
+    const resView = document.getElementById('apparatus-resource-view');
+    const dash = document.getElementById('apparatus-dashboard-view');
+    if (setView && setView.parentNode) {
+      setView.parentNode.insertBefore(appSetView, setView.nextSibling);
+    } else if (resView && resView.parentNode) {
+      resView.parentNode.insertBefore(appSetView, resView.nextSibling);
+    } else if (dash && dash.parentNode) {
+      dash.parentNode.insertBefore(appSetView, dash.nextSibling);
+    } else if (app) {
+      app.appendChild(appSetView);
+    }
+
+    // Attach back buttons
+    const backBtn1 = document.getElementById('apparatus-admin-set-back-btn');
+    const backBtn2 = document.getElementById('apparatus-admin-set-back-btn-2');
+    function goBackFromAdminSettings(e) {
+      e.preventDefault();
+      window.location.hash = '';
+      if (window.location.pathname !== '/') {
+        history.pushState(null, '', '/');
+      }
+      applyViewMode();
+      smoothScrollToTop();
+    }
+    if (backBtn1) backBtn1.addEventListener('click', goBackFromAdminSettings);
+    if (backBtn2) backBtn2.addEventListener('click', goBackFromAdminSettings);
+
+    // 1. SEO Handlers
+    const seoTitleInp = appSetView.querySelector('#app-set-seo-title');
+    const seoDescInp = appSetView.querySelector('#app-set-seo-desc');
+    const seoKwInp = appSetView.querySelector('#app-set-seo-keywords');
+    const seoOgImgInp = appSetView.querySelector('#app-set-seo-ogimg');
+    const seoFavInp = appSetView.querySelector('#app-set-seo-favicon');
+    const seoRobotsInp = appSetView.querySelector('#app-set-seo-robots');
+    const seoSaveBtn = appSetView.querySelector('#app-set-seo-save-btn');
+    const seoResetBtn = appSetView.querySelector('#app-set-seo-reset-btn');
+
+    try {
+      const storedSeo = JSON.parse(localStorage.getItem('apparatus_seo_settings') || '{}');
+      if (seoTitleInp) seoTitleInp.value = storedSeo.title || document.title || 'ArixByte Cloud — Game & VPS Infrastructure';
+      if (seoDescInp) seoDescInp.value = storedSeo.description || 'Deploy and manage high-performance game servers, Cloud VPS, and infrastructure with Apparatus Theme.';
+      if (seoKwInp) seoKwInp.value = storedSeo.keywords || 'pterodactyl, game servers, cloud vps, hosting, arixbyte';
+      if (seoOgImgInp) seoOgImgInp.value = storedSeo.ogImage || '';
+      if (seoFavInp) seoFavInp.value = storedSeo.favicon || '';
+      if (seoRobotsInp && storedSeo.robots) seoRobotsInp.value = storedSeo.robots;
+    } catch (e) {}
+
+    if (seoSaveBtn) {
+      seoSaveBtn.addEventListener('click', function () {
+        const seoData = {
+          title: seoTitleInp ? seoTitleInp.value.trim() : '',
+          description: seoDescInp ? seoDescInp.value.trim() : '',
+          keywords: seoKwInp ? seoKwInp.value.trim() : '',
+          ogTitle: seoTitleInp ? seoTitleInp.value.trim() : '',
+          ogImage: seoOgImgInp ? seoOgImgInp.value.trim() : '',
+          favicon: seoFavInp ? seoFavInp.value.trim() : '',
+          robots: seoRobotsInp ? seoRobotsInp.value : 'index, follow'
+        };
+        localStorage.setItem('apparatus_seo_settings', JSON.stringify(seoData));
+        applySeoMetadata();
+        showToast('success', 'SEO & Metadata Saved', 'Site meta tags and browser title updated live!');
+      });
+    }
+
+    if (seoResetBtn) {
+      seoResetBtn.addEventListener('click', function () {
+        localStorage.removeItem('apparatus_seo_settings');
+        if (seoTitleInp) seoTitleInp.value = 'ArixByte Cloud — Game & VPS Infrastructure';
+        if (seoDescInp) seoDescInp.value = 'Deploy and manage high-performance game servers, Cloud VPS, and infrastructure with Apparatus Theme.';
+        if (seoKwInp) seoKwInp.value = 'pterodactyl, game servers, cloud vps, hosting, arixbyte';
+        if (seoOgImgInp) seoOgImgInp.value = '';
+        if (seoFavInp) seoFavInp.value = '';
+        if (seoRobotsInp) seoRobotsInp.value = 'index, follow';
+        applySeoMetadata();
+        showToast('info', 'SEO Reset', 'Default SEO values restored.');
+      });
+    }
+
+    // 2. Branding Handlers
+    const brandNameInp = appSetView.querySelector('#app-set-brand-name');
+    const wmTitleInp = appSetView.querySelector('#app-set-watermark-title');
+    const wmSubInp = appSetView.querySelector('#app-set-watermark-sub');
+    const footerTextInp = appSetView.querySelector('#app-set-footer-text');
+    const brandSaveBtn = appSetView.querySelector('#app-set-brand-save-btn');
+    const brandResetBtn = appSetView.querySelector('#app-set-brand-reset-btn');
+
+    try {
+      const storedBrand = JSON.parse(localStorage.getItem('apparatus_branding_settings') || '{}');
+      if (brandNameInp) brandNameInp.value = storedBrand.brandName || 'ARIXBYTE CLOUD';
+      if (wmTitleInp) wmTitleInp.value = storedBrand.watermarkTitle || 'ARIXBYTE';
+      if (wmSubInp) wmSubInp.value = storedBrand.watermarkSubtitle || 'CLOUD & INFRASTRUCTURES';
+      if (footerTextInp) footerTextInp.value = storedBrand.footerText || '© 2026 ArixByte Cloud. All rights reserved.';
+    } catch (e) {}
+
+    if (brandSaveBtn) {
+      brandSaveBtn.addEventListener('click', function () {
+        const brandData = {
+          brandName: brandNameInp ? brandNameInp.value.trim() : 'ARIXBYTE CLOUD',
+          watermarkTitle: wmTitleInp ? wmTitleInp.value.trim() : 'ARIXBYTE',
+          watermarkSubtitle: wmSubInp ? wmSubInp.value.trim() : 'CLOUD & INFRASTRUCTURES',
+          footerText: footerTextInp ? footerTextInp.value.trim() : '© 2026 ArixByte Cloud. All rights reserved.'
+        };
+        localStorage.setItem('apparatus_branding_settings', JSON.stringify(brandData));
+        applyBrandingSettings();
+        showToast('success', 'Branding Saved', 'Sidebar brand and ambient watermark updated live!');
+      });
+    }
+
+    if (brandResetBtn) {
+      brandResetBtn.addEventListener('click', function () {
+        localStorage.removeItem('apparatus_branding_settings');
+        if (brandNameInp) brandNameInp.value = 'ARIXBYTE CLOUD';
+        if (wmTitleInp) wmTitleInp.value = 'ARIXBYTE';
+        if (wmSubInp) wmSubInp.value = 'CLOUD & INFRASTRUCTURES';
+        if (footerTextInp) footerTextInp.value = '© 2026 ArixByte Cloud. All rights reserved.';
+        applyBrandingSettings();
+        showToast('info', 'Branding Reset', 'Default brand names and watermark restored.');
+      });
+    }
+
+    // 3. Custom Code Handlers
+    const codeHeadInp = appSetView.querySelector('#app-set-custom-head');
+    const codeCssInp = appSetView.querySelector('#app-set-custom-css');
+    const codeSaveBtn = appSetView.querySelector('#app-set-code-save-btn');
+    const codeClearBtn = appSetView.querySelector('#app-set-code-clear-btn');
+
+    try {
+      const storedCode = JSON.parse(localStorage.getItem('apparatus_custom_code') || '{}');
+      if (codeHeadInp) codeHeadInp.value = storedCode.head || '';
+      if (codeCssInp) codeCssInp.value = storedCode.css || '';
+    } catch (e) {}
+
+    if (codeSaveBtn) {
+      codeSaveBtn.addEventListener('click', function () {
+        const codeData = {
+          head: codeHeadInp ? codeHeadInp.value : '',
+          css: codeCssInp ? codeCssInp.value : ''
+        };
+        localStorage.setItem('apparatus_custom_code', JSON.stringify(codeData));
+        applyCustomCode();
+        showToast('success', 'Custom Code Applied', 'Injected styles and head scripts updated.');
+      });
+    }
+
+    if (codeClearBtn) {
+      codeClearBtn.addEventListener('click', function () {
+        localStorage.removeItem('apparatus_custom_code');
+        if (codeHeadInp) codeHeadInp.value = '';
+        if (codeCssInp) codeCssInp.value = '';
+        applyCustomCode();
+        showToast('info', 'Code Cleared', 'Custom CSS and head scripts removed.');
+      });
+    }
+
+    // 4. Maintenance / Banner Handlers
+    const bannerToggle = appSetView.querySelector('#app-set-banner-toggle');
+    const bannerMsgInp = appSetView.querySelector('#app-set-banner-msg');
+    const bannerTypeInp = appSetView.querySelector('#app-set-banner-type');
+    const bannerStatusInp = appSetView.querySelector('#app-set-status-url');
+    const bannerSaveBtn = appSetView.querySelector('#app-set-banner-save-btn');
+
+    try {
+      const storedBanner = JSON.parse(localStorage.getItem('apparatus_system_banner') || '{}');
+      if (bannerToggle) bannerToggle.checked = !!storedBanner.enabled;
+      if (bannerMsgInp) bannerMsgInp.value = storedBanner.message || 'Notice: Scheduled node upgrade tonight at 02:00 UTC.';
+      if (bannerTypeInp && storedBanner.type) bannerTypeInp.value = storedBanner.type;
+      if (bannerStatusInp) bannerStatusInp.value = storedBanner.statusUrl || '';
+    } catch (e) {}
+
+    if (bannerSaveBtn) {
+      bannerSaveBtn.addEventListener('click', function () {
+        const bannerData = {
+          enabled: bannerToggle ? bannerToggle.checked : false,
+          message: bannerMsgInp ? bannerMsgInp.value.trim() : '',
+          type: bannerTypeInp ? bannerTypeInp.value : 'info',
+          statusUrl: bannerStatusInp ? bannerStatusInp.value.trim() : ''
+        };
+        localStorage.setItem('apparatus_system_banner', JSON.stringify(bannerData));
+        applySystemBanner();
+        showToast('success', 'System Notice Saved', bannerData.enabled ? 'Announcement banner is now live!' : 'Banner hidden.');
+      });
+    }
   }
 
   // ==============================================================================
@@ -4883,10 +5366,11 @@
       document.body.classList.remove('apparatus-is-admin');
     }
 
-    // Initialize 4-card transparent dashboard, resource view, and settings view
+    // Initialize 4-card transparent dashboard, resource view, and settings views
     initDashboardView();
     initResourceView();
     initSettingsView();
+    initApparatusSettingsView();
 
     let sidebar = document.getElementById('apparatus-sidebar');
     if (!sidebar) {
@@ -5169,6 +5653,23 @@
         });
       }
 
+      // Dedicated Apparatus Settings navigation (for root admins)
+      const apparatusSettingsBtn = sidebar.querySelector('.apparatus-settings-link');
+      if (apparatusSettingsBtn) {
+        apparatusSettingsBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          const rawP = window.location.pathname || '/';
+          const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard';
+          if (!onHome) {
+            window.location.href = '/#apparatus-settings';
+          } else {
+            window.location.hash = '#apparatus-settings';
+            applyViewMode();
+            smoothScrollToTop();
+          }
+        });
+      }
+
       // Admin-only placeholder settings links
       const adminPanelSettingsLinks = [
         { selector: '.apparatus-panel-editor-link', title: 'Panel Editor', msg: 'Opening Panel Editor customization module...' },
@@ -5298,6 +5799,9 @@
   function initApparatus() {
     initSmoothScroll();
     applySeoMetadata();
+    applyBrandingSettings();
+    applyCustomCode();
+    applySystemBanner();
     // Clean up any legacy solid opacity setting
     if (localStorage.getItem('apparatus_card_opacity') === '82' || localStorage.getItem('apparatus_card_opacity') === '75') {
       localStorage.removeItem('apparatus_card_opacity');
@@ -5366,8 +5870,7 @@
       renderHackingMode();
       return;
     } else {
-      if (bgTitle) bgTitle.textContent = 'ARIXBYTE';
-      if (bgSubtitle) bgSubtitle.textContent = 'CLOUD & INFRASTRUCTURES';
+      applyBrandingSettings();
     }
 
     if (isAuth) {
