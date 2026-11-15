@@ -1268,22 +1268,32 @@
 
                 <!-- User Unique Referral Code Box -->
                 <div class="apparatus-referral-card">
-                  <div class="apparatus-referral-top">
-                    <span class="apparatus-referral-title"><i class="ri-vip-crown-line"></i> Referral Program</span>
-                    <span class="apparatus-referral-badge"><i class="ri-copper-coin-line"></i> +10 Coins / referral</span>
+                  <div class="apparatus-referral-header">
+                    <div class="apparatus-referral-header-left">
+                      <div class="apparatus-referral-icon">
+                        <i class="ri-copper-coin-line"></i>
+                      </div>
+                      <div class="apparatus-referral-titles">
+                        <span class="apparatus-referral-title">Referral Program</span>
+                        <span class="apparatus-referral-subtitle">Earn 10 coins per friend invited</span>
+                      </div>
+                    </div>
+                    <span class="apparatus-referral-badge">+10 Coins</span>
                   </div>
+
                   <div class="apparatus-referral-box">
-                    <div class="apparatus-referral-code-label">
-                      <span class="apparatus-code-subtag">YOUR CODE</span>
+                    <div class="apparatus-referral-code-wrap">
+                      <span class="apparatus-referral-code-tag">YOUR CODE</span>
                       <code class="apparatus-referral-code" id="apparatus-user-ref-code">${referralCode}</code>
                     </div>
                     <button type="button" class="apparatus-copy-ref-btn" id="apparatus-copy-ref-btn" title="Copy Referral Code">
                       <i class="ri-file-copy-line"></i> <span>Copy</span>
                     </button>
                   </div>
-                  <div class="apparatus-referral-note">
-                    <i class="ri-sparkling-fill" style="color: #fbbf24;"></i> Earn <strong style="color: #fbbf24;">10 Coins</strong> for each friend who joins using your code
-                  </div>
+
+                  <p class="apparatus-referral-note">
+                    Share your unique code with friends to earn 10 Coins when they sign up.
+                  </p>
                 </div>
               </div>
 
