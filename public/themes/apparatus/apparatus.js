@@ -199,6 +199,11 @@
       '[role="navigation"]',
       '[class*="NavigationBar"]',
       'div[class*="NavigationBar___StyledDiv"]',
+      '#SubNavigation',
+      '[id="SubNavigation"]',
+      'div#SubNavigation',
+      'div[id*="SubNavigation"]',
+      'nav#SubNavigation',
       'div[class*="SubNavigation"]',
       'nav[class*="SubNavigation"]',
       '[class*="SubNavigation"]'
@@ -212,7 +217,7 @@
       el.style.setProperty('margin', '0', 'important');
       el.style.setProperty('padding', '0', 'important');
       el.style.setProperty('border', 'none', 'important');
-      if (el.matches('[class*="SubNavigation"]') || el.closest('[class*="SubNavigation"]')) {
+      if (el.id === 'SubNavigation' || el.matches('[class*="SubNavigation"]') || el.closest('[class*="SubNavigation"], #SubNavigation')) {
         try { el.remove(); } catch(e) {}
       }
     });
@@ -236,7 +241,9 @@
           el.matches('[class*="NavigationBar"]') ||
           el.querySelector('[class*="NavigationBar"]') ||
           el.matches('[class*="SubNavigation"]') ||
-          el.querySelector('[class*="SubNavigation"]')
+          el.querySelector('[class*="SubNavigation"]') ||
+          el.id === 'SubNavigation' ||
+          el.querySelector('#SubNavigation')
         ) {
           el.style.setProperty('display', 'none', 'important');
           el.style.setProperty('visibility', 'hidden', 'important');
@@ -278,14 +285,39 @@
       }
     });
 
-    // 4. Equal height & layout improvements for Account cards
-    const accountCards = document.querySelectorAll('div[class*="AccountOverviewContainer"] div.bg-neutral-700, div[class*="AccountApiContainer"] div.bg-neutral-700, div[class*="AccountSSHContainer"] div.bg-neutral-700');
-    accountCards.forEach(function (card) {
+    // 4. Proper Transparency & Styling for ContentBox cards (.sc-mjlt6f-2) across /account, /account/api, /account/ssh
+    const contentCards = document.querySelectorAll('.sc-mjlt6f-2, [class*="sc-mjlt6f-2"], div[class*="ContentBox___StyledDiv"]');
+    contentCards.forEach(function (card) {
+      card.style.setProperty('background', 'rgba(14, 10, 24, 0.45)', 'important');
+      card.style.setProperty('backdrop-filter', 'blur(16px) saturate(180%)', 'important');
+      card.style.setProperty('-webkit-backdrop-filter', 'blur(16px) saturate(180%)', 'important');
+      card.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.12)', 'important');
+      card.style.setProperty('border-radius', '16px', 'important');
+      card.style.setProperty('box-shadow', '0 12px 32px 0 rgba(0, 0, 0, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)', 'important');
       if (card.parentElement && !card.parentElement.style.height) {
         card.parentElement.style.display = 'flex';
         card.parentElement.style.flexDirection = 'column';
         card.style.flex = '1 1 auto';
       }
+    });
+
+    // 5. Ensure inputs and textareas on account pages are properly translucent
+    document.querySelectorAll('.sc-19rce1w-0, .sc-19rce1w-1, .sc-lcvdq4-0, .sc-plts88-0').forEach(function (inp) {
+      inp.style.setProperty('background', 'rgba(0, 0, 0, 0.35)', 'important');
+      inp.style.setProperty('backdrop-filter', 'blur(8px)', 'important');
+      inp.style.setProperty('-webkit-backdrop-filter', 'blur(8px)', 'important');
+      inp.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.15)', 'important');
+      inp.style.setProperty('border-radius', '10px', 'important');
+      inp.style.setProperty('color', '#ffffff', 'important');
+    });
+
+    // 6. Ensure action buttons on account cards have Apparatus pink gradient
+    document.querySelectorAll('.sc-mjlt6f-2 button:not([class*="secondary"]):not([class*="danger"]):not([class*="ghost"])').forEach(function (btn) {
+      btn.style.setProperty('background', 'linear-gradient(135deg, #ec4899, #db2777)', 'important');
+      btn.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.2)', 'important');
+      btn.style.setProperty('color', '#ffffff', 'important');
+      btn.style.setProperty('border-radius', '10px', 'important');
+      btn.style.setProperty('box-shadow', '0 4px 15px rgba(236, 72, 153, 0.35)', 'important');
     });
   }
 

@@ -1300,6 +1300,11 @@ body:not(.apparatus-auth) header,
 body:not(.apparatus-auth) [role="navigation"],
 body:not(.apparatus-auth) [class*="NavigationBar"],
 body:not(.apparatus-auth) div[class*="NavigationBar___StyledDiv"],
+body:not(.apparatus-auth) #SubNavigation,
+body:not(.apparatus-auth) [id="SubNavigation"],
+body:not(.apparatus-auth) div#SubNavigation,
+body:not(.apparatus-auth) div[id*="SubNavigation"],
+body:not(.apparatus-auth) nav#SubNavigation,
 body:not(.apparatus-auth) div[class*="SubNavigation"],
 body:not(.apparatus-auth) nav[class*="SubNavigation"],
 body:not(.apparatus-auth) [class*="SubNavigation"],
@@ -1398,20 +1403,27 @@ div[style*="height:2px"] {
    ============================================================================== */
 
 /* Section / ContentBox Titles */
+body:not(.apparatus-auth) .sc-mjlt6f-0,
+body:not(.apparatus-auth) h2[class*="sc-mjlt6f-0"],
+body:not(.apparatus-auth) h2[class*="ContentBox___StyledH"],
 body:not(.apparatus-auth) div[class*="ContentBox"] h2,
 body:not(.apparatus-auth) h2.text-2xl,
 body:not(.apparatus-auth) h2[class*="text-neutral-300"] {
   font-family: var(--apparatus-font) !important;
-  font-size: 1.3rem !important;
+  font-size: 1.28rem !important;
   font-weight: 700 !important;
   letter-spacing: -0.01em !important;
   color: #ffffff !important;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35) !important;
   margin-bottom: 0.85rem !important;
   padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
 }
 
 /* Flex alignments for equal card heights */
+body:not(.apparatus-auth) .sc-12to0iy-1,
+body:not(.apparatus-auth) .sc-1c4s3nm-0,
+body:not(.apparatus-auth) .sc-yksipt-0,
 body:not(.apparatus-auth) div[class*="AccountOverviewContainer"] > div,
 body:not(.apparatus-auth) div[class*="AccountApiContainer"] > div,
 body:not(.apparatus-auth) div[class*="AccountSSHContainer"] > div {
@@ -1419,21 +1431,29 @@ body:not(.apparatus-auth) div[class*="AccountSSHContainer"] > div {
   align-items: stretch !important;
 }
 
-body:not(.apparatus-auth) div:has(> h2 + div.bg-neutral-700),
-body:not(.apparatus-auth) div:has(> div.bg-neutral-700) {
+body:not(.apparatus-auth) .sc-12to0iy-1 > div,
+body:not(.apparatus-auth) .sc-1c4s3nm-0 > div,
+body:not(.apparatus-auth) .sc-yksipt-0 > div,
+body:not(.apparatus-auth) div:has(> .sc-mjlt6f-2),
+body:not(.apparatus-auth) div:has(> div[class*="sc-mjlt6f-2"]) {
   display: flex !important;
   flex-direction: column !important;
 }
 
-body:not(.apparatus-auth) div:has(> h2 + div.bg-neutral-700) > div.bg-neutral-700,
-body:not(.apparatus-auth) div:has(> div.bg-neutral-700) > div.bg-neutral-700 {
+body:not(.apparatus-auth) .sc-12to0iy-1 > div > .sc-mjlt6f-2,
+body:not(.apparatus-auth) .sc-1c4s3nm-0 > div > .sc-mjlt6f-2,
+body:not(.apparatus-auth) .sc-yksipt-0 > div > .sc-mjlt6f-2,
+body:not(.apparatus-auth) div:has(> .sc-mjlt6f-2) > .sc-mjlt6f-2,
+body:not(.apparatus-auth) div:has(> div[class*="sc-mjlt6f-2"]) > div[class*="sc-mjlt6f-2"] {
   flex: 1 1 auto !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: space-between !important;
 }
 
-/* Glassmorphic native panels, TitledGreyBox, ContentBox containers */
+/* Glassmorphic native panels, ContentBox cards (.sc-mjlt6f-2) */
+body:not(.apparatus-auth) .sc-mjlt6f-2,
+body:not(.apparatus-auth) div[class*="sc-mjlt6f-2"],
+body:not(.apparatus-auth) div[class*="ContentBox___StyledDiv"],
 body:not(.apparatus-auth) .bg-neutral-800,
 body:not(.apparatus-auth) .bg-neutral-700,
 body:not(.apparatus-auth) div[class*="TitledGreyBox"],
@@ -1450,6 +1470,9 @@ body:not(.apparatus-auth) div[class*="Card"] {
   transition: all 0.25s ease !important;
 }
 
+body:not(.apparatus-auth) .sc-mjlt6f-2:hover,
+body:not(.apparatus-auth) div[class*="sc-mjlt6f-2"]:hover,
+body:not(.apparatus-auth) div[class*="ContentBox___StyledDiv"]:hover,
 body:not(.apparatus-auth) .bg-neutral-800:hover,
 body:not(.apparatus-auth) .bg-neutral-700:hover,
 body:not(.apparatus-auth) div[class*="TitledGreyBox"]:hover {
@@ -1481,19 +1504,32 @@ body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:last-child {
 }
 
 /* Empty state message boxes (API Keys, SSH Keys) */
+body:not(.apparatus-auth) .sc-1c4s3nm-3,
+body:not(.apparatus-auth) .sc-yksipt-3,
+body:not(.apparatus-auth) p[class*="sc-1c4s3nm-3"],
+body:not(.apparatus-auth) p[class*="sc-yksipt-3"],
+body:not(.apparatus-auth) .sc-mjlt6f-2 > p.text-center,
+body:not(.apparatus-auth) .sc-mjlt6f-2 > p,
 body:not(.apparatus-auth) div.bg-neutral-700 > p.text-center,
 body:not(.apparatus-auth) div[class*="ContentBox"] p.text-center {
   background: rgba(255, 255, 255, 0.03) !important;
   border: 1px dashed rgba(255, 255, 255, 0.16) !important;
   border-radius: 12px !important;
-  padding: 1.75rem 1.25rem !important;
+  padding: 1.5rem 1.25rem !important;
   color: rgba(255, 255, 255, 0.75) !important;
   font-size: 0.92rem !important;
   font-weight: 500 !important;
   margin: 0.5rem 0 !important;
+  text-align: center !important;
 }
 
 /* GreyRowBox (API Keys, SSH Keys, Activity Log rows) */
+body:not(.apparatus-auth) .sc-1xo9c6v-0,
+body:not(.apparatus-auth) .sc-1c4s3nm-4,
+body:not(.apparatus-auth) .sc-yksipt-4,
+body:not(.apparatus-auth) div[class*="sc-1xo9c6v"],
+body:not(.apparatus-auth) div[class*="sc-1c4s3nm-4"],
+body:not(.apparatus-auth) div[class*="sc-yksipt-4"],
 body:not(.apparatus-auth) div[class*="GreyRowBox"],
 body:not(.apparatus-auth) .bg-neutral-600 {
   background: rgba(255, 255, 255, 0.04) !important;
@@ -1506,6 +1542,10 @@ body:not(.apparatus-auth) .bg-neutral-600 {
   transition: all 0.2s ease !important;
 }
 
+body:not(.apparatus-auth) .sc-1xo9c6v-0:hover,
+body:not(.apparatus-auth) .sc-1c4s3nm-4:hover,
+body:not(.apparatus-auth) .sc-yksipt-4:hover,
+body:not(.apparatus-auth) div[class*="sc-1xo9c6v"]:hover,
 body:not(.apparatus-auth) div[class*="GreyRowBox"]:hover,
 body:not(.apparatus-auth) .bg-neutral-600:hover {
   background: rgba(255, 255, 255, 0.08) !important;
@@ -1515,6 +1555,14 @@ body:not(.apparatus-auth) .bg-neutral-600:hover {
 }
 
 /* Form Inputs, Textareas & Selects - universal translucent glassmorphism */
+body:not(.apparatus-auth) input.sc-19rce1w-0,
+body:not(.apparatus-auth) textarea.sc-19rce1w-1,
+body:not(.apparatus-auth) textarea.sc-lcvdq4-0,
+body:not(.apparatus-auth) textarea.sc-plts88-0,
+body:not(.apparatus-auth) input[class*="sc-19rce1w"],
+body:not(.apparatus-auth) textarea[class*="sc-19rce1w"],
+body:not(.apparatus-auth) textarea[class*="sc-lcvdq4"],
+body:not(.apparatus-auth) textarea[class*="sc-plts88"],
 body:not(.apparatus-auth) input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]),
 body:not(.apparatus-auth) textarea,
 body:not(.apparatus-auth) select,
@@ -1531,8 +1579,17 @@ body:not(.apparatus-auth) div[class*="Input___StyledInput"] {
   font-size: 0.92rem !important;
   transition: all 0.2s ease !important;
   outline: none !important;
+  box-shadow: none !important;
 }
 
+body:not(.apparatus-auth) input.sc-19rce1w-0:focus,
+body:not(.apparatus-auth) textarea.sc-19rce1w-1:focus,
+body:not(.apparatus-auth) textarea.sc-lcvdq4-0:focus,
+body:not(.apparatus-auth) textarea.sc-plts88-0:focus,
+body:not(.apparatus-auth) input[class*="sc-19rce1w"]:focus,
+body:not(.apparatus-auth) textarea[class*="sc-19rce1w"]:focus,
+body:not(.apparatus-auth) textarea[class*="sc-lcvdq4"]:focus,
+body:not(.apparatus-auth) textarea[class*="sc-plts88"]:focus,
 body:not(.apparatus-auth) input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):focus,
 body:not(.apparatus-auth) textarea:focus,
 body:not(.apparatus-auth) select:focus {
@@ -1558,11 +1615,15 @@ body:not(.apparatus-auth) .input-help {
 }
 
 /* Primary Action Buttons (Update Password, Update Email, Enable Two-Step, Create, Save) */
+body:not(.apparatus-auth) button[class*="style-module_4LBM1DKx"],
+body:not(.apparatus-auth) button[class*="style-module_3kBDV_wo"],
 body:not(.apparatus-auth) button.bg-blue-600,
 body:not(.apparatus-auth) button[class*="primary"],
 body:not(.apparatus-auth) button[class*="Button--primary"],
 body:not(.apparatus-auth) button[type="submit"],
 body:not(.apparatus-auth) .bg-primary-500,
+body:not(.apparatus-auth) .sc-mjlt6f-2 button:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):not([aria-label="close"]),
+body:not(.apparatus-auth) div[class*="sc-mjlt6f-2"] button:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):not([aria-label="close"]),
 body:not(.apparatus-auth) button[class*="Button"]:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]),
 body:not(.apparatus-auth) button[class*="button"]:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):not([aria-label="close"]),
 body:not(.apparatus-auth) div[class*="ContentBox"] button:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):not([aria-label="close"]) {
@@ -1579,11 +1640,15 @@ body:not(.apparatus-auth) div[class*="ContentBox"] button:not([class*="secondary
   cursor: pointer !important;
 }
 
+body:not(.apparatus-auth) button[class*="style-module_4LBM1DKx"]:hover,
+body:not(.apparatus-auth) button[class*="style-module_3kBDV_wo"]:hover,
 body:not(.apparatus-auth) button.bg-blue-600:hover,
 body:not(.apparatus-auth) button[class*="primary"]:hover,
 body:not(.apparatus-auth) button[class*="Button--primary"]:hover,
 body:not(.apparatus-auth) button[type="submit"]:hover,
 body:not(.apparatus-auth) .bg-primary-500:hover,
+body:not(.apparatus-auth) .sc-mjlt6f-2 button:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):not([aria-label="close"]):hover,
+body:not(.apparatus-auth) div[class*="sc-mjlt6f-2"] button:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):not([aria-label="close"]):hover,
 body:not(.apparatus-auth) button[class*="Button"]:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):hover,
 body:not(.apparatus-auth) button[class*="button"]:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):not([aria-label="close"]):hover,
 body:not(.apparatus-auth) div[class*="ContentBox"] button:not([class*="secondary"]):not([class*="danger"]):not([class*="text"]):not([class*="ghost"]):not([aria-label="close"]):hover {
