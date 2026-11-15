@@ -1490,7 +1490,7 @@
                 <div class="apparatus-balance-box apparatus-balance-coins">
                   <span class="apparatus-balance-label">Referral Points</span>
                   <div class="apparatus-balance-value">
-                    <span id="apparatus-coin-count">100</span> <span class="apparatus-coin-symbol">🪙</span>
+                    <span id="apparatus-coin-count">100</span>
                   </div>
                   <span class="apparatus-balance-note">Redeem points for discounts &amp; upgrades</span>
                 </div>
@@ -2080,7 +2080,6 @@
                   <span class="apparatus-res-coins-lbl">AVAILABLE COINS</span>
                   <div class="apparatus-res-coins-num">
                     <span id="res-coin-count">0</span>
-                    <span class="apparatus-coin-icon-gold">🪙</span>
                   </div>
                 </div>
               </div>
