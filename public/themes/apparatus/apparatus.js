@@ -1114,7 +1114,7 @@
           if (container) {
             container.innerHTML = `
               <div class="apparatus-empty-servers">
-                <div class="apparatus-empty-icon"><i class="ri-server-line"></i></div>
+                <div class="apparatus-empty-icon"><i class="ri-gamepad-line"></i></div>
                 <h4 class="apparatus-empty-title">No Game Servers Active</h4>
                 <p class="apparatus-empty-desc">
                   You do not have any active game servers yet. Deploy high-performance Minecraft, Rust, CS2, or bot instances with instant setup.
@@ -1224,7 +1224,7 @@
     if (container) {
       container.innerHTML = `
         <div class="apparatus-empty-servers">
-          <div class="apparatus-empty-icon"><i class="ri-server-line"></i></div>
+          <div class="apparatus-empty-icon"><i class="ri-gamepad-line"></i></div>
           <h4 class="apparatus-empty-title">No Game Servers Active</h4>
           <p class="apparatus-empty-desc">
             You do not have any active game servers yet. Deploy high-performance Minecraft, Rust, CS2, or bot instances with instant setup.
@@ -1364,11 +1364,9 @@
                 <div class="apparatus-tabs-nav">
                   <button type="button" class="apparatus-tab-btn active" data-tab="servers" id="apparatus-tab-btn-servers">
                     <i class="ri-gamepad-line"></i> Game Servers
-                    <span class="apparatus-tab-badge" id="apparatus-server-badge">0</span>
                   </button>
                   <button type="button" class="apparatus-tab-btn" data-tab="vps" id="apparatus-tab-btn-vps">
-                    <i class="ri-hard-drive-3-line"></i> Cloud VPS
-                    <span class="apparatus-tab-badge" id="apparatus-vps-badge">0</span>
+                    <i class="ri-server-line"></i> Cloud VPS
                   </button>
                 </div>
                 <div class="apparatus-hub-actions">
@@ -1391,7 +1389,7 @@
               <div class="apparatus-tab-pane" id="apparatus-pane-vps" style="display: none;">
                 <div class="apparatus-vps-empty">
                   <div class="apparatus-vps-empty-icon">
-                    <i class="ri-hard-drive-3-line"></i>
+                    <i class="ri-server-line"></i>
                   </div>
                   <h4 class="apparatus-vps-empty-title">No Cloud VPS Found</h4>
                   <p class="apparatus-vps-empty-desc">
@@ -2162,13 +2160,13 @@
               </li>
               <li>
                 <a href="/servers" class="apparatus-nav-link" data-tab="servers" data-path="/servers">
-                  <i class="ri-server-line apparatus-nav-icon"></i>
+                  <i class="ri-gamepad-line apparatus-nav-icon"></i>
                   <span>Servers</span>
                 </a>
               </li>
               <li>
                 <a href="/vps" class="apparatus-nav-link apparatus-vps-link" data-tab="vps" data-path="/vps">
-                  <i class="ri-hard-drive-2-line apparatus-nav-icon"></i>
+                  <i class="ri-server-line apparatus-nav-icon"></i>
                   <span>VPS</span>
                 </a>
               </li>

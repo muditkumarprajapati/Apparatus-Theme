@@ -1860,12 +1860,7 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 }
 
 .apparatus-tab-badge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 0.12rem 0.45rem;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  display: none !important;
 }
 
 .apparatus-tab-badge-accent {
