@@ -1328,16 +1328,16 @@
             <p class="apparatus-welcome-desc">Deploy and manage your game servers, cloud VPS, and infrastructure.</p>
             <div class="apparatus-welcome-actions">
               <a href="/servers" class="apparatus-btn apparatus-btn-primary" id="apparatus-btn-to-servers">
-                <i class="ri-server-line apparatus-btn-icon-servers"></i> View Servers
+                <i class="ri-server-line"></i> <span>View Servers</span>
               </a>
               <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-hero-vps-btn">
-                <i class="ri-hard-drive-3-line apparatus-btn-icon-vps"></i> Cloud VPS
+                <i class="ri-hard-drive-3-line"></i> <span>Cloud VPS</span>
               </button>
               <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-hero-store-btn">
-                <i class="ri-wallet-3-line apparatus-btn-icon-store"></i> Billing &amp; Store
+                <i class="ri-wallet-3-line"></i> <span>Billing &amp; Store</span>
               </button>
               <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass">
-                <i class="ri-discord-fill apparatus-btn-icon-discord"></i> Discord Community
+                <i class="ri-discord-fill"></i> <span>Discord Community</span> <i class="ri-arrow-right-up-line apparatus-btn-ext"></i>
               </a>
             </div>
           </div>
