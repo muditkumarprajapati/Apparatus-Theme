@@ -1355,12 +1355,12 @@
             </div>
             <div class="apparatus-metric-body">
               <span class="apparatus-metric-label">Cash Balance</span>
-              <div class="apparatus-metric-num">
+              <div class="apparatus-metric-num apparatus-blur-sensitive">
                 <span class="apparatus-metric-val" id="apparatus-metric-balance">₹0.00</span>
                 <span class="apparatus-metric-unit">INR</span>
               </div>
               <span class="apparatus-metric-sub">
-                <span id="apparatus-metric-coins">100</span> Referral Points &bull; <a href="javascript:void(0)" class="apparatus-metric-sublink" id="apparatus-ribbon-topup">Top Up</a>
+                <span class="apparatus-blur-sensitive"><span id="apparatus-metric-coins">100</span> Referral Points</span> &bull; <a href="javascript:void(0)" class="apparatus-metric-sublink" id="apparatus-ribbon-topup">Top Up</a>
               </span>
             </div>
           </div>
@@ -2360,32 +2360,6 @@
                 Automatically obscures sensitive metrics including IP addresses, ports, account email, currency balances, and referral codes across all pages.
                 <strong>Hover your cursor over any blurred element to temporarily reveal it.</strong>
               </p>
-
-              <!-- Interactive Privacy Test Area -->
-              <div class="apparatus-privacy-preview-box">
-                <div class="apparatus-privacy-preview-head">
-                  <span class="apparatus-privacy-preview-title"><i class="ri-flask-line"></i> Live Privacy Sandbox</span>
-                  <span class="apparatus-privacy-preview-sub">Hover over any item below to test:</span>
-                </div>
-                <div class="apparatus-privacy-chips-row">
-                  <div class="apparatus-privacy-chip">
-                    <span class="apparatus-privacy-chip-lbl">Server IP:</span>
-                    <span class="apparatus-blur-sensitive apparatus-privacy-val">198.51.100.42:25565</span>
-                  </div>
-                  <div class="apparatus-privacy-chip">
-                    <span class="apparatus-privacy-chip-lbl">Account Email:</span>
-                    <span class="apparatus-blur-sensitive apparatus-privacy-val">client@arixbyte.com</span>
-                  </div>
-                  <div class="apparatus-privacy-chip">
-                    <span class="apparatus-privacy-chip-lbl">Balance:</span>
-                    <span class="apparatus-blur-sensitive apparatus-privacy-val">₹450.00 / 1,200 Coins</span>
-                  </div>
-                  <div class="apparatus-privacy-chip">
-                    <span class="apparatus-privacy-chip-lbl">Referral Code:</span>
-                    <span class="apparatus-blur-sensitive apparatus-privacy-val">ARIX-9082-VIP</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
