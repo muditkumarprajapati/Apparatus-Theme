@@ -1314,22 +1314,27 @@
             <div class="apparatus-card apparatus-card-billing" id="apparatus-area-billing">
               <div class="apparatus-card-header">
                 <h2 class="apparatus-card-title">
-                  <i class="ri-money-rupee-circle-line" style="color: #34d399;"></i> Billing &amp; Wallet
+                  <i class="ri-wallet-3-line" style="color: #34d399;"></i> Billing &amp; Wallet
                 </h2>
-                <span class="apparatus-pill apparatus-pill-green">INR (₹)</span>
               </div>
 
               <div class="apparatus-billing-balances">
                 <!-- Cash Wallet -->
                 <div class="apparatus-balance-box apparatus-balance-cash">
-                  <span class="apparatus-balance-label">Cash Balance</span>
+                  <div class="apparatus-balance-box-top">
+                    <span class="apparatus-balance-label">Cash Balance</span>
+                    <i class="ri-money-rupee-circle-line apparatus-balance-icon" style="color: #34d399;"></i>
+                  </div>
                   <div class="apparatus-balance-value">₹0.00</div>
                   <span class="apparatus-balance-note">Instant UPI / NetBanking / Cards</span>
                 </div>
 
                 <!-- Referral Points Balance -->
                 <div class="apparatus-balance-box apparatus-balance-coins">
-                  <span class="apparatus-balance-label">Referral Points</span>
+                  <div class="apparatus-balance-box-top">
+                    <span class="apparatus-balance-label">Referral Points</span>
+                    <i class="ri-copper-coin-line apparatus-balance-icon" style="color: #fbbf24;"></i>
+                  </div>
                   <div class="apparatus-balance-value">
                     <span id="apparatus-coin-count">100</span> <span class="apparatus-coin-symbol">🪙</span>
                   </div>
@@ -1347,7 +1352,7 @@
                   <div class="apparatus-referral-header">
                     <div class="apparatus-referral-header-left">
                       <div class="apparatus-referral-icon">
-                        <i class="ri-gift-2-line"></i>
+                        <i class="ri-gift-line"></i>
                       </div>
                       <div class="apparatus-referral-titles">
                         <span class="apparatus-referral-title">Referral Program</span>
@@ -1366,9 +1371,10 @@
                     </button>
                   </div>
 
-                  <p class="apparatus-referral-note">
-                    Share your unique code with friends to earn 10 Coins when they sign up.
-                  </p>
+                  <div class="apparatus-referral-note">
+                    <i class="ri-sparkling-fill" style="color: #fbbf24; font-size: 0.72rem; margin-right: 4px;"></i>
+                    Earn <strong style="color: #fbbf24; margin: 0 3px;">10 Coins</strong> for each friend who joins using your code
+                  </div>
                 </div>
               </div>
 
@@ -1400,8 +1406,8 @@
                 <h2 class="apparatus-card-title">
                   <i class="ri-dashboard-3-line" style="color: #38bdf8;"></i> Resource Capacity
                 </h2>
-                <a href="#resource" class="apparatus-pill apparatus-pill-interactive" id="apparatus-dash-resource-link" style="text-decoration: none; cursor: pointer;">
-                  <span>Allocated</span> <i class="ri-arrow-right-line" style="margin-left: 2px;"></i>
+                <a href="#resource" class="apparatus-link-btn" id="apparatus-dash-resource-link" style="text-decoration: none; font-size: 0.76rem; font-weight: 600; color: #38bdf8; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); transition: all 0.2s ease;">
+                  <span>Allocated</span> <i class="ri-arrow-right-line"></i>
                 </a>
               </div>
 
