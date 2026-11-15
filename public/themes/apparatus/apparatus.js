@@ -120,8 +120,9 @@
     // Normalize path by stripping trailing slash (unless root '/')
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
-    const isServerTab = currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers';
-    const isDashboardTab = (currentPath === '/' || currentPath === '/dashboard') && !isServerTab;
+    const isResourceTab = window.location.hash === '#resource' || currentPath === '/billing/resource' || currentPath === '/resource';
+    const isServerTab = !isResourceTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
+    const isDashboardTab = !isResourceTab && (currentPath === '/' || currentPath === '/dashboard') && !isServerTab;
 
     const links = document.querySelectorAll('.apparatus-nav-link[data-path], .apparatus-nav-link[data-tab]');
     links.forEach(function (link) {
@@ -131,7 +132,9 @@
 
       let isActive = false;
 
-      if (tab === 'dashboard' || p === '/') {
+      if (tab === 'resource' || p === '/billing/resource' || p === '/resource') {
+        isActive = isResourceTab;
+      } else if (tab === 'dashboard' || p === '/') {
         isActive = isDashboardTab;
       } else if (tab === 'servers' || p === '/servers') {
         isActive = isServerTab;
@@ -157,14 +160,31 @@
     const rawPath = window.location.pathname || '/';
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
-    const isServerTab = currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers';
-    const isDashboardTab = (currentPath === '/' || currentPath === '/dashboard') && !isServerTab;
+    const isResourceTab = window.location.hash === '#resource' || currentPath === '/billing/resource' || currentPath === '/resource';
+    const isServerTab = !isResourceTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
+    const isDashboardTab = !isResourceTab && (currentPath === '/' || currentPath === '/dashboard') && !isServerTab;
     const isHomeRoute = isDashboardTab || isServerTab;
 
     const hero = document.getElementById('apparatus-dashboard-view');
+    const resView = document.getElementById('apparatus-resource-view');
 
-    if (isHomeRoute) {
+    if (isResourceTab) {
+      if (hero) hero.style.display = 'none';
+      if (resView) {
+        resView.style.display = 'block';
+        if (typeof renderResourcePage === 'function') renderResourcePage();
+      }
+      document.body.classList.add('apparatus-page-resource');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers');
+
+      // Hide all account containers and native server messages
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3').forEach(function (el) {
+        el.style.setProperty('display', 'none', 'important');
+      });
+    } else if (isHomeRoute) {
+      if (resView) resView.style.display = 'none';
       if (hero) hero.style.display = 'block';
+      document.body.classList.remove('apparatus-page-resource');
 
       if (isServerTab) {
         document.body.classList.add('apparatus-page-servers');
@@ -179,8 +199,9 @@
         el.style.setProperty('display', 'none', 'important');
       });
     } else {
+      if (resView) resView.style.display = 'none';
       if (hero) hero.style.display = 'none';
-      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-view-dashboard', 'apparatus-view-servers');
+      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-view-dashboard', 'apparatus-view-servers');
 
       // Restore display for account containers when on account routes
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, div.bg-gray-700, [class*="PageContentBlock"]').forEach(function (el) {
@@ -821,6 +842,94 @@
     if (diskBar) diskBar.style.width = diskPct + '%';
   }
 
+  // ==============================================================================
+  // RESOURCE ALLOCATION DATA STORE (Server & VPS Resources)
+  // Default values are 0 / unallocated as requested
+  // Admin page can update this structure via window.setApparatusResources(newData)
+  // ==============================================================================
+  function getApparatusResources() {
+    const defaults = {
+      server: {
+        slots: 0,
+        processor: '0',
+        ram: '0 MB',
+        cpu: '0%',
+        disk: '0 GB',
+        allocation: 0,
+        ports: 0,
+        database: 0,
+        validity: '0 (after activation of server)'
+      },
+      vps: {
+        slots: 0,
+        node: '0',
+        ram: '0 GB',
+        cpu: '0 vCPU',
+        disk: '0 GB'
+      }
+    };
+    try {
+      const saved = localStorage.getItem('apparatus_allocated_resources');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          server: Object.assign({}, defaults.server, parsed.server || {}),
+          vps: Object.assign({}, defaults.vps, parsed.vps || {})
+        };
+      }
+    } catch (e) {}
+    return defaults;
+  }
+  window.getApparatusResources = getApparatusResources;
+  window.setApparatusResources = function (data) {
+    try {
+      localStorage.setItem('apparatus_allocated_resources', JSON.stringify(data));
+      renderResourcePage();
+    } catch (e) {}
+  };
+
+  function renderResourcePage() {
+    const res = getApparatusResources();
+
+    // Overview Ribbon
+    const sSlotsVal = document.getElementById('res-val-server-slots');
+    if (sSlotsVal) sSlotsVal.textContent = res.server.slots + ' Slots';
+    const vSlotsVal = document.getElementById('res-val-vps-slots');
+    if (vSlotsVal) vSlotsVal.textContent = res.vps.slots + ' Slots';
+
+    // Server Resources
+    const sSlots = document.getElementById('res-server-slots');
+    if (sSlots) sSlots.textContent = res.server.slots;
+    const sProc = document.getElementById('res-server-processor');
+    if (sProc) sProc.textContent = res.server.processor;
+    const sRam = document.getElementById('res-server-ram');
+    if (sRam) sRam.textContent = res.server.ram;
+    const sCpu = document.getElementById('res-server-cpu');
+    if (sCpu) sCpu.textContent = res.server.cpu;
+    const sDisk = document.getElementById('res-server-disk');
+    if (sDisk) sDisk.textContent = res.server.disk;
+    const sAlloc = document.getElementById('res-server-allocation');
+    if (sAlloc) sAlloc.textContent = res.server.allocation;
+    const sPorts = document.getElementById('res-server-ports');
+    if (sPorts) sPorts.textContent = res.server.ports;
+    const sDb = document.getElementById('res-server-database');
+    if (sDb) sDb.textContent = res.server.database;
+    const sVal = document.getElementById('res-server-validity');
+    if (sVal) sVal.textContent = res.server.validity;
+
+    // VPS Resources
+    const vSlots = document.getElementById('res-vps-slots');
+    if (vSlots) vSlots.textContent = res.vps.slots;
+    const vNode = document.getElementById('res-vps-node');
+    if (vNode) vNode.textContent = res.vps.node;
+    const vRam = document.getElementById('res-vps-ram');
+    if (vRam) vRam.textContent = res.vps.ram;
+    const vCpu = document.getElementById('res-vps-cpu');
+    if (vCpu) vCpu.textContent = res.vps.cpu;
+    const vDisk = document.getElementById('res-vps-disk');
+    if (vDisk) vDisk.textContent = res.vps.disk;
+  }
+
   // Load API Data for Dashboard (Servers, Activities, Account Details)
   async function loadDashboardApiData() {
     // 1. Fetch user data if not fully provided
@@ -1282,7 +1391,9 @@
                 <h2 class="apparatus-card-title">
                   <i class="ri-dashboard-3-line" style="color: #38bdf8;"></i> Resource Capacity
                 </h2>
-                <span class="apparatus-pill" id="apparatus-resource-status">Allocated</span>
+                <a href="#resource" class="apparatus-pill apparatus-pill-interactive" id="apparatus-dash-resource-link" style="text-decoration: none; cursor: pointer;">
+                  <span>Allocated</span> <i class="ri-arrow-right-line" style="margin-left: 2px;"></i>
+                </a>
               </div>
 
               <div class="apparatus-gauges-list">
@@ -1370,6 +1481,16 @@
       });
     }
 
+    const dashResLink = document.getElementById('apparatus-dash-resource-link');
+    if (dashResLink) {
+      dashResLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.hash = '#resource';
+        applyViewMode();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
     // Toggle reveal for mobile touch
     const emailEl = document.getElementById('apparatus-email-val');
     if (emailEl) {
@@ -1386,6 +1507,360 @@
 
     // Load dynamic data
     loadDashboardApiData();
+  }
+
+  // Initialize the Dedicated Resource Allocation View
+  function initResourceView() {
+    let resView = document.getElementById('apparatus-resource-view');
+    if (resView) return;
+
+    resView = document.createElement('div');
+    resView.id = 'apparatus-resource-view';
+    resView.className = 'apparatus-resource-view';
+    resView.style.display = 'none';
+
+    resView.innerHTML = `
+      <div class="apparatus-dashboard-container">
+        
+        <!-- Top Resource Header -->
+        <div class="apparatus-card apparatus-resource-header-card">
+          <div class="apparatus-resource-header-left">
+            <div class="apparatus-resource-breadcrumbs">
+              <a href="/" class="apparatus-breadcrumb-link" id="apparatus-res-back-btn">
+                <i class="ri-arrow-left-s-line"></i> Dashboard
+              </a>
+              <span class="apparatus-breadcrumb-sep">/</span>
+              <span class="apparatus-breadcrumb-current">Resources</span>
+            </div>
+            <h1 class="apparatus-resource-main-title">
+              <i class="ri-cpu-line" style="color: #f472b6;"></i> Allocated Resources
+            </h1>
+            <p class="apparatus-resource-subtitle">
+              Overview of your dedicated Game Server and Cloud VPS computing limits.
+            </p>
+          </div>
+
+          <div class="apparatus-resource-header-right">
+            <div class="apparatus-resource-meta-pill">
+              <span class="apparatus-status-dot"></span> Admin Provisioned
+            </div>
+            <a href="/" class="apparatus-btn apparatus-btn-glass" id="apparatus-res-back-btn-2">
+              <i class="ri-dashboard-line"></i> Back to Dashboard
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Overview Stats Ribbon -->
+        <div class="apparatus-resource-overview-ribbon">
+          <div class="apparatus-resource-stat-tile">
+            <div class="apparatus-res-stat-icon" style="background: rgba(244, 114, 182, 0.12); color: #f472b6;">
+              <i class="ri-gamepad-line"></i>
+            </div>
+            <div class="apparatus-res-stat-body">
+              <span class="apparatus-res-stat-label">Game Server Slots</span>
+              <span class="apparatus-res-stat-val" id="res-val-server-slots">0 Slots</span>
+            </div>
+          </div>
+
+          <div class="apparatus-resource-stat-tile">
+            <div class="apparatus-res-stat-icon" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8;">
+              <i class="ri-hard-drive-3-line"></i>
+            </div>
+            <div class="apparatus-res-stat-body">
+              <span class="apparatus-res-stat-label">Cloud VPS Slots</span>
+              <span class="apparatus-res-stat-val" id="res-val-vps-slots">0 Slots</span>
+            </div>
+          </div>
+
+          <div class="apparatus-resource-stat-tile">
+            <div class="apparatus-res-stat-icon" style="background: rgba(52, 211, 153, 0.12); color: #34d399;">
+              <i class="ri-shield-check-line"></i>
+            </div>
+            <div class="apparatus-res-stat-body">
+              <span class="apparatus-res-stat-label">Allocation Status</span>
+              <span class="apparatus-res-stat-val" style="color: #34d399;">Active • Verified</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two-Column Main Resource Grid -->
+        <div class="apparatus-resource-grid">
+
+          <!-- Column 1: Server Resources -->
+          <div class="apparatus-card apparatus-resource-card">
+            <div class="apparatus-card-header apparatus-res-card-header">
+              <div class="apparatus-res-card-title-group">
+                <div class="apparatus-res-badge-icon" style="background: rgba(244, 114, 182, 0.15); color: #f472b6;">
+                  <i class="ri-gamepad-line"></i>
+                </div>
+                <div>
+                  <h2 class="apparatus-card-title">Server Resources</h2>
+                  <span class="apparatus-res-card-sub">Pterodactyl Game Server Allocation</span>
+                </div>
+              </div>
+              <span class="apparatus-pill" style="border-color: rgba(244, 114, 182, 0.3); color: #f472b6; background: rgba(244, 114, 182, 0.1);">Game Hosting</span>
+            </div>
+
+            <div class="apparatus-res-items-list">
+              
+              <!-- SERVER SLOTS -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-server-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">SERVER SLOTS</span>
+                    <span class="apparatus-res-row-desc">Total deployable game servers</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-server-slots">0</span>
+                </div>
+              </div>
+
+              <!-- ALLOCATED PROCESSOR -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-cpu-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">ALLOCATED PROCESSOR</span>
+                    <span class="apparatus-res-row-desc">Compute architecture tier</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-server-processor">0</span>
+                </div>
+              </div>
+
+              <!-- RAM -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-database-2-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">RAM</span>
+                    <span class="apparatus-res-row-desc">Allocated memory capacity</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-server-ram">0 MB</span>
+                </div>
+              </div>
+
+              <!-- CPU -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-dashboard-3-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">CPU</span>
+                    <span class="apparatus-res-row-desc">Allocated processing limit</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-server-cpu">0%</span>
+                </div>
+              </div>
+
+              <!-- DISK -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-hard-drive-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">DISK</span>
+                    <span class="apparatus-res-row-desc">Fast NVMe SSD storage</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-server-disk">0 GB</span>
+                </div>
+              </div>
+
+              <!-- ALLOCATION -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-node-tree"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">ALLOCATION</span>
+                    <span class="apparatus-res-row-desc">Network IP allocation count</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-server-allocation">0</span>
+                </div>
+              </div>
+
+              <!-- PORTS -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-router-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">PORTS</span>
+                    <span class="apparatus-res-row-desc">Assigned server ports</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-server-ports">0</span>
+                </div>
+              </div>
+
+              <!-- DATABASE -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-database-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">DATABASE</span>
+                    <span class="apparatus-res-row-desc">MySQL database limit</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-server-database">0</span>
+                </div>
+              </div>
+
+              <!-- VALIDITY -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-calendar-check-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">VALIDITY</span>
+                    <span class="apparatus-res-row-desc">Starts after activation of server</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val apparatus-res-badge-validity" id="res-server-validity">0 (after activation)</span>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="apparatus-res-card-footer">
+              <i class="ri-information-line"></i>
+              <span>Game server resources are allocated and updated by administrators.</span>
+            </div>
+          </div>
+
+          <!-- Column 2: VPS Resources -->
+          <div class="apparatus-card apparatus-resource-card">
+            <div class="apparatus-card-header apparatus-res-card-header">
+              <div class="apparatus-res-card-title-group">
+                <div class="apparatus-res-badge-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+                  <i class="ri-hard-drive-3-line"></i>
+                </div>
+                <div>
+                  <h2 class="apparatus-card-title">VPS Resources</h2>
+                  <span class="apparatus-res-card-sub">Cloud KVM Virtual Private Server</span>
+                </div>
+              </div>
+              <span class="apparatus-pill" style="border-color: rgba(56, 189, 248, 0.3); color: #38bdf8; background: rgba(56, 189, 248, 0.1);">KVM Cloud</span>
+            </div>
+
+            <div class="apparatus-res-items-list">
+              
+              <!-- VPS SLOTS -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-server-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">VPS SLOTS</span>
+                    <span class="apparatus-res-row-desc">Total deployable VPS instances</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-vps-slots">0</span>
+                </div>
+              </div>
+
+              <!-- ALLOCATED NODE -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-global-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">ALLOCATED NODE</span>
+                    <span class="apparatus-res-row-desc">Assigned hypervisor node</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-vps-node">0</span>
+                </div>
+              </div>
+
+              <!-- RAM -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-database-2-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">RAM</span>
+                    <span class="apparatus-res-row-desc">Dedicated physical memory</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-vps-ram">0 GB</span>
+                </div>
+              </div>
+
+              <!-- CPU -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-dashboard-3-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">CPU</span>
+                    <span class="apparatus-res-row-desc">Dedicated virtual CPU cores</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-vps-cpu">0 vCPU</span>
+                </div>
+              </div>
+
+              <!-- DISK -->
+              <div class="apparatus-res-row">
+                <div class="apparatus-res-row-left">
+                  <div class="apparatus-res-row-icon"><i class="ri-hard-drive-line"></i></div>
+                  <div class="apparatus-res-row-info">
+                    <span class="apparatus-res-row-title">DISK</span>
+                    <span class="apparatus-res-row-desc">Dedicated NVMe block storage</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-row-right">
+                  <span class="apparatus-res-badge-val" id="res-vps-disk">0 GB</span>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="apparatus-res-card-footer">
+              <i class="ri-information-line"></i>
+              <span>Cloud VPS instances and node allocations are provisioned by administrators.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+    const app = document.getElementById('app') || document.body;
+    const dash = document.getElementById('apparatus-dashboard-view');
+    if (dash && dash.parentNode) {
+      dash.parentNode.insertBefore(resView, dash.nextSibling);
+    } else if (app) {
+      app.appendChild(resView);
+    }
+
+    // Attach back buttons
+    const backBtn1 = document.getElementById('apparatus-res-back-btn');
+    const backBtn2 = document.getElementById('apparatus-res-back-btn-2');
+    function goBackToDash(e) {
+      e.preventDefault();
+      window.location.hash = '';
+      if (window.location.pathname !== '/') {
+        history.pushState(null, '', '/');
+      }
+      applyViewMode();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    if (backBtn1) backBtn1.addEventListener('click', goBackToDash);
+    if (backBtn2) backBtn2.addEventListener('click', goBackToDash);
+
+    renderResourcePage();
   }
 
   function initSidebar() {
@@ -1407,8 +1882,9 @@
       document.body.classList.remove('apparatus-is-admin');
     }
 
-    // Initialize 4-card transparent dashboard
+    // Initialize 4-card transparent dashboard and resource view
     initDashboardView();
+    initResourceView();
 
     let sidebar = document.getElementById('apparatus-sidebar');
     if (!sidebar) {
@@ -1455,10 +1931,9 @@
             <div class="apparatus-category-title">Billing</div>
             <ul class="apparatus-nav-list">
               <li>
-                <a href="#resource" class="apparatus-nav-link apparatus-resource-link" data-path="/billing/resource">
+                <a href="#resource" class="apparatus-nav-link apparatus-resource-link" data-tab="resource">
                   <i class="ri-cpu-line apparatus-nav-icon"></i>
                   <span>Resource</span>
-                  <span class="apparatus-tag-soon">Soon</span>
                 </a>
               </li>
               <li>
@@ -1608,15 +2083,9 @@
       if (resourceBtn) {
         resourceBtn.addEventListener('click', function (e) {
           e.preventDefault();
-          const resCard = document.getElementById('apparatus-area-resources') || document.getElementById('apparatus-area-billing');
-          if (resCard) {
-            resCard.scrollIntoView({ behavior: 'smooth' });
-            resCard.style.transition = 'box-shadow 0.3s ease';
-            resCard.style.boxShadow = '0 0 25px rgba(56, 189, 248, 0.45)';
-            setTimeout(function () { resCard.style.boxShadow = ''; }, 1500);
-          } else {
-            showToast('info', 'Resource Allocation', 'View and scale your compute, RAM & NVMe storage capacity.');
-          }
+          window.location.hash = '#resource';
+          applyViewMode();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       }
 
