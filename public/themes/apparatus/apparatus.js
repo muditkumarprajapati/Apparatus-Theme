@@ -2255,16 +2255,11 @@
                   <span>Panel Settings</span>
                 </a>
               </li>
+              ${isRootAdmin ? `
               <li>
-                <a href="#hyper-editor" class="apparatus-nav-link apparatus-hyper-editor-link" data-tab="hyper-editor">
+                <a href="#panel-editor" class="apparatus-nav-link apparatus-panel-editor-link" data-tab="panel-editor">
                   <i class="ri-sparkling-2-line apparatus-nav-icon"></i>
-                  <span>Hyper Editor</span>
-                </a>
-              </li>
-              <li>
-                <a href="#hyper-settings" class="apparatus-nav-link apparatus-hyper-settings-link" data-tab="hyper-settings">
-                  <i class="ri-settings-4-line apparatus-nav-icon"></i>
-                  <span>Hyper Settings</span>
+                  <span>Panel Editor</span>
                 </a>
               </li>
               <li>
@@ -2273,6 +2268,7 @@
                   <span>Addon Settings</span>
                 </a>
               </li>
+              ` : ''}
             </ul>
           </div>
 
@@ -2393,8 +2389,7 @@
       // Panel Settings category click handlers
       const panelSettingsLinks = [
         { selector: '.apparatus-panel-settings-link', title: 'Panel Settings', msg: 'Opening Panel Settings configuration...' },
-        { selector: '.apparatus-hyper-editor-link', title: 'Hyper Editor', msg: 'Opening Hyper Editor customization module...' },
-        { selector: '.apparatus-hyper-settings-link', title: 'Hyper Settings', msg: 'Opening Hyper Settings preferences...' },
+        { selector: '.apparatus-panel-editor-link', title: 'Panel Editor', msg: 'Opening Panel Editor customization module...' },
         { selector: '.apparatus-addon-settings-link', title: 'Addon Settings', msg: 'Opening Addon Settings configuration...' }
       ];
 
