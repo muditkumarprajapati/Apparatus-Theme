@@ -431,7 +431,7 @@
     // 4. Proper Transparency & Styling for ContentBox cards (.sc-mjlt6f-2) across /account, /account/api, /account/ssh
     const contentCards = document.querySelectorAll('.sc-mjlt6f-2, [class*="sc-mjlt6f-2"], div[class*="ContentBox___StyledDiv"]');
     contentCards.forEach(function (card) {
-      card.style.setProperty('background', 'radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.15), transparent 60%), var(--apparatus-card-bg, rgba(22, 16, 32, 0.82))', 'important');
+      card.style.setProperty('background', 'radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.15), transparent 55%), rgba(255, 255, 255, 0.04)', 'important');
       card.style.setProperty('backdrop-filter', 'blur(20px) saturate(180%)', 'important');
       card.style.setProperty('-webkit-backdrop-filter', 'blur(20px) saturate(180%)', 'important');
       card.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.18)', 'important');
@@ -4065,21 +4065,21 @@
               <div class="apparatus-setting-title-meta">
                 <div class="apparatus-setting-title-row">
                   <h2 class="apparatus-setting-title">Glass Transparency &amp; Opacity</h2>
-                  <span class="apparatus-range-value-pill" id="apparatus-opacity-val-badge">82% Opacity</span>
+                  <span class="apparatus-range-value-pill" id="apparatus-opacity-val-badge">30% (Default Transparent)</span>
                 </div>
-                <p class="apparatus-setting-desc">Slide to choose the exact transparency of cards, panels, and sidebars across the theme.</p>
+                <p class="apparatus-setting-desc">Select card glass transparency. 30% is the default ultra-transparent luxury glass.</p>
               </div>
             </div>
 
             <div class="apparatus-setting-body">
               <div class="apparatus-slider-line-container">
                 <div class="apparatus-slider-line-labels">
-                  <span><i class="ri-blur-off-line"></i> Ultra Glass (25%)</span>
-                  <span><i class="ri-contrast-drop-line"></i> Balanced (80%)</span>
-                  <span><i class="ri-shield-fill"></i> Rich Solid (95%)</span>
+                  <span><i class="ri-blur-off-line"></i> Crystal Glass (15%)</span>
+                  <span><i class="ri-contrast-drop-line"></i> Default Transparent (30%)</span>
+                  <span><i class="ri-shield-fill"></i> Darker Glass (60%)</span>
                 </div>
                 <div class="apparatus-slider-line-track">
-                  <input type="range" min="25" max="95" value="82" step="1" class="apparatus-line-slider" id="apparatus-card-opacity-slider">
+                  <input type="range" min="15" max="70" value="30" step="1" class="apparatus-line-slider" id="apparatus-card-opacity-slider">
                 </div>
               </div>
             </div>
@@ -4261,20 +4261,29 @@
     // Glass Card Opacity / Transparency Line Slider Event
     const opacitySlider = setView.querySelector('#apparatus-card-opacity-slider');
     const opacityBadge = setView.querySelector('#apparatus-opacity-val-badge');
-    const curOpacity = localStorage.getItem('apparatus_card_opacity') || '82';
+    const curOpacity = localStorage.getItem('apparatus_card_opacity') || '30';
     if (opacitySlider) {
       opacitySlider.value = curOpacity;
-      if (opacityBadge) opacityBadge.textContent = curOpacity + '% Opacity';
+      if (opacityBadge) opacityBadge.textContent = curOpacity + '% ' + (curOpacity === '30' ? '(Default Transparent)' : 'Opacity');
       opacitySlider.addEventListener('input', function () {
         const val = this.value;
-        if (opacityBadge) opacityBadge.textContent = val + '% Opacity';
-        const decVal = (val / 100).toFixed(2);
-        document.documentElement.style.setProperty('--apparatus-card-opacity', decVal);
+        if (opacityBadge) opacityBadge.textContent = val + '% ' + (val === '30' ? '(Default Transparent)' : 'Opacity');
+        document.querySelectorAll('.apparatus-card, .apparatus-user-profile-card').forEach(function (c) {
+          c.style.setProperty('background', 'rgba(14, 10, 22, ' + (val / 100) + ')', 'important');
+        });
       });
       opacitySlider.addEventListener('change', function () {
         const val = this.value;
-        localStorage.setItem('apparatus_card_opacity', val);
-        showToast('success', 'Transparency Updated', 'Applied ' + val + '% glass opacity.');
+        if (val === '30') {
+          localStorage.removeItem('apparatus_card_opacity');
+          document.querySelectorAll('.apparatus-card').forEach(function (c) {
+            c.style.removeProperty('background');
+          });
+          showToast('success', 'Default Glass Restored', 'Restored 30% crystal transparent glass.');
+        } else {
+          localStorage.setItem('apparatus_card_opacity', val);
+          showToast('success', 'Transparency Updated', 'Applied ' + val + '% glass opacity.');
+        }
       });
     }
 
@@ -5254,8 +5263,16 @@
   function initApparatus() {
     initSmoothScroll();
     applySeoMetadata();
-    const storedOp = localStorage.getItem('apparatus_card_opacity') || '82';
-    document.documentElement.style.setProperty('--apparatus-card-opacity', (parseInt(storedOp, 10) / 100).toFixed(2));
+    // Clean up any legacy solid opacity setting
+    if (localStorage.getItem('apparatus_card_opacity') === '82' || localStorage.getItem('apparatus_card_opacity') === '75') {
+      localStorage.removeItem('apparatus_card_opacity');
+    }
+    const storedOp = localStorage.getItem('apparatus_card_opacity');
+    if (storedOp) {
+      document.querySelectorAll('.apparatus-card, .apparatus-user-profile-card').forEach(function (c) {
+        c.style.setProperty('background', 'rgba(14, 10, 22, ' + (parseInt(storedOp, 10) / 100).toFixed(2) + ')', 'important');
+      });
+    }
     const isAuth = isAuthPage();
     const isHacking = isUnauthorizedAdminAttempt();
 

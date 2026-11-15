@@ -7,8 +7,6 @@
 
 :root {
   --apparatus-font: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --apparatus-card-opacity: 0.82;
-  --apparatus-card-bg: rgba(22, 16, 32, var(--apparatus-card-opacity, 0.82));
 }
 
 html,
@@ -1188,7 +1186,7 @@ body.apparatus-auth #apparatus-mobile-toggle {
 
 /* Truly Transparent Glass Card */
 .apparatus-card {
-  background: var(--apparatus-card-bg, rgba(22, 16, 32, 0.82)) !important;
+  background: rgba(14, 10, 22, 0.3) !important;
   backdrop-filter: blur(24px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -4822,12 +4820,12 @@ div[class*="AccountOverviewContainer"] > div:not(.apparatus-user-profile-section
   width: 100% !important;
   box-sizing: border-box !important;
   padding: 1.75rem 2rem !important;
-  background: radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.16), transparent 60%), var(--apparatus-card-bg, rgba(22, 16, 32, 0.82)) !important;
+  background: radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.16), transparent 55%), rgba(255, 255, 255, 0.04) !important;
   backdrop-filter: blur(24px) saturate(140%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
   border-radius: 20px !important;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
 }
 
 /* Top Identity Bar */
