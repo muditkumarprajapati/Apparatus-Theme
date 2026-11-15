@@ -89,6 +89,9 @@ install_theme() {
   echo -e "  -> Downloading apparatus.js..."
   curl -s -L "$RAW_BASE/public/themes/apparatus/apparatus.js?v=$TS" -o "$ASSET_DIR/apparatus.js"
 
+  echo -e "  -> Downloading lenis.min.js..."
+  curl -s -L "$RAW_BASE/public/themes/apparatus/lenis.min.js?v=$TS" -o "$ASSET_DIR/lenis.min.js"
+
   echo -e "  -> Downloading logos..."
   curl -s -L "$RAW_BASE/public/themes/apparatus/ab-logo.png?v=$TS" -o "$ASSET_DIR/ab-logo.png"
   curl -s -L "$RAW_BASE/public/themes/apparatus/ab-logo-white.png?v=$TS" -o "$ASSET_DIR/ab-logo-white.png"
@@ -135,6 +138,7 @@ snippet = '''<!-- BEGIN apparatus-theme-loader -->
 <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css\">
 <link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css?v=$ts\">
 <script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>
+<script src=\"/themes/apparatus/lenis.min.js?v=$ts\"></script>
 <script src=\"/themes/apparatus/apparatus.js?v=$ts\" defer></script>
 <!-- END apparatus-theme-loader -->
 </head>'''
@@ -144,7 +148,7 @@ if '</head>' in content:
     with open('$target', 'w') as f:
         f.write(content)
 " 2>/dev/null || {
-      awk -v ts="$ts" '/<\/head>/{print "<!-- BEGIN apparatus-theme-loader -->\n<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css\">\n<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css?v=" ts "\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>\n<script src=\"/themes/apparatus/apparatus.js?v=" ts "\" defer></script>\n<!-- END apparatus-theme-loader -->"}1' "$target" > "$target.tmp" && mv "$target.tmp" "$target"
+      awk -v ts="$ts" '/<\/head>/{print "<!-- BEGIN apparatus-theme-loader -->\n<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css\">\n<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css?v=" ts "\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>\n<script src=\"/themes/apparatus/lenis.min.js?v=" ts "\"></script>\n<script src=\"/themes/apparatus/apparatus.js?v=" ts "\" defer></script>\n<!-- END apparatus-theme-loader -->"}1' "$target" > "$target.tmp" && mv "$target.tmp" "$target"
     }
   }
 
