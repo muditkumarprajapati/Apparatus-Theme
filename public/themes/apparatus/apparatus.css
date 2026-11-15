@@ -65,8 +65,12 @@ body:not(.apparatus-auth) #app {
   min-height: 100vh !important;
 }
 
-/* Offset #app on desktop for left sidebar */
+/* Offset #app on desktop for left sidebar & Universal 80% Default Panel Scale */
 @media (min-width: 992px) {
+  body:not(.apparatus-auth) {
+    zoom: 0.8 !important;
+  }
+
   body:not(.apparatus-auth) #app {
     margin-left: 250px !important;
     width: calc(100% - 250px) !important;
@@ -221,8 +225,10 @@ div[class*="sc-cyh04c-7"] {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
   overflow: hidden !important;
   display: flex !important;
   justify-content: center !important;
