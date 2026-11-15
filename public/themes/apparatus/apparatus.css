@@ -817,12 +817,7 @@ body.apparatus-page-servers #apparatus-area-4 {
 }
 
 /* Visible Content on Non-Dashboard/Non-Servers Pages (Account, API Keys, SSH Keys, Activity, Server details, etc.) */
-body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="DashboardContainer"],
-body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="PageContentBlock"],
-body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="ActivityLogContainer"],
-body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="ContentContainer"],
-body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div.bg-gray-700,
-body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) main {
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="DashboardContainer"] {
   display: flex !important;
   visibility: visible !important;
   height: auto !important;
@@ -837,6 +832,16 @@ body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-ser
 
 body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="DashboardContainer"] > div {
   width: 100% !important;
+}
+
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="PageContentBlock"],
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="ActivityLogContainer"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
 }
 
 #apparatus-dashboard-view {
@@ -1765,23 +1770,29 @@ body:not(.apparatus-auth) div[class*="ModalMask"] > div {
 body:not(.apparatus-auth) div.bg-gray-700,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.bg-gray-700,
 body:not(.apparatus-auth) .bg-gray-700 {
-  background: rgba(14, 10, 24, 0.45) !important;
-  backdrop-filter: blur(16px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  display: block !important;
+  background: rgba(26, 16, 38, 0.28) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
   border-radius: 16px !important;
   overflow: hidden !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.2) !important;
+  margin-bottom: 2rem !important;
 }
 
 /* Activity rows */
 body:not(.apparatus-auth) div.bg-gray-700 > div.grid,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid,
 body:not(.apparatus-auth) div[class*="ActivityLogEntry"] {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   padding: 1.1rem 1.25rem !important;
   transition: background 0.2s ease !important;
   background: transparent !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 body:not(.apparatus-auth) div.bg-gray-700 > div.grid:hover,
