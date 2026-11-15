@@ -742,6 +742,60 @@
     });
   }
 
+  function getReferralCode(user) {
+    const u = (user && user.username) ? user.username : ((window.PterodactylUser && window.PterodactylUser.username) || 'USER');
+    const cleanU = u.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const prefix = (cleanU.length >= 3 ? cleanU.slice(0, 4) : cleanU).padEnd(4, 'X');
+    const seed = (user && user.email ? user.email : '') + u + (user && user.id ? user.id : '');
+    let hash = 5381;
+    for (let i = 0; i < seed.length; i++) {
+      hash = ((hash << 5) + hash) + seed.charCodeAt(i);
+      hash |= 0;
+    }
+    const suffix = Math.abs(hash).toString(36).toUpperCase().padStart(4, '0').slice(-4);
+    return 'AB-' + prefix + '-' + suffix;
+  }
+
+  function initReferralCode() {
+    const codeEl = document.getElementById('apparatus-user-ref-code');
+    const copyBtn = document.getElementById('apparatus-copy-ref-btn');
+    if (!codeEl) return;
+
+    const user = window.PterodactylUser || {};
+    const code = getReferralCode(user);
+    codeEl.textContent = code;
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        const textToCopy = codeEl.textContent.trim();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToCopy);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = textToCopy;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        }
+
+        const icon = copyBtn.querySelector('i');
+        const span = copyBtn.querySelector('span');
+        if (icon) icon.className = 'ri-check-line';
+        if (span) span.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+
+        showToast('success', 'Referral Code Copied!', 'Your code ' + textToCopy + ' was copied. Share it with friends to earn points!');
+
+        setTimeout(function () {
+          if (icon) icon.className = 'ri-file-copy-line';
+          if (span) span.textContent = 'Copy';
+          copyBtn.classList.remove('copied');
+        }, 2500);
+      });
+    }
+  }
+
   function updateResourceGauges(totalRamMB, totalCpuPercent, totalDiskMB) {
     const ramText = document.getElementById('apparatus-gauge-ram-text');
     const ramBar = document.getElementById('apparatus-gauge-ram-bar');
@@ -778,6 +832,8 @@
         if (attr.username) {
           const uEl = document.getElementById('apparatus-welcome-username');
           if (uEl) uEl.textContent = attr.username;
+          const refEl = document.getElementById('apparatus-user-ref-code');
+          if (refEl) refEl.textContent = getReferralCode(attr);
         }
         if (attr.email) {
           const eEl = document.getElementById('apparatus-email-val') || document.getElementById('apparatus-email-real');
@@ -984,6 +1040,7 @@
     const isRootAdmin = !!user.root_admin;
     const useTotp = !!user.use_totp;
     const greeting = getGreeting();
+    const referralCode = getReferralCode(user);
 
     dash.innerHTML = `
       <div class="apparatus-dashboard-container">
@@ -1208,9 +1265,21 @@
                 <button type="button" class="apparatus-btn apparatus-btn-primary apparatus-btn-full" id="apparatus-wallet-topup-btn">
                   <i class="ri-add-circle-line"></i> Top Up Balance (INR ₹)
                 </button>
-                <button type="button" class="apparatus-btn apparatus-btn-glass apparatus-btn-full" id="apparatus-daily-reward-btn">
-                  <i class="ri-gift-line"></i> Claim Daily Points (+25 pts)
-                </button>
+
+                <!-- User Unique Referral Code Box -->
+                <div class="apparatus-referral-card">
+                  <div class="apparatus-referral-top">
+                    <span class="apparatus-referral-title"><i class="ri-user-shared-line"></i> Referral Code</span>
+                    <span class="apparatus-referral-badge">+50 pts / invite</span>
+                  </div>
+                  <div class="apparatus-referral-box">
+                    <code class="apparatus-referral-code" id="apparatus-user-ref-code">${referralCode}</code>
+                    <button type="button" class="apparatus-copy-ref-btn" id="apparatus-copy-ref-btn" title="Copy Referral Code">
+                      <i class="ri-file-copy-line"></i> <span>Copy</span>
+                    </button>
+                  </div>
+                  <span class="apparatus-referral-note">Share your unique code to earn referral points</span>
+                </div>
               </div>
 
               <!-- Quick Resource Upgrades -->
@@ -1337,9 +1406,10 @@
       });
     }
 
-    // Initialize interactive tabs, coins, and billing
+    // Initialize interactive tabs, coins, referral code, and billing
     initInstanceTabs();
     initDailyReward();
+    initReferralCode();
     initBillingActions();
 
     // Load dynamic data
