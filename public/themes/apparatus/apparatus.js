@@ -154,9 +154,21 @@
         document.body.classList.add('apparatus-page-dashboard');
         document.body.classList.remove('apparatus-page-servers');
       }
+
+      // Hide all account containers and native server messages if user transitioned to home
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3').forEach(function (el) {
+        el.style.setProperty('display', 'none', 'important');
+      });
     } else {
       if (hero) hero.style.display = 'none';
       document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-view-dashboard', 'apparatus-view-servers');
+
+      // Restore display for account containers when on account routes
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, div.bg-gray-700, [class*="PageContentBlock"]').forEach(function (el) {
+        el.style.removeProperty('display');
+        el.style.removeProperty('visibility');
+        el.style.removeProperty('height');
+      });
     }
 
     updateActiveSidebarLinks();
@@ -301,8 +313,8 @@
       }
     });
 
-    // Strip borders, backgrounds and shadows from any transition/fade wrappers inside cards
-    document.querySelectorAll('.sc-mjlt6f-2 [class*="Fade"], .sc-mjlt6f-2 [class*="sc-1p0gm8n"], div[class*="Fade__Container"]').forEach(function (fade) {
+    // Strip borders, backgrounds and shadows from any transition/fade wrappers inside cards ONLY
+    document.querySelectorAll('.sc-mjlt6f-2 [class*="Fade"], .sc-mjlt6f-2 [class*="sc-1p0gm8n"], .sc-mjlt6f-2 div[class*="Fade__Container"]').forEach(function (fade) {
       fade.style.setProperty('border', 'none', 'important');
       fade.style.setProperty('background', 'transparent', 'important');
       fade.style.setProperty('box-shadow', 'none', 'important');
@@ -314,6 +326,26 @@
         fade.style.setProperty('padding', '0', 'important');
       }
     });
+
+    // 4b. Hide native Pterodactyl empty server messages and dashboard leaks on Dashboard and Servers tabs
+    const rawP = window.location.pathname || '/';
+    const curP = (rawP.length > 1 && rawP.endsWith('/')) ? rawP.slice(0, -1) : rawP;
+    const isSrv = curP === '/servers' || curP.startsWith('/servers/') || window.location.hash === '#servers';
+    const isDash = (curP === '/' || curP === '/dashboard') && !isSrv;
+    if (isDash || isSrv) {
+      document.querySelectorAll('p[class*="DashboardContainer"], .sc-1topkxf-3, div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0').forEach(function (el) {
+        el.style.setProperty('display', 'none', 'important');
+        el.style.setProperty('visibility', 'hidden', 'important');
+        el.style.setProperty('height', '0', 'important');
+      });
+      document.querySelectorAll('p').forEach(function (p) {
+        if (p.textContent && p.textContent.includes('There are no servers associated with your account')) {
+          p.style.setProperty('display', 'none', 'important');
+          p.style.setProperty('visibility', 'hidden', 'important');
+          p.style.setProperty('height', '0', 'important');
+        }
+      });
+    }
 
     // 5. Ensure inputs and textareas on account pages are properly translucent
     document.querySelectorAll('.sc-19rce1w-0, .sc-19rce1w-1, .sc-lcvdq4-0, .sc-plts88-0').forEach(function (inp) {
@@ -673,6 +705,12 @@
     const toServersBtn = document.getElementById('apparatus-btn-to-servers');
     if (toServersBtn) {
       toServersBtn.addEventListener('click', function (e) {
+        const rawP = window.location.pathname || '/';
+        const onHome = rawP === '/' || rawP === '/servers' || rawP === '/dashboard';
+        if (!onHome) {
+          window.location.href = '/servers';
+          return;
+        }
         e.preventDefault();
         if (window.location.pathname !== '/servers') {
           history.pushState(null, '', '/servers');
@@ -881,21 +919,32 @@
       sidebar.querySelectorAll('a[data-tab]').forEach(function (tabLink) {
         tabLink.addEventListener('click', function (e) {
           const tab = this.getAttribute('data-tab');
+          const rawP = window.location.pathname || '/';
+          const onHome = rawP === '/' || rawP === '/servers' || rawP === '/dashboard';
+
+          if (!onHome) {
+            // If navigating from an account subpage, navigate cleanly so React Router unmounts the account page!
+            if (tab === 'servers') {
+              window.location.href = '/servers';
+            } else {
+              window.location.href = '/';
+            }
+            return;
+          }
+
+          // If already on home (between / and /servers), switch smoothly
+          e.preventDefault();
           if (tab === 'servers') {
-            e.preventDefault();
             if (window.location.pathname !== '/servers') {
               history.pushState(null, '', '/servers');
             }
-            applyViewMode();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
           } else if (tab === 'dashboard') {
-            e.preventDefault();
             if (window.location.pathname !== '/') {
               history.pushState(null, '', '/');
             }
-            applyViewMode();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
           }
+          applyViewMode();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       });
 

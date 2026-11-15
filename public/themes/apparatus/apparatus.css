@@ -757,13 +757,40 @@ body.apparatus-auth .apparatus-sidebar {
    VIEW MODE SWITCHER: DASHBOARD (/) VS SERVERS (/servers)
    ============================================================================== */
 body.apparatus-page-dashboard main,
+body.apparatus-page-dashboard section,
 body.apparatus-page-dashboard div[class*="DashboardContainer"],
+body.apparatus-page-dashboard p[class*="DashboardContainer"],
+body.apparatus-page-dashboard div[class*="PageContentBlock"],
+body.apparatus-page-dashboard div[class*="ContentContainer"],
+body.apparatus-page-dashboard div[class*="AccountOverviewContainer"],
+body.apparatus-page-dashboard div[class*="AccountApiContainer"],
+body.apparatus-page-dashboard div[class*="AccountSSHContainer"],
+body.apparatus-page-dashboard div[class*="ActivityLogContainer"],
+body.apparatus-page-dashboard .sc-1topkxf-3,
+body.apparatus-page-dashboard .sc-12to0iy-1,
+body.apparatus-page-dashboard .sc-1c4s3nm-0,
+body.apparatus-page-dashboard .sc-yksipt-0,
 body.apparatus-page-servers main,
-body.apparatus-page-servers div[class*="DashboardContainer"] {
+body.apparatus-page-servers section,
+body.apparatus-page-servers div[class*="DashboardContainer"],
+body.apparatus-page-servers p[class*="DashboardContainer"],
+body.apparatus-page-servers div[class*="PageContentBlock"],
+body.apparatus-page-servers div[class*="ContentContainer"],
+body.apparatus-page-servers div[class*="AccountOverviewContainer"],
+body.apparatus-page-servers div[class*="AccountApiContainer"],
+body.apparatus-page-servers div[class*="AccountSSHContainer"],
+body.apparatus-page-servers div[class*="ActivityLogContainer"],
+body.apparatus-page-servers .sc-1topkxf-3,
+body.apparatus-page-servers .sc-12to0iy-1,
+body.apparatus-page-servers .sc-1c4s3nm-0,
+body.apparatus-page-servers .sc-yksipt-0 {
   display: none !important;
   visibility: hidden !important;
   height: 0 !important;
+  min-height: 0 !important;
   overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 body.apparatus-page-dashboard #apparatus-dashboard-view,
@@ -790,7 +817,12 @@ body.apparatus-page-servers #apparatus-area-4 {
 }
 
 /* Visible Content on Non-Dashboard/Non-Servers Pages (Account, API Keys, SSH Keys, Activity, Server details, etc.) */
-body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="DashboardContainer"] {
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="DashboardContainer"],
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="PageContentBlock"],
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="ActivityLogContainer"],
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="ContentContainer"],
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div.bg-gray-700,
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) main {
   display: flex !important;
   visibility: visible !important;
   height: auto !important;
@@ -1483,7 +1515,7 @@ body:not(.apparatus-auth) .sc-mjlt6f-2 hr,
 body:not(.apparatus-auth) .sc-mjlt6f-2 [class*="Fade"],
 body:not(.apparatus-auth) .sc-mjlt6f-2 [class*="sc-1p0gm8n"],
 body:not(.apparatus-auth) .sc-mjlt6f-2 [class*="SpinnerOverlay"],
-body:not(.apparatus-auth) div[class*="Fade__Container"] {
+body:not(.apparatus-auth) .sc-mjlt6f-2 div[class*="Fade__Container"] {
   border: none !important;
   border-top: none !important;
   border-bottom: none !important;
@@ -1493,9 +1525,10 @@ body:not(.apparatus-auth) div[class*="Fade__Container"] {
   box-shadow: none !important;
 }
 
-/* Hide empty fade and spinner containers completely so they don't produce any phantom lines */
+/* Hide empty fade and spinner containers inside ContentBox cards so they don't produce any phantom lines */
 body:not(.apparatus-auth) .sc-mjlt6f-2 div[class*="Fade__Container"]:empty,
-body:not(.apparatus-auth) div[class*="Fade__Container"]:empty {
+body:not(.apparatus-auth) .sc-mjlt6f-2 [class*="Fade"]:empty,
+body:not(.apparatus-auth) .sc-mjlt6f-2 [class*="SpinnerOverlay"]:empty {
   display: none !important;
   height: 0 !important;
   min-height: 0 !important;
