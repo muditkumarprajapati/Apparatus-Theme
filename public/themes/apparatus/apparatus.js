@@ -4256,7 +4256,9 @@
             <div class="apparatus-prof-field">
               <label class="apparatus-prof-label" for="apparatus-prof-username">Username <span class="apparatus-prof-req">*</span></label>
               <div class="apparatus-prof-input-wrap">
-                <i class="ri-at-line apparatus-prof-input-icon"></i>
+                <span class="apparatus-prof-input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"></path></svg>
+                </span>
                 <input type="text" id="apparatus-prof-username" class="apparatus-prof-input with-icon" value="${username}" placeholder="Username">
               </div>
             </div>
@@ -4264,7 +4266,9 @@
             <div class="apparatus-prof-field">
               <label class="apparatus-prof-label" for="apparatus-prof-firstname">First Name</label>
               <div class="apparatus-prof-input-wrap">
-                <i class="ri-user-line apparatus-prof-input-icon"></i>
+                <span class="apparatus-prof-input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </span>
                 <input type="text" id="apparatus-prof-firstname" class="apparatus-prof-input with-icon" value="${firstName}" placeholder="First Name">
               </div>
             </div>
@@ -4272,7 +4276,9 @@
             <div class="apparatus-prof-field">
               <label class="apparatus-prof-label" for="apparatus-prof-lastname">Last Name</label>
               <div class="apparatus-prof-input-wrap">
-                <i class="ri-user-line apparatus-prof-input-icon"></i>
+                <span class="apparatus-prof-input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </span>
                 <input type="text" id="apparatus-prof-lastname" class="apparatus-prof-input with-icon" value="${lastName}" placeholder="Last Name">
               </div>
             </div>
@@ -4282,7 +4288,9 @@
             <div class="apparatus-prof-field">
               <label class="apparatus-prof-label" for="apparatus-prof-bio">Status / Bio Tagline</label>
               <div class="apparatus-prof-input-wrap">
-                <i class="ri-chat-smile-2-line apparatus-prof-input-icon"></i>
+                <span class="apparatus-prof-input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><line x1="8" y1="10" x2="16" y2="10"></line></svg>
+                </span>
                 <input type="text" id="apparatus-prof-bio" class="apparatus-prof-input with-icon" value="${bio}" placeholder="e.g. Infrastructure Engineer & Gamer">
               </div>
             </div>
@@ -4290,7 +4298,9 @@
             <div class="apparatus-prof-field">
               <label class="apparatus-prof-label" for="apparatus-prof-timezone">Account Timezone</label>
               <div class="apparatus-prof-input-wrap">
-                <i class="ri-time-line apparatus-prof-input-icon"></i>
+                <span class="apparatus-prof-input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </span>
                 <select id="apparatus-prof-timezone" class="apparatus-prof-input with-icon apparatus-prof-select">
                   <option value="Asia/Kolkata" ${timezone === 'Asia/Kolkata' ? 'selected' : ''}>Asia/Kolkata (IST +5:30)</option>
                   <option value="UTC" ${timezone === 'UTC' ? 'selected' : ''}>UTC (Universal Time)</option>
@@ -4330,7 +4340,12 @@
             <div class="apparatus-prof-field">
               <label class="apparatus-prof-label" for="apparatus-prof-avatar-url">Custom Image URL</label>
               <div class="apparatus-prof-url-input-wrap">
-                <input type="text" id="apparatus-prof-avatar-url" class="apparatus-prof-input" placeholder="https://example.com/avatar.png" value="${avatar}">
+                <div class="apparatus-prof-input-wrap" style="flex: 1;">
+                  <span class="apparatus-prof-input-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                  </span>
+                  <input type="text" id="apparatus-prof-avatar-url" class="apparatus-prof-input with-icon" placeholder="https://example.com/avatar.png" value="${avatar}">
+                </div>
                 <button type="button" class="apparatus-btn apparatus-btn-glass apparatus-btn-sm" id="apparatus-prof-apply-url-btn">Apply</button>
               </div>
             </div>
