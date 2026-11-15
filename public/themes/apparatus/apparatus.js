@@ -379,9 +379,136 @@
           actCard.parentElement.insertBefore(header, actCard);
         }
       }
+
+      // 8. Enhance Activity Log IP addresses with Flag, Blur, and Clickable Location Lookup
+      enhanceActivityLogIps();
     } else {
       const existingHeader = document.getElementById('apparatus-activity-header');
       if (existingHeader) existingHeader.remove();
+    }
+  }
+
+  // Activity Log IP Country & Location enhancement
+  const ipCountryCache = new Map();
+
+  function isPrivateIp(ip) {
+    if (!ip) return true;
+    ip = ip.trim();
+    return ip === '127.0.0.1' || ip === 'localhost' || ip === '::1' ||
+      /^10\./.test(ip) ||
+      /^192\.168\./.test(ip) ||
+      /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip) ||
+      /^fc00:/.test(ip) ||
+      /^fe80:/.test(ip);
+  }
+
+  async function resolveIpCountry(ip, imgEl, fallbackIcon) {
+    if (!ip || isPrivateIp(ip)) return;
+    if (ipCountryCache.has(ip)) {
+      const code = ipCountryCache.get(ip);
+      if (code && imgEl) {
+        imgEl.src = 'https://flagcdn.com/20x15/' + code + '.png';
+        imgEl.style.display = 'inline-block';
+        if (fallbackIcon) fallbackIcon.style.display = 'none';
+      }
+      return;
+    }
+    try {
+      const cached = localStorage.getItem('apparatus_geo_' + ip);
+      if (cached) {
+        ipCountryCache.set(ip, cached);
+        if (imgEl) {
+          imgEl.src = 'https://flagcdn.com/20x15/' + cached + '.png';
+          imgEl.style.display = 'inline-block';
+          if (fallbackIcon) fallbackIcon.style.display = 'none';
+        }
+        return;
+      }
+    } catch (e) {}
+
+    try {
+      const res = await fetch('https://api.country.is/' + ip);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.country) {
+          const code = data.country.toLowerCase();
+          ipCountryCache.set(ip, code);
+          try { localStorage.setItem('apparatus_geo_' + ip, code); } catch (e) {}
+          if (imgEl) {
+            imgEl.src = 'https://flagcdn.com/20x15/' + code + '.png';
+            imgEl.style.display = 'inline-block';
+            if (fallbackIcon) fallbackIcon.style.display = 'none';
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  function enhanceActivityLogIps() {
+    const card = document.querySelector('.bg-gray-700');
+    if (!card) return;
+    const rows = card.children;
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      if (row.dataset.apparatusIpEnhanced) continue;
+      const spans = row.querySelectorAll('span');
+      for (let j = 0; j < spans.length; j++) {
+        const s = spans[j];
+        const text = s.textContent.trim();
+        const match = text.match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
+        if (match && s.childNodes.length > 0) {
+          const ip = match[1];
+          row.dataset.apparatusIpEnhanced = 'true';
+
+          const isLocal = isPrivateIp(ip);
+          const lookupUrl = 'https://www.iplocation.net/ip-lookup?query=' + encodeURIComponent(ip);
+
+          const badge = document.createElement('a');
+          badge.href = lookupUrl;
+          badge.target = '_blank';
+          badge.rel = 'noopener noreferrer';
+          badge.className = 'apparatus-ip-badge';
+          badge.title = 'Click to check IP location (' + ip + ')';
+
+          if (isLocal) {
+            badge.innerHTML = '<i class="ri-shield-keyhole-line apparatus-ip-local-icon" title="Localhost / Reverse Proxy"></i><span class="apparatus-ip-val">' + ip + '</span><i class="ri-external-link-line apparatus-ip-ext"></i>';
+          } else {
+            const flagImg = document.createElement('img');
+            flagImg.className = 'apparatus-ip-flag';
+            flagImg.alt = 'Flag';
+            flagImg.style.display = 'none';
+
+            const fallbackIcon = document.createElement('i');
+            fallbackIcon.className = 'ri-global-line apparatus-ip-global-icon';
+
+            badge.appendChild(flagImg);
+            badge.appendChild(fallbackIcon);
+
+            const valSpan = document.createElement('span');
+            valSpan.className = 'apparatus-ip-val';
+            valSpan.textContent = ip;
+            badge.appendChild(valSpan);
+
+            const extIcon = document.createElement('i');
+            extIcon.className = 'ri-external-link-line apparatus-ip-ext';
+            badge.appendChild(extIcon);
+
+            flagImg.onload = function () {
+              if (fallbackIcon) fallbackIcon.style.display = 'none';
+            };
+
+            resolveIpCountry(ip, flagImg, fallbackIcon);
+          }
+
+          s.innerHTML = '';
+          s.appendChild(badge);
+          const divider = document.createElement('span');
+          divider.className = 'text-gray-400';
+          divider.innerHTML = '&nbsp;|&nbsp;';
+          s.appendChild(divider);
+          break;
+        }
+      }
     }
   }
 
