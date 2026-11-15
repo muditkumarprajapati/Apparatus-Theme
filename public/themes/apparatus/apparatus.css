@@ -825,12 +825,14 @@ body.apparatus-page-vps .apparatus-dashboard-container {
 
 body.apparatus-page-servers #apparatus-area-1,
 body.apparatus-page-servers #apparatus-metrics-ribbon,
-body.apparatus-page-servers .apparatus-dash-right,
+body.apparatus-page-servers #apparatus-area-billing,
 body.apparatus-page-servers #apparatus-area-resources,
+body.apparatus-page-servers #apparatus-area-2,
 body.apparatus-page-vps #apparatus-area-1,
 body.apparatus-page-vps #apparatus-metrics-ribbon,
-body.apparatus-page-vps .apparatus-dash-right,
-body.apparatus-page-vps #apparatus-area-resources {
+body.apparatus-page-vps #apparatus-area-billing,
+body.apparatus-page-vps #apparatus-area-resources,
+body.apparatus-page-vps #apparatus-area-2 {
   display: none !important;
 }
 
@@ -840,13 +842,9 @@ body.apparatus-page-vps .apparatus-dash-main-grid {
   width: 100% !important;
 }
 
-body.apparatus-page-servers .apparatus-dash-left,
-body.apparatus-page-vps .apparatus-dash-left {
-  width: 100% !important;
-}
-
 body.apparatus-page-servers #apparatus-area-4,
 body.apparatus-page-vps #apparatus-area-4 {
+  grid-column: 1 / -1 !important;
   width: 100% !important;
 }
 
@@ -1029,6 +1027,26 @@ body.apparatus-auth #apparatus-mobile-toggle {
   grid-template-columns: 1.65fr 1fr;
   gap: 1.25rem;
   width: 100%;
+  align-items: stretch;
+}
+
+@media (min-width: 1081px) {
+  #apparatus-area-4 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  #apparatus-area-billing {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  #apparatus-area-resources {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  #apparatus-area-2 {
+    grid-column: 2;
+    grid-row: 2;
+  }
 }
 
 @media (max-width: 1080px) {
@@ -1038,15 +1056,62 @@ body.apparatus-auth #apparatus-mobile-toggle {
   }
 }
 
-.apparatus-dash-col {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  min-width: 0;
+#apparatus-area-billing,
+#apparatus-area-2 {
+  padding: 1.4rem 1.5rem !important;
 }
 
-.apparatus-dash-right .apparatus-card {
-  padding: 1.4rem 1.5rem !important;
+.apparatus-card-servers {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.apparatus-card-servers .apparatus-tab-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.apparatus-card-servers .apparatus-tab-pane[style*="display: none"] {
+  display: none !important;
+}
+
+.apparatus-card-servers .apparatus-tab-pane[style*="display: block"] {
+  display: flex !important;
+  flex-direction: column;
+}
+
+.apparatus-card-servers .apparatus-servers-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.apparatus-card-servers .apparatus-empty-servers {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.apparatus-card-servers .apparatus-vps-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.apparatus-card-activity {
+  display: flex;
+  flex-direction: column;
+}
+
+.apparatus-card-activity .apparatus-activity-list {
+  flex: 1;
+  min-height: 0;
 }
 
 /* Truly Transparent Glass Card */

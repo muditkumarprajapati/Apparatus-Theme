@@ -1416,210 +1416,203 @@
 
         <!-- Main 2-Column Content Grid -->
         <div class="apparatus-dash-main-grid">
-          <!-- Left Column: Dual Instances Hub (Area 4) -->
-          <div class="apparatus-dash-col apparatus-dash-left">
-            <div class="apparatus-card apparatus-card-servers" id="apparatus-area-4">
-              <div class="apparatus-card-header apparatus-hub-header">
-                <div class="apparatus-tabs-nav">
-                  <button type="button" class="apparatus-tab-btn active" data-tab="servers" id="apparatus-tab-btn-servers">
-                    <i class="ri-gamepad-line"></i> Game Servers
-                  </button>
-                  <button type="button" class="apparatus-tab-btn" data-tab="vps" id="apparatus-tab-btn-vps">
-                    <i class="ri-server-line"></i> Cloud VPS
-                  </button>
-                </div>
-                <div class="apparatus-hub-actions">
-                  <button type="button" class="apparatus-btn apparatus-btn-primary apparatus-btn-sm" id="apparatus-hub-deploy-btn">
-                    <i class="ri-add-line"></i> Deploy Server
-                  </button>
-                </div>
+          <!-- Card 1 (Row 1 Left): Dual Instances Hub (Area 4) -->
+          <div class="apparatus-card apparatus-card-servers" id="apparatus-area-4">
+            <div class="apparatus-card-header apparatus-hub-header">
+              <div class="apparatus-tabs-nav">
+                <button type="button" class="apparatus-tab-btn active" data-tab="servers" id="apparatus-tab-btn-servers">
+                  <i class="ri-gamepad-line"></i> Game Servers
+                </button>
+                <button type="button" class="apparatus-tab-btn" data-tab="vps" id="apparatus-tab-btn-vps">
+                  <i class="ri-server-line"></i> Cloud VPS
+                </button>
               </div>
-
-              <!-- Tab 1: Game Servers List -->
-              <div class="apparatus-tab-pane active" id="apparatus-pane-servers">
-                <div class="apparatus-servers-content" id="apparatus-servers-list">
-                  <div class="apparatus-empty-msg">
-                    <i class="ri-loader-4-line apparatus-spin"></i> Loading servers...
-                  </div>
-                </div>
+              <div class="apparatus-hub-actions">
+                <button type="button" class="apparatus-btn apparatus-btn-primary apparatus-btn-sm" id="apparatus-hub-deploy-btn">
+                  <i class="ri-add-line"></i> Deploy Server
+                </button>
               </div>
+            </div>
 
-              <!-- Tab 2: Cloud VPS Hub -->
-              <div class="apparatus-tab-pane" id="apparatus-pane-vps" style="display: none;">
-                <div class="apparatus-vps-empty">
-                  <div class="apparatus-vps-empty-icon">
-                    <i class="ri-server-line"></i>
-                  </div>
-                  <h4 class="apparatus-vps-empty-title">No Cloud VPS Found</h4>
-                  <p class="apparatus-vps-empty-desc">
-                    You don't have any active Cloud VPS instances associated with your account.
-                  </p>
-                  <div class="apparatus-vps-empty-actions">
-                    <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
-                      <i class="ri-add-line"></i> Deploy Cloud VPS
-                    </a>
-                    <a href="#resource" class="apparatus-btn apparatus-btn-glass" id="apparatus-vps-view-res-btn">
-                      <i class="ri-cpu-line"></i> View Resources
-                    </a>
-                  </div>
+            <!-- Tab 1: Game Servers List -->
+            <div class="apparatus-tab-pane active" id="apparatus-pane-servers">
+              <div class="apparatus-servers-content" id="apparatus-servers-list">
+                <div class="apparatus-empty-msg">
+                  <i class="ri-loader-4-line apparatus-spin"></i> Loading servers...
                 </div>
               </div>
             </div>
 
-            <!-- Card: Resource Capacity (Left Column) -->
-            <div class="apparatus-card apparatus-card-resources" id="apparatus-area-resources">
-              <div class="apparatus-card-header">
-                <h2 class="apparatus-card-title">
-                  <i class="ri-dashboard-3-line" style="color: #38bdf8;"></i> Resource Capacity
-                </h2>
-                <a href="#resource" class="apparatus-link-btn" id="apparatus-dash-resource-link" style="text-decoration: none; font-size: 0.76rem; font-weight: 600; color: #38bdf8; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); transition: all 0.2s ease;">
-                  <span>Allocated</span> <i class="ri-arrow-right-line"></i>
-                </a>
-              </div>
-
-              <div class="apparatus-gauges-list">
-                <!-- Memory Bar -->
-                <div class="apparatus-gauge-row">
-                  <div class="apparatus-gauge-header">
-                    <span class="gauge-label"><i class="ri-database-2-line"></i> Memory (RAM)</span>
-                    <span class="gauge-val" id="apparatus-gauge-ram-text">0.0 GB Allocated</span>
-                  </div>
-                  <div class="apparatus-progress-track">
-                    <div class="apparatus-progress-bar apparatus-progress-ram" id="apparatus-gauge-ram-bar" style="width: 20%;"></div>
-                  </div>
+            <!-- Tab 2: Cloud VPS Hub -->
+            <div class="apparatus-tab-pane" id="apparatus-pane-vps" style="display: none;">
+              <div class="apparatus-vps-empty">
+                <div class="apparatus-vps-empty-icon">
+                  <i class="ri-server-line"></i>
                 </div>
-
-                <!-- CPU Bar -->
-                <div class="apparatus-gauge-row">
-                  <div class="apparatus-gauge-header">
-                    <span class="gauge-label"><i class="ri-cpu-line"></i> CPU Compute</span>
-                    <span class="gauge-val" id="apparatus-gauge-cpu-text">0% Allocated</span>
-                  </div>
-                  <div class="apparatus-progress-track">
-                    <div class="apparatus-progress-bar apparatus-progress-cpu" id="apparatus-gauge-cpu-bar" style="width: 15%;"></div>
-                  </div>
+                <h4 class="apparatus-vps-empty-title">No Cloud VPS Found</h4>
+                <p class="apparatus-vps-empty-desc">
+                  You don't have any active Cloud VPS instances associated with your account.
+                </p>
+                <div class="apparatus-vps-empty-actions">
+                  <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
+                    <i class="ri-add-line"></i> Deploy Cloud VPS
+                  </a>
+                  <a href="#resource" class="apparatus-btn apparatus-btn-glass" id="apparatus-vps-view-res-btn">
+                    <i class="ri-cpu-line"></i> View Resources
+                  </a>
                 </div>
-
-                <!-- Disk Bar -->
-                <div class="apparatus-gauge-row">
-                  <div class="apparatus-gauge-header">
-                    <span class="gauge-label"><i class="ri-hard-drive-line"></i> NVMe Storage</span>
-                    <span class="gauge-val" id="apparatus-gauge-disk-text">0.0 GB Allocated</span>
-                  </div>
-                  <div class="apparatus-progress-track">
-                    <div class="apparatus-progress-bar apparatus-progress-disk" id="apparatus-gauge-disk-bar" style="width: 25%;"></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Blurred Email Quick Row -->
-              <div class="apparatus-account-quick-row">
-                <span class="apparatus-row-label">Account Email</span>
-                <span class="apparatus-email-blurred" id="apparatus-email-val" title="Click or hover to reveal">${email}</span>
               </div>
             </div>
           </div>
 
-          <!-- Right Column: Billing/Wallet -->
-          <div class="apparatus-dash-col apparatus-dash-right">
-            
-            <!-- Card 1: Billing & INR Wallet -->
-            <div class="apparatus-card apparatus-card-billing" id="apparatus-area-billing">
-              <div class="apparatus-card-header">
-                <h2 class="apparatus-card-title">
-                  <i class="ri-wallet-3-line" style="color: #34d399;"></i> Billing &amp; Wallet
-                </h2>
+          <!-- Card 2 (Row 1 Right): Billing & INR Wallet -->
+          <div class="apparatus-card apparatus-card-billing" id="apparatus-area-billing">
+            <div class="apparatus-card-header">
+              <h2 class="apparatus-card-title">
+                <i class="ri-wallet-3-line" style="color: #34d399;"></i> Billing &amp; Wallet
+              </h2>
+            </div>
+
+            <div class="apparatus-billing-balances">
+              <!-- Cash Wallet -->
+              <div class="apparatus-balance-box apparatus-balance-cash">
+                <span class="apparatus-balance-label">Cash Balance</span>
+                <div class="apparatus-balance-value">₹0.00</div>
+                <span class="apparatus-balance-note">Instant UPI / NetBanking / Cards</span>
               </div>
 
-              <div class="apparatus-billing-balances">
-                <!-- Cash Wallet -->
-                <div class="apparatus-balance-box apparatus-balance-cash">
-                  <span class="apparatus-balance-label">Cash Balance</span>
-                  <div class="apparatus-balance-value">₹0.00</div>
-                  <span class="apparatus-balance-note">Instant UPI / NetBanking / Cards</span>
+              <!-- Referral Points Balance -->
+              <div class="apparatus-balance-box apparatus-balance-coins">
+                <span class="apparatus-balance-label">Referral Points</span>
+                <div class="apparatus-balance-value">
+                  <span id="apparatus-coin-count">100</span>
                 </div>
+                <span class="apparatus-balance-note">Redeem points for discounts &amp; upgrades</span>
+              </div>
+            </div>
 
-                <!-- Referral Points Balance -->
-                <div class="apparatus-balance-box apparatus-balance-coins">
-                  <span class="apparatus-balance-label">Referral Points</span>
-                  <div class="apparatus-balance-value">
-                    <span id="apparatus-coin-count">100</span>
+            <div class="apparatus-billing-actions">
+              <button type="button" class="apparatus-btn apparatus-btn-primary apparatus-btn-full" id="apparatus-wallet-topup-btn">
+                <i class="ri-add-circle-line"></i> Top Up Balance (INR ₹)
+              </button>
+
+              <!-- User Unique Referral Code Box -->
+              <div class="apparatus-referral-card">
+                <div class="apparatus-referral-header">
+                  <div class="apparatus-referral-header-left">
+                    <div class="apparatus-referral-icon">
+                      <i class="ri-gift-line"></i>
+                    </div>
+                    <div class="apparatus-referral-titles">
+                      <span class="apparatus-referral-title">Referral Program</span>
+                      <span class="apparatus-referral-subtitle">Earn 10 coins per friend invited</span>
+                    </div>
                   </div>
-                  <span class="apparatus-balance-note">Redeem points for discounts &amp; upgrades</span>
+                </div>
+
+                <div class="apparatus-referral-box">
+                  <div class="apparatus-referral-code-wrap">
+                    <span class="apparatus-referral-code-tag">YOUR CODE</span>
+                    <code class="apparatus-referral-code" id="apparatus-user-ref-code">${referralCode}</code>
+                  </div>
+                  <button type="button" class="apparatus-copy-ref-btn" id="apparatus-copy-ref-btn" title="Copy Referral Code">
+                    <i class="ri-file-copy-line"></i> <span>Copy</span>
+                  </button>
+                </div>
+
+                <div class="apparatus-referral-note">
+                  <i class="ri-sparkling-fill" style="color: #fbbf24; font-size: 0.72rem; margin-right: 4px;"></i>
+                  Earn <strong style="color: #fbbf24; margin: 0 3px;">10 Coins</strong> for each friend who joins using your code
                 </div>
               </div>
+            </div>
 
-              <div class="apparatus-billing-actions">
-                <button type="button" class="apparatus-btn apparatus-btn-primary apparatus-btn-full" id="apparatus-wallet-topup-btn">
-                  <i class="ri-add-circle-line"></i> Top Up Balance (INR ₹)
+            <!-- Quick Resource Upgrades -->
+            <div class="apparatus-upgrades-section">
+              <span class="apparatus-upgrades-title">
+                <i class="ri-flashlight-line"></i> Quick Server Upgrades
+              </span>
+              <div class="apparatus-upgrades-grid">
+                <button type="button" class="apparatus-upgrade-pill" data-upgrade="+2 GB DDR4 RAM" data-price="₹99">
+                  <span class="upgrade-name">+2 GB RAM</span>
+                  <span class="upgrade-price">₹99/mo</span>
                 </button>
+                <button type="button" class="apparatus-upgrade-pill" data-upgrade="+100% Dedicated CPU" data-price="₹79">
+                  <span class="upgrade-name">+100% CPU</span>
+                  <span class="upgrade-price">₹79/mo</span>
+                </button>
+                <button type="button" class="apparatus-upgrade-pill" data-upgrade="+20 GB NVMe Storage" data-price="₹49">
+                  <span class="upgrade-name">+20 GB NVMe</span>
+                  <span class="upgrade-price">₹49/mo</span>
+                </button>
+              </div>
+            </div>
+          </div>
 
-                <!-- User Unique Referral Code Box -->
-                <div class="apparatus-referral-card">
-                  <div class="apparatus-referral-header">
-                    <div class="apparatus-referral-header-left">
-                      <div class="apparatus-referral-icon">
-                        <i class="ri-gift-line"></i>
-                      </div>
-                      <div class="apparatus-referral-titles">
-                        <span class="apparatus-referral-title">Referral Program</span>
-                        <span class="apparatus-referral-subtitle">Earn 10 coins per friend invited</span>
-                      </div>
-                    </div>
-                  </div>
+          <!-- Card 3 (Row 2 Left): Resource Capacity -->
+          <div class="apparatus-card apparatus-card-resources" id="apparatus-area-resources">
+            <div class="apparatus-card-header">
+              <h2 class="apparatus-card-title">
+                <i class="ri-dashboard-3-line" style="color: #38bdf8;"></i> Resource Capacity
+              </h2>
+              <a href="#resource" class="apparatus-link-btn" id="apparatus-dash-resource-link" style="text-decoration: none; font-size: 0.76rem; font-weight: 600; color: #38bdf8; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); transition: all 0.2s ease;">
+                <span>Allocated</span> <i class="ri-arrow-right-line"></i>
+              </a>
+            </div>
 
-                  <div class="apparatus-referral-box">
-                    <div class="apparatus-referral-code-wrap">
-                      <span class="apparatus-referral-code-tag">YOUR CODE</span>
-                      <code class="apparatus-referral-code" id="apparatus-user-ref-code">${referralCode}</code>
-                    </div>
-                    <button type="button" class="apparatus-copy-ref-btn" id="apparatus-copy-ref-btn" title="Copy Referral Code">
-                      <i class="ri-file-copy-line"></i> <span>Copy</span>
-                    </button>
-                  </div>
-
-                  <div class="apparatus-referral-note">
-                    <i class="ri-sparkling-fill" style="color: #fbbf24; font-size: 0.72rem; margin-right: 4px;"></i>
-                    Earn <strong style="color: #fbbf24; margin: 0 3px;">10 Coins</strong> for each friend who joins using your code
-                  </div>
+            <div class="apparatus-gauges-list">
+              <!-- Memory Bar -->
+              <div class="apparatus-gauge-row">
+                <div class="apparatus-gauge-header">
+                  <span class="gauge-label"><i class="ri-database-2-line"></i> Memory (RAM)</span>
+                  <span class="gauge-val" id="apparatus-gauge-ram-text">0.0 GB Allocated</span>
+                </div>
+                <div class="apparatus-progress-track">
+                  <div class="apparatus-progress-bar apparatus-progress-ram" id="apparatus-gauge-ram-bar" style="width: 20%;"></div>
                 </div>
               </div>
 
-              <!-- Quick Resource Upgrades -->
-              <div class="apparatus-upgrades-section">
-                <span class="apparatus-upgrades-title">
-                  <i class="ri-flashlight-line"></i> Quick Server Upgrades
-                </span>
-                <div class="apparatus-upgrades-grid">
-                  <button type="button" class="apparatus-upgrade-pill" data-upgrade="+2 GB DDR4 RAM" data-price="₹99">
-                    <span class="upgrade-name">+2 GB RAM</span>
-                    <span class="upgrade-price">₹99/mo</span>
-                  </button>
-                  <button type="button" class="apparatus-upgrade-pill" data-upgrade="+100% Dedicated CPU" data-price="₹79">
-                    <span class="upgrade-name">+100% CPU</span>
-                    <span class="upgrade-price">₹79/mo</span>
-                  </button>
-                  <button type="button" class="apparatus-upgrade-pill" data-upgrade="+20 GB NVMe Storage" data-price="₹49">
-                    <span class="upgrade-name">+20 GB NVMe</span>
-                    <span class="upgrade-price">₹49/mo</span>
-                  </button>
+              <!-- CPU Bar -->
+              <div class="apparatus-gauge-row">
+                <div class="apparatus-gauge-header">
+                  <span class="gauge-label"><i class="ri-cpu-line"></i> CPU Compute</span>
+                  <span class="gauge-val" id="apparatus-gauge-cpu-text">0% Allocated</span>
+                </div>
+                <div class="apparatus-progress-track">
+                  <div class="apparatus-progress-bar apparatus-progress-cpu" id="apparatus-gauge-cpu-bar" style="width: 15%;"></div>
+                </div>
+              </div>
+
+              <!-- Disk Bar -->
+              <div class="apparatus-gauge-row">
+                <div class="apparatus-gauge-header">
+                  <span class="gauge-label"><i class="ri-hard-drive-line"></i> NVMe Storage</span>
+                  <span class="gauge-val" id="apparatus-gauge-disk-text">0.0 GB Allocated</span>
+                </div>
+                <div class="apparatus-progress-track">
+                  <div class="apparatus-progress-bar apparatus-progress-disk" id="apparatus-gauge-disk-bar" style="width: 25%;"></div>
                 </div>
               </div>
             </div>
 
-            <!-- Card 2: Recent Activity (Right Column Bottom) -->
-            <div class="apparatus-card apparatus-card-activity" id="apparatus-area-2">
-              <div class="apparatus-card-header">
-                <h2 class="apparatus-card-title">
-                  <i class="ri-history-line" style="color: #f472b6;"></i> Recent Activity
-                </h2>
-                <a href="/account/activity" class="apparatus-link">View All <i class="ri-arrow-right-s-line"></i></a>
-              </div>
-              <div class="apparatus-activity-list" id="apparatus-activity-list">
-                <div class="apparatus-empty-msg">Loading activity...</div>
-              </div>
+            <!-- Blurred Email Quick Row -->
+            <div class="apparatus-account-quick-row">
+              <span class="apparatus-row-label">Account Email</span>
+              <span class="apparatus-email-blurred" id="apparatus-email-val" title="Click or hover to reveal">${email}</span>
             </div>
+          </div>
 
+          <!-- Card 4 (Row 2 Right): Recent Activity -->
+          <div class="apparatus-card apparatus-card-activity" id="apparatus-area-2">
+            <div class="apparatus-card-header">
+              <h2 class="apparatus-card-title">
+                <i class="ri-history-line" style="color: #f472b6;"></i> Recent Activity
+              </h2>
+              <a href="/account/activity" class="apparatus-link">View All <i class="ri-arrow-right-s-line"></i></a>
+            </div>
+            <div class="apparatus-activity-list" id="apparatus-activity-list">
+              <div class="apparatus-empty-msg">Loading activity...</div>
+            </div>
           </div>
         </div>
       </div>
