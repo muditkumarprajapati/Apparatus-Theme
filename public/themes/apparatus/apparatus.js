@@ -1321,20 +1321,14 @@
               <div class="apparatus-billing-balances">
                 <!-- Cash Wallet -->
                 <div class="apparatus-balance-box apparatus-balance-cash">
-                  <div class="apparatus-balance-box-top">
-                    <span class="apparatus-balance-label">Cash Balance</span>
-                    <i class="ri-money-rupee-circle-line apparatus-balance-icon" style="color: #34d399;"></i>
-                  </div>
+                  <span class="apparatus-balance-label">Cash Balance</span>
                   <div class="apparatus-balance-value">₹0.00</div>
                   <span class="apparatus-balance-note">Instant UPI / NetBanking / Cards</span>
                 </div>
 
                 <!-- Referral Points Balance -->
                 <div class="apparatus-balance-box apparatus-balance-coins">
-                  <div class="apparatus-balance-box-top">
-                    <span class="apparatus-balance-label">Referral Points</span>
-                    <i class="ri-copper-coin-line apparatus-balance-icon" style="color: #fbbf24;"></i>
-                  </div>
+                  <span class="apparatus-balance-label">Referral Points</span>
                   <div class="apparatus-balance-value">
                     <span id="apparatus-coin-count">100</span> <span class="apparatus-coin-symbol">🪙</span>
                   </div>
