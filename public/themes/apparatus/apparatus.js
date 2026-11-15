@@ -492,6 +492,14 @@
       btn.style.setProperty('box-shadow', '0 4px 15px rgba(236, 72, 153, 0.35)', 'important');
     });
 
+    // 7b. Mount User Profile Section on /account above Update Password / Email / 2FA cards
+    if (window.location.pathname === '/account' || window.location.pathname === '/account/') {
+      injectUserProfileSection();
+    } else {
+      const existingProf = document.getElementById('apparatus-user-profile-section');
+      if (existingProf) existingProf.remove();
+    }
+
     // 7. Ensure "Recent Activity" header text is present above the activity card on /account/activity
     const rawPathname = window.location.pathname || '';
     if (rawPathname.startsWith('/account/activity')) {
@@ -4176,6 +4184,329 @@
     renderSettingsPage();
   }
 
+  // ==============================================================================
+  // User Profile Studio: Personal Identity, Avatar Studio, Badges & Preferences
+  // Mounted directly above Update Password, Update Email, and Two-Step Verification
+  // ==============================================================================
+  function injectUserProfileSection() {
+    const rawPath = window.location.pathname || '';
+    if (rawPath !== '/account' && rawPath !== '/account/') {
+      const existing = document.getElementById('apparatus-user-profile-section');
+      if (existing) existing.remove();
+      return;
+    }
+
+    const container = document.querySelector('div[class*="AccountOverviewContainer"]') || 
+                      document.querySelector('div[class*="PageContentBlock"] > div');
+    if (!container) return;
+
+    if (document.getElementById('apparatus-user-profile-section')) return;
+
+    const user = window.PterodactylUser || {};
+    const username = localStorage.getItem('apparatus_profile_username') || user.username || 'mudit';
+    const email = user.email || 'muditkumar.me@gmail.com';
+    const firstName = localStorage.getItem('apparatus_profile_firstname') || user.first_name || user.name_first || 'Mudit';
+    const lastName = localStorage.getItem('apparatus_profile_lastname') || user.last_name || user.name_last || 'Kumar';
+    const bio = localStorage.getItem('apparatus_profile_bio') || 'ArixByte Cloud Administrator';
+    const defaultAvatar = 'https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(username);
+    const avatar = localStorage.getItem('apparatus_profile_avatar') || defaultAvatar;
+    const timezone = localStorage.getItem('apparatus_profile_timezone') || 'Asia/Kolkata';
+    const isAdmin = !!user.root_admin;
+    const is2fa = !!user.use_totp;
+    const memberYear = user.created_at ? new Date(user.created_at).getFullYear() : '2024';
+    const points = localStorage.getItem('apparatus_coins') || '125';
+
+    const section = document.createElement('div');
+    section.id = 'apparatus-user-profile-section';
+    section.className = 'apparatus-user-profile-section';
+
+    section.innerHTML = `
+      <div class="apparatus-card apparatus-user-profile-card">
+        <!-- Profile Header with Badges -->
+        <div class="apparatus-prof-header">
+          <div class="apparatus-prof-header-left">
+            <div class="apparatus-prof-title-row">
+              <h2 class="apparatus-prof-title"><i class="ri-user-smile-line"></i> User Profile</h2>
+              <span class="apparatus-prof-badge apparatus-prof-badge-admin">
+                <i class="ri-shield-check-fill"></i> ${isAdmin ? 'Administrator' : 'Standard Member'}
+              </span>
+              <span class="apparatus-prof-badge apparatus-prof-badge-since">
+                <i class="ri-calendar-line"></i> Member since ${memberYear}
+              </span>
+              <span class="apparatus-prof-badge apparatus-prof-badge-2fa ${is2fa ? 'active' : ''}">
+                <i class="${is2fa ? 'ri-lock-check-fill' : 'ri-lock-unlock-line'}"></i> ${is2fa ? '2FA Active' : '2FA Inactive'}
+              </span>
+              <span class="apparatus-prof-badge apparatus-prof-badge-pts">
+                <i class="ri-copper-coin-fill"></i> ${points} Points
+              </span>
+            </div>
+            <p class="apparatus-prof-desc">Customize your personal identity, avatar icon, account details, and regional preferences.</p>
+          </div>
+        </div>
+
+        <!-- Profile Body (2 Columns) -->
+        <div class="apparatus-prof-grid">
+          <!-- Left Column: Avatar & Preset Studio -->
+          <div class="apparatus-prof-avatar-col">
+            <div class="apparatus-prof-avatar-preview-wrap">
+              <div class="apparatus-prof-avatar-ring">
+                <img src="${avatar}" id="apparatus-prof-avatar-img" class="apparatus-prof-avatar-img" alt="Avatar" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=mudit';">
+                <span class="apparatus-prof-online-dot" title="Account Status: Online"></span>
+              </div>
+              <div class="apparatus-prof-avatar-meta">
+                <span class="apparatus-prof-display-name" id="apparatus-prof-preview-name">${firstName} ${lastName}</span>
+                <span class="apparatus-prof-display-handle" id="apparatus-prof-preview-handle">@${username}</span>
+              </div>
+            </div>
+
+            <!-- Avatar Preset Picker -->
+            <div class="apparatus-prof-presets-section">
+              <span class="apparatus-prof-label">Quick Avatar Presets</span>
+              <div class="apparatus-prof-preset-row">
+                <button type="button" class="apparatus-prof-preset-btn" data-avatar="https://api.dicebear.com/7.x/bottts/svg?seed=ArixGamer" title="Cyber Bot">
+                  <img src="https://api.dicebear.com/7.x/bottts/svg?seed=ArixGamer" alt="Bot">
+                </button>
+                <button type="button" class="apparatus-prof-preset-btn" data-avatar="https://api.dicebear.com/7.x/shapes/svg?seed=CyberCore" title="Geometric Luxury">
+                  <img src="https://api.dicebear.com/7.x/shapes/svg?seed=CyberCore" alt="Shapes">
+                </button>
+                <button type="button" class="apparatus-prof-preset-btn" data-avatar="https://api.dicebear.com/7.x/pixel-art/svg?seed=ArixByte" title="Pixel Retro">
+                  <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=ArixByte" alt="Pixel">
+                </button>
+                <button type="button" class="apparatus-prof-preset-btn" data-avatar="https://api.dicebear.com/7.x/identicon/svg?seed=CloudOps" title="Security Matrix">
+                  <img src="https://api.dicebear.com/7.x/identicon/svg?seed=CloudOps" alt="Identicon">
+                </button>
+                <button type="button" class="apparatus-prof-preset-btn" data-avatar="https://api.dicebear.com/7.x/thumbs/svg?seed=ServerRoot" title="Neon Operator">
+                  <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=ServerRoot" alt="Thumbs">
+                </button>
+              </div>
+            </div>
+
+            <!-- Custom Avatar URL Input -->
+            <div class="apparatus-prof-field">
+              <label class="apparatus-prof-label" for="apparatus-prof-avatar-url">Custom Image URL</label>
+              <div class="apparatus-prof-url-input-wrap">
+                <input type="text" id="apparatus-prof-avatar-url" class="apparatus-prof-input" placeholder="https://example.com/avatar.png" value="${avatar}">
+                <button type="button" class="apparatus-btn apparatus-btn-glass apparatus-btn-sm" id="apparatus-prof-apply-url-btn">Apply</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Personal Information & Settings -->
+          <div class="apparatus-prof-fields-col">
+            <div class="apparatus-prof-row-2col">
+              <div class="apparatus-prof-field">
+                <label class="apparatus-prof-label" for="apparatus-prof-username">Username <span class="apparatus-prof-req">*</span></label>
+                <div class="apparatus-prof-input-wrap">
+                  <i class="ri-at-line apparatus-prof-input-icon"></i>
+                  <input type="text" id="apparatus-prof-username" class="apparatus-prof-input with-icon" value="${username}" placeholder="Username">
+                </div>
+              </div>
+              <div class="apparatus-prof-field">
+                <label class="apparatus-prof-label" for="apparatus-prof-email">Account Email</label>
+                <div class="apparatus-prof-input-wrap">
+                  <i class="ri-mail-line apparatus-prof-input-icon"></i>
+                  <input type="email" id="apparatus-prof-email" class="apparatus-prof-input with-icon" value="${email}" readonly title="To update your primary email, use the Update Email Address card below">
+                </div>
+              </div>
+            </div>
+
+            <div class="apparatus-prof-row-2col">
+              <div class="apparatus-prof-field">
+                <label class="apparatus-prof-label" for="apparatus-prof-firstname">First Name</label>
+                <div class="apparatus-prof-input-wrap">
+                  <i class="ri-user-line apparatus-prof-input-icon"></i>
+                  <input type="text" id="apparatus-prof-firstname" class="apparatus-prof-input with-icon" value="${firstName}" placeholder="First Name">
+                </div>
+              </div>
+              <div class="apparatus-prof-field">
+                <label class="apparatus-prof-label" for="apparatus-prof-lastname">Last Name</label>
+                <div class="apparatus-prof-input-wrap">
+                  <i class="ri-user-line apparatus-prof-input-icon"></i>
+                  <input type="text" id="apparatus-prof-lastname" class="apparatus-prof-input with-icon" value="${lastName}" placeholder="Last Name">
+                </div>
+              </div>
+            </div>
+
+            <div class="apparatus-prof-field">
+              <label class="apparatus-prof-label" for="apparatus-prof-bio">Status / Bio Tagline</label>
+              <div class="apparatus-prof-input-wrap">
+                <i class="ri-chat-smile-2-line apparatus-prof-input-icon"></i>
+                <input type="text" id="apparatus-prof-bio" class="apparatus-prof-input with-icon" value="${bio}" placeholder="e.g. Infrastructure Engineer & Gamer">
+              </div>
+            </div>
+
+            <div class="apparatus-prof-row-2col">
+              <div class="apparatus-prof-field">
+                <label class="apparatus-prof-label" for="apparatus-prof-timezone">Account Timezone</label>
+                <div class="apparatus-prof-input-wrap">
+                  <i class="ri-time-line apparatus-prof-input-icon"></i>
+                  <select id="apparatus-prof-timezone" class="apparatus-prof-input with-icon apparatus-prof-select">
+                    <option value="Asia/Kolkata" ${timezone === 'Asia/Kolkata' ? 'selected' : ''}>Asia/Kolkata (IST +5:30)</option>
+                    <option value="UTC" ${timezone === 'UTC' ? 'selected' : ''}>UTC (Universal Time)</option>
+                    <option value="America/New_York" ${timezone === 'America/New_York' ? 'selected' : ''}>America/New_York (EST/EDT)</option>
+                    <option value="America/Los_Angeles" ${timezone === 'America/Los_Angeles' ? 'selected' : ''}>America/Los_Angeles (PST/PDT)</option>
+                    <option value="Europe/London" ${timezone === 'Europe/London' ? 'selected' : ''}>Europe/London (GMT/BST)</option>
+                    <option value="Europe/Berlin" ${timezone === 'Europe/Berlin' ? 'selected' : ''}>Europe/Berlin (CET/CEST)</option>
+                    <option value="Asia/Singapore" ${timezone === 'Asia/Singapore' ? 'selected' : ''}>Asia/Singapore (SGT +8:00)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="apparatus-prof-field apparatus-prof-field-center">
+                <div class="apparatus-prof-toggle-info">
+                  <label class="apparatus-prof-label" for="apparatus-prof-privacy-toggle" style="margin: 0; cursor: pointer;">Privacy Blur Mode</label>
+                  <span class="apparatus-prof-subtext">Blur financial balances & email</span>
+                </div>
+                <label class="apparatus-switch">
+                  <input type="checkbox" id="apparatus-prof-privacy-toggle" ${localStorage.getItem('apparatus_privacy') !== 'false' ? 'checked' : ''}>
+                  <span class="apparatus-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="apparatus-prof-actions">
+              <button type="button" class="apparatus-btn apparatus-btn-primary" id="apparatus-prof-save-btn">
+                <i class="ri-check-line"></i> <span>Save Profile Changes</span>
+              </button>
+              <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-prof-reset-btn">
+                <i class="ri-refresh-line"></i> <span>Reset Default</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Divider Header for Security Cards (Update Password, Update Email, 2FA) -->
+      <div class="apparatus-account-sec-divider" id="apparatus-account-sec-divider">
+        <div class="apparatus-sec-divider-head">
+          <div class="apparatus-sec-divider-icon"><i class="ri-shield-keyhole-line"></i></div>
+          <div class="apparatus-sec-divider-meta">
+            <h3 class="apparatus-sec-divider-title">Security &amp; Credentials</h3>
+            <p class="apparatus-sec-divider-desc">Manage your authentication credentials, account password, and two-factor verification.</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.prepend(section);
+
+    // Wire up Avatar Preview from URL input
+    const avatarImg = section.querySelector('#apparatus-prof-avatar-img');
+    const avatarUrlInput = section.querySelector('#apparatus-prof-avatar-url');
+    const applyUrlBtn = section.querySelector('#apparatus-prof-apply-url-btn');
+
+    if (applyUrlBtn && avatarUrlInput && avatarImg) {
+      applyUrlBtn.addEventListener('click', function () {
+        const val = avatarUrlInput.value.trim();
+        if (val) {
+          avatarImg.src = val;
+          showToast('info', 'Avatar Preview', 'Previewing custom avatar image.');
+        }
+      });
+    }
+
+    // Wire up Avatar Preset Buttons
+    section.querySelectorAll('.apparatus-prof-preset-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const pUrl = this.getAttribute('data-avatar');
+        if (pUrl && avatarImg && avatarUrlInput) {
+          avatarImg.src = pUrl;
+          avatarUrlInput.value = pUrl;
+          showToast('info', 'Avatar Selected', 'Click "Save Profile Changes" to confirm.');
+        }
+      });
+    });
+
+    // Wire up Real-Time Display Name and Handle previews
+    const uInput = section.querySelector('#apparatus-prof-username');
+    const fInput = section.querySelector('#apparatus-prof-firstname');
+    const lInput = section.querySelector('#apparatus-prof-lastname');
+    const pName = section.querySelector('#apparatus-prof-preview-name');
+    const pHandle = section.querySelector('#apparatus-prof-preview-handle');
+
+    function updatePreviewName() {
+      if (pName && fInput && lInput) {
+        const f = fInput.value.trim() || 'Mudit';
+        const l = lInput.value.trim() || 'Kumar';
+        pName.textContent = f + ' ' + l;
+      }
+      if (pHandle && uInput) {
+        pHandle.textContent = '@' + (uInput.value.trim() || 'mudit');
+      }
+    }
+    if (uInput) uInput.addEventListener('input', updatePreviewName);
+    if (fInput) fInput.addEventListener('input', updatePreviewName);
+    if (lInput) lInput.addEventListener('input', updatePreviewName);
+
+    // Privacy toggle in profile
+    const profPrivToggle = section.querySelector('#apparatus-prof-privacy-toggle');
+    if (profPrivToggle) {
+      profPrivToggle.addEventListener('change', function () {
+        const isPriv = profPrivToggle.checked;
+        localStorage.setItem('apparatus_privacy', isPriv ? 'true' : 'false');
+        if (isPriv) {
+          document.body.classList.add('apparatus-privacy-active');
+        } else {
+          document.body.classList.remove('apparatus-privacy-active');
+        }
+      });
+    }
+
+    // Save Profile Changes
+    const saveBtn = section.querySelector('#apparatus-prof-save-btn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function () {
+        const newU = uInput ? uInput.value.trim() : username;
+        const newF = fInput ? fInput.value.trim() : firstName;
+        const newL = lInput ? lInput.value.trim() : lastName;
+        const newBio = section.querySelector('#apparatus-prof-bio') ? section.querySelector('#apparatus-prof-bio').value.trim() : bio;
+        const newTz = section.querySelector('#apparatus-prof-timezone') ? section.querySelector('#apparatus-prof-timezone').value : timezone;
+        const newAv = avatarUrlInput ? avatarUrlInput.value.trim() : avatar;
+
+        if (!newU) {
+          showToast('error', 'Validation Error', 'Username cannot be left blank.');
+          return;
+        }
+
+        localStorage.setItem('apparatus_profile_username', newU);
+        localStorage.setItem('apparatus_profile_firstname', newF);
+        localStorage.setItem('apparatus_profile_lastname', newL);
+        localStorage.setItem('apparatus_profile_bio', newBio);
+        localStorage.setItem('apparatus_profile_timezone', newTz);
+        if (newAv) localStorage.setItem('apparatus_profile_avatar', newAv);
+
+        if (window.PterodactylUser) {
+          window.PterodactylUser.username = newU;
+          window.PterodactylUser.first_name = newF;
+          window.PterodactylUser.last_name = newL;
+        }
+
+        const heroU = document.getElementById('apparatus-welcome-username');
+        if (heroU) heroU.textContent = newU;
+
+        showToast('success', 'Profile Updated', '🎉 Your profile details and avatar have been saved successfully!');
+      });
+    }
+
+    // Reset Default
+    const resetBtn = section.querySelector('#apparatus-prof-reset-btn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        localStorage.removeItem('apparatus_profile_username');
+        localStorage.removeItem('apparatus_profile_firstname');
+        localStorage.removeItem('apparatus_profile_lastname');
+        localStorage.removeItem('apparatus_profile_bio');
+        localStorage.removeItem('apparatus_profile_avatar');
+        localStorage.removeItem('apparatus_profile_timezone');
+        showToast('info', 'Profile Reset', 'Reloading default account details...');
+        setTimeout(function () {
+          window.location.reload();
+        }, 600);
+      });
+    }
+  }
+
   function initSidebar() {
     if (isAuthPage() || isUnauthorizedAdminAttempt()) {
       const existing = document.getElementById('apparatus-sidebar');
@@ -4275,7 +4606,7 @@
               <li>
                 <a href="/account" class="apparatus-nav-link" data-path="/account">
                   <i class="ri-user-settings-line apparatus-nav-icon"></i>
-                  <span>Account Credentials</span>
+                  <span>Account</span>
                 </a>
               </li>
               <li>

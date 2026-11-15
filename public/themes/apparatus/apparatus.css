@@ -4728,3 +4728,372 @@ html.lenis body {
 .apparatus-social-wa:hover i:first-child {
   color: #25d366;
 }
+
+
+/* ==============================================================================
+   Account View: User Profile Studio & Security Divider
+   ============================================================================== */
+
+.apparatus-user-profile-section {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  margin-bottom: 2rem !important;
+  animation: apparatusViewEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.apparatus-user-profile-card {
+  padding: 1.75rem 2rem !important;
+  background: rgba(18, 18, 24, 0.45) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35) !important;
+}
+
+.apparatus-prof-header {
+  padding-bottom: 1.35rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  margin-bottom: 1.5rem;
+}
+
+.apparatus-prof-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.apparatus-prof-title {
+  margin: 0;
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.apparatus-prof-title i {
+  color: #ec4899;
+}
+
+.apparatus-prof-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.apparatus-prof-badge-admin {
+  background: rgba(236, 72, 153, 0.12);
+  border-color: rgba(236, 72, 153, 0.3);
+  color: #f472b6;
+}
+
+.apparatus-prof-badge-2fa.active {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+}
+
+.apparatus-prof-badge-pts {
+  background: rgba(251, 191, 36, 0.12);
+  border-color: rgba(251, 191, 36, 0.3);
+  color: #fcd34d;
+}
+
+.apparatus-prof-desc {
+  margin: 0.4rem 0 0 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* 2-Column Profile Grid */
+.apparatus-prof-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 920px) {
+  .apparatus-prof-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Avatar Column */
+.apparatus-prof-avatar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+}
+
+.apparatus-prof-avatar-preview-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.apparatus-prof-avatar-ring {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, #ec4899, #a855f7);
+  box-shadow: 0 0 25px rgba(236, 72, 153, 0.35);
+}
+
+.apparatus-prof-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #111;
+  display: block;
+}
+
+.apparatus-prof-online-dot {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2.5px solid #121218;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+.apparatus-prof-avatar-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.apparatus-prof-display-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.apparatus-prof-display-handle {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.apparatus-prof-presets-section {
+  width: 100%;
+}
+
+.apparatus-prof-label {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.apparatus-prof-preset-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.apparatus-prof-preset-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.apparatus-prof-preset-btn img {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.apparatus-prof-preset-btn:hover {
+  transform: translateY(-2px) scale(1.08);
+  border-color: #ec4899;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);
+}
+
+.apparatus-prof-url-input-wrap {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.apparatus-prof-url-input-wrap .apparatus-prof-input {
+  font-size: 0.78rem;
+  padding: 0.4rem 0.65rem;
+}
+
+/* Fields Column */
+.apparatus-prof-fields-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.apparatus-prof-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.15rem;
+}
+
+@media (max-width: 640px) {
+  .apparatus-prof-row-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.apparatus-prof-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.apparatus-prof-req {
+  color: #ec4899;
+}
+
+.apparatus-prof-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.apparatus-prof-input-icon {
+  position: absolute;
+  left: 0.85rem;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+
+.apparatus-prof-input {
+  width: 100%;
+  height: 42px;
+  background: rgba(0, 0, 0, 0.25) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 10px !important;
+  color: #fff !important;
+  padding: 0 0.85rem;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.apparatus-prof-input.with-icon {
+  padding-left: 2.35rem;
+}
+
+.apparatus-prof-input:focus {
+  border-color: rgba(236, 72, 153, 0.6) !important;
+  box-shadow: 0 0 14px rgba(236, 72, 153, 0.25) !important;
+}
+
+.apparatus-prof-select {
+  cursor: pointer;
+}
+
+.apparatus-prof-select option {
+  background: #181622;
+  color: #fff;
+}
+
+.apparatus-prof-field-center {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.5rem;
+}
+
+.apparatus-prof-toggle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.apparatus-prof-subtext {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.apparatus-prof-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Security & Credentials Section Divider */
+.apparatus-account-sec-divider {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  margin: 1.5rem 0 1.25rem 0 !important;
+  padding-top: 1rem;
+}
+
+.apparatus-sec-divider-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.apparatus-sec-divider-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(236, 72, 153, 0.15);
+  color: #ec4899;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.apparatus-sec-divider-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.apparatus-sec-divider-title {
+  margin: 0;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+}
+
+.apparatus-sec-divider-desc {
+  margin: 0.2rem 0 0 0;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+}
