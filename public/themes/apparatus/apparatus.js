@@ -779,7 +779,17 @@
         lerp: 0.1, // Matches moradosolution.in: calm glide rather than a flick
         smoothWheel: true,
         syncTouch: false,
-        autoRaf: false
+        autoRaf: false,
+        prevent: function (node) {
+          if (!node || typeof node.closest !== 'function') return false;
+          return !!node.closest(
+            '#apparatus-sidebar, .apparatus-sidebar, .apparatus-sidebar-scroll, ' +
+            '[data-lenis-prevent], [data-lenis-prevent-wheel], .apparatus-activity-list, ' +
+            'aside, nav, #SubNavigation, [class*="SubNavigation"], [class*="NavigationBar"], ' +
+            '[class*="Modal"], [class*="Terminal"], [class*="FileManager"], ' +
+            '.overflow-y-auto, .overflow-y-scroll, pre, code'
+          );
+        }
       });
 
       function lenisRaf(time) {
@@ -794,13 +804,31 @@
     } catch (e) {
       console.warn('Apparatus Lenis initialization skipped:', e);
     }
+
+    // Capture-phase wheel isolation: Ensure mouse scrolling inside sidebar, menus, or modals never moves the main page
+    if (!window.__apparatusWheelIsolated) {
+      window.__apparatusWheelIsolated = true;
+      window.addEventListener('wheel', function (e) {
+        if (!e.target || typeof e.target.closest !== 'function') return;
+        const scrollable = e.target.closest(
+          '#apparatus-sidebar, .apparatus-sidebar, .apparatus-sidebar-scroll, ' +
+          'aside, nav, #SubNavigation, [class*="SubNavigation"], [class*="NavigationBar"], ' +
+          '[data-lenis-prevent], [data-lenis-prevent-wheel], .apparatus-activity-list, ' +
+          '[class*="Modal"], [class*="Terminal"], [class*="FileManager"], ' +
+          '.overflow-y-auto, .overflow-y-scroll'
+        );
+        if (scrollable) {
+          e.stopImmediatePropagation();
+        }
+      }, { capture: true, passive: true });
+    }
   }
 
   function smoothScrollToTop() {
     if (lenisInstance) {
       lenisInstance.scrollTo(0, { duration: 1.1 });
     } else {
-      smoothScrollToTop();
+      window.scrollTo(0, 0);
     }
   }
 
@@ -4189,6 +4217,8 @@
       sidebar = document.createElement('aside');
       sidebar.id = 'apparatus-sidebar';
       sidebar.className = 'apparatus-sidebar';
+      sidebar.setAttribute('data-lenis-prevent', 'true');
+      sidebar.setAttribute('data-lenis-prevent-wheel', 'true');
 
       sidebar.innerHTML = `
         <div class="apparatus-sidebar-header">
@@ -4197,7 +4227,7 @@
           </div>
         </div>
 
-        <div class="apparatus-sidebar-scroll">
+        <div class="apparatus-sidebar-scroll" data-lenis-prevent="true" data-lenis-prevent-wheel="true">
           <!-- Home -->
           <div class="apparatus-nav-category">
             <div class="apparatus-category-title">Home</div>
@@ -4390,6 +4420,10 @@
       `;
 
       document.body.appendChild(sidebar);
+
+      sidebar.addEventListener('wheel', function (e) {
+        e.stopPropagation();
+      }, { passive: true });
 
       // Billing click handlers
       const resourceBtn = sidebar.querySelector('.apparatus-resource-link');

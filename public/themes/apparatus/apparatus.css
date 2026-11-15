@@ -4327,8 +4327,11 @@ html.lenis body {
 .lenis [data-lenis-prevent-wheel],
 .lenis [data-lenis-prevent-touch],
 .lenis [data-lenis-prevent-vertical],
-.lenis [data-lenis-prevent-horizontal] {
-  overscroll-behavior: contain;
+.lenis [data-lenis-prevent-horizontal],
+.apparatus-sidebar,
+.apparatus-sidebar-scroll,
+#apparatus-sidebar {
+  overscroll-behavior: contain !important;
 }
 
 .lenis.lenis-smooth iframe {
