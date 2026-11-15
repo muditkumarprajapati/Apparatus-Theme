@@ -3797,8 +3797,57 @@ body:not(.apparatus-privacy-active) #apparatus-metric-coins {
 }
 
 /* ------------------------------------------------------------------------------
-   WALLPAPER PRESETS GRID
+   WALLPAPER PRESETS GRID & CATEGORIES
    ------------------------------------------------------------------------------ */
+.apparatus-wp-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.apparatus-wp-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.95rem;
+}
+
+.apparatus-wp-section-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.apparatus-wp-section-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.apparatus-wp-section-badge.badge-motion {
+  background: rgba(168, 85, 247, 0.16);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.38);
+}
+
+.apparatus-wp-section-badge.badge-static {
+  background: rgba(56, 189, 248, 0.16);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.38);
+}
+
+.apparatus-wp-section-hint {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.48);
+  line-height: 1.4;
+}
+
 .apparatus-setting-sublabel {
   font-size: 0.8rem;
   font-weight: 700;
@@ -3849,8 +3898,38 @@ body:not(.apparatus-privacy-active) #apparatus-metric-coins {
   background: linear-gradient(135deg, #f7abae 0%, #d9777f 40%, #5b2149 100%);
 }
 
+.apparatus-wp-preview-cyberpunk {
+  background: linear-gradient(135deg, #0d081e 0%, #290947 50%, #ff007f 100%) !important;
+}
+
+.apparatus-wp-preview-nebula {
+  background: radial-gradient(circle at 60% 40%, #7c3aed 0%, #1e1145 50%, #060412 100%) !important;
+}
+
+.apparatus-wp-preview-aurora {
+  background: linear-gradient(135deg, #022c22 0%, #065f46 40%, #047857 70%, #030f18 100%) !important;
+}
+
 .apparatus-wp-preview-dark {
   background: radial-gradient(circle at 50% 30%, #2e2646 0%, #0d0b14 100%);
+}
+
+.apparatus-motion-chip {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #c084fc;
+  background: rgba(13, 8, 30, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  border: 1px solid rgba(192, 132, 252, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 
 .apparatus-wp-badge {
