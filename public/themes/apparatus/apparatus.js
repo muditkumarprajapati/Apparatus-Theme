@@ -1151,7 +1151,6 @@
                   </button>
                   <button type="button" class="apparatus-tab-btn" data-tab="vps" id="apparatus-tab-btn-vps">
                     <i class="ri-hard-drive-3-line"></i> Cloud VPS
-                    <span class="apparatus-tab-badge apparatus-tab-badge-accent">KVM</span>
                   </button>
                 </div>
                 <div class="apparatus-hub-actions">
