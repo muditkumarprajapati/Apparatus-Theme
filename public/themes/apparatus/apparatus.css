@@ -2972,17 +2972,48 @@ body:not(.apparatus-auth) div[class*="ModalMask"] > div {
 /* ==============================================================================
    ACTIVITY LOG PAGE GLASSMORPHISM & IMPROVEMENTS
    ============================================================================== */
-/* Recent Activity Page Header */
-.apparatus-activity-header-bar {
+/* Ensure parent container is left-aligned */
+div[class*="ActivityLogContainer"] {
   display: flex !important;
   flex-direction: column !important;
-  gap: 0.35rem !important;
-  margin-bottom: 1.5rem !important;
-  width: 100% !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
   box-sizing: border-box !important;
 }
 
-.apparatus-activity-main-title {
+/* Recent Activity Page Header */
+#apparatus-activity-header,
+.apparatus-activity-header-bar {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  gap: 0.35rem !important;
+  margin-top: 0 !important;
+  margin-bottom: 1.5rem !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  align-self: flex-start !important;
+}
+
+#apparatus-activity-header .apparatus-resource-breadcrumbs {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  align-self: flex-start !important;
+  margin: 0 0 0.35rem 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+#apparatus-activity-header .apparatus-activity-main-title {
   font-family: var(--apparatus-font) !important;
   font-size: 1.65rem !important;
   font-weight: 800 !important;
@@ -2990,18 +3021,27 @@ body:not(.apparatus-auth) div[class*="ModalMask"] > div {
   color: #ffffff !important;
   display: flex !important;
   align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  align-self: flex-start !important;
   gap: 0.65rem !important;
-  margin: 0.25rem 0 0.15rem 0 !important;
+  margin: 0.15rem 0 0.15rem 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
 }
 
-.apparatus-activity-subtitle {
+#apparatus-activity-header .apparatus-activity-subtitle {
   font-size: 0.9rem !important;
   color: rgba(255, 255, 255, 0.7) !important;
+  display: block !important;
+  text-align: left !important;
+  align-self: flex-start !important;
   margin: 0 !important;
+  padding: 0 !important;
   line-height: 1.4 !important;
+  width: 100% !important;
 }
 
-body:not(.apparatus-auth) #apparatus-activity-header,
 body:not(.apparatus-auth) .apparatus-section-title {
   font-family: var(--apparatus-font) !important;
   font-size: 1.35rem !important;
@@ -3018,8 +3058,10 @@ body:not(.apparatus-auth) .apparatus-section-title {
   gap: 0.6rem !important;
 }
 
-body:not(.apparatus-auth) #apparatus-activity-header i {
+body:not(.apparatus-auth) #apparatus-activity-header i:not([style*="color"]) {
   color: #ffffff !important;
+}
+body:not(.apparatus-auth) #apparatus-activity-header i {
   text-shadow: none !important;
   filter: none !important;
   box-shadow: none !important;

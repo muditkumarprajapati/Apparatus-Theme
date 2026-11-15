@@ -531,6 +531,10 @@
           </p>
         `;
         if (actCard.parentElement) {
+          actCard.parentElement.style.setProperty('display', 'flex', 'important');
+          actCard.parentElement.style.setProperty('flex-direction', 'column', 'important');
+          actCard.parentElement.style.setProperty('align-items', 'flex-start', 'important');
+          actCard.parentElement.style.setProperty('text-align', 'left', 'important');
           actCard.parentElement.insertBefore(header, actCard);
         }
       }
