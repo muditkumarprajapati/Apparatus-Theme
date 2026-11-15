@@ -2700,27 +2700,103 @@ body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid > div:nth-
 
 /* Activity Log event links & badges (Exclude apparatus-ip links) */
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] a:not([class*="apparatus-ip"]),
-body:not(.apparatus-auth) div.bg-gray-700 a:not([class*="apparatus-ip"]) {
-  background: rgba(236, 72, 153, 0.22) !important;
-  color: #fce7f3 !important;
-  border: 1px solid rgba(236, 72, 153, 0.4) !important;
-  padding: 2px 9px !important;
+body:not(.apparatus-auth) div.bg-gray-700 a:not([class*="apparatus-ip"]),
+body:not(.apparatus-auth) .apparatus-event-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  color: #f1f5f9 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  padding: 2px 8px !important;
   border-radius: 6px !important;
-  font-size: 0.82rem !important;
+  font-size: 0.74rem !important;
   font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
   text-decoration: none !important;
   margin-left: 0.35rem !important;
-  display: inline-block !important;
+  line-height: 1.35 !important;
   transition: all 0.2s ease !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
 }
 
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] a:not([class*="apparatus-ip"]):hover,
-body:not(.apparatus-auth) div.bg-gray-700 a:not([class*="apparatus-ip"]):hover {
-  background: rgba(236, 72, 153, 0.38) !important;
-  border-color: rgba(236, 72, 153, 0.6) !important;
+body:not(.apparatus-auth) div.bg-gray-700 a:not([class*="apparatus-ip"]):hover,
+body:not(.apparatus-auth) .apparatus-event-badge:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Event Badge - Authentication Success (Soft Emerald Glass) */
+body:not(.apparatus-auth) .apparatus-event-badge-auth {
+  background: rgba(52, 211, 153, 0.12) !important;
+  color: #6ee7b7 !important;
+  border-color: rgba(52, 211, 153, 0.28) !important;
+}
+
+body:not(.apparatus-auth) .apparatus-event-badge-auth:hover {
+  background: rgba(52, 211, 153, 0.2) !important;
+  border-color: rgba(52, 211, 153, 0.45) !important;
+  color: #a7f3d0 !important;
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.25) !important;
+}
+
+/* Event Badge - Server Power / System (Soft Cyan Glass) */
+body:not(.apparatus-auth) .apparatus-event-badge-power {
+  background: rgba(56, 189, 248, 0.12) !important;
+  color: #7dd3fc !important;
+  border-color: rgba(56, 189, 248, 0.28) !important;
+}
+
+body:not(.apparatus-auth) .apparatus-event-badge-power:hover {
+  background: rgba(56, 189, 248, 0.2) !important;
+  border-color: rgba(56, 189, 248, 0.45) !important;
+  color: #bae6fd !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.25) !important;
+}
+
+/* Event Badge - Security / Warning (Soft Amber Glass) */
+body:not(.apparatus-auth) .apparatus-event-badge-warn {
+  background: rgba(251, 191, 36, 0.12) !important;
+  color: #fde047 !important;
+  border-color: rgba(251, 191, 36, 0.28) !important;
+}
+
+body:not(.apparatus-auth) .apparatus-event-badge-warn:hover {
+  background: rgba(251, 191, 36, 0.2) !important;
+  border-color: rgba(251, 191, 36, 0.45) !important;
+  color: #fef08a !important;
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.25) !important;
+}
+
+/* Event Badge - Destructive (Soft Rose Glass) */
+body:not(.apparatus-auth) .apparatus-event-badge-danger {
+  background: rgba(244, 63, 94, 0.12) !important;
+  color: #fda4af !important;
+  border-color: rgba(244, 63, 94, 0.28) !important;
+}
+
+body:not(.apparatus-auth) .apparatus-event-badge-danger:hover {
+  background: rgba(244, 63, 94, 0.2) !important;
+  border-color: rgba(244, 63, 94, 0.45) !important;
   color: #ffffff !important;
-  box-shadow: 0 0 10px rgba(236, 72, 153, 0.4) !important;
-  text-shadow: 0 0 8px rgba(236, 72, 153, 0.4) !important;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.25) !important;
+}
+
+/* Event Badge - Default / General (Soft Violet Glass) */
+body:not(.apparatus-auth) .apparatus-event-badge-default {
+  background: rgba(168, 85, 247, 0.12) !important;
+  color: #d8b4fe !important;
+  border-color: rgba(168, 85, 247, 0.28) !important;
+}
+
+body:not(.apparatus-auth) .apparatus-event-badge-default:hover {
+  background: rgba(168, 85, 247, 0.2) !important;
+  border-color: rgba(168, 85, 247, 0.45) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.25) !important;
 }
 
 /* ==============================================================================

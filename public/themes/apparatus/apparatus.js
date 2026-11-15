@@ -422,6 +422,7 @@
 
       // 8. Enhance Activity Log IP addresses with Flag, Blur, and Clickable Location Lookup
       enhanceActivityLogIps();
+      enhanceActivityLogBadges();
     } else {
       const existingHeader = document.getElementById('apparatus-activity-header');
       if (existingHeader) existingHeader.remove();
@@ -556,10 +557,80 @@
     }
   }
 
+  // Activity Log Event Badge enhancement (Transforms raw "auth:success" into clean readable badges)
+  function enhanceActivityLogBadges() {
+    const actContainer = document.querySelector('div[class*="ActivityLogContainer"]') || document.querySelector('.bg-gray-700');
+    if (!actContainer) return;
+
+    const links = actContainer.querySelectorAll('a:not([class*="apparatus-ip"])');
+    for (let i = 0; i < links.length; i++) {
+      const a = links[i];
+      if (a.dataset.apparatusEventEnhanced) continue;
+
+      const raw = (a.textContent || '').trim();
+      if (!raw) continue;
+
+      a.dataset.apparatusEventEnhanced = 'true';
+      a.classList.add('apparatus-event-badge');
+
+      let icon = 'ri-shield-check-line';
+      let label = raw;
+      let typeClass = 'apparatus-event-badge-default';
+
+      if (raw === 'auth:success' || raw === 'auth:login') {
+        label = 'Login Success';
+        icon = 'ri-shield-check-line';
+        typeClass = 'apparatus-event-badge-auth';
+      } else if (raw === 'auth:checkpoint') {
+        label = '2FA Verified';
+        icon = 'ri-fingerprint-line';
+        typeClass = 'apparatus-event-badge-warn';
+      } else if (raw === 'auth:password') {
+        label = 'Password Changed';
+        icon = 'ri-key-line';
+        typeClass = 'apparatus-event-badge-warn';
+      } else if (raw === 'auth:recovery') {
+        label = 'Recovery Code Used';
+        icon = 'ri-lock-unlock-line';
+        typeClass = 'apparatus-event-badge-warn';
+      } else if (raw.startsWith('server:power.start')) {
+        label = 'Server Started';
+        icon = 'ri-play-circle-line';
+        typeClass = 'apparatus-event-badge-power';
+      } else if (raw.startsWith('server:power.stop')) {
+        label = 'Server Stopped';
+        icon = 'ri-stop-circle-line';
+        typeClass = 'apparatus-event-badge-power';
+      } else if (raw.startsWith('server:power.restart')) {
+        label = 'Server Restarted';
+        icon = 'ri-restart-line';
+        typeClass = 'apparatus-event-badge-power';
+      } else if (raw.startsWith('server:console')) {
+        label = 'Console Command';
+        icon = 'ri-terminal-box-line';
+        typeClass = 'apparatus-event-badge-default';
+      } else if (raw.includes('backup')) {
+        label = raw.includes('create') ? 'Backup Created' : (raw.includes('restore') ? 'Backup Restored' : 'Backup Action');
+        icon = 'ri-save-3-line';
+        typeClass = 'apparatus-event-badge-default';
+      } else if (raw.includes('delete')) {
+        label = raw.replace(/^.*:/, '').replace(/[._-]/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+        icon = 'ri-delete-bin-line';
+        typeClass = 'apparatus-event-badge-danger';
+      } else {
+        label = raw.replace(/^[a-z0-9_-]+:/i, '').replace(/[._-]/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+      }
+
+      a.classList.add(typeClass);
+      a.innerHTML = '<i class="' + icon + '"></i> <span>' + label + '</span>';
+    }
+  }
+
   // Event formatters for Recent Activity
   function formatEventName(event) {
     if (!event) return 'Account Event';
     const map = {
+      'auth:success': 'Account Logged In',
       'auth:login': 'Account Logged In',
       'auth:checkpoint': '2FA Verification Passed',
       'auth:password': 'Password Changed',
