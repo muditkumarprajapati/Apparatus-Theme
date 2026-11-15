@@ -1,0 +1,17 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="auroraMidCliffs" x1="1024" y1="680" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#081e2b"/>
+        <stop offset="0.6" stop-color="#0d2b3c"/>
+        <stop offset="1" stop-color="#12384e"/>
+      </linearGradient>
+    
+</defs>
+<path d="
+      M0 1373 
+      V840 L120 790 L240 850 L380 770 L520 840 L680 750 L840 830 L980 760 
+      L1140 840 L1310 750 L1480 840 L1660 760 L1840 850 L2048 780 
+      V1373 H0 Z
+    " fill="url(#auroraMidCliffs)"/>
+</svg>

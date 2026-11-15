@@ -1,0 +1,28 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberSkylineDistant" x1="1024" y1="500" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#140628" stop-opacity="0.9"/>
+        <stop offset="1" stop-color="#220b3e"/>
+      </linearGradient>
+    
+</defs>
+
+      <path d="M0 1373 V820 L40 810 L45 680 L50 680 L55 810 L90 820 L120 780 L125 580 L130 580 L135 780 L180 790 L210 750 L213 520 L217 520 L220 750 L260 770 L300 740 L305 630 L310 630 L315 740 L380 770 L410 790 L450 730 L455 600 L460 600 L465 730 L520 780 L560 820 L600 790 L630 760 L633 550 L637 550 L640 760 L690 770 L720 750 L725 610 L730 610 L735 750 L780 780 L820 800 L1220 800 L1260 770 L1265 620 L1270 620 L1275 770 L1320 750 L1323 540 L1327 540 L1330 750 L1380 770 L1420 740 L1425 590 L1430 590 L1435 740 L1490 780 L1530 810 L1580 780 L1610 750 L1613 510 L1617 510 L1620 750 L1670 770 L1710 730 L1715 620 L1720 620 L1725 730 L1780 760 L1820 790 L1860 740 L1865 570 L1870 570 L1875 740 L1930 770 L1970 810 L2048 820 V1373 H0 Z" fill="url(#cyberSkylineDistant)"/>
+      
+      <circle cx="48" cy="678" r="3" fill="#ff0055"/>
+      <circle cx="128" cy="578" r="3.5" fill="#00f0ff"/>
+      <circle cx="215" cy="518" r="4" fill="#ff0055"/>
+      <circle cx="308" cy="628" r="3" fill="#ffbf00"/>
+      <circle cx="458" cy="598" r="3" fill="#00f0ff"/>
+      <circle cx="635" cy="548" r="3.5" fill="#ff0055"/>
+      <circle cx="728" cy="608" r="3" fill="#00f0ff"/>
+      <circle cx="1268" cy="618" r="3" fill="#ff0055"/>
+      <circle cx="1325" cy="538" r="4" fill="#00f0ff"/>
+      <circle cx="1428" cy="588" r="3" fill="#ffbf00"/>
+      <circle cx="1615" cy="508" r="4" fill="#ff0055"/>
+      <circle cx="1718" cy="618" r="3" fill="#00f0ff"/>
+      <circle cx="1868" cy="568" r="3.5" fill="#ff0055"/>
+    
+    
+</svg>

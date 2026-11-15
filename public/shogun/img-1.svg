@@ -1,0 +1,28 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="shogunSun" x1="1024" y1="420" x2="1024" y2="1020" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#e11d48"/>
+        <stop offset="0.6" stop-color="#f43f5e"/>
+        <stop offset="1" stop-color="#fb7185"/>
+      </linearGradient>
+      <radialGradient id="sunGlowShogun" cx="1024" cy="700" r="420" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#e11d48" stop-opacity="0.45"/>
+        <stop offset="0.6" stop-color="#ea580c" stop-opacity="0.2"/>
+        <stop offset="1" stop-color="#0f0106" stop-opacity="0"/>
+      </radialGradient>
+    
+</defs>
+
+      <circle cx="1024" cy="700" r="420" fill="url(#sunGlowShogun)"/>
+      <circle cx="1024" cy="700" r="280" fill="url(#shogunSun)"/>
+      
+      <!-- Flying crane 1 -->
+      <path d="M840 460 Q860 445 880 460 Q910 420 930 460 L870 470 Z" fill="#0f0106"/>
+      <!-- Flying crane 2 -->
+      <path d="M960 410 Q975 398 990 410 Q1015 375 1030 410 L985 418 Z" fill="#0f0106"/>
+      <!-- Flying crane 3 -->
+      <path d="M1120 450 Q1135 438 1150 450 Q1175 415 1190 450 L1145 458 Z" fill="#0f0106"/>
+    
+    
+</svg>

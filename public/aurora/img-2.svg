@@ -1,0 +1,31 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="auroraGlaciers" x1="1024" y1="480" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0a2538"/>
+        <stop offset="0.5" stop-color="#0f344c"/>
+        <stop offset="1" stop-color="#154260"/>
+      </linearGradient>
+      <linearGradient id="snowGlow" x1="1024" y1="480" x2="1024" y2="850" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#a7f3d0" stop-opacity="0.8"/>
+        <stop offset="1" stop-color="#0a2538" stop-opacity="0"/>
+      </linearGradient>
+    
+</defs>
+
+      <path d="
+      M0 1373 
+      V760 L90 710 L160 740 L260 660 L380 720 L510 590 L620 680 L760 520 L870 660 L990 560 
+      L1120 690 L1260 530 L1380 670 L1520 570 L1650 710 L1780 610 L1910 730 L2048 640 
+      V1373 H0 Z
+    " fill="url(#auroraGlaciers)"/>
+      
+      <polygon points="510,590 480,680 510,700 550,670" fill="url(#snowGlow)"/>
+      <polygon points="760,520 720,620 760,650 800,610" fill="url(#snowGlow)"/>
+      <polygon points="990,560 950,650 990,670 1030,640" fill="url(#snowGlow)"/>
+      <polygon points="1260,530 1220,630 1260,660 1300,620" fill="url(#snowGlow)"/>
+      <polygon points="1520,570 1480,660 1520,680 1560,650" fill="url(#snowGlow)"/>
+      <polygon points="1780,610 1740,690 1780,710 1820,680" fill="url(#snowGlow)"/>
+    
+    
+</svg>

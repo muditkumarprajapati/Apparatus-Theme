@@ -1,0 +1,16 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="hakoneHills" x1="1024" y1="780" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#22040e"/>
+        <stop offset="0.5" stop-color="#380819"/>
+        <stop offset="1" stop-color="#4f0d25"/>
+      </linearGradient>
+    
+</defs>
+<path d="
+      M0 1373 
+      V880 Q240 830 480 870 Q720 910 960 850 Q1200 790 1440 860 Q1680 920 2048 860 
+      V1373 H0 Z
+    " fill="url(#hakoneHills)"/>
+</svg>

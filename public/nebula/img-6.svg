@@ -1,0 +1,33 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="stationGrad" x1="1024" y1="920" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#080214"/>
+        <stop offset="1" stop-color="#14062a"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Orbital space station silhouette -->
+      <g transform="translate(860, 940)">
+        <!-- Central hub -->
+        <rect x="140" y="40" width="60" height="120" rx="8" fill="url(#stationGrad)" stroke="#38bdf8" stroke-width="2"/>
+        <!-- Habitation ring -->
+        <ellipse cx="170" cy="100" rx="140" ry="24" stroke="#c084fc" stroke-width="8" fill="none"/>
+        <ellipse cx="170" cy="100" rx="140" ry="24" stroke="#38bdf8" stroke-width="2" fill="none"/>
+        <!-- Solar panel wings -->
+        <rect x="0" y="75" width="120" height="50" fill="#0f172a" stroke="#00f0ff" stroke-width="1.5"/>
+        <line x1="40" y1="75" x2="40" y2="125" stroke="#00f0ff" stroke-width="1"/>
+        <line x1="80" y1="75" x2="80" y2="125" stroke="#00f0ff" stroke-width="1"/>
+        <rect x="220" y="75" width="120" height="50" fill="#0f172a" stroke="#00f0ff" stroke-width="1.5"/>
+        <line x1="260" y1="75" x2="260" y2="125" stroke="#00f0ff" stroke-width="1"/>
+        <line x1="300" y1="75" x2="300" y2="125" stroke="#00f0ff" stroke-width="1"/>
+        <!-- Communications spire & beacon -->
+        <line x1="170" y1="40" x2="170" y2="0" stroke="#c084fc" stroke-width="3"/>
+        <circle cx="170" cy="0" r="4" fill="#00f0ff"/>
+        <!-- Thruster glows -->
+        <circle cx="160" cy="165" r="5" fill="#00f0ff"/>
+        <circle cx="180" cy="165" r="5" fill="#00f0ff"/>
+      </g>
+    
+</svg>

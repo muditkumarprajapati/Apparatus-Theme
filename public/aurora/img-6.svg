@@ -1,0 +1,22 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="auroraCliffsClose" x1="1024" y1="960" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#030e16"/>
+        <stop offset="0.5" stop-color="#051722"/>
+        <stop offset="1" stop-color="#08202d"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Left granite crag -->
+      <path d="M0 1373 V940 Q180 960 320 1020 Q440 1080 540 1140 L500 1373 H0 Z" fill="url(#auroraCliffsClose)"/>
+      <!-- Wind-swept pine on left rock -->
+      <polygon points="280,1020 270,960 280,960 275,920 285,920 280,880 290,920 285,920 295,960 285,960 300,1020" fill="#02080d"/>
+
+      <!-- Right granite crag -->
+      <path d="M2048 1373 V950 Q1860 970 1720 1030 Q1600 1090 1500 1160 L1560 1373 H2048 Z" fill="url(#auroraCliffsClose)"/>
+      <!-- Wind-swept pine on right rock -->
+      <polygon points="1760,1020 1750,950 1760,950 1755,910 1765,910 1760,870 1770,910 1765,910 1775,950 1765,950 1780,1020" fill="#02080d"/>
+    
+</svg>

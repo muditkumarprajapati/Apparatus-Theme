@@ -1,0 +1,47 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberLayer5Grad" x1="1024" y1="920" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0b0318"/>
+        <stop offset="0.6" stop-color="#150628"/>
+        <stop offset="1" stop-color="#1f0836"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Left side complex -->
+      <polygon points="0,1373 0,980 140,980 140,950 260,950 320,1020 320,1373" fill="url(#cyberLayer5Grad)"/>
+      <!-- Rooftop water tank -->
+      <rect x="60" y="930" width="50" height="50" rx="4" fill="#080212"/>
+      <line x1="70" y1="980" x2="60" y2="1010" stroke="#00f0ff" stroke-width="2"/>
+      <line x1="100" y1="980" x2="110" y2="1010" stroke="#00f0ff" stroke-width="2"/>
+      <!-- AC ducts -->
+      <rect x="160" y="920" width="70" height="30" fill="#0c0418"/>
+      <circle cx="195" cy="935" r="10" stroke="#ff007f" stroke-width="2" fill="none"/>
+
+      <!-- Large Neon Billboard Left: "ARIX" -->
+      <g>
+        <rect x="420" y="950" width="180" height="70" rx="6" fill="#05010d" stroke="#00f0ff" stroke-width="3"/>
+        <text x="510" y="998" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="34" fill="#00f0ff" text-anchor="middle" letter-spacing="4">ARIX</text>
+        <!-- Support scaffolding -->
+        <line x1="440" y1="1020" x2="430" y2="1080" stroke="#00f0ff" stroke-width="2" opacity="0.6"/>
+        <line x1="580" y1="1020" x2="590" y2="1080" stroke="#00f0ff" stroke-width="2" opacity="0.6"/>
+        <line x1="440" y1="1020" x2="590" y2="1080" stroke="#00f0ff" stroke-width="1.5" opacity="0.4"/>
+      </g>
+
+      <!-- Center satellite dishes -->
+      <path d="M960 1060 Q990 1020 1030 1030 L1000 1070 Z" fill="#080212" stroke="#00f0ff" stroke-width="1.5"/>
+      <line x1="995" y1="1070" x2="995" y2="1110" stroke="#ff007f" stroke-width="2"/>
+
+      <!-- Large Neon Sign Right: "CYBER" -->
+      <g>
+        <rect x="1460" y="960" width="200" height="75" rx="6" fill="#05010d" stroke="#ff007f" stroke-width="3"/>
+        <text x="1560" y="1010" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="32" fill="#ff007f" text-anchor="middle" letter-spacing="5">CYBER</text>
+        <line x1="1490" y1="1035" x2="1480" y2="1090" stroke="#ff007f" stroke-width="2" opacity="0.6"/>
+        <line x1="1630" y1="1035" x2="1640" y2="1090" stroke="#ff007f" stroke-width="2" opacity="0.6"/>
+      </g>
+
+      <!-- Right side complex -->
+      <polygon points="1740,1373 1740,1030 1820,970 1940,970 1940,1010 2048,1010 2048,1373" fill="url(#cyberLayer5Grad)"/>
+    
+</svg>

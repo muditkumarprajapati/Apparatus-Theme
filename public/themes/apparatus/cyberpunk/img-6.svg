@@ -1,0 +1,44 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberLayer6Grad" x1="1024" y1="980" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#06020e"/>
+        <stop offset="0.6" stop-color="#0f031c"/>
+        <stop offset="1" stop-color="#18052a"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Left foreground high-rise flank -->
+      <polygon points="0,1373 0,1020 180,990 280,1040 380,1040 380,1373" fill="url(#cyberLayer6Grad)"/>
+
+      <!-- Vertical Neon Signboard Left (Glowing Cyan & Pink) -->
+      <g>
+        <rect x="220" y="1030" width="36" height="220" rx="4" fill="#04010a" stroke="#00f0ff" stroke-width="2.5"/>
+        <text x="238" y="1070" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#00f0ff" text-anchor="middle">ク</text>
+        <text x="238" y="1115" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#00f0ff" text-anchor="middle">ラ</text>
+        <text x="238" y="1160" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#00f0ff" text-anchor="middle">ウ</text>
+        <text x="238" y="1205" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#00f0ff" text-anchor="middle">ド</text>
+      </g>
+
+      <!-- Right foreground high-rise flank -->
+      <polygon points="1680,1373 1680,1050 1780,1010 1920,1010 2048,1040 2048,1373" fill="url(#cyberLayer6Grad)"/>
+
+      <!-- Vertical Neon Signboard Right (Glowing Magenta & Yellow) -->
+      <g>
+        <rect x="1800" y="1020" width="36" height="240" rx="4" fill="#04010a" stroke="#ff007f" stroke-width="2.5"/>
+        <text x="1818" y="1065" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#ff007f" text-anchor="middle">電</text>
+        <text x="1818" y="1115" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#ff007f" text-anchor="middle">脳</text>
+        <text x="1818" y="1165" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#ff007f" text-anchor="middle">都</text>
+        <text x="1818" y="1215" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#ff007f" text-anchor="middle">市</text>
+      </g>
+
+      <!-- Crane Arm silhouette on top of building -->
+      <path d="M1720 1050 L1720 940 L1600 890 L1840 890 L1720 940" stroke="#00f0ff" stroke-width="2" fill="none" opacity="0.7"/>
+      <line x1="1650" y1="890" x2="1650" y2="950" stroke="#00f0ff" stroke-width="1.5" opacity="0.6"/>
+
+      <!-- Catenary high-voltage power cables spanning across -->
+      <path d="M0 1060 Q500 1140 1000 1110 Q1500 1080 2048 1070" stroke="#00f0ff" stroke-width="1.8" fill="none" opacity="0.4"/>
+      <path d="M0 1090 Q500 1170 1000 1140 Q1500 1110 2048 1100" stroke="#ff007f" stroke-width="1.5" fill="none" opacity="0.35"/>
+    
+</svg>

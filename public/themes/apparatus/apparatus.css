@@ -3914,6 +3914,10 @@ body:not(.apparatus-privacy-active) #apparatus-metric-coins {
   background: radial-gradient(circle at 50% 30%, #2e2646 0%, #0d0b14 100%);
 }
 
+.apparatus-wp-preview-shogun {
+  background: linear-gradient(135deg, #18020a 0%, #7f1d1d 40%, #ea580c 75%, #fbbf24 100%) !important;
+}
+
 .apparatus-motion-chip {
   position: absolute;
   bottom: 6px;

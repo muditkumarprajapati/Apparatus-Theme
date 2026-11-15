@@ -1,0 +1,35 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <radialGradient id="nebulaCore" cx="700" cy="520" r="600" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#c084fc" stop-opacity="0.8"/>
+        <stop offset="0.35" stop-color="#9333ea" stop-opacity="0.5"/>
+        <stop offset="0.7" stop-color="#3b82f6" stop-opacity="0.25"/>
+        <stop offset="1" stop-color="#08021c" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="nebulaCyan" cx="1300" cy="450" r="500" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#06b6d4" stop-opacity="0.7"/>
+        <stop offset="0.4" stop-color="#3b82f6" stop-opacity="0.35"/>
+        <stop offset="1" stop-color="#08021c" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="galaxyNucleus" cx="420" cy="300" r="160" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ffffff"/>
+        <stop offset="0.2" stop-color="#fde047" stop-opacity="0.9"/>
+        <stop offset="0.6" stop-color="#ec4899" stop-opacity="0.5"/>
+        <stop offset="1" stop-color="#020008" stop-opacity="0"/>
+      </radialGradient>
+    
+</defs>
+
+      <!-- Main cosmic nebula clouds -->
+      <ellipse cx="700" cy="520" rx="600" ry="380" fill="url(#nebulaCore)" transform="rotate(-15 700 520)"/>
+      <ellipse cx="1300" cy="450" rx="520" ry="320" fill="url(#nebulaCyan)" transform="rotate(18 1300 450)"/>
+
+      <!-- Distant tilted spiral galaxy -->
+      <g transform="rotate(-28 420 300)">
+        <ellipse cx="420" cy="300" rx="160" ry="45" fill="url(#galaxyNucleus)"/>
+        <ellipse cx="420" cy="300" rx="220" ry="25" stroke="#ec4899" stroke-width="6" fill="none" opacity="0.6"/>
+        <ellipse cx="420" cy="300" rx="280" ry="15" stroke="#38bdf8" stroke-width="4" fill="none" opacity="0.4"/>
+      </g>
+    
+</svg>

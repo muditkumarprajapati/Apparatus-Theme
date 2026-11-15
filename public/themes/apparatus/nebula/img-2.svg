@@ -1,0 +1,42 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="planetSphere" x1="1400" y1="360" x2="1680" y2="680" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#e0e7ff"/>
+        <stop offset="0.25" stop-color="#a5b4fc"/>
+        <stop offset="0.55" stop-color="#6366f1"/>
+        <stop offset="0.85" stop-color="#312e81"/>
+        <stop offset="1" stop-color="#0f0e2b"/>
+      </linearGradient>
+      <linearGradient id="ringGrad" x1="1100" y1="520" x2="2000" y2="520" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#c084fc" stop-opacity="0.9"/>
+        <stop offset="0.4" stop-color="#38bdf8" stop-opacity="0.8"/>
+        <stop offset="0.7" stop-color="#818cf8" stop-opacity="0.85"/>
+        <stop offset="1" stop-color="#c084fc" stop-opacity="0.9"/>
+      </linearGradient>
+    
+</defs>
+
+      <g transform="rotate(-16 1560 520)">
+        <!-- Back half of rings -->
+        <ellipse cx="1560" cy="520" rx="320" ry="58" stroke="url(#ringGrad)" stroke-width="26" fill="none" opacity="0.85"/>
+        <ellipse cx="1560" cy="520" rx="360" ry="66" stroke="#38bdf8" stroke-width="12" fill="none" opacity="0.5"/>
+
+        <!-- Gas giant planet sphere -->
+        <circle cx="1560" cy="520" r="150" fill="url(#planetSphere)"/>
+        
+        <!-- Planet atmospheric shadow and cloud band lines -->
+        <path d="M1410 520 Q1560 560 1710 520" stroke="#312e81" stroke-width="12" fill="none" opacity="0.6"/>
+        <path d="M1410 470 Q1560 510 1710 470" stroke="#4338ca" stroke-width="8" fill="none" opacity="0.5"/>
+
+        <!-- Front half of rings overlapping the planet -->
+        <path d="M1240 520 A320 58 0 0 0 1880 520" stroke="url(#ringGrad)" stroke-width="26" fill="none" opacity="0.95"/>
+        <path d="M1200 520 A360 66 0 0 0 1920 520" stroke="#38bdf8" stroke-width="12" fill="none" opacity="0.6"/>
+      </g>
+
+      <!-- Orbiting Moons -->
+      <circle cx="1240" cy="460" r="18" fill="#e2e8f0"/>
+      <circle cx="1244" cy="458" r="16" fill="#1e1b4b"/>
+      <circle cx="1820" cy="680" r="10" fill="#cbd5e1"/>
+    
+</svg>

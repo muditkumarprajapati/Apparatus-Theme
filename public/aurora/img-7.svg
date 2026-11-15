@@ -1,0 +1,41 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cabinWindowGlow" x1="1680" y1="1170" x2="1710" y2="1200" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ffbf00"/>
+        <stop offset="1" stop-color="#ff7700"/>
+      </linearGradient>
+      <radialGradient id="windowHalo" cx="1695" cy="1185" r="45" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ffaa00" stop-opacity="0.4"/>
+        <stop offset="1" stop-color="#02080c" stop-opacity="0"/>
+      </radialGradient>
+    
+</defs>
+
+      <!-- Tall ancient pine tree left -->
+      <polygon points="120,1373 110,1100 60,1120 110,1040 70,1055 110,980 80,990 110,920 90,930 115,860 125,860 145,930 130,920 155,990 130,980 165,1055 130,1040 180,1120 130,1100 140,1373" fill="#01060a"/>
+      <!-- Secondary pine left -->
+      <polygon points="40,1373 30,1150 0,1165 30,1100 5,1115 30,1050 15,1060 35,990 45,990 60,1060 45,1050 70,1115 45,1100 80,1165 50,1150 60,1373" fill="#01060a"/>
+    
+
+      <!-- Foreground shore -->
+      <path d="M0 1373 L0 1260 Q500 1240 1024 1250 Q1600 1260 2048 1220 L2048 1373 Z" fill="#01060a"/>
+
+      <!-- Right foreground pine -->
+      <polygon points="1920,1373 1910,1060 1860,1080 1910,1000 1870,1015 1910,940 1880,950 1910,880 1890,890 1915,820 1925,820 1945,890 1930,880 1955,950 1930,940 1965,1015 1930,1000 1980,1080 1930,1060 1940,1373" fill="#01060a"/>
+
+      <!-- Cozy wooden cabin -->
+      <g>
+        <!-- Cabin roof -->
+        <polygon points="1640,1160 1700,1110 1760,1160" fill="#01060a"/>
+        <!-- Cabin body -->
+        <rect x="1650" y="1160" width="100" height="70" fill="#01060a"/>
+        <!-- Window halo and warm glowing window -->
+        <circle cx="1695" cy="1185" r="45" fill="url(#windowHalo)"/>
+        <rect x="1680" y="1170" width="30" height="30" rx="3" fill="url(#cabinWindowGlow)"/>
+        <!-- Window cross pane -->
+        <line x1="1695" y1="1170" x2="1695" y2="1200" stroke="#01060a" stroke-width="2"/>
+        <line x1="1680" y1="1185" x2="1710" y2="1185" stroke="#01060a" stroke-width="2"/>
+      </g>
+    
+</svg>

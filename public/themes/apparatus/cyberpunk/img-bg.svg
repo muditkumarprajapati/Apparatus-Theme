@@ -1,0 +1,25 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberSky" x1="1024" y1="0" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#050212"/>
+        <stop offset="0.45" stop-color="#140428"/>
+        <stop offset="0.72" stop-color="#2d0847"/>
+        <stop offset="0.9" stop-color="#550b64"/>
+        <stop offset="1" stop-color="#7a0d78"/>
+      </linearGradient>
+      <radialGradient id="cyberHorizonGlow" cx="1024" cy="760" r="800" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ff007f" stop-opacity="0.45"/>
+        <stop offset="0.4" stop-color="#ff5500" stop-opacity="0.2"/>
+        <stop offset="1" stop-color="#050212" stop-opacity="0"/>
+      </radialGradient>
+    
+</defs>
+
+      <rect width="2048" height="1373" fill="url(#cyberSky)"/>
+      <rect x="0" y="400" width="2048" height="973" fill="url(#cyberHorizonGlow)"/>
+      <g>
+        <line x1="1024" y1="760" x2="-500" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="-360" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="-220" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="-80" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="60" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="200" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="340" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="480" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="620" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="760" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="900" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1040" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1180" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1320" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1460" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1600" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1740" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1880" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="2020" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="2160" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="2300" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="2440" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="2580" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="0" y1="770" x2="2048" y2="770" stroke="#ff007f" stroke-width="2" opacity="0.15"/><line x1="0" y1="785" x2="2048" y2="785" stroke="#ff007f" stroke-width="2" opacity="0.16"/><line x1="0" y1="805" x2="2048" y2="805" stroke="#ff007f" stroke-width="2" opacity="0.17"/><line x1="0" y1="835" x2="2048" y2="835" stroke="#ff007f" stroke-width="2" opacity="0.19"/><line x1="0" y1="875" x2="2048" y2="875" stroke="#ff007f" stroke-width="2" opacity="0.22"/><line x1="0" y1="930" x2="2048" y2="930" stroke="#ff007f" stroke-width="2" opacity="0.26"/><line x1="0" y1="1005" x2="2048" y2="1005" stroke="#ff007f" stroke-width="2" opacity="0.31"/><line x1="0" y1="1100" x2="2048" y2="1100" stroke="#ff007f" stroke-width="2" opacity="0.37"/><line x1="0" y1="1220" x2="2048" y2="1220" stroke="#ff007f" stroke-width="2" opacity="0.45"/><line x1="0" y1="1370" x2="2048" y2="1370" stroke="#ff007f" stroke-width="2" opacity="0.55"/>
+      </g>
+    
+</svg>

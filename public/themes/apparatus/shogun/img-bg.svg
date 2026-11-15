@@ -1,0 +1,15 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="shogunSky" x1="1024" y1="0" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0f0106"/>
+        <stop offset="0.35" stop-color="#2a0410"/>
+        <stop offset="0.6" stop-color="#5c0a1f"/>
+        <stop offset="0.82" stop-color="#a81a2f"/>
+        <stop offset="0.94" stop-color="#ea580c"/>
+        <stop offset="1" stop-color="#fbbf24"/>
+      </linearGradient>
+    
+</defs>
+<rect width="2048" height="1373" fill="url(#shogunSky)"/>
+</svg>

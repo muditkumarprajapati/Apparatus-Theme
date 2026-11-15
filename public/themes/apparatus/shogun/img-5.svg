@@ -1,0 +1,38 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="pagodaRidge" x1="1024" y1="940" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#100107"/>
+        <stop offset="0.6" stop-color="#1e030f"/>
+        <stop offset="1" stop-color="#2e0618"/>
+      </linearGradient>
+    
+</defs>
+
+      <path d="
+      M0 1373 V980 Q300 960 600 970 Q900 980 1200 960 Q1600 950 2048 980 V1373 H0 Z
+    " fill="url(#pagodaRidge)"/>
+      
+      <g>
+        <!-- Spire finial (sorin) -->
+        <line x1="480" y1="800" x2="480" y2="840" stroke="#0a0104" stroke-width="3"/>
+        <circle cx="480" cy="800" r="3" fill="#fbbf24"/>
+        <!-- Tier 5 -->
+        <polygon points="450,852 480,840 510,852" fill="#0a0104"/>
+        <rect x="468" y="852" width="24" height="15" fill="#0a0104"/>
+        <!-- Tier 4 -->
+        <polygon points="442,875 480,864 518,875" fill="#0a0104"/>
+        <rect x="464" y="875" width="32" height="16" fill="#0a0104"/>
+        <!-- Tier 3 -->
+        <polygon points="434,900 480,888 526,900" fill="#0a0104"/>
+        <rect x="460" y="900" width="40" height="18" fill="#0a0104"/>
+        <!-- Tier 2 -->
+        <polygon points="426,928 480,915 534,928" fill="#0a0104"/>
+        <rect x="456" y="928" width="48" height="20" fill="#0a0104"/>
+        <!-- Tier 1 Base -->
+        <polygon points="418,958 480,944 542,958" fill="#0a0104"/>
+        <rect x="452" y="958" width="56" height="25" fill="#0a0104"/>
+      </g>
+    
+    
+</svg>

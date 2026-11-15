@@ -1,0 +1,12 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="asteroidRock" x1="0" y1="0" x2="1" y2="1">
+        <stop stop-color="#475569"/>
+        <stop offset="0.6" stop-color="#1e293b"/>
+        <stop offset="1" stop-color="#0f172a"/>
+      </linearGradient>
+    
+</defs>
+<g><polygon points="320,658 342,673 335,702 307,698 298,680" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="380,706 394,716 390,734 372,731 366,720" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="460,642 478,655 473,678 449,674 442,660" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="540,698 552,706 548,722 533,720 528,710" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="680,614 706,632 698,666 664,661 654,640" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="780,674 796,685 791,706 770,703 764,690" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="920,610 940,624 934,650 908,646 900,630" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="1050,655 1065,666 1060,685 1041,682 1035,670" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="1180,616 1204,633 1197,664 1166,659 1156,640" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="1320,682 1338,695 1333,718 1309,714 1302,700" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="1450,636 1464,646 1460,664 1442,661 1436,650" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="1750,700 1770,714 1764,740 1738,736 1730,720" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/></g>
+</svg>

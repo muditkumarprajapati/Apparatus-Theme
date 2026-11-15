@@ -1,0 +1,23 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cockpitStrut" x1="1024" y1="1050" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#030008"/>
+        <stop offset="1" stop-color="#0a0218"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Cockpit bottom console rim -->
+      <polygon points="0,1373 0,1180 340,1150 780,1220 1268,1220 1708,1150 2048,1180 2048,1373" fill="url(#cockpitStrut)"/>
+      <!-- Diagonal windshield structural pillars -->
+      <polygon points="0,0 80,0 420,1160 340,1160" fill="url(#cockpitStrut)"/>
+      <polygon points="2048,0 1968,0 1628,1160 1708,1160" fill="url(#cockpitStrut)"/>
+      <!-- Small instrument lights on console -->
+      <circle cx="820" cy="1250" r="4" fill="#00f0ff"/>
+      <circle cx="850" cy="1250" r="4" fill="#22c55e"/>
+      <circle cx="880" cy="1250" r="4" fill="#ff007f"/>
+      <circle cx="1180" cy="1250" r="4" fill="#ffbb00"/>
+      <circle cx="1210" cy="1250" r="4" fill="#00f0ff"/>
+    
+</svg>

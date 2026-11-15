@@ -2156,7 +2156,57 @@
   }
 
   // Motion and Static Wallpaper Definitions
-  const MOTION_THEMES = ['desert', 'motion-cyberpunk', 'motion-nebula', 'motion-aurora'];
+  const MOTION_THEMES = [
+    'desert',
+    'cyberpunk', 'motion-cyberpunk',
+    'aurora', 'motion-aurora',
+    'nebula', 'motion-nebula',
+    'shogun', 'motion-shogun'
+  ];
+
+  const MOTION_THEME_CONFIG = {
+    'desert': {
+      folder: 'desert',
+      bgColor: '#F7ABAE',
+      titleStyle: 'color: #ffffff; text-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);',
+      subStyle: 'color: #ffffff; opacity: 0.75; letter-spacing: 0.45em;'
+    },
+    'cyberpunk': {
+      folder: 'cyberpunk',
+      bgColor: '#070214',
+      titleStyle: 'color: #ffffff; text-shadow: 0 0 35px #00f0ff, 0 0 70px rgba(0, 240, 255, 0.45);',
+      subStyle: 'color: #ff007f; text-shadow: 0 0 20px rgba(255, 0, 127, 0.6); letter-spacing: 0.45em;'
+    },
+    'aurora': {
+      folder: 'aurora',
+      bgColor: '#021422',
+      titleStyle: 'color: #ffffff; text-shadow: 0 0 35px #00ff88, 0 0 70px rgba(0, 255, 136, 0.45);',
+      subStyle: 'color: #38bdf8; text-shadow: 0 0 20px rgba(56, 189, 248, 0.6); letter-spacing: 0.45em;'
+    },
+    'nebula': {
+      folder: 'nebula',
+      bgColor: '#04000e',
+      titleStyle: 'color: #ffffff; text-shadow: 0 0 35px #c084fc, 0 0 70px rgba(192, 132, 252, 0.5);',
+      subStyle: 'color: #38bdf8; text-shadow: 0 0 20px rgba(56, 189, 248, 0.6); letter-spacing: 0.45em;'
+    },
+    'shogun': {
+      folder: 'shogun',
+      bgColor: '#100107',
+      titleStyle: 'color: #ffffff; text-shadow: 0 0 35px #ff5a22, 0 0 70px rgba(255, 90, 34, 0.5);',
+      subStyle: 'color: #fbbf24; text-shadow: 0 0 20px rgba(251, 191, 36, 0.6); letter-spacing: 0.45em;'
+    }
+  };
+
+  function normalizeMotionKey(key) {
+    if (!key || key === 'desert') return 'desert';
+    const k = String(key).toLowerCase();
+    if (k.includes('cyber')) return 'cyberpunk';
+    if (k.includes('aurora')) return 'aurora';
+    if (k.includes('nebula')) return 'nebula';
+    if (k.includes('shogun')) return 'shogun';
+    return 'desert';
+  }
+
   const STATIC_WALLPAPERS = {
     'static-obsidian': 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=2560&q=85',
     'static-neondusk': 'https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=2560&q=85',
@@ -2190,284 +2240,42 @@
     });
   }
 
-  // Renders dynamic multi-layered vector SVG scenes for motion themes
+  // Renders dynamic multi-layered vector SVG scenes for motion themes (all 7+ layers)
   function renderMotionTheme(theme) {
     const parallaxEl = document.getElementById('apparatus-parallax');
     const wrapper = document.getElementById('apparatus-desert-wrapper');
     if (!parallaxEl) return;
+
+    const normKey = normalizeMotionKey(theme);
+    const cfg = MOTION_THEME_CONFIG[normKey] || MOTION_THEME_CONFIG['desert'];
 
     let bgTitle = document.getElementById('apparatus-bg-title');
     let bgSubtitle = document.getElementById('apparatus-bg-subtitle');
     const titleText = (bgTitle && bgTitle.textContent) || 'ARIXBYTE';
     const subText = (bgSubtitle && bgSubtitle.textContent) || 'CLOUD & INFRASTRUCTURES';
 
-    if (theme === 'motion-cyberpunk') {
-      if (wrapper) {
-        wrapper.style.backgroundColor = '#0b0618';
-        document.documentElement.style.setProperty('--apparatus-bg-color', '#0b0618');
-      }
-      parallaxEl.innerHTML = `
-        <svg class="parallax-layer layer-bg" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <rect width="2048" height="1373" fill="url(#cyberBgGrad)"/>
-          <circle cx="1024" cy="720" r="320" fill="url(#cyberSunGrad)"/>
-          <defs>
-            <linearGradient id="cyberBgGrad" x1="1024" y1="0" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#0a0518"/>
-              <stop offset="0.65" stop-color="#1d0a36"/>
-              <stop offset="1" stop-color="#3b1259"/>
-            </linearGradient>
-            <linearGradient id="cyberSunGrad" x1="1024" y1="400" x2="1024" y2="1040" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#ff007f"/>
-              <stop offset="0.6" stop-color="#ff5500"/>
-              <stop offset="1" stop-color="#ffbf00"/>
-            </linearGradient>
-          </defs>
-        </svg>
-
-        <svg class="parallax-layer layer-1" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <g opacity="0.35">
-            <line x1="1024" y1="720" x2="-200" y2="1373" stroke="#00f0ff" stroke-width="2"/>
-            <line x1="1024" y1="720" x2="200" y2="1373" stroke="#00f0ff" stroke-width="2"/>
-            <line x1="1024" y1="720" x2="600" y2="1373" stroke="#00f0ff" stroke-width="2"/>
-            <line x1="1024" y1="720" x2="1024" y2="1373" stroke="#00f0ff" stroke-width="2"/>
-            <line x1="1024" y1="720" x2="1448" y2="1373" stroke="#00f0ff" stroke-width="2"/>
-            <line x1="1024" y1="720" x2="1848" y2="1373" stroke="#00f0ff" stroke-width="2"/>
-            <line x1="1024" y1="720" x2="2248" y2="1373" stroke="#00f0ff" stroke-width="2"/>
-            <line x1="0" y1="800" x2="2048" y2="800" stroke="#00f0ff" stroke-width="1.5" opacity="0.4"/>
-            <line x1="0" y1="890" x2="2048" y2="890" stroke="#00f0ff" stroke-width="1.8" opacity="0.6"/>
-            <line x1="0" y1="1000" x2="2048" y2="1000" stroke="#00f0ff" stroke-width="2.2" opacity="0.8"/>
-            <line x1="0" y1="1150" x2="2048" y2="1150" stroke="#00f0ff" stroke-width="2.8"/>
-            <line x1="0" y1="1340" x2="2048" y2="1340" stroke="#00f0ff" stroke-width="3.5"/>
-          </g>
-        </svg>
-
-        <svg class="parallax-layer layer-2" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <path d="M120 1373V840L210 820L310 840V1373H120ZM380 1373V760L460 740L540 760V1373H380ZM620 1373V880L720 860V1373H620ZM1450 1373V780L1560 760L1640 780V1373H1450ZM1720 1373V850L1820 830V1373H1720ZM1880 1373V790L1980 770V1373H1880Z" fill="#1b1236" fill-opacity="0.85"/>
-        </svg>
-
-        <svg class="parallax-layer layer-3" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <path d="M40 1373V910L140 890V1373H40ZM240 1373V780H340V1373H240ZM500 1373V820L580 800L660 820V1373H500ZM780 1373V940L880 920V1373H780ZM1200 1373V920L1310 890V1373H1200ZM1380 1373V810L1480 790V1373H1380ZM1620 1373V860L1710 840V1373H1620ZM1790 1373V930L1900 900V1373H1790Z" fill="#130926"/>
-          <circle cx="290" cy="770" r="4" fill="#00f0ff"/>
-          <line x1="290" y1="770" x2="290" y2="740" stroke="#00f0ff" stroke-width="2"/>
-          <circle cx="580" cy="790" r="4" fill="#ff007f"/>
-          <line x1="580" y1="790" x2="580" y2="750" stroke="#ff007f" stroke-width="2"/>
-          <circle cx="1430" cy="780" r="4" fill="#00f0ff"/>
-          <line x1="1430" y1="780" x2="1430" y2="735" stroke="#00f0ff" stroke-width="2"/>
-        </svg>
-
-        <div class="parallax-layer layer-text">
-          <h1 class="background-title" id="apparatus-bg-title" style="color: #fff; text-shadow: 0 0 35px rgba(0, 240, 255, 0.45);">${titleText}</h1>
-          <p class="background-subtitle" id="apparatus-bg-subtitle" style="color: rgba(255, 0, 127, 0.9); letter-spacing: 0.35em;">${subText}</p>
-        </div>
-
-        <svg class="parallax-layer layer-4" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <path d="M0 1373V980L90 960V1373H0ZM180 1373V890L290 860V1373H180ZM700 1373V930L810 910V1373H700ZM1100 1373V950L1210 930V1373H1100ZM1520 1373V890L1630 870V1373H1520ZM1920 1373V940L2048 920V1373H1920Z" fill="#0c051a"/>
-        </svg>
-
-        <svg class="parallax-layer layer-5" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <path d="M-50 1120Q400 1080 1024 1110Q1648 1140 2098 1090" stroke="#ff007f" stroke-width="4" fill="none" opacity="0.75"/>
-          <path d="M-50 1130Q400 1090 1024 1120Q1648 1150 2098 1100" stroke="#00f0ff" stroke-width="3" fill="none" opacity="0.6"/>
-        </svg>
-
-        <svg class="parallax-layer layer-6" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <circle cx="350" cy="620" r="3" fill="#00f0ff" opacity="0.7"/>
-          <circle cx="680" cy="510" r="2.5" fill="#ff007f" opacity="0.6"/>
-          <circle cx="920" cy="680" r="4" fill="#00f0ff" opacity="0.8"/>
-          <circle cx="1280" cy="580" r="3" fill="#ffbf00" opacity="0.7"/>
-          <circle cx="1600" cy="640" r="3.5" fill="#00f0ff" opacity="0.75"/>
-          <circle cx="1780" cy="490" r="2" fill="#ff007f" opacity="0.6"/>
-        </svg>
-
-        <svg class="parallax-layer layer-7" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <path d="M0 1373V1220L2048 1260V1373H0Z" fill="#06020c"/>
-        </svg>
-      `;
-    } else if (theme === 'motion-nebula') {
-      if (wrapper) {
-        wrapper.style.backgroundColor = '#05030d';
-        document.documentElement.style.setProperty('--apparatus-bg-color', '#05030d');
-      }
-      parallaxEl.innerHTML = `
-        <svg class="parallax-layer layer-bg" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <rect width="2048" height="1373" fill="url(#nebulaBgGrad)"/>
-          <defs>
-            <linearGradient id="nebulaBgGrad" x1="1024" y1="0" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#020108"/>
-              <stop offset="0.5" stop-color="#0a051d"/>
-              <stop offset="1" stop-color="#140833"/>
-            </linearGradient>
-          </defs>
-        </svg>
-
-        <svg class="parallax-layer layer-1" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <g fill="#fff" opacity="0.85">
-            <circle cx="180" cy="220" r="2"/><circle cx="340" cy="140" r="1.5"/><circle cx="520" cy="310" r="2.5"/><circle cx="710" cy="180" r="1.5"/><circle cx="950" cy="260" r="2"/><circle cx="1180" cy="150" r="3"/><circle cx="1390" cy="290" r="1.5"/><circle cx="1580" cy="190" r="2.5"/><circle cx="1790" cy="240" r="1.5"/><circle cx="1920" cy="160" r="2"/><circle cx="280" cy="480" r="1.5"/><circle cx="620" cy="540" r="2"/><circle cx="880" cy="460" r="1.5"/><circle cx="1290" cy="520" r="2"/><circle cx="1680" cy="480" r="1.8"/>
-          </g>
-        </svg>
-
-        <svg class="parallax-layer layer-2" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <ellipse cx="1024" cy="650" rx="750" ry="380" fill="url(#nebulaCloudGrad)" opacity="0.55"/>
-          <ellipse cx="600" cy="550" rx="420" ry="240" fill="url(#nebulaCyanGrad)" opacity="0.4"/>
-          <defs>
-            <radialGradient id="nebulaCloudGrad" cx="0.5" cy="0.5" r="0.5" gradientUnits="userSpaceOnUse" gradientTransform="translate(1024 650) scale(750 380)">
-              <stop stop-color="#9333ea" stop-opacity="0.8"/>
-              <stop offset="0.5" stop-color="#6366f1" stop-opacity="0.4"/>
-              <stop offset="1" stop-color="#020108" stop-opacity="0"/>
-            </radialGradient>
-            <radialGradient id="nebulaCyanGrad" cx="0.5" cy="0.5" r="0.5" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 550) scale(420 240)">
-              <stop stop-color="#06b6d4" stop-opacity="0.75"/>
-              <stop offset="0.6" stop-color="#3b82f6" stop-opacity="0.25"/>
-              <stop offset="1" stop-color="#020108" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-        </svg>
-
-        <svg class="parallax-layer layer-3" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <circle cx="1520" cy="450" r="110" fill="url(#planetGrad)"/>
-          <ellipse cx="1520" cy="450" rx="210" ry="38" stroke="url(#ringGrad)" stroke-width="12" fill="none" transform="rotate(-18 1520 450)" opacity="0.85"/>
-          <defs>
-            <linearGradient id="planetGrad" x1="1450" y1="360" x2="1610" y2="540" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#e0e7ff"/>
-              <stop offset="0.4" stop-color="#818cf8"/>
-              <stop offset="1" stop-color="#1e1b4b"/>
-            </linearGradient>
-            <linearGradient id="ringGrad" x1="1310" y1="450" x2="1730" y2="450" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#c084fc"/>
-              <stop offset="0.5" stop-color="#38bdf8"/>
-              <stop offset="1" stop-color="#c084fc"/>
-            </linearGradient>
-          </defs>
-        </svg>
-
-        <div class="parallax-layer layer-text">
-          <h1 class="background-title" id="apparatus-bg-title" style="color: #fff; text-shadow: 0 0 45px rgba(168, 85, 247, 0.5);">${titleText}</h1>
-          <p class="background-subtitle" id="apparatus-bg-subtitle" style="color: rgba(192, 132, 252, 0.9); letter-spacing: 0.35em;">${subText}</p>
-        </div>
-
-        <svg class="parallax-layer layer-4" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <ellipse cx="1024" cy="980" rx="900" ry="180" fill="url(#dustStreamGrad)" opacity="0.35" transform="rotate(-6 1024 980)"/>
-          <defs>
-            <radialGradient id="dustStreamGrad" cx="0.5" cy="0.5" r="0.5" gradientUnits="userSpaceOnUse" gradientTransform="translate(1024 980) scale(900 180)">
-              <stop stop-color="#c084fc" stop-opacity="0.9"/>
-              <stop offset="0.5" stop-color="#38bdf8" stop-opacity="0.4"/>
-              <stop offset="1" stop-color="#05030d" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-        </svg>
-
-        <svg class="parallax-layer layer-5" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <polygon points="420,840 445,820 470,835 480,865 450,880 430,865" fill="#130924"/>
-          <polygon points="1680,780 1715,760 1740,785 1730,815 1690,820 1675,800" fill="#130924"/>
-        </svg>
-
-        <svg class="parallax-layer layer-6" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <circle cx="520" cy="310" r="16" fill="#38bdf8" opacity="0.25"/>
-          <circle cx="1180" cy="150" r="22" fill="#c084fc" opacity="0.3"/>
-        </svg>
-
-        <svg class="parallax-layer layer-7" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <rect y="1250" width="2048" height="123" fill="#020108"/>
-        </svg>
-      `;
-    } else if (theme === 'motion-aurora') {
-      if (wrapper) {
-        wrapper.style.backgroundColor = '#030e17';
-        document.documentElement.style.setProperty('--apparatus-bg-color', '#030e17');
-      }
-      parallaxEl.innerHTML = `
-        <svg class="parallax-layer layer-bg" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <rect width="2048" height="1373" fill="url(#auroraSkyGrad)"/>
-          <defs>
-            <linearGradient id="auroraSkyGrad" x1="1024" y1="0" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#020810"/>
-              <stop offset="0.55" stop-color="#041824"/>
-              <stop offset="1" stop-color="#0b2938"/>
-            </linearGradient>
-          </defs>
-        </svg>
-
-        <svg class="parallax-layer layer-1" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <g fill="#e2f7f9" opacity="0.8">
-            <circle cx="150" cy="180" r="2"/><circle cx="320" cy="240" r="1.5"/><circle cx="480" cy="120" r="2.5"/><circle cx="720" cy="200" r="1.8"/><circle cx="920" cy="140" r="2.2"/><circle cx="1140" cy="220" r="1.5"/><circle cx="1360" cy="130" r="2.8"/><circle cx="1600" cy="210" r="2"/><circle cx="1840" cy="160" r="1.6"/><circle cx="1980" cy="250" r="2.2"/>
-          </g>
-        </svg>
-
-        <svg class="parallax-layer layer-2" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <path d="M-100 480Q350 250 820 440Q1290 630 1750 360Q1980 230 2150 380V800H-100Z" fill="url(#auroraGreenGrad)" opacity="0.65"/>
-          <path d="M-100 520Q450 340 980 500Q1510 660 2150 420V850H-100Z" fill="url(#auroraCyanGrad)" opacity="0.5"/>
-          <defs>
-            <linearGradient id="auroraGreenGrad" x1="1024" y1="260" x2="1024" y2="800" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#10b981" stop-opacity="0.9"/>
-              <stop offset="0.5" stop-color="#34d399" stop-opacity="0.45"/>
-              <stop offset="1" stop-color="#041824" stop-opacity="0"/>
-            </linearGradient>
-            <linearGradient id="auroraCyanGrad" x1="1024" y1="340" x2="1024" y2="850" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#06b6d4" stop-opacity="0.8"/>
-              <stop offset="0.5" stop-color="#3b82f6" stop-opacity="0.35"/>
-              <stop offset="1" stop-color="#041824" stop-opacity="0"/>
-            </linearGradient>
-          </defs>
-        </svg>
-
-        <svg class="parallax-layer layer-3" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <path d="M0 1373V890L220 720L440 860L680 690L920 840L1180 680L1420 820L1700 660L1940 810L2048 740V1373H0Z" fill="#081e28" fill-opacity="0.85"/>
-        </svg>
-
-        <div class="parallax-layer layer-text">
-          <h1 class="background-title" id="apparatus-bg-title" style="color: #fff; text-shadow: 0 0 40px rgba(16, 185, 129, 0.45);">${titleText}</h1>
-          <p class="background-subtitle" id="apparatus-bg-subtitle" style="color: rgba(52, 211, 153, 0.9); letter-spacing: 0.35em;">${subText}</p>
-        </div>
-
-        <svg class="parallax-layer layer-4" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <path d="M0 1373V960L180 880L360 980L580 860L780 950L1020 840L1280 940L1560 830L1820 930L2048 850V1373H0Z" fill="#05141c"/>
-        </svg>
-
-        <svg class="parallax-layer layer-5" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <rect y="1080" width="2048" height="293" fill="url(#frozenLakeGrad)" opacity="0.5"/>
-          <defs>
-            <linearGradient id="frozenLakeGrad" x1="1024" y1="1080" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#10b981" stop-opacity="0.25"/>
-              <stop offset="0.4" stop-color="#06b6d4" stop-opacity="0.15"/>
-              <stop offset="1" stop-color="#02090f" stop-opacity="0.8"/>
-            </linearGradient>
-          </defs>
-        </svg>
-
-        <svg class="parallax-layer layer-6" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <circle cx="380" cy="560" r="3" fill="#34d399" opacity="0.6"/>
-          <circle cx="740" cy="460" r="3.5" fill="#06b6d4" opacity="0.65"/>
-          <circle cx="1120" cy="580" r="2.5" fill="#34d399" opacity="0.5"/>
-          <circle cx="1580" cy="510" r="3" fill="#a7f3d0" opacity="0.7"/>
-        </svg>
-
-        <svg class="parallax-layer layer-7" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-          <polygon points="0,1373 0,840 50,910 30,990 80,1050 50,1130 110,1210 60,1373" fill="#02080d"/>
-          <polygon points="2048,1373 2048,820 1990,900 2020,970 1960,1040 1990,1120 1930,1210 1980,1373" fill="#02080d"/>
-        </svg>
-      `;
-    } else {
-      // Default: Desert Sunset
-      if (wrapper) {
-        wrapper.style.backgroundColor = '#F7ABAE';
-        document.documentElement.style.setProperty('--apparatus-bg-color', '#F7ABAE');
-      }
-      parallaxEl.innerHTML = `
-        <img src="/themes/apparatus/desert/img-bg.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-bg.svg';}" alt="" class="parallax-layer layer-bg" />
-        <img src="/themes/apparatus/desert/img-1.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-1.svg';}" alt="" class="parallax-layer layer-1" />
-        <img src="/themes/apparatus/desert/img-2.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-2.svg';}" alt="" class="parallax-layer layer-2" />
-        <img src="/themes/apparatus/desert/img-3.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-3.svg';}" alt="" class="parallax-layer layer-3" />
-        
-        <div class="parallax-layer layer-text">
-          <h1 class="background-title" id="apparatus-bg-title">${titleText}</h1>
-          <p class="background-subtitle" id="apparatus-bg-subtitle">${subText}</p>
-        </div>
-
-        <img src="/themes/apparatus/desert/img-4.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-4.svg';}" alt="" class="parallax-layer layer-4" />
-        <img src="/themes/apparatus/desert/img-5.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-5.svg';}" alt="" class="parallax-layer layer-5" />
-        <img src="/themes/apparatus/desert/img-6.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-6.svg';}" alt="" class="parallax-layer layer-6" />
-        <img src="/themes/apparatus/desert/img-7.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-7.svg';}" alt="" class="parallax-layer layer-7" />
-      `;
+    if (wrapper) {
+      wrapper.style.backgroundColor = cfg.bgColor;
+      document.documentElement.style.setProperty('--apparatus-bg-color', cfg.bgColor);
     }
+
+    const folder = cfg.folder;
+    parallaxEl.innerHTML = `
+      <img src="/themes/apparatus/${folder}/img-bg.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-bg.svg';}" alt="" class="parallax-layer layer-bg" />
+      <img src="/themes/apparatus/${folder}/img-1.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-1.svg';}" alt="" class="parallax-layer layer-1" />
+      <img src="/themes/apparatus/${folder}/img-2.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-2.svg';}" alt="" class="parallax-layer layer-2" />
+      <img src="/themes/apparatus/${folder}/img-3.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-3.svg';}" alt="" class="parallax-layer layer-3" />
+      
+      <div class="parallax-layer layer-text">
+        <h1 class="background-title" id="apparatus-bg-title" style="${cfg.titleStyle}">${titleText}</h1>
+        <p class="background-subtitle" id="apparatus-bg-subtitle" style="${cfg.subStyle}">${subText}</p>
+      </div>
+
+      <img src="/themes/apparatus/${folder}/img-4.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-4.svg';}" alt="" class="parallax-layer layer-4" />
+      <img src="/themes/apparatus/${folder}/img-5.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-5.svg';}" alt="" class="parallax-layer layer-5" />
+      <img src="/themes/apparatus/${folder}/img-6.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-6.svg';}" alt="" class="parallax-layer layer-6" />
+      <img src="/themes/apparatus/${folder}/img-7.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-7.svg';}" alt="" class="parallax-layer layer-7" />
+    `;
 
     restartParallaxAnimations();
   }
@@ -2476,10 +2284,10 @@
   function applyWallpaper(wp) {
     const customBg = document.getElementById('apparatus-custom-bg');
     const parallaxEl = document.getElementById('apparatus-parallax');
-    const isMotion = !wp || MOTION_THEMES.includes(wp);
+    const isMotion = !wp || MOTION_THEMES.includes(wp) || ['desert', 'cyberpunk', 'aurora', 'nebula', 'shogun'].some(k => String(wp).includes(k));
 
     if (isMotion) {
-      const motionKey = (!wp || wp === 'desert') ? 'desert' : wp;
+      const motionKey = (!wp || wp === 'desert') ? 'desert' : normalizeMotionKey(wp);
       document.body.classList.remove('apparatus-has-custom-wallpaper');
       document.body.classList.add('apparatus-has-motion-wallpaper');
       if (customBg) {
@@ -2571,7 +2379,10 @@
     const wpCards = document.querySelectorAll('.apparatus-wp-preset-card');
     let matchedPreset = false;
     wpCards.forEach(function (c) {
-      if (c.getAttribute('data-wp') === currentWp) {
+      const cardWp = c.getAttribute('data-wp');
+      const isCardMotion = MOTION_THEMES.includes(cardWp);
+      const isCurMotion = MOTION_THEMES.includes(currentWp);
+      if (cardWp === currentWp || (isCardMotion && isCurMotion && normalizeMotionKey(cardWp) === normalizeMotionKey(currentWp))) {
         c.classList.add('active');
         matchedPreset = true;
       } else {
@@ -2711,7 +2522,7 @@
                   <div class="apparatus-wp-preset-card active" data-wp="desert">
                     <div class="apparatus-wp-preview apparatus-wp-preview-desert">
                       <span class="apparatus-wp-badge">Default</span>
-                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> Parallax</span>
+                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> 7 Layers</span>
                     </div>
                     <div class="apparatus-wp-meta">
                       <span class="apparatus-wp-name">Desert Sunset</span>
@@ -2719,36 +2530,47 @@
                     </div>
                   </div>
 
-                  <!-- Motion 2: Cyberpunk City -->
-                  <div class="apparatus-wp-preset-card" data-wp="motion-cyberpunk">
+                  <!-- Motion 2: Cyberpunk Metropolis -->
+                  <div class="apparatus-wp-preset-card" data-wp="cyberpunk">
                     <div class="apparatus-wp-preview apparatus-wp-preview-cyberpunk">
-                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> Parallax</span>
+                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> 7 Layers</span>
                     </div>
                     <div class="apparatus-wp-meta">
-                      <span class="apparatus-wp-name">Cyberpunk Neon City</span>
-                      <span class="apparatus-wp-type">Animated Skyline &amp; Grid</span>
+                      <span class="apparatus-wp-name">Cyberpunk Metropolis</span>
+                      <span class="apparatus-wp-type">Neo-Tokyo Synthwave &amp; Maglev</span>
                     </div>
                   </div>
 
-                  <!-- Motion 3: Midnight Nebula -->
-                  <div class="apparatus-wp-preset-card" data-wp="motion-nebula">
-                    <div class="apparatus-wp-preview apparatus-wp-preview-nebula">
-                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> Parallax</span>
-                    </div>
-                    <div class="apparatus-wp-meta">
-                      <span class="apparatus-wp-name">Midnight Nebula</span>
-                      <span class="apparatus-wp-type">Cosmic Stars &amp; Planet</span>
-                    </div>
-                  </div>
-
-                  <!-- Motion 4: Mystic Aurora -->
-                  <div class="apparatus-wp-preset-card" data-wp="motion-aurora">
+                  <!-- Motion 3: Mystic Nordic Aurora -->
+                  <div class="apparatus-wp-preset-card" data-wp="aurora">
                     <div class="apparatus-wp-preview apparatus-wp-preview-aurora">
-                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> Parallax</span>
+                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> 7 Layers</span>
                     </div>
                     <div class="apparatus-wp-meta">
-                      <span class="apparatus-wp-name">Mystic Aurora</span>
-                      <span class="apparatus-wp-type">Northern Lights &amp; Pines</span>
+                      <span class="apparatus-wp-name">Mystic Nordic Aurora</span>
+                      <span class="apparatus-wp-type">Borealis Fjord &amp; Glacial Peaks</span>
+                    </div>
+                  </div>
+
+                  <!-- Motion 4: Cosmic Space Odyssey -->
+                  <div class="apparatus-wp-preset-card" data-wp="nebula">
+                    <div class="apparatus-wp-preview apparatus-wp-preview-nebula">
+                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> 7 Layers</span>
+                    </div>
+                    <div class="apparatus-wp-meta">
+                      <span class="apparatus-wp-name">Cosmic Space Odyssey</span>
+                      <span class="apparatus-wp-type">Ringed Exoplanet &amp; Galaxy</span>
+                    </div>
+                  </div>
+
+                  <!-- Motion 5: Crimson Shogun -->
+                  <div class="apparatus-wp-preset-card" data-wp="shogun">
+                    <div class="apparatus-wp-preview apparatus-wp-preview-shogun">
+                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> 7 Layers</span>
+                    </div>
+                    <div class="apparatus-wp-meta">
+                      <span class="apparatus-wp-name">Crimson Shogun</span>
+                      <span class="apparatus-wp-type">Mount Fuji, Torii &amp; Sakura</span>
                     </div>
                   </div>
 
@@ -3608,20 +3430,20 @@
 
       wrapper.innerHTML = `
         <div class="parallax-container" id="apparatus-parallax">
-          <img src="/themes/apparatus/desert/img-bg.svg" alt="" class="parallax-layer layer-bg" />
-          <img src="/themes/apparatus/desert/img-1.svg" alt="" class="parallax-layer layer-1" />
-          <img src="/themes/apparatus/desert/img-2.svg" alt="" class="parallax-layer layer-2" />
-          <img src="/themes/apparatus/desert/img-3.svg" alt="" class="parallax-layer layer-3" />
+          <img src="/themes/apparatus/desert/img-bg.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-bg.svg';}" alt="" class="parallax-layer layer-bg" />
+          <img src="/themes/apparatus/desert/img-1.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-1.svg';}" alt="" class="parallax-layer layer-1" />
+          <img src="/themes/apparatus/desert/img-2.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-2.svg';}" alt="" class="parallax-layer layer-2" />
+          <img src="/themes/apparatus/desert/img-3.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-3.svg';}" alt="" class="parallax-layer layer-3" />
           
           <div class="parallax-layer layer-text">
             <h1 class="background-title" id="apparatus-bg-title">ARIXBYTE</h1>
             <p class="background-subtitle" id="apparatus-bg-subtitle">CLOUD &amp; INFRASTRUCTURES</p>
           </div>
 
-          <img src="/themes/apparatus/desert/img-4.svg" alt="" class="parallax-layer layer-4" />
-          <img src="/themes/apparatus/desert/img-5.svg" alt="" class="parallax-layer layer-5" />
-          <img src="/themes/apparatus/desert/img-6.svg" alt="" class="parallax-layer layer-6" />
-          <img src="/themes/apparatus/desert/img-7.svg" alt="" class="parallax-layer layer-7" />
+          <img src="/themes/apparatus/desert/img-4.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-4.svg';}" alt="" class="parallax-layer layer-4" />
+          <img src="/themes/apparatus/desert/img-5.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-5.svg';}" alt="" class="parallax-layer layer-5" />
+          <img src="/themes/apparatus/desert/img-6.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-6.svg';}" alt="" class="parallax-layer layer-6" />
+          <img src="/themes/apparatus/desert/img-7.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-7.svg';}" alt="" class="parallax-layer layer-7" />
         </div>
 
         <div id="apparatus-custom-bg" class="apparatus-custom-bg"></div>

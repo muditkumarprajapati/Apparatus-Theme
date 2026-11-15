@@ -1,0 +1,32 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="toriiGrad" x1="1024" y1="940" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0a0104"/>
+        <stop offset="1" stop-color="#18020a"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Left shoreline rock outcrop with stone lantern (toro) -->
+      <path d="M0 1373 V1040 Q160 1020 280 1090 Q400 1160 480 1373 H0 Z" fill="url(#toriiGrad)"/>
+      <path d="M1200 1373 Q1320 1080 1620 1080 Q1880 1080 2048 1040 V1373 H1200 Z" fill="url(#toriiGrad)"/>
+      
+      <g>
+        <!-- Top curved lintel (kasagi) -->
+        <path d="M1350 928 Q1460 910 1570 928 L1565 942 Q1460 926 1355 942 Z" fill="#b91c1c"/>
+        <!-- Sub-lintel (shimaki) -->
+        <rect x="1365" y="940" width="190" height="10" fill="#b91c1c"/>
+        <!-- Tie beam (nuki) -->
+        <rect x="1375" y="970" width="170" height="12" fill="#b91c1c"/>
+        <!-- Central strut (gakuzuka) with tablet -->
+        <rect x="1452" y="946" width="16" height="28" fill="#0a0104"/>
+        <!-- Main pillars (hashira) slightly leaning inward -->
+        <polygon points="1395,948 1407,948 1412,1100 1392,1100" fill="#991b1b"/>
+        <polygon points="1513,948 1525,948 1528,1100 1508,1100" fill="#991b1b"/>
+        <!-- Torii water reflection -->
+        <ellipse cx="1460" cy="1105" rx="70" ry="4" fill="#fbbf24" opacity="0.3"/>
+      </g>
+    
+    
+</svg>

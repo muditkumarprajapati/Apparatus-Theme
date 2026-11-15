@@ -1,0 +1,26 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="crystalFacet1" x1="0" y1="0" x2="1" y2="1">
+        <stop stop-color="#c084fc"/>
+        <stop offset="1" stop-color="#1e1b4b"/>
+      </linearGradient>
+      <linearGradient id="crystalFacet2" x1="0" y1="0" x2="1" y2="1">
+        <stop stop-color="#38bdf8"/>
+        <stop offset="1" stop-color="#0f172a"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Large floating crystalline asteroid left -->
+      <g transform="translate(180, 780)">
+        <polygon points="0,0 80,-40 140,20 60,80 -20,50" fill="url(#crystalFacet1)" stroke="#c084fc" stroke-width="2"/>
+        <polygon points="0,0 60,80 -20,50" fill="#0f0728" opacity="0.6"/>
+      </g>
+      <!-- Large floating crystalline asteroid right -->
+      <g transform="translate(1620, 800)">
+        <polygon points="0,-20 90,-50 150,30 70,90 -10,40" fill="url(#crystalFacet2)" stroke="#38bdf8" stroke-width="2"/>
+        <polygon points="0,-20 70,90 -10,40" fill="#030b1c" opacity="0.6"/>
+      </g>
+    
+</svg>

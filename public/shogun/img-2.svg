@@ -1,0 +1,27 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="fujiMountain" x1="1024" y1="560" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#2d0614"/>
+        <stop offset="0.6" stop-color="#450b20"/>
+        <stop offset="1" stop-color="#621230"/>
+      </linearGradient>
+      <linearGradient id="fujiSnow" x1="1024" y1="560" x2="1024" y2="760" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#fff1f2"/>
+        <stop offset="0.5" stop-color="#fecdd3"/>
+        <stop offset="1" stop-color="#fda4af" stop-opacity="0.8"/>
+      </linearGradient>
+    
+</defs>
+
+      <path d="
+      M0 1373 
+      V920 L580 920 
+      Q840 840 960 620 L1024 590 L1088 620 Q1208 840 1468 920 
+      L2048 920 V1373 H0 Z
+    " fill="url(#fujiMountain)"/>
+      
+      <path d="M960 620 L1024 590 L1088 620 Q1060 680 1050 710 L1030 670 L1018 730 L1000 680 L980 720 Z" fill="url(#fujiSnow)"/>
+    
+    
+</svg>

@@ -1,0 +1,59 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberLayer4Grad" x1="1024" y1="800" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#120524"/>
+        <stop offset="0.7" stop-color="#1e0836"/>
+        <stop offset="1" stop-color="#290b47"/>
+      </linearGradient>
+      <linearGradient id="maglevGlow" x1="0" y1="960" x2="2048" y2="960" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#00f0ff"/>
+        <stop offset="0.5" stop-color="#ff007f"/>
+        <stop offset="1" stop-color="#00f0ff"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Left massive tower -->
+      <polygon points="0,1373 0,860 180,820 280,820 280,870 340,870 340,1373" fill="url(#cyberLayer4Grad)"/>
+      <line x1="180" y1="820" x2="180" y2="1373" stroke="#00f0ff" stroke-width="2" opacity="0.6"/>
+
+      <!-- Center-left tower -->
+      <polygon points="460,1373 460,890 560,870 660,870 660,930 720,930 720,1373" fill="url(#cyberLayer4Grad)"/>
+      <line x1="560" y1="870" x2="560" y2="1373" stroke="#ff007f" stroke-width="2" opacity="0.6"/>
+
+      <!-- Center-right tower -->
+      <polygon points="1320,1373 1320,910 1390,880 1480,880 1480,940 1560,940 1560,1373" fill="url(#cyberLayer4Grad)"/>
+      <line x1="1390" y1="880" x2="1390" y2="1373" stroke="#00f0ff" stroke-width="2" opacity="0.6"/>
+
+      <!-- Right massive tower -->
+      <polygon points="1680,1373 1680,840 1780,800 1900,800 1900,860 2048,860 2048,1373" fill="url(#cyberLayer4Grad)"/>
+      <line x1="1780" y1="800" x2="1780" y2="1373" stroke="#ff007f" stroke-width="2" opacity="0.6"/>
+    
+
+      <!-- Monorail support pillars -->
+      <rect x="220" y="960" width="30" height="413" fill="#0d041a"/>
+      <rect x="580" y="980" width="30" height="393" fill="#0d041a"/>
+      <rect x="1000" y="995" width="32" height="378" fill="#0d041a"/>
+      <rect x="1440" y="980" width="30" height="393" fill="#0d041a"/>
+      <rect x="1820" y="960" width="30" height="413" fill="#0d041a"/>
+
+      <!-- Track beam -->
+      <path d="M-50 970 Q1024 1020 2098 970 L2098 995 Q1024 1045 -50 995 Z" fill="#140624"/>
+      <!-- Glowing light rail top -->
+      <path d="M-50 968 Q1024 1018 2098 968" stroke="url(#maglevGlow)" stroke-width="4" fill="none"/>
+      <!-- Glowing light rail bottom -->
+      <path d="M-50 995 Q1024 1045 2098 995" stroke="#00f0ff" stroke-width="2" fill="none" opacity="0.8"/>
+
+      <!-- High-speed Maglev Train crossing track -->
+      <g>
+        <!-- Train body -->
+        <path d="M850 975 Q960 985 1070 985 Q1180 985 1250 977 L1248 992 Q1180 1000 1070 1000 Q960 1000 852 990 Z" fill="#e0f7fa"/>
+        <!-- Window strip -->
+        <path d="M880 979 L1220 982 L1218 986 L880 983 Z" fill="#00f0ff"/>
+        <!-- Motion blur trail -->
+        <line x1="720" y1="980" x2="850" y2="980" stroke="#00f0ff" stroke-width="3" opacity="0.6"/>
+        <line x1="680" y1="984" x2="850" y2="984" stroke="#ff007f" stroke-width="2" opacity="0.5"/>
+      </g>
+    
+</svg>

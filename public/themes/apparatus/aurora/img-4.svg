@@ -1,0 +1,23 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="fjordWater" x1="1024" y1="840" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#051824"/>
+        <stop offset="0.5" stop-color="#092332"/>
+        <stop offset="1" stop-color="#0f3448"/>
+      </linearGradient>
+      <linearGradient id="waterReflection" x1="0" y1="900" x2="2048" y2="900" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#00ff88" stop-opacity="0.15"/>
+        <stop offset="0.3" stop-color="#00e5ff" stop-opacity="0.3"/>
+        <stop offset="0.7" stop-color="#00ff88" stop-opacity="0.35"/>
+        <stop offset="1" stop-color="#00e5ff" stop-opacity="0.15"/>
+      </linearGradient>
+    
+</defs>
+
+      <rect y="840" width="2048" height="533" fill="url(#fjordWater)"/>
+      <g>
+        <ellipse cx="1024" cy="860" rx="400" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="864" rx="160" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="866" rx="160" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="872" rx="496" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="876" rx="198" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="878" rx="198" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="884" rx="592" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="888" rx="237" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="890" rx="237" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="896" rx="688" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="900" rx="275" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="902" rx="275" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="908" rx="784" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="912" rx="314" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="914" rx="314" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="920" rx="880" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="924" rx="352" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="926" rx="352" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="932" rx="976" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="936" rx="390" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="938" rx="390" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="944" rx="1072" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="948" rx="429" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="950" rx="429" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="956" rx="1168" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="960" rx="467" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="962" rx="467" ry="1.5" fill="url(#waterReflection)"/>
+      </g>
+    
+</svg>

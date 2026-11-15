@@ -1,0 +1,33 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="auroraCurtain1" x1="200" y1="150" x2="1800" y2="600" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#00ff88" stop-opacity="0.85"/>
+        <stop offset="0.4" stop-color="#00e5ff" stop-opacity="0.9"/>
+        <stop offset="0.7" stop-color="#38bdf8" stop-opacity="0.6"/>
+        <stop offset="1" stop-color="#a855f7" stop-opacity="0.3"/>
+      </linearGradient>
+      <linearGradient id="auroraCurtain2" x1="100" y1="250" x2="1900" y2="650" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#10b981" stop-opacity="0.75"/>
+        <stop offset="0.5" stop-color="#06b6d4" stop-opacity="0.85"/>
+        <stop offset="1" stop-color="#8b5cf6" stop-opacity="0.4"/>
+      </linearGradient>
+      <radialGradient id="moonGlow" cx="1720" cy="240" r="120" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#e0f2fe" stop-opacity="0.3"/>
+        <stop offset="1" stop-color="#021422" stop-opacity="0"/>
+      </radialGradient>
+    
+</defs>
+
+      <!-- Crescent moon with halo -->
+      <circle cx="1720" cy="240" r="100" fill="url(#moonGlow)"/>
+      <circle cx="1720" cy="240" r="32" fill="#f0f9ff"/>
+      <circle cx="1732" cy="235" r="28" fill="#021422"/>
+
+      <!-- Aurora Wave Ribbon 1 (Top Harmonic) -->
+      <path d="M-100 360 Q380 140 850 310 Q1320 480 1780 260 Q1980 180 2150 280 L2150 580 Q1780 480 1320 620 Q850 490 -100 580 Z" fill="url(#auroraCurtain1)" opacity="0.8"/>
+
+      <!-- Aurora Wave Ribbon 2 (Lower Harmonic) -->
+      <path d="M-100 440 Q450 220 980 390 Q1510 560 2150 340 L2150 680 Q1510 680 980 540 Q450 720 -100 640 Z" fill="url(#auroraCurtain2)" opacity="0.65"/>
+    
+</svg>

@@ -1,0 +1,56 @@
+<svg width="2048" height="1373" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberLayer7Grad" x1="1024" y1="1100" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#020006"/>
+        <stop offset="1" stop-color="#080210"/>
+      </linearGradient>
+      <radialGradient id="droneGlow" cx="620" cy="1130" r="30" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#00f0ff"/>
+        <stop offset="0.5" stop-color="#00f0ff" stop-opacity="0.4"/>
+        <stop offset="1" stop-color="#020006" stop-opacity="0"/>
+      </radialGradient>
+    
+</defs>
+
+      <!-- Foreground rooftop ledge with edge profile -->
+      <polygon points="0,1373 0,1190 480,1190 540,1230 1520,1230 1580,1190 2048,1190 2048,1373" fill="url(#cyberLayer7Grad)"/>
+
+      <!-- Industrial safety railing along the roof edge -->
+      <g stroke="#1a0a2a" stroke-width="4">
+        <line x1="0" y1="1150" x2="480" y2="1150"/>
+        <line x1="0" y1="1170" x2="480" y2="1170"/>
+        <line x1="80" y1="1150" x2="80" y2="1190"/>
+        <line x1="200" y1="1150" x2="200" y2="1190"/>
+        <line x1="320" y1="1150" x2="320" y2="1190"/>
+        <line x1="440" y1="1150" x2="440" y2="1190"/>
+
+        <line x1="1580" y1="1150" x2="2048" y2="1150"/>
+        <line x1="1580" y1="1170" x2="2048" y2="1170"/>
+        <line x1="1640" y1="1150" x2="1640" y2="1190"/>
+        <line x1="1760" y1="1150" x2="1760" y2="1190"/>
+        <line x1="1880" y1="1150" x2="1880" y2="1190"/>
+        <line x1="2000" y1="1150" x2="2000" y2="1190"/>
+      </g>
+
+      <!-- Hovering Cyber Surveillance Drone -->
+      <g>
+        <!-- Drone chassis -->
+        <rect x="580" y="1120" width="80" height="20" rx="5" fill="#04010a"/>
+        <!-- Rotor arms -->
+        <line x1="560" y1="1115" x2="600" y2="1125" stroke="#1f0a33" stroke-width="3"/>
+        <line x1="680" y1="1115" x2="640" y2="1125" stroke="#1f0a33" stroke-width="3"/>
+        <!-- Rotor discs -->
+        <ellipse cx="550" cy="1115" rx="25" ry="3" fill="#00f0ff" opacity="0.6"/>
+        <ellipse cx="690" cy="1115" rx="25" ry="3" fill="#00f0ff" opacity="0.6"/>
+        <!-- Glowing sensor eye -->
+        <circle cx="620" cy="1130" r="16" fill="url(#droneGlow)"/>
+        <circle cx="620" cy="1130" r="5" fill="#00f0ff"/>
+      </g>
+
+      <!-- Foreground thick cables framing top-left and top-right -->
+      <path d="M0 0 Q400 120 700 80" stroke="#04010a" stroke-width="5" fill="none"/>
+      <path d="M0 30 Q450 160 720 110" stroke="#04010a" stroke-width="4" fill="none"/>
+      <path d="M1400 70 Q1700 140 2048 20" stroke="#04010a" stroke-width="5" fill="none"/>
+    
+</svg>
