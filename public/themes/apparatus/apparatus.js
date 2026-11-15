@@ -121,8 +121,9 @@
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
     const isResourceTab = window.location.hash === '#resource' || currentPath === '/billing/resource' || currentPath === '/resource';
-    const isServerTab = !isResourceTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
-    const isDashboardTab = !isResourceTab && (currentPath === '/' || currentPath === '/dashboard') && !isServerTab;
+    const isVpsTab = !isResourceTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
+    const isServerTab = !isResourceTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
+    const isDashboardTab = !isResourceTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
 
     const links = document.querySelectorAll('.apparatus-nav-link[data-path], .apparatus-nav-link[data-tab]');
     links.forEach(function (link) {
@@ -138,6 +139,8 @@
         isActive = isDashboardTab;
       } else if (tab === 'servers' || p === '/servers') {
         isActive = isServerTab;
+      } else if (tab === 'vps' || p === '/vps') {
+        isActive = isVpsTab;
       } else if (p === '/account') {
         // Account Credentials should ONLY be active on exact /account, NOT on /account/api, /account/ssh, etc.
         isActive = currentPath === '/account';
@@ -161,9 +164,10 @@
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
     const isResourceTab = window.location.hash === '#resource' || currentPath === '/billing/resource' || currentPath === '/resource';
-    const isServerTab = !isResourceTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
-    const isDashboardTab = !isResourceTab && (currentPath === '/' || currentPath === '/dashboard') && !isServerTab;
-    const isHomeRoute = isDashboardTab || isServerTab;
+    const isVpsTab = !isResourceTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
+    const isServerTab = !isResourceTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
+    const isDashboardTab = !isResourceTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
+    const isHomeRoute = isDashboardTab || isServerTab || isVpsTab;
 
     const hero = document.getElementById('apparatus-dashboard-view');
     const resView = document.getElementById('apparatus-resource-view');
@@ -175,7 +179,7 @@
         if (typeof renderResourcePage === 'function') renderResourcePage();
       }
       document.body.classList.add('apparatus-page-resource');
-      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps');
 
       // Hide all account containers and native server messages
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3').forEach(function (el) {
@@ -186,24 +190,35 @@
       if (hero) hero.style.display = 'block';
       document.body.classList.remove('apparatus-page-resource');
 
+      const sPane = document.getElementById('apparatus-pane-servers');
+      const vPane = document.getElementById('apparatus-pane-vps');
+      const sBtn = document.getElementById('apparatus-tab-btn-servers');
+      const vBtn = document.getElementById('apparatus-tab-btn-vps');
+      const deployBtn = document.getElementById('apparatus-hub-deploy-btn');
+
       if (isServerTab) {
         document.body.classList.add('apparatus-page-servers');
-        document.body.classList.remove('apparatus-page-dashboard');
-        const sPane = document.getElementById('apparatus-pane-servers');
-        const vPane = document.getElementById('apparatus-pane-vps');
+        document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-vps');
         if (sPane) sPane.style.display = 'block';
         if (vPane) vPane.style.display = 'none';
-        const sBtn = document.getElementById('apparatus-tab-btn-servers');
-        const vBtn = document.getElementById('apparatus-tab-btn-vps');
         if (sBtn) sBtn.classList.add('active');
         if (vBtn) vBtn.classList.remove('active');
-        const deployBtn = document.getElementById('apparatus-hub-deploy-btn');
         if (deployBtn) {
           deployBtn.innerHTML = '<i class="ri-add-line"></i> Deploy Server';
         }
+      } else if (isVpsTab) {
+        document.body.classList.add('apparatus-page-vps');
+        document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers');
+        if (sPane) sPane.style.display = 'none';
+        if (vPane) vPane.style.display = 'block';
+        if (sBtn) sBtn.classList.remove('active');
+        if (vBtn) vBtn.classList.add('active');
+        if (deployBtn) {
+          deployBtn.innerHTML = '<i class="ri-add-line"></i> Deploy Cloud VPS';
+        }
       } else {
         document.body.classList.add('apparatus-page-dashboard');
-        document.body.classList.remove('apparatus-page-servers');
+        document.body.classList.remove('apparatus-page-servers', 'apparatus-page-vps');
       }
 
       // Hide all account containers and native server messages if user transitioned to home
@@ -213,7 +228,7 @@
     } else {
       if (resView) resView.style.display = 'none';
       if (hero) hero.style.display = 'none';
-      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-view-dashboard', 'apparatus-view-servers');
+      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-view-dashboard', 'apparatus-view-servers', 'apparatus-view-vps');
 
       // Restore display for account containers when on account routes
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, div.bg-gray-700, [class*="PageContentBlock"]').forEach(function (el) {
@@ -383,8 +398,9 @@
     const rawP = window.location.pathname || '/';
     const curP = (rawP.length > 1 && rawP.endsWith('/')) ? rawP.slice(0, -1) : rawP;
     const isSrv = curP === '/servers' || curP.startsWith('/servers/') || window.location.hash === '#servers';
-    const isDash = (curP === '/' || curP === '/dashboard') && !isSrv;
-    if (isDash || isSrv) {
+    const isVps = curP === '/vps' || curP.startsWith('/vps/') || window.location.hash === '#vps';
+    const isDash = (curP === '/' || curP === '/dashboard') && !isSrv && !isVps;
+    if (isDash || isSrv || isVps) {
       document.querySelectorAll('p[class*="DashboardContainer"], .sc-1topkxf-3, div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0').forEach(function (el) {
         el.style.setProperty('display', 'none', 'important');
         el.style.setProperty('visibility', 'hidden', 'important');
@@ -701,7 +717,7 @@
         if (paneVps) paneVps.style.display = 'block';
         if (paneServers) paneServers.style.display = 'none';
         if (deployBtn) {
-          deployBtn.innerHTML = '<i class="ri-rocket-line"></i> Deploy Cloud VPS';
+          deployBtn.innerHTML = '<i class="ri-add-line"></i> Deploy Cloud VPS';
           deployBtn.onclick = function () { window.open('https://arixbyte.com', '_blank'); };
         }
       } else {
@@ -1352,6 +1368,7 @@
                   </button>
                   <button type="button" class="apparatus-tab-btn" data-tab="vps" id="apparatus-tab-btn-vps">
                     <i class="ri-hard-drive-3-line"></i> Cloud VPS
+                    <span class="apparatus-tab-badge" id="apparatus-vps-badge">0</span>
                   </button>
                 </div>
                 <div class="apparatus-hub-actions">
@@ -1374,7 +1391,7 @@
               <div class="apparatus-tab-pane" id="apparatus-pane-vps" style="display: none;">
                 <div class="apparatus-vps-empty">
                   <div class="apparatus-vps-empty-icon">
-                    <i class="ri-server-line"></i>
+                    <i class="ri-hard-drive-3-line"></i>
                   </div>
                   <h4 class="apparatus-vps-empty-title">No Cloud VPS Found</h4>
                   <p class="apparatus-vps-empty-desc">
@@ -1383,6 +1400,9 @@
                   <div class="apparatus-vps-empty-actions">
                     <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
                       <i class="ri-add-line"></i> Deploy Cloud VPS
+                    </a>
+                    <a href="#resource" class="apparatus-btn apparatus-btn-glass" id="apparatus-vps-view-res-btn">
+                      <i class="ri-cpu-line"></i> View Resources
                     </a>
                   </div>
                 </div>
@@ -1559,7 +1579,7 @@
     if (toServersBtn) {
       toServersBtn.addEventListener('click', function (e) {
         const rawP = window.location.pathname || '/';
-        const onHome = rawP === '/' || rawP === '/servers' || rawP === '/dashboard';
+        const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard';
         if (!onHome) {
           window.location.href = '/servers';
           return;
@@ -2147,10 +2167,9 @@
                 </a>
               </li>
               <li>
-                <a href="#vps" class="apparatus-nav-link apparatus-vps-link" data-path="/vps">
+                <a href="/vps" class="apparatus-nav-link apparatus-vps-link" data-tab="vps" data-path="/vps">
                   <i class="ri-hard-drive-2-line apparatus-nav-icon"></i>
                   <span>VPS</span>
-                  <span class="apparatus-tag-soon">Soon</span>
                 </a>
               </li>
             </ul>
@@ -2291,23 +2310,6 @@
 
       document.body.appendChild(sidebar);
 
-      // VPS click handler
-      const vpsBtn = sidebar.querySelector('.apparatus-vps-link');
-      if (vpsBtn) {
-        vpsBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          const vpsTab = document.getElementById('apparatus-tab-btn-vps');
-          if (vpsTab) {
-            vpsTab.click();
-            const hub = document.getElementById('apparatus-area-4');
-            if (hub) hub.scrollIntoView({ behavior: 'smooth' });
-          } else {
-            showToast('info', 'Cloud VPS Hub', 'High-Performance KVM VPS starting at ₹149/mo.');
-            window.location.href = '/';
-          }
-        });
-      }
-
       // Billing click handlers
       const resourceBtn = sidebar.querySelector('.apparatus-resource-link');
       if (resourceBtn) {
@@ -2380,28 +2382,36 @@
         });
       }
 
-      // Tab switcher handlers for Dashboard vs Servers
+      // Tab switcher handlers for Dashboard vs Servers vs VPS
       sidebar.querySelectorAll('a[data-tab]').forEach(function (tabLink) {
         tabLink.addEventListener('click', function (e) {
           const tab = this.getAttribute('data-tab');
+          if (!tab || (tab !== 'dashboard' && tab !== 'servers' && tab !== 'vps')) return;
+
           const rawP = window.location.pathname || '/';
-          const onHome = rawP === '/' || rawP === '/servers' || rawP === '/dashboard';
+          const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard';
 
           if (!onHome) {
             // If navigating from an account subpage, navigate cleanly so React Router unmounts the account page!
             if (tab === 'servers') {
               window.location.href = '/servers';
+            } else if (tab === 'vps') {
+              window.location.href = '/vps';
             } else {
               window.location.href = '/';
             }
             return;
           }
 
-          // If already on home (between / and /servers), switch smoothly
+          // If already on home (between /, /servers, /vps), switch smoothly
           e.preventDefault();
           if (tab === 'servers') {
             if (window.location.pathname !== '/servers') {
               history.pushState(null, '', '/servers');
+            }
+          } else if (tab === 'vps') {
+            if (window.location.pathname !== '/vps') {
+              history.pushState(null, '', '/vps');
             }
           } else if (tab === 'dashboard') {
             if (window.location.pathname !== '/') {
