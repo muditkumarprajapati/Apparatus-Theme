@@ -1278,71 +1278,41 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 
 .apparatus-welcome-decor {
   position: absolute;
-  right: 2.5rem;
+  right: 2.75rem;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
   user-select: none;
   z-index: 1;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.apparatus-hero-badge-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.apparatus-hero-badge-glow {
-  position: absolute;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, rgba(236, 72, 153, 0.15) 50%, transparent 70%);
-  filter: blur(20px);
-  pointer-events: none;
-  opacity: 0.7;
-  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .apparatus-ab-watermark {
-  position: relative;
-  height: 100px;
+  height: 95px;
   width: auto;
   max-width: 170px;
-  opacity: 0.55;
-  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 16px rgba(168, 85, 247, 0.35));
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.2;
+  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.25));
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: block;
 }
 
 .apparatus-card-welcome:hover .apparatus-welcome-decor {
-  transform: translateY(-50%) scale(1.05);
-}
-
-.apparatus-card-welcome:hover .apparatus-hero-badge-glow {
-  opacity: 1;
-  transform: scale(1.2);
-  background: radial-gradient(circle, rgba(236, 72, 153, 0.4) 0%, rgba(168, 85, 247, 0.3) 50%, transparent 70%);
+  transform: translateY(-50%) scale(1.04);
 }
 
 .apparatus-card-welcome:hover .apparatus-ab-watermark {
-  opacity: 0.9;
-  filter: drop-shadow(0 8px 26px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 24px rgba(236, 72, 153, 0.7));
+  opacity: 0.42;
+  filter: drop-shadow(0 0 24px rgba(124, 58, 237, 0.45));
 }
 
 @media (max-width: 900px) {
   .apparatus-ab-watermark {
     height: 75px;
-    opacity: 0.45;
-  }
-  .apparatus-hero-badge-glow {
-    width: 100px;
-    height: 100px;
+    opacity: 0.15;
   }
 }
 
@@ -1826,82 +1796,22 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 
 .apparatus-metric-sub {
   font-size: 0.76rem;
-  color: rgba(255, 255, 255, 0.55);
-  margin-top: 0.25rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.2rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
 }
 
-.apparatus-metric-cash-sub {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin-top: 0.25rem;
-  font-size: 0.76rem;
-  white-space: nowrap;
-}
-
-.apparatus-metric-points-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.28rem;
-  color: rgba(255, 255, 255, 0.72);
-  font-weight: 500;
-}
-
-.apparatus-metric-points-wrap i {
-  color: #fbbf24;
-  font-size: 0.85rem;
-  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.45));
-}
-
-.apparatus-metric-sub-divider {
-  display: inline-block;
-  color: rgba(255, 255, 255, 0.35);
-  font-size: 0.75rem;
-  user-select: none;
-}
-
-.apparatus-metric-topup-btn,
 .apparatus-metric-sublink {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.25rem !important;
-  padding: 0.15rem 0.6rem !important;
-  border-radius: 999px !important;
-  background: rgba(236, 72, 153, 0.14) !important;
-  border: 1px solid rgba(236, 72, 153, 0.35) !important;
   color: #f472b6 !important;
-  font-size: 0.72rem !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  text-decoration: none !important;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  line-height: 1.25 !important;
-  letter-spacing: 0.02em !important;
+  font-weight: 600;
+  text-decoration: underline !important;
+  cursor: pointer;
 }
 
-.apparatus-metric-topup-btn:hover,
 .apparatus-metric-sublink:hover {
-  background: rgba(236, 72, 153, 0.28) !important;
-  border-color: rgba(236, 72, 153, 0.65) !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 12px rgba(236, 72, 153, 0.45) !important;
-  transform: translateY(-1px) !important;
-  text-decoration: none !important;
-}
-
-.apparatus-metric-topup-btn i {
-  font-size: 0.78rem;
-  transition: transform 0.2s ease;
-}
-
-.apparatus-metric-topup-btn:hover i {
-  transform: rotate(90deg);
+  color: #fff !important;
 }
 
 /* ==============================================================================
@@ -3745,7 +3655,6 @@ body.apparatus-privacy-active .apparatus-referral-code-text,
 body.apparatus-privacy-active #apparatus-metric-email,
 body.apparatus-privacy-active .apparatus-user-email,
 body.apparatus-privacy-active #apparatus-metric-balance,
-body.apparatus-privacy-active #apparatus-metric-coins,
 body.apparatus-privacy-active #apparatus-coin-count,
 body.apparatus-privacy-active #apparatus-res-coin-val,
 body.apparatus-privacy-active .apparatus-res-coins-num,
@@ -3769,7 +3678,6 @@ body.apparatus-privacy-active .apparatus-referral-code-text:hover,
 body.apparatus-privacy-active #apparatus-metric-email:hover,
 body.apparatus-privacy-active .apparatus-user-email:hover,
 body.apparatus-privacy-active #apparatus-metric-balance:hover,
-body.apparatus-privacy-active #apparatus-metric-coins:hover,
 body.apparatus-privacy-active #apparatus-coin-count:hover,
 body.apparatus-privacy-active #apparatus-res-coin-val:hover,
 body.apparatus-privacy-active .apparatus-res-coins-num:hover,
@@ -3784,8 +3692,7 @@ body.apparatus-privacy-active .apparatus-server-node:hover {
 /* When Privacy is toggled off, show clean crisp values */
 body:not(.apparatus-privacy-active) .apparatus-blur-sensitive,
 body:not(.apparatus-privacy-active) .apparatus-privacy-val,
-body:not(.apparatus-privacy-active) #apparatus-metric-balance,
-body:not(.apparatus-privacy-active) #apparatus-metric-coins {
+body:not(.apparatus-privacy-active) #apparatus-metric-balance {
   filter: none !important;
   -webkit-filter: none !important;
 }

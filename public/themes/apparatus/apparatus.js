@@ -1342,10 +1342,7 @@
             </div>
           </div>
           <div class="apparatus-welcome-decor apparatus-welcome-decor-ab" aria-hidden="true">
-            <div class="apparatus-hero-badge-wrap">
-              <div class="apparatus-hero-badge-glow"></div>
-              <img src="/themes/apparatus/ab-logo-white.png?v=2" class="apparatus-ab-watermark" alt="ArixByte Cloud" onerror="this.src='/themes/apparatus/ab-logo.png';">
-            </div>
+            <img src="/themes/apparatus/ab-logo-white.png" class="apparatus-ab-watermark" alt="ArixByte" onerror="this.src='/themes/apparatus/ab-logo.png';">
           </div>
         </div>
 
@@ -1377,16 +1374,9 @@
                 <span class="apparatus-metric-val" id="apparatus-metric-balance">₹0.00</span>
                 <span class="apparatus-metric-unit">INR</span>
               </div>
-              <div class="apparatus-metric-cash-sub">
-                <span class="apparatus-metric-points-wrap">
-                  <i class="ri-copper-coin-line"></i>
-                  <span id="apparatus-metric-coins" class="apparatus-blur-sensitive">100</span> Referral Points
-                </span>
-                <span class="apparatus-metric-sub-divider">&bull;</span>
-                <a href="javascript:void(0)" class="apparatus-metric-topup-btn" id="apparatus-ribbon-topup">
-                  <i class="ri-add-line"></i> Top Up
-                </a>
-              </div>
+              <span class="apparatus-metric-sub">
+                <span id="apparatus-metric-coins">100</span> Referral Points &bull; <a href="javascript:void(0)" class="apparatus-metric-sublink" id="apparatus-ribbon-topup">Top Up</a>
+              </span>
             </div>
           </div>
 
