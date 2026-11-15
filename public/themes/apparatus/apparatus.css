@@ -3007,7 +3007,7 @@ h2.apparatus-activity-title {
   color: #ffffff !important;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35) !important;
   margin-top: 0 !important;
-  margin-bottom: 0.85rem !important;
+  margin-bottom: 1.1rem !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
   padding-left: 0.25rem !important;
@@ -3061,9 +3061,11 @@ body:not(.apparatus-auth) div[class*="ActivityLogEntry"] {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  gap: 1.25rem !important;
+  gap: 1.35rem !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  padding: 1.15rem 1.4rem !important;
+  padding: 1.25rem 2rem !important;
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
   transition: all 0.2s ease !important;
   background: transparent !important;
   width: 100% !important;
@@ -4907,8 +4909,8 @@ div[class*="AccountOverviewContainer"],
 div[class*="PageContentBlock"] {
   padding-top: 1.5rem !important;
   padding-bottom: 3rem !important;
-  padding-left: 1.5rem !important;
-  padding-right: 1.5rem !important;
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
   box-sizing: border-box !important;
 }
 
