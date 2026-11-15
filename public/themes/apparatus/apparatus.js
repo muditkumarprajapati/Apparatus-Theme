@@ -557,7 +557,7 @@
     }
   }
 
-  // Activity Log Event Badge enhancement (Transforms raw "auth:success" into clean readable badges)
+  // Activity Log Event Status Circle enhancement (Green circular tick for success, red circular cross for error, etc.)
   function enhanceActivityLogBadges() {
     const actContainer = document.querySelector('div[class*="ActivityLogContainer"]') || document.querySelector('.bg-gray-700');
     if (!actContainer) return;
@@ -571,58 +571,42 @@
       if (!raw) continue;
 
       a.dataset.apparatusEventEnhanced = 'true';
-      a.classList.add('apparatus-event-badge');
 
-      let icon = 'ri-shield-check-line';
-      let label = raw;
-      let typeClass = 'apparatus-event-badge-default';
-
-      if (raw === 'auth:success' || raw === 'auth:login') {
-        label = 'Login Success';
-        icon = 'ri-shield-check-line';
-        typeClass = 'apparatus-event-badge-auth';
-      } else if (raw === 'auth:checkpoint') {
-        label = '2FA Verified';
-        icon = 'ri-fingerprint-line';
-        typeClass = 'apparatus-event-badge-warn';
-      } else if (raw === 'auth:password') {
-        label = 'Password Changed';
-        icon = 'ri-key-line';
-        typeClass = 'apparatus-event-badge-warn';
-      } else if (raw === 'auth:recovery') {
-        label = 'Recovery Code Used';
-        icon = 'ri-lock-unlock-line';
-        typeClass = 'apparatus-event-badge-warn';
-      } else if (raw.startsWith('server:power.start')) {
-        label = 'Server Started';
-        icon = 'ri-play-circle-line';
-        typeClass = 'apparatus-event-badge-power';
-      } else if (raw.startsWith('server:power.stop')) {
-        label = 'Server Stopped';
-        icon = 'ri-stop-circle-line';
-        typeClass = 'apparatus-event-badge-power';
-      } else if (raw.startsWith('server:power.restart')) {
-        label = 'Server Restarted';
-        icon = 'ri-restart-line';
-        typeClass = 'apparatus-event-badge-power';
-      } else if (raw.startsWith('server:console')) {
-        label = 'Console Command';
-        icon = 'ri-terminal-box-line';
-        typeClass = 'apparatus-event-badge-default';
-      } else if (raw.includes('backup')) {
-        label = raw.includes('create') ? 'Backup Created' : (raw.includes('restore') ? 'Backup Restored' : 'Backup Action');
-        icon = 'ri-save-3-line';
-        typeClass = 'apparatus-event-badge-default';
-      } else if (raw.includes('delete')) {
-        label = raw.replace(/^.*:/, '').replace(/[._-]/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
-        icon = 'ri-delete-bin-line';
-        typeClass = 'apparatus-event-badge-danger';
-      } else {
-        label = raw.replace(/^[a-z0-9_-]+:/i, '').replace(/[._-]/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+      // Clean dash text node right before the badge if present ("mudit — " -> "mudit ")
+      if (a.previousSibling && a.previousSibling.nodeType === Node.TEXT_NODE) {
+        a.previousSibling.textContent = a.previousSibling.textContent.replace(/\s*[—–-]\s*/g, ' ');
       }
 
-      a.classList.add(typeClass);
-      a.innerHTML = '<i class="' + icon + '"></i> <span>' + label + '</span>';
+      let icon = 'ri-check-line';
+      let title = 'Successful (' + raw + ')';
+      let typeClass = 'apparatus-event-circle-success';
+
+      const lower = raw.toLowerCase();
+      if (lower.includes('fail') || lower.includes('error') || lower.includes('denied') || lower.includes('delete')) {
+        // Red circular cross
+        icon = 'ri-close-line';
+        title = lower.includes('delete') ? 'Deleted (' + raw + ')' : 'Failed / Error (' + raw + ')';
+        typeClass = 'apparatus-event-circle-error';
+      } else if (lower.includes('warn') || lower.includes('checkpoint') || lower.includes('password') || lower.includes('recovery')) {
+        // Amber circular alert
+        icon = 'ri-alert-line';
+        title = 'Security Alert (' + raw + ')';
+        typeClass = 'apparatus-event-circle-warn';
+      } else if (lower.startsWith('server:power') || lower.startsWith('server:console')) {
+        // Cyan circular info/power
+        icon = lower.includes('stop') ? 'ri-stop-line' : 'ri-play-line';
+        title = 'Server Action (' + raw + ')';
+        typeClass = 'apparatus-event-circle-info';
+      } else {
+        // Green circular tick (auth:success, login, verified, created, etc.)
+        icon = 'ri-check-line';
+        title = 'Success (' + raw + ')';
+        typeClass = 'apparatus-event-circle-success';
+      }
+
+      a.className = 'apparatus-event-badge ' + typeClass;
+      a.title = title;
+      a.innerHTML = '<i class="' + icon + '"></i>';
     }
   }
 
