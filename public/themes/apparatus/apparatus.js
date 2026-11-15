@@ -1466,72 +1466,56 @@
               </div>
             </div>
 
-            <!-- Lower Grid: Resource Capacity (1) and Recent Activity (2) -->
-            <div class="apparatus-dash-subgrid" id="apparatus-dash-subgrid">
-              <!-- Card 1: Resource Allocation -->
-              <div class="apparatus-card apparatus-card-resources" id="apparatus-area-resources">
-                <div class="apparatus-card-header">
-                  <h2 class="apparatus-card-title">
-                    <i class="ri-dashboard-3-line" style="color: #38bdf8;"></i> Resource Capacity
-                  </h2>
-                  <a href="#resource" class="apparatus-link-btn" id="apparatus-dash-resource-link" style="text-decoration: none; font-size: 0.76rem; font-weight: 600; color: #38bdf8; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); transition: all 0.2s ease;">
-                    <span>Allocated</span> <i class="ri-arrow-right-line"></i>
-                  </a>
-                </div>
+            <!-- Card: Resource Capacity (Left Column) -->
+            <div class="apparatus-card apparatus-card-resources" id="apparatus-area-resources">
+              <div class="apparatus-card-header">
+                <h2 class="apparatus-card-title">
+                  <i class="ri-dashboard-3-line" style="color: #38bdf8;"></i> Resource Capacity
+                </h2>
+                <a href="#resource" class="apparatus-link-btn" id="apparatus-dash-resource-link" style="text-decoration: none; font-size: 0.76rem; font-weight: 600; color: #38bdf8; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); transition: all 0.2s ease;">
+                  <span>Allocated</span> <i class="ri-arrow-right-line"></i>
+                </a>
+              </div>
 
-                <div class="apparatus-gauges-list">
-                  <!-- Memory Bar -->
-                  <div class="apparatus-gauge-row">
-                    <div class="apparatus-gauge-header">
-                      <span class="gauge-label"><i class="ri-database-2-line"></i> Memory (RAM)</span>
-                      <span class="gauge-val" id="apparatus-gauge-ram-text">0.0 GB Allocated</span>
-                    </div>
-                    <div class="apparatus-progress-track">
-                      <div class="apparatus-progress-bar apparatus-progress-ram" id="apparatus-gauge-ram-bar" style="width: 20%;"></div>
-                    </div>
+              <div class="apparatus-gauges-list">
+                <!-- Memory Bar -->
+                <div class="apparatus-gauge-row">
+                  <div class="apparatus-gauge-header">
+                    <span class="gauge-label"><i class="ri-database-2-line"></i> Memory (RAM)</span>
+                    <span class="gauge-val" id="apparatus-gauge-ram-text">0.0 GB Allocated</span>
                   </div>
-
-                  <!-- CPU Bar -->
-                  <div class="apparatus-gauge-row">
-                    <div class="apparatus-gauge-header">
-                      <span class="gauge-label"><i class="ri-cpu-line"></i> CPU Compute</span>
-                      <span class="gauge-val" id="apparatus-gauge-cpu-text">0% Allocated</span>
-                    </div>
-                    <div class="apparatus-progress-track">
-                      <div class="apparatus-progress-bar apparatus-progress-cpu" id="apparatus-gauge-cpu-bar" style="width: 15%;"></div>
-                    </div>
-                  </div>
-
-                  <!-- Disk Bar -->
-                  <div class="apparatus-gauge-row">
-                    <div class="apparatus-gauge-header">
-                      <span class="gauge-label"><i class="ri-hard-drive-line"></i> NVMe Storage</span>
-                      <span class="gauge-val" id="apparatus-gauge-disk-text">0.0 GB Allocated</span>
-                    </div>
-                    <div class="apparatus-progress-track">
-                      <div class="apparatus-progress-bar apparatus-progress-disk" id="apparatus-gauge-disk-bar" style="width: 25%;"></div>
-                    </div>
+                  <div class="apparatus-progress-track">
+                    <div class="apparatus-progress-bar apparatus-progress-ram" id="apparatus-gauge-ram-bar" style="width: 20%;"></div>
                   </div>
                 </div>
 
-                <!-- Blurred Email Quick Row -->
-                <div class="apparatus-account-quick-row">
-                  <span class="apparatus-row-label">Account Email</span>
-                  <span class="apparatus-email-blurred" id="apparatus-email-val" title="Click or hover to reveal">${email}</span>
+                <!-- CPU Bar -->
+                <div class="apparatus-gauge-row">
+                  <div class="apparatus-gauge-header">
+                    <span class="gauge-label"><i class="ri-cpu-line"></i> CPU Compute</span>
+                    <span class="gauge-val" id="apparatus-gauge-cpu-text">0% Allocated</span>
+                  </div>
+                  <div class="apparatus-progress-track">
+                    <div class="apparatus-progress-bar apparatus-progress-cpu" id="apparatus-gauge-cpu-bar" style="width: 15%;"></div>
+                  </div>
+                </div>
+
+                <!-- Disk Bar -->
+                <div class="apparatus-gauge-row">
+                  <div class="apparatus-gauge-header">
+                    <span class="gauge-label"><i class="ri-hard-drive-line"></i> NVMe Storage</span>
+                    <span class="gauge-val" id="apparatus-gauge-disk-text">0.0 GB Allocated</span>
+                  </div>
+                  <div class="apparatus-progress-track">
+                    <div class="apparatus-progress-bar apparatus-progress-disk" id="apparatus-gauge-disk-bar" style="width: 25%;"></div>
+                  </div>
                 </div>
               </div>
 
-              <!-- Card 2: Recent Activity (Area 2) -->
-              <div class="apparatus-card apparatus-card-activity" id="apparatus-area-2">
-                <div class="apparatus-card-header">
-                  <h2 class="apparatus-card-title">
-                    <i class="ri-history-line" style="color: #f472b6;"></i> Recent Activity
-                  </h2>
-                  <a href="/account/activity" class="apparatus-link">View All <i class="ri-arrow-right-s-line"></i></a>
-                </div>
-                <div class="apparatus-activity-list" id="apparatus-activity-list">
-                  <div class="apparatus-empty-msg">Loading activity...</div>
-                </div>
+              <!-- Blurred Email Quick Row -->
+              <div class="apparatus-account-quick-row">
+                <span class="apparatus-row-label">Account Email</span>
+                <span class="apparatus-email-blurred" id="apparatus-email-val" title="Click or hover to reveal">${email}</span>
               </div>
             </div>
           </div>
@@ -1620,6 +1604,19 @@
                     <span class="upgrade-price">₹49/mo</span>
                   </button>
                 </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Recent Activity (Right Column Bottom) -->
+            <div class="apparatus-card apparatus-card-activity" id="apparatus-area-2">
+              <div class="apparatus-card-header">
+                <h2 class="apparatus-card-title">
+                  <i class="ri-history-line" style="color: #f472b6;"></i> Recent Activity
+                </h2>
+                <a href="/account/activity" class="apparatus-link">View All <i class="ri-arrow-right-s-line"></i></a>
+              </div>
+              <div class="apparatus-activity-list" id="apparatus-activity-list">
+                <div class="apparatus-empty-msg">Loading activity...</div>
               </div>
             </div>
 
@@ -2106,14 +2103,14 @@
                 <!-- Daily Bonus -->
                 <div class="apparatus-res-row">
                   <div class="apparatus-res-row-left">
-                    <div class="apparatus-res-row-icon" style="color: #34d399;"><i class="ri-calendar-check-line"></i></div>
+                    <div class="apparatus-res-row-icon" style="color: rgba(255, 255, 255, 0.4);"><i class="ri-calendar-check-line"></i></div>
                     <div class="apparatus-res-row-info">
                       <span class="apparatus-res-row-title">DAILY BONUS</span>
                       <span class="apparatus-res-row-desc">Claim free bonus coins every 24 hours</span>
                     </div>
                   </div>
                   <div class="apparatus-res-row-right">
-                    <span class="apparatus-res-badge-val" style="color: #34d399; border-color: rgba(52, 211, 153, 0.3);">+2 Coins</span>
+                    <span class="apparatus-res-badge-val" style="color: rgba(255, 255, 255, 0.45); border-color: rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.04);">NA</span>
                   </div>
                 </div>
 
