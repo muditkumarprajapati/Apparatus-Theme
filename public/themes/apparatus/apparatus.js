@@ -1375,7 +1375,7 @@
                 <span class="apparatus-metric-unit">INR</span>
               </div>
               <span class="apparatus-metric-sub">
-                <span id="apparatus-metric-coins">100</span> Referral Points &bull; <a href="javascript:void(0)" class="apparatus-metric-sublink" id="apparatus-ribbon-topup">Top Up</a>
+                <span class="apparatus-blur-sensitive"><span id="apparatus-metric-coins">100</span> Referral Points</span> &bull; <a href="javascript:void(0)" class="apparatus-metric-sublink" id="apparatus-ribbon-topup">Top Up</a>
               </span>
             </div>
           </div>
