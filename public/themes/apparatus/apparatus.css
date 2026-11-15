@@ -72,7 +72,34 @@ body:not(.apparatus-auth) #app {
     width: calc(100% - 250px) !important;
     box-sizing: border-box !important;
     padding-top: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
   }
+}
+
+/* ==============================================================================
+   UNIVERSAL 90% DEFAULT PANEL WIDTH
+   ============================================================================== */
+body:not(.apparatus-auth) .apparatus-dashboard-container,
+body:not(.apparatus-auth) .apparatus-settings-grid,
+body:not(.apparatus-auth) .apparatus-resource-header-card,
+body:not(.apparatus-auth) .apparatus-resource-main-grid,
+body:not(.apparatus-auth) div[class*="AccountOverviewContainer"],
+body:not(.apparatus-auth) div[class*="AccountApiContainer"],
+body:not(.apparatus-auth) div[class*="AccountSSHContainer"],
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"],
+body:not(.apparatus-auth) div[class*="PageContentBlock"],
+body:not(.apparatus-auth) div[class*="PageContentBlock"] > div,
+body:not(.apparatus-auth) div[class*="ServerViewContainer"],
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"],
+body:not(.apparatus-auth) div[class*="ServerDetailsBlock"],
+body:not(.apparatus-auth) div[class*="DashboardContainer"] > div {
+  width: 90% !important;
+  max-width: 90% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
 }
 
 @media (max-width: 991px) {
@@ -846,7 +873,10 @@ body.apparatus-page-vps #apparatus-dashboard-view {
 /* Dedicated Servers & VPS Page Layout (/servers and /vps) */
 body.apparatus-page-servers .apparatus-dashboard-container,
 body.apparatus-page-vps .apparatus-dashboard-container {
-  max-width: 1200px !important;
+  width: 90% !important;
+  max-width: 90% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 body.apparatus-page-servers #apparatus-area-1,
