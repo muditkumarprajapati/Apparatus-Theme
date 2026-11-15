@@ -43,6 +43,7 @@ if [ ! -d "$PTERO_DIR" ]; then
 fi
 
 WRAPPER_FILE="$PTERO_DIR/resources/views/templates/wrapper.blade.php"
+ERROR_FILE="$PTERO_DIR/resources/views/layouts/error.blade.php"
 ASSET_DIR="$PTERO_DIR/public/themes/apparatus"
 
 # Resolve latest commit SHA to completely bypass GitHub CDN edge caching
@@ -64,6 +65,9 @@ install_theme() {
     echo -e "${GREEN}✓ Backup created: $WRAPPER_FILE.apparatus.bak${NC}"
   else
     echo -e "${YELLOW}[1/4] Existing backup detected. Keeping original safe.${NC}"
+  fi
+  if [ -f "$ERROR_FILE" ] && [ ! -f "$ERROR_FILE.apparatus.bak" ]; then
+    cp "$ERROR_FILE" "$ERROR_FILE.apparatus.bak"
   fi
 
   # Step 2: Download Assets
@@ -94,34 +98,44 @@ install_theme() {
   chown www-data:www-data "$CTRL_FILE"
   chmod 644 "$CTRL_FILE"
 
-  # Step 3: Inject Into Wrapper cleanly with timestamp cache-buster
+  # Step 3: Inject Into Wrapper and Error Views cleanly with timestamp cache-buster
   echo -e "${BLUE}[3/4] Linking Apparatus Theme with GSAP Parallax...${NC}"
-  if grep -q "apparatus-theme-loader" "$WRAPPER_FILE"; then
-    sed -i '/<!-- BEGIN apparatus-theme-loader -->/,/<!-- END apparatus-theme-loader -->/d' "$WRAPPER_FILE"
-  fi
 
-  TS=$(date +%s)
-  python3 -c "
-with open('$WRAPPER_FILE', 'r') as f:
+  inject_loader() {
+    local target="$1"
+    local ts="$2"
+    if [ ! -f "$target" ]; then return; fi
+    if grep -q "apparatus-theme-loader" "$target"; then
+      sed -i '/<!-- BEGIN apparatus-theme-loader -->/,/<!-- END apparatus-theme-loader -->/d' "$target"
+    fi
+    python3 -c "
+with open('$target', 'r') as f:
     content = f.read()
 
 snippet = '''<!-- BEGIN apparatus-theme-loader -->
 <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css\">
-<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css?v=$TS\">
+<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css?v=$ts\">
 <script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>
-<script src=\"/themes/apparatus/apparatus.js?v=$TS\" defer></script>
+<script src=\"/themes/apparatus/apparatus.js?v=$ts\" defer></script>
 <!-- END apparatus-theme-loader -->
 </head>'''
 
 if '</head>' in content:
     content = content.replace('</head>', snippet, 1)
-    with open('$WRAPPER_FILE', 'w') as f:
+    with open('$target', 'w') as f:
         f.write(content)
 " 2>/dev/null || {
-    awk -v ts="$TS" '/<\/head>/{print "<!-- BEGIN apparatus-theme-loader -->\n<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css\">\n<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css?v=" ts "\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>\n<script src=\"/themes/apparatus/apparatus.js?v=" ts "\" defer></script>\n<!-- END apparatus-theme-loader -->"}1' "$WRAPPER_FILE" > "$WRAPPER_FILE.tmp" && mv "$WRAPPER_FILE.tmp" "$WRAPPER_FILE"
+      awk -v ts="$ts" '/<\/head>/{print "<!-- BEGIN apparatus-theme-loader -->\n<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css\">\n<link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css?v=" ts "\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>\n<script src=\"/themes/apparatus/apparatus.js?v=" ts "\" defer></script>\n<!-- END apparatus-theme-loader -->"}1' "$target" > "$target.tmp" && mv "$target.tmp" "$target"
+    }
   }
 
-  echo -e "${GREEN}✓ Injected theme loader into wrapper successfully.${NC}"
+  TS=$(date +%s)
+  inject_loader "$WRAPPER_FILE" "$TS"
+  if [ -f "$ERROR_FILE" ]; then
+    inject_loader "$ERROR_FILE" "$TS"
+  fi
+
+  echo -e "${GREEN}✓ Injected theme loader successfully.${NC}"
 
   # Step 4: Disable broken reCAPTCHA if quota exceeded and Clear Cache
   echo -e "${BLUE}[4/4] Optimizing login and clearing Pterodactyl cache...${NC}"
@@ -158,6 +172,16 @@ remove_theme() {
     if [ -f "$WRAPPER_FILE" ]; then
       sed -i '/<!-- BEGIN apparatus-theme-loader -->/,/<!-- END apparatus-theme-loader -->/d' "$WRAPPER_FILE"
       echo -e "${GREEN}✓ Removed Apparatus injections from wrapper.${NC}"
+    fi
+  fi
+
+  # Restore error layout if backed up
+  if [ -f "$ERROR_FILE.apparatus.bak" ]; then
+    cp "$ERROR_FILE.apparatus.bak" "$ERROR_FILE"
+    rm -f "$ERROR_FILE.apparatus.bak"
+  else
+    if [ -f "$ERROR_FILE" ]; then
+      sed -i '/<!-- BEGIN apparatus-theme-loader -->/,/<!-- END apparatus-theme-loader -->/d' "$ERROR_FILE"
     fi
   fi
 

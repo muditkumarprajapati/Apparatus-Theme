@@ -1992,3 +1992,60 @@ body:not(.apparatus-auth) .apparatus-ip-divider {
   line-height: 1 !important;
   user-select: none !important;
 }
+
+/* ==============================================================================
+   HIDE ADMIN PANEL FOR NORMAL USERS
+   ============================================================================== */
+body:not(.apparatus-is-admin) .apparatus-admin-panel-item,
+body:not(.apparatus-is-admin) .apparatus-admin-nav-item,
+body:not(.apparatus-is-admin) a[data-path="/admin"],
+body:not(.apparatus-is-admin) a[href="/admin"],
+body:not(.apparatus-is-admin) .apparatus-tag-admin {
+  display: none !important;
+}
+
+/* ==============================================================================
+   HACKING ATTEMPT / ACCESS DENIED MODE (LOGIN PAGE BG WITH CUSTOM MESSAGING)
+   ============================================================================== */
+body.apparatus-hacking-mode .background-title {
+  color: #ef4444 !important;
+  font-size: clamp(2.4rem, 7.5vw, 7.5rem) !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.02em !important;
+  text-shadow: 0 10px 40px rgba(239, 68, 68, 0.45), 0 0 25px rgba(239, 68, 68, 0.3) !important;
+}
+
+body.apparatus-hacking-mode .background-subtitle {
+  color: #ffffff !important;
+  font-size: clamp(0.85rem, 1.8vw, 1.6rem) !important;
+  letter-spacing: 0.3em !important;
+  opacity: 0.9 !important;
+  text-transform: uppercase !important;
+}
+
+.hacking-warning-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.15rem;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.16);
+  border: 1.5px solid rgba(239, 68, 68, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  font-size: 2rem;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.35);
+  animation: apparatusPulseWarning 2s infinite ease-in-out;
+}
+
+@keyframes apparatusPulseWarning {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.35);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 35px rgba(239, 68, 68, 0.65);
+  }
+}

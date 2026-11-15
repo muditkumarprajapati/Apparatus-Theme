@@ -43,6 +43,23 @@
            window.location.pathname === '/login';
   }
 
+  function isUnauthorizedAdminAttempt() {
+    const rawPath = window.location.pathname || '';
+    if (!rawPath.startsWith('/admin')) return false;
+
+    // Check if this is the legitimate Pterodactyl Admin Panel
+    if (document.querySelector('.main-sidebar') || document.querySelector('.content-wrapper') || document.body.classList.contains('skin-blue')) {
+      return false;
+    }
+
+    const user = window.PterodactylUser;
+    if (user && user.root_admin) {
+      return false;
+    }
+
+    return true;
+  }
+
   // Toast / Popup Notification System
   function showToast(type, title, message) {
     const existing = document.getElementById('apparatus-toast');
@@ -133,7 +150,7 @@
   }
 
   function applyViewMode() {
-    if (isAuthPage()) return;
+    if (isAuthPage() || isUnauthorizedAdminAttempt()) return;
 
     const rawPath = window.location.pathname || '/';
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
@@ -176,7 +193,7 @@
   }
 
   function cleanPterodactylElements() {
-    if (isAuthPage()) return;
+    if (isAuthPage() || isUnauthorizedAdminAttempt()) return;
 
     // 0. Completely remove native progress bar / cyan glowing line
     const progressSelectors = [
@@ -584,8 +601,17 @@
           if (eEl) eEl.textContent = attr.email;
         }
         if (attr.admin !== undefined) {
+          const isAdmin = !!attr.admin;
           const rEl = document.getElementById('apparatus-stat-role');
-          if (rEl) rEl.textContent = attr.admin ? 'Administrator' : 'User';
+          if (rEl) rEl.textContent = isAdmin ? 'Administrator' : 'User';
+
+          if (isAdmin) {
+            document.body.classList.add('apparatus-is-admin');
+          } else {
+            document.body.classList.remove('apparatus-is-admin');
+            const adminItem = document.querySelector('.apparatus-admin-panel-item');
+            if (adminItem) adminItem.remove();
+          }
         }
       }
     } catch (e) {}
@@ -882,7 +908,7 @@
   }
 
   function initSidebar() {
-    if (isAuthPage()) {
+    if (isAuthPage() || isUnauthorizedAdminAttempt()) {
       const existing = document.getElementById('apparatus-sidebar');
       if (existing) existing.style.display = 'none';
       const toggle = document.getElementById('apparatus-mobile-toggle');
@@ -890,6 +916,14 @@
       const hero = document.getElementById('apparatus-dashboard-view');
       if (hero) hero.style.display = 'none';
       return;
+    }
+
+    const user = window.PterodactylUser || {};
+    const isRootAdmin = !!user.root_admin;
+    if (isRootAdmin) {
+      document.body.classList.add('apparatus-is-admin');
+    } else {
+      document.body.classList.remove('apparatus-is-admin');
     }
 
     // Initialize 4-card transparent dashboard
@@ -923,6 +957,41 @@
                 <a href="/servers" class="apparatus-nav-link" data-tab="servers" data-path="/servers">
                   <i class="ri-server-line apparatus-nav-icon"></i>
                   <span>Servers</span>
+                </a>
+              </li>
+              <li>
+                <a href="#vps" class="apparatus-nav-link apparatus-vps-link" data-path="/vps">
+                  <i class="ri-hard-drive-2-line apparatus-nav-icon"></i>
+                  <span>VPS</span>
+                  <span class="apparatus-tag-soon">Soon</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Billing -->
+          <div class="apparatus-nav-category">
+            <div class="apparatus-category-title">Billing</div>
+            <ul class="apparatus-nav-list">
+              <li>
+                <a href="#resource" class="apparatus-nav-link apparatus-resource-link" data-path="/billing/resource">
+                  <i class="ri-cpu-line apparatus-nav-icon"></i>
+                  <span>Resource</span>
+                  <span class="apparatus-tag-soon">Soon</span>
+                </a>
+              </li>
+              <li>
+                <a href="#store" class="apparatus-nav-link apparatus-store-link" data-path="/billing/store">
+                  <i class="ri-shopping-cart-2-line apparatus-nav-icon"></i>
+                  <span>Store</span>
+                  <span class="apparatus-tag-soon">Soon</span>
+                </a>
+              </li>
+              <li>
+                <a href="#earn" class="apparatus-nav-link apparatus-earn-link" data-path="/billing/earn">
+                  <i class="ri-copper-coin-line apparatus-nav-icon"></i>
+                  <span>Earn</span>
+                  <span class="apparatus-tag-soon">Soon</span>
                 </a>
               </li>
             </ul>
@@ -1014,13 +1083,15 @@
           <!-- Downside Options (Admin Panel & Sign Out) -->
           <div class="apparatus-nav-category apparatus-downside-options">
             <ul class="apparatus-nav-list">
-              <li>
+              ${isRootAdmin ? `
+              <li class="apparatus-admin-panel-item">
                 <a href="/admin" class="apparatus-nav-link" data-path="/admin">
                   <i class="ri-settings-4-line apparatus-nav-icon"></i>
                   <span>Admin Panel</span>
                   <span class="apparatus-tag-admin">Admin</span>
                 </a>
               </li>
+              ` : ''}
               <li>
                 <a href="#logout" class="apparatus-nav-link apparatus-logout-link">
                   <i class="ri-logout-box-r-line apparatus-nav-icon"></i>
@@ -1033,6 +1104,40 @@
       `;
 
       document.body.appendChild(sidebar);
+
+      // VPS click handler
+      const vpsBtn = sidebar.querySelector('.apparatus-vps-link');
+      if (vpsBtn) {
+        vpsBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          showToast('info', 'VPS Cloud', 'VPS management panel is coming soon!');
+        });
+      }
+
+      // Billing click handlers
+      const resourceBtn = sidebar.querySelector('.apparatus-resource-link');
+      if (resourceBtn) {
+        resourceBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          showToast('info', 'Resources', 'Resource management & upgrades coming soon!');
+        });
+      }
+
+      const storeBtn = sidebar.querySelector('.apparatus-store-link');
+      if (storeBtn) {
+        storeBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          showToast('info', 'Store', 'Cloud Addon & Server Store coming soon!');
+        });
+      }
+
+      const earnBtn = sidebar.querySelector('.apparatus-earn-link');
+      if (earnBtn) {
+        earnBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          showToast('info', 'Earn', 'Rewards and Earn system coming soon!');
+        });
+      }
 
       // Ticket placeholder click handler
       const ticketBtn = sidebar.querySelector('.apparatus-ticket-link');
@@ -1121,11 +1226,17 @@
 
   function initApparatus() {
     const isAuth = isAuthPage();
+    const isHacking = isUnauthorizedAdminAttempt();
 
-    if (isAuth) {
+    if (isAuth || isHacking) {
       document.body.classList.add('apparatus-auth');
+      if (isHacking) {
+        document.body.classList.add('apparatus-hacking-mode');
+      } else {
+        document.body.classList.remove('apparatus-hacking-mode');
+      }
     } else {
-      document.body.classList.remove('apparatus-auth');
+      document.body.classList.remove('apparatus-auth', 'apparatus-hacking-mode');
     }
 
     let wrapper = document.getElementById('apparatus-desert-wrapper');
@@ -1142,8 +1253,8 @@
           <img src="/themes/apparatus/desert/img-3.svg" alt="" class="parallax-layer layer-3" />
           
           <div class="parallax-layer layer-text">
-            <h1 class="background-title">ARIXBYTE</h1>
-            <p class="background-subtitle">CLOUD &amp; INFRASTRUCTURES</p>
+            <h1 class="background-title" id="apparatus-bg-title">ARIXBYTE</h1>
+            <p class="background-subtitle" id="apparatus-bg-subtitle">CLOUD &amp; INFRASTRUCTURES</p>
           </div>
 
           <img src="/themes/apparatus/desert/img-4.svg" alt="" class="parallax-layer layer-4" />
@@ -1159,7 +1270,19 @@
       setupParallax();
     }
 
+    const bgTitle = document.getElementById('apparatus-bg-title');
+    const bgSubtitle = document.getElementById('apparatus-bg-subtitle');
     const cardSlot = document.getElementById('apparatus-card-slot');
+
+    if (isHacking) {
+      if (bgTitle) bgTitle.textContent = 'HACKING ATTEMPT';
+      if (bgSubtitle) bgSubtitle.textContent = 'You Cannot Access is Page';
+      renderHackingMode();
+      return;
+    } else {
+      if (bgTitle) bgTitle.textContent = 'ARIXBYTE';
+      if (bgSubtitle) bgSubtitle.textContent = 'CLOUD & INFRASTRUCTURES';
+    }
 
     if (isAuth) {
       if (cardSlot) cardSlot.style.display = 'block';
@@ -1180,6 +1303,67 @@
     }
 
     initSidebar();
+  }
+
+  function renderHackingMode() {
+    document.body.classList.add('apparatus-auth', 'apparatus-hacking-mode');
+
+    const sidebar = document.getElementById('apparatus-sidebar');
+    if (sidebar) sidebar.style.display = 'none';
+    const toggle = document.getElementById('apparatus-mobile-toggle');
+    if (toggle) toggle.style.display = 'none';
+    const hero = document.getElementById('apparatus-dashboard-view');
+    if (hero) hero.style.display = 'none';
+
+    document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], main, #app > div > div').forEach(function (el) {
+      if (!el.classList.contains('desert-wrapper') && !el.closest('#apparatus-desert-wrapper')) {
+        el.style.setProperty('display', 'none', 'important');
+      }
+    });
+
+    const bgTitle = document.getElementById('apparatus-bg-title');
+    if (bgTitle) bgTitle.textContent = 'HACKING ATTEMPT';
+
+    const bgSubtitle = document.getElementById('apparatus-bg-subtitle');
+    if (bgSubtitle) bgSubtitle.textContent = 'You Cannot Access is Page';
+
+    const card = document.getElementById('apparatus-card-slot');
+    if (!card) return;
+
+    card.style.display = 'block';
+    card.style.opacity = '1';
+    card.style.visibility = 'visible';
+
+    card.innerHTML = `
+      <div class="hacking-warning-icon">
+        <i class="ri-alert-fill"></i>
+      </div>
+      <h2 class="login-title" style="color: #ef4444; font-size: 1.55rem; margin-bottom: 0.35rem; font-weight: 800; letter-spacing: 0.02em;">ACCESS DENIED</h2>
+      <p class="login-subtitle" style="margin-bottom: 1.5rem; color: rgba(255, 255, 255, 0.78); font-size: 0.92rem; line-height: 1.5;">
+        You do not have permission to access this page.
+      </p>
+      <a href="/" class="login-button apparatus-hacking-back-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; box-sizing: border-box;">
+        <i class="ri-arrow-left-line"></i> Return to Dashboard
+      </a>
+    `;
+
+    const backBtn = card.querySelector('.apparatus-hacking-back-btn');
+    if (backBtn) {
+      backBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.history.pushState({}, '', '/');
+        document.body.classList.remove('apparatus-auth', 'apparatus-hacking-mode');
+        if (bgTitle) bgTitle.textContent = 'ARIXBYTE';
+        if (bgSubtitle) bgSubtitle.textContent = 'CLOUD & INFRASTRUCTURES';
+        initApparatus();
+        applyViewMode();
+      });
+    }
+
+    if (typeof gsap !== 'undefined') {
+      gsap.set(".desert-wrapper", { backgroundColor: "#F7ABAE", display: "block" });
+      gsap.set(".parallax-container", { scale: 1, opacity: 1, visibility: "visible" });
+    }
   }
 
   // Icons
@@ -1686,8 +1870,9 @@
 
     const slot = document.getElementById('apparatus-card-slot');
     if (slot) {
-      slot.style.display = isAuthPage() ? 'block' : 'none';
-      if (isAuthPage()) {
+      const shouldShow = isAuthPage() || isUnauthorizedAdminAttempt();
+      slot.style.display = shouldShow ? 'block' : 'none';
+      if (shouldShow) {
         slot.style.opacity = '1';
         slot.style.visibility = 'visible';
       }
@@ -1743,10 +1928,24 @@
   }
 
   
+  // Global click interception: block non-admins attempting to access /admin
+  document.addEventListener('click', function (e) {
+    const a = e.target.closest('a[href*="/admin"], a[data-path="/admin"]');
+    if (!a) return;
+    const user = window.PterodactylUser;
+    const isRootAdmin = !!(user && user.root_admin);
+    if (!isRootAdmin) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.history.pushState({}, '', '/admin');
+      initApparatus();
+    }
+  }, true);
+
   // Dynamic cleanup and route sync observer for Pterodactyl SPA updates
   let lastObservedPath = window.location.pathname;
   const apparatusObserver = new MutationObserver(function () {
-    if (!isAuthPage()) {
+    if (!isAuthPage() && !isUnauthorizedAdminAttempt()) {
       cleanPterodactylElements();
       if (window.location.pathname !== lastObservedPath) {
         lastObservedPath = window.location.pathname;
