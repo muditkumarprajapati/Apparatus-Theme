@@ -60,8 +60,30 @@
     return true;
   }
 
+  // Lightweight Web Audio API tactile feedback
+  function playClickSound(force) {
+    if (!force && localStorage.getItem('apparatus_sound') !== 'true') return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(580, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.04);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.04);
+    } catch (e) {}
+  }
+
   // Toast / Popup Notification System
   function showToast(type, title, message) {
+    if (localStorage.getItem('apparatus_toast_enabled') === 'false') return;
     const existing = document.getElementById('apparatus-toast');
     if (existing) existing.remove();
 
@@ -121,9 +143,10 @@
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
     const isResourceTab = window.location.hash === '#resource' || currentPath === '/billing/resource' || currentPath === '/resource';
-    const isVpsTab = !isResourceTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
-    const isServerTab = !isResourceTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
-    const isDashboardTab = !isResourceTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
+    const isSettingsTab = !isResourceTab && (window.location.hash === '#panel-settings' || window.location.hash === '#settings' || currentPath === '/settings');
+    const isVpsTab = !isResourceTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
+    const isServerTab = !isResourceTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
+    const isDashboardTab = !isResourceTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
 
     const links = document.querySelectorAll('.apparatus-nav-link[data-path], .apparatus-nav-link[data-tab]');
     links.forEach(function (link) {
@@ -135,6 +158,8 @@
 
       if (tab === 'resource' || p === '/billing/resource' || p === '/resource') {
         isActive = isResourceTab;
+      } else if (tab === 'panel-settings' || tab === 'settings' || p === '/settings') {
+        isActive = isSettingsTab;
       } else if (tab === 'dashboard' || p === '/') {
         isActive = isDashboardTab;
       } else if (tab === 'servers' || p === '/servers') {
@@ -164,22 +189,39 @@
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
     const isResourceTab = window.location.hash === '#resource' || currentPath === '/billing/resource' || currentPath === '/resource';
-    const isVpsTab = !isResourceTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
-    const isServerTab = !isResourceTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
-    const isDashboardTab = !isResourceTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
+    const isSettingsTab = !isResourceTab && (window.location.hash === '#panel-settings' || window.location.hash === '#settings' || currentPath === '/settings');
+    const isVpsTab = !isResourceTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
+    const isServerTab = !isResourceTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
+    const isDashboardTab = !isResourceTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
     const isHomeRoute = isDashboardTab || isServerTab || isVpsTab;
 
     const hero = document.getElementById('apparatus-dashboard-view');
     const resView = document.getElementById('apparatus-resource-view');
+    const setView = document.getElementById('apparatus-settings-view');
 
     if (isResourceTab) {
       if (hero) hero.style.display = 'none';
+      if (setView) setView.style.display = 'none';
       if (resView) {
         resView.style.display = 'block';
         if (typeof renderResourcePage === 'function') renderResourcePage();
       }
       document.body.classList.add('apparatus-page-resource');
-      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-settings');
+
+      // Hide all account containers and native server messages
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3').forEach(function (el) {
+        el.style.setProperty('display', 'none', 'important');
+      });
+    } else if (isSettingsTab) {
+      if (hero) hero.style.display = 'none';
+      if (resView) resView.style.display = 'none';
+      if (setView) {
+        setView.style.display = 'block';
+        if (typeof renderSettingsPage === 'function') renderSettingsPage();
+      }
+      document.body.classList.add('apparatus-page-settings');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource');
 
       // Hide all account containers and native server messages
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3').forEach(function (el) {
@@ -187,8 +229,9 @@
       });
     } else if (isHomeRoute) {
       if (resView) resView.style.display = 'none';
+      if (setView) setView.style.display = 'none';
       if (hero) hero.style.display = 'block';
-      document.body.classList.remove('apparatus-page-resource');
+      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-settings');
 
       const sPane = document.getElementById('apparatus-pane-servers');
       const vPane = document.getElementById('apparatus-pane-vps');
@@ -227,8 +270,9 @@
       });
     } else {
       if (resView) resView.style.display = 'none';
+      if (setView) setView.style.display = 'none';
       if (hero) hero.style.display = 'none';
-      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-view-dashboard', 'apparatus-view-servers', 'apparatus-view-vps');
+      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-settings', 'apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-view-dashboard', 'apparatus-view-servers', 'apparatus-view-vps');
 
       // Restore display for account containers when on account routes
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, div.bg-gray-700, [class*="PageContentBlock"]').forEach(function (el) {
@@ -2111,6 +2155,666 @@
     renderResourcePage();
   }
 
+  // Wallpaper Manager
+  function applyWallpaper(wp) {
+    const customBg = document.getElementById('apparatus-custom-bg');
+    const parallaxEl = document.getElementById('apparatus-parallax');
+    if (!wp || wp === 'desert') {
+      document.body.classList.remove('apparatus-has-custom-wallpaper');
+      if (customBg) {
+        customBg.style.display = 'none';
+        customBg.style.backgroundImage = 'none';
+      }
+      if (parallaxEl) {
+        parallaxEl.style.display = 'block';
+        parallaxEl.style.opacity = '1';
+        parallaxEl.style.visibility = 'visible';
+      }
+    } else if (wp === 'dark') {
+      document.body.classList.add('apparatus-has-custom-wallpaper');
+      if (customBg) {
+        customBg.style.display = 'block';
+        customBg.style.background = 'radial-gradient(circle at 50% 20%, #1e1933 0%, #0d0b14 100%)';
+        customBg.style.backgroundImage = '';
+      }
+      if (parallaxEl) {
+        parallaxEl.style.display = 'none';
+        parallaxEl.style.opacity = '0';
+      }
+    } else {
+      document.body.classList.add('apparatus-has-custom-wallpaper');
+      if (customBg) {
+        customBg.style.display = 'block';
+        customBg.style.background = '#0a0a10';
+        customBg.style.backgroundImage = 'url("' + wp + '")';
+      }
+      if (parallaxEl) {
+        parallaxEl.style.display = 'none';
+        parallaxEl.style.opacity = '0';
+      }
+    }
+  }
+
+  // Global Settings Application
+  function applyGlobalStoredSettings() {
+    // 1. Privacy Mode: DEFAULT IS TRUE (BLURRED)
+    const isPrivacy = localStorage.getItem('apparatus_privacy') !== 'false';
+    if (isPrivacy) {
+      document.body.classList.add('apparatus-privacy-active');
+    } else {
+      document.body.classList.remove('apparatus-privacy-active');
+    }
+
+    // 2. Wallpaper
+    const wp = localStorage.getItem('apparatus_wallpaper') || 'desert';
+    applyWallpaper(wp);
+
+    // 3. Frosted Glass Blur
+    const blur = localStorage.getItem('apparatus_glass_blur') || '16px';
+    document.documentElement.style.setProperty('--apparatus-glass-blur', blur);
+
+    // 4. Low-Spec Mode
+    const isLowSpec = localStorage.getItem('apparatus_low_spec') === 'true';
+    if (isLowSpec) {
+      document.body.classList.add('apparatus-low-spec');
+    } else {
+      document.body.classList.remove('apparatus-low-spec');
+    }
+
+    // 5. Reduce Motion
+    const isReduceMotion = localStorage.getItem('apparatus_reduce_motion') === 'true';
+    if (isReduceMotion) {
+      document.body.classList.add('apparatus-reduce-motion');
+    } else {
+      document.body.classList.remove('apparatus-reduce-motion');
+    }
+
+    // 6. Parallax Motion
+    const isParallax = localStorage.getItem('apparatus_parallax') !== 'false';
+    if (!isParallax) {
+      document.body.classList.add('apparatus-no-parallax');
+    } else {
+      document.body.classList.remove('apparatus-no-parallax');
+    }
+  }
+
+  // Synchronize Settings Page UI elements with storage
+  function renderSettingsPage() {
+    const isPrivacy = localStorage.getItem('apparatus_privacy') !== 'false';
+    const privToggle = document.getElementById('apparatus-setting-privacy-toggle');
+    const privBadge = document.getElementById('apparatus-privacy-status-badge');
+    if (privToggle) privToggle.checked = isPrivacy;
+    if (privBadge) {
+      privBadge.textContent = isPrivacy ? 'Blurred (Active)' : 'Visible (Disabled)';
+      privBadge.className = 'apparatus-setting-badge apparatus-badge-privacy ' + (isPrivacy ? 'active' : 'inactive');
+    }
+
+    const currentWp = localStorage.getItem('apparatus_wallpaper') || 'desert';
+    const wpCards = document.querySelectorAll('.apparatus-wp-preset-card');
+    let matchedPreset = false;
+    wpCards.forEach(function (c) {
+      if (c.getAttribute('data-wp') === currentWp) {
+        c.classList.add('active');
+        matchedPreset = true;
+      } else {
+        c.classList.remove('active');
+      }
+    });
+
+    const customWpInput = document.getElementById('apparatus-custom-wp-input');
+    if (customWpInput) {
+      if (!matchedPreset && currentWp !== 'desert' && currentWp !== 'dark') {
+        customWpInput.value = currentWp;
+      } else {
+        customWpInput.value = '';
+      }
+    }
+
+    const currentBlur = localStorage.getItem('apparatus_glass_blur') || '16px';
+    const blurBtns = document.querySelectorAll('.apparatus-blur-opt-btn');
+    blurBtns.forEach(function (b) {
+      if (b.getAttribute('data-blur') === currentBlur) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+
+    const parallaxToggle = document.getElementById('apparatus-setting-parallax-toggle');
+    if (parallaxToggle) parallaxToggle.checked = localStorage.getItem('apparatus_parallax') !== 'false';
+
+    const lowSpecToggle = document.getElementById('apparatus-setting-lowspec-toggle');
+    if (lowSpecToggle) lowSpecToggle.checked = localStorage.getItem('apparatus_low_spec') === 'true';
+
+    const redMotionToggle = document.getElementById('apparatus-setting-reducemotion-toggle');
+    if (redMotionToggle) redMotionToggle.checked = localStorage.getItem('apparatus_reduce_motion') === 'true';
+
+    const soundToggle = document.getElementById('apparatus-setting-sound-toggle');
+    if (soundToggle) soundToggle.checked = localStorage.getItem('apparatus_sound') === 'true';
+
+    const toastToggle = document.getElementById('apparatus-setting-toasts-toggle');
+    if (toastToggle) toastToggle.checked = localStorage.getItem('apparatus_toast_enabled') !== 'false';
+  }
+
+  // Initialize the Dedicated Panel Settings View
+  function initSettingsView() {
+    let setView = document.getElementById('apparatus-settings-view');
+    if (setView) return;
+
+    setView = document.createElement('div');
+    setView.id = 'apparatus-settings-view';
+    setView.className = 'apparatus-settings-view';
+    setView.style.display = 'none';
+
+    setView.innerHTML = `
+      <div class="apparatus-dashboard-container">
+        
+        <!-- Top Settings Header -->
+        <div class="apparatus-card apparatus-resource-header-card apparatus-settings-header-card">
+          <div class="apparatus-resource-header-left">
+            <div class="apparatus-resource-breadcrumbs">
+              <a href="/" class="apparatus-breadcrumb-link" id="apparatus-set-back-btn">
+                <i class="ri-arrow-left-s-line"></i> Dashboard
+              </a>
+              <span class="apparatus-breadcrumb-sep">/</span>
+              <span class="apparatus-breadcrumb-current">Panel Settings</span>
+            </div>
+            <h1 class="apparatus-resource-main-title">
+              <i class="ri-settings-3-line" style="color: #a78bfa;"></i> Panel Settings
+            </h1>
+            <p class="apparatus-resource-subtitle">
+              Configure client privacy, visual appearance, themes, and personal interface preferences.
+            </p>
+          </div>
+
+          <div class="apparatus-resource-header-right">
+            <a href="/" class="apparatus-btn apparatus-btn-glass" id="apparatus-set-back-btn-2">
+              <i class="ri-dashboard-line"></i> Back to Dashboard
+            </a>
+          </div>
+        </div>
+
+        <!-- Settings Cards Grid -->
+        <div class="apparatus-settings-grid">
+          
+          <!-- CARD 1: PRIVACY PROTECTION (HIGHLIGHTED) -->
+          <div class="apparatus-card apparatus-setting-card apparatus-setting-card-privacy">
+            <div class="apparatus-setting-card-head">
+              <div class="apparatus-setting-icon-box" style="background: rgba(167, 139, 250, 0.15); color: #c4b5fd;">
+                <i class="ri-eye-off-line"></i>
+              </div>
+              <div class="apparatus-setting-title-meta">
+                <div class="apparatus-setting-title-row">
+                  <h2 class="apparatus-setting-title">Privacy</h2>
+                  <span class="apparatus-setting-badge apparatus-badge-privacy active" id="apparatus-privacy-status-badge">Blurred (Active)</span>
+                </div>
+                <p class="apparatus-setting-desc">Configure privacy settings for sensitive information across the panel.</p>
+              </div>
+              <div class="apparatus-setting-toggle-wrap">
+                <label class="apparatus-switch">
+                  <input type="checkbox" id="apparatus-setting-privacy-toggle" checked>
+                  <span class="apparatus-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="apparatus-setting-body">
+              <p class="apparatus-setting-explanation">
+                Automatically obscures sensitive metrics including IP addresses, ports, account email, currency balances, and referral codes across all pages.
+                <strong>Hover your cursor over any blurred element to temporarily reveal it.</strong>
+              </p>
+
+              <!-- Interactive Privacy Test Area -->
+              <div class="apparatus-privacy-preview-box">
+                <div class="apparatus-privacy-preview-head">
+                  <span class="apparatus-privacy-preview-title"><i class="ri-flask-line"></i> Live Privacy Sandbox</span>
+                  <span class="apparatus-privacy-preview-sub">Hover over any item below to test:</span>
+                </div>
+                <div class="apparatus-privacy-chips-row">
+                  <div class="apparatus-privacy-chip">
+                    <span class="apparatus-privacy-chip-lbl">Server IP:</span>
+                    <span class="apparatus-blur-sensitive apparatus-privacy-val">198.51.100.42:25565</span>
+                  </div>
+                  <div class="apparatus-privacy-chip">
+                    <span class="apparatus-privacy-chip-lbl">Account Email:</span>
+                    <span class="apparatus-blur-sensitive apparatus-privacy-val">client@arixbyte.com</span>
+                  </div>
+                  <div class="apparatus-privacy-chip">
+                    <span class="apparatus-privacy-chip-lbl">Balance:</span>
+                    <span class="apparatus-blur-sensitive apparatus-privacy-val">₹450.00 / 1,200 Coins</span>
+                  </div>
+                  <div class="apparatus-privacy-chip">
+                    <span class="apparatus-privacy-chip-lbl">Referral Code:</span>
+                    <span class="apparatus-blur-sensitive apparatus-privacy-val">ARIX-9082-VIP</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 2: APPEARANCE & WALLPAPERS -->
+          <div class="apparatus-card apparatus-setting-card">
+            <div class="apparatus-setting-card-head">
+              <div class="apparatus-setting-icon-box" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+                <i class="ri-palette-line"></i>
+              </div>
+              <div class="apparatus-setting-title-meta">
+                <h2 class="apparatus-setting-title">Appearance &amp; Theme Wallpapers</h2>
+                <p class="apparatus-setting-desc">Choose from high-definition theme presets or provide your own custom wallpaper URL.</p>
+              </div>
+            </div>
+
+            <div class="apparatus-setting-body">
+              <div class="apparatus-setting-sublabel">Select Background Theme</div>
+              <div class="apparatus-wallpaper-presets-grid" id="apparatus-wallpaper-presets">
+                
+                <!-- Preset 1: Desert Sunset (Default) -->
+                <div class="apparatus-wp-preset-card active" data-wp="desert">
+                  <div class="apparatus-wp-preview apparatus-wp-preview-desert">
+                    <span class="apparatus-wp-badge">Default</span>
+                  </div>
+                  <div class="apparatus-wp-meta">
+                    <span class="apparatus-wp-name">Desert Sunset</span>
+                    <span class="apparatus-wp-type">Parallax SVG</span>
+                  </div>
+                </div>
+
+                <!-- Preset 2: Midnight Nebula -->
+                <div class="apparatus-wp-preset-card" data-wp="https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1920&q=80">
+                  <div class="apparatus-wp-preview" style="background-image: url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=300&q=60');"></div>
+                  <div class="apparatus-wp-meta">
+                    <span class="apparatus-wp-name">Midnight Nebula</span>
+                    <span class="apparatus-wp-type">Cosmic Purple</span>
+                  </div>
+                </div>
+
+                <!-- Preset 3: Cyber City -->
+                <div class="apparatus-wp-preset-card" data-wp="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1920&q=80">
+                  <div class="apparatus-wp-preview" style="background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=60');"></div>
+                  <div class="apparatus-wp-meta">
+                    <span class="apparatus-wp-name">Cyber City</span>
+                    <span class="apparatus-wp-type">Futuristic Neon</span>
+                  </div>
+                </div>
+
+                <!-- Preset 4: Deep Space -->
+                <div class="apparatus-wp-preset-card" data-wp="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80">
+                  <div class="apparatus-wp-preview" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=300&q=60');"></div>
+                  <div class="apparatus-wp-meta">
+                    <span class="apparatus-wp-name">Deep Space</span>
+                    <span class="apparatus-wp-type">Galactic Blue</span>
+                  </div>
+                </div>
+
+                <!-- Preset 5: Pure Dark Glass -->
+                <div class="apparatus-wp-preset-card" data-wp="dark">
+                  <div class="apparatus-wp-preview apparatus-wp-preview-dark"></div>
+                  <div class="apparatus-wp-meta">
+                    <span class="apparatus-wp-name">Pure Dark Glass</span>
+                    <span class="apparatus-wp-type">Minimal Radial</span>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Custom Wallpaper URL Input -->
+              <div class="apparatus-setting-sublabel" style="margin-top: 1.5rem;">Custom Wallpaper Image URL</div>
+              <div class="apparatus-custom-wp-bar">
+                <input type="url" id="apparatus-custom-wp-input" class="apparatus-input" placeholder="https://images.unsplash.com/... or direct image link (.png, .jpg, .webp)">
+                <button type="button" class="apparatus-btn apparatus-btn-primary" id="apparatus-apply-custom-wp-btn">
+                  <i class="ri-check-line"></i> Apply
+                </button>
+                <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-reset-wp-btn" title="Reset to Desert Sunset">
+                  <i class="ri-refresh-line"></i> Reset
+                </button>
+              </div>
+
+              <!-- Frosted Glass Blur Presets & Parallax -->
+              <div class="apparatus-setting-sub-grid" style="margin-top: 1.5rem;">
+                <div class="apparatus-setting-sub-item">
+                  <div class="apparatus-setting-sublabel">Frosted Glass Blur Density</div>
+                  <div class="apparatus-blur-btn-group" id="apparatus-blur-btn-group">
+                    <button type="button" class="apparatus-blur-opt-btn" data-blur="8px">Soft (8px)</button>
+                    <button type="button" class="apparatus-blur-opt-btn active" data-blur="16px">Standard (16px)</button>
+                    <button type="button" class="apparatus-blur-opt-btn" data-blur="28px">Deep Frost (28px)</button>
+                  </div>
+                </div>
+
+                <div class="apparatus-setting-sub-item">
+                  <div class="apparatus-setting-sublabel">Interactive Parallax Motion</div>
+                  <div class="apparatus-setting-row-inline">
+                    <div>
+                      <span class="apparatus-setting-sub-title">3D Mouse Tilt &amp; Waves</span>
+                      <p class="apparatus-setting-sub-desc">Responsive multi-depth parallax animation when moving the mouse.</p>
+                    </div>
+                    <label class="apparatus-switch">
+                      <input type="checkbox" id="apparatus-setting-parallax-toggle" checked>
+                      <span class="apparatus-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- CARD 3: PERFORMANCE & GRAPHICS -->
+          <div class="apparatus-card apparatus-setting-card">
+            <div class="apparatus-setting-card-head">
+              <div class="apparatus-setting-icon-box" style="background: rgba(52, 211, 153, 0.15); color: #34d399;">
+                <i class="ri-speed-up-line"></i>
+              </div>
+              <div class="apparatus-setting-title-meta">
+                <h2 class="apparatus-setting-title">Performance &amp; Accessibility</h2>
+                <p class="apparatus-setting-desc">Optimize rendering pipeline, reduce GPU overhead, and configure motion preferences.</p>
+              </div>
+            </div>
+
+            <div class="apparatus-setting-body">
+              <div class="apparatus-setting-list">
+                
+                <div class="apparatus-setting-row">
+                  <div class="apparatus-setting-info">
+                    <div class="apparatus-setting-row-title">
+                      <i class="ri-battery-charge-line" style="color: #34d399;"></i> Low-Spec / Battery Saver Mode
+                    </div>
+                    <div class="apparatus-setting-row-desc">
+                      Disables backdrop blur filters and heavy GPU compositing to maximize battery life and framerate on low-end hardware.
+                    </div>
+                  </div>
+                  <div class="apparatus-setting-ctrl">
+                    <label class="apparatus-switch">
+                      <input type="checkbox" id="apparatus-setting-lowspec-toggle">
+                      <span class="apparatus-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="apparatus-setting-row">
+                  <div class="apparatus-setting-info">
+                    <div class="apparatus-setting-row-title">
+                      <i class="ri-stop-circle-line" style="color: #fbbf24;"></i> Reduce Motion
+                    </div>
+                    <div class="apparatus-setting-row-desc">
+                      Minimizes card transitions and floating wave animations for users sensitive to motion.
+                    </div>
+                  </div>
+                  <div class="apparatus-setting-ctrl">
+                    <label class="apparatus-switch">
+                      <input type="checkbox" id="apparatus-setting-reducemotion-toggle">
+                      <span class="apparatus-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 4: NOTIFICATIONS & AUDIO FEEDBACK -->
+          <div class="apparatus-card apparatus-setting-card">
+            <div class="apparatus-setting-card-head">
+              <div class="apparatus-setting-icon-box" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24;">
+                <i class="ri-volume-up-line"></i>
+              </div>
+              <div class="apparatus-setting-title-meta">
+                <h2 class="apparatus-setting-title">Audio &amp; Notification Preferences</h2>
+                <p class="apparatus-setting-desc">Configure tactile audio feedback and popup toast behavior.</p>
+              </div>
+            </div>
+
+            <div class="apparatus-setting-body">
+              <div class="apparatus-setting-list">
+                
+                <div class="apparatus-setting-row">
+                  <div class="apparatus-setting-info">
+                    <div class="apparatus-setting-row-title">
+                      <i class="ri-music-2-line" style="color: #fbbf24;"></i> Tactile Interface Click Sound
+                    </div>
+                    <div class="apparatus-setting-row-desc">
+                      Plays a subtle, ultra-low latency acoustic click via Web Audio API on button and navigation clicks.
+                    </div>
+                  </div>
+                  <div class="apparatus-setting-ctrl" style="display: flex; align-items: center; gap: 0.75rem;">
+                    <button type="button" class="apparatus-btn apparatus-btn-glass apparatus-btn-sm" id="apparatus-test-sound-btn">
+                      <i class="ri-play-line"></i> Test Click
+                    </button>
+                    <label class="apparatus-switch">
+                      <input type="checkbox" id="apparatus-setting-sound-toggle">
+                      <span class="apparatus-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="apparatus-setting-row">
+                  <div class="apparatus-setting-info">
+                    <div class="apparatus-setting-row-title">
+                      <i class="ri-notification-3-line" style="color: #38bdf8;"></i> System Toast Alerts
+                    </div>
+                    <div class="apparatus-setting-row-desc">
+                      Show status toasts for actions such as copied text, settings saved, and daily rewards.
+                    </div>
+                  </div>
+                  <div class="apparatus-setting-ctrl">
+                    <label class="apparatus-switch">
+                      <input type="checkbox" id="apparatus-setting-toasts-toggle" checked>
+                      <span class="apparatus-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+    const app = document.getElementById('app') || document.body;
+    const resView = document.getElementById('apparatus-resource-view');
+    const dash = document.getElementById('apparatus-dashboard-view');
+    if (resView && resView.parentNode) {
+      resView.parentNode.insertBefore(setView, resView.nextSibling);
+    } else if (dash && dash.parentNode) {
+      dash.parentNode.insertBefore(setView, dash.nextSibling);
+    } else if (app) {
+      app.appendChild(setView);
+    }
+
+    // Attach back buttons
+    const backBtn1 = document.getElementById('apparatus-set-back-btn');
+    const backBtn2 = document.getElementById('apparatus-set-back-btn-2');
+    function goBackFromSettings(e) {
+      e.preventDefault();
+      window.location.hash = '';
+      if (window.location.pathname !== '/') {
+        history.pushState(null, '', '/');
+      }
+      applyViewMode();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    if (backBtn1) backBtn1.addEventListener('click', goBackFromSettings);
+    if (backBtn2) backBtn2.addEventListener('click', goBackFromSettings);
+
+    // 1. Privacy Toggle Event
+    const privToggle = document.getElementById('apparatus-setting-privacy-toggle');
+    const privBadge = document.getElementById('apparatus-privacy-status-badge');
+    if (privToggle) {
+      privToggle.checked = localStorage.getItem('apparatus_privacy') !== 'false';
+      privToggle.addEventListener('change', function () {
+        const isBlurred = privToggle.checked;
+        localStorage.setItem('apparatus_privacy', isBlurred ? 'true' : 'false');
+        if (isBlurred) {
+          document.body.classList.add('apparatus-privacy-active');
+          if (privBadge) {
+            privBadge.textContent = 'Blurred (Active)';
+            privBadge.className = 'apparatus-setting-badge apparatus-badge-privacy active';
+          }
+          showToast('success', 'Privacy Filter Enabled', 'Sensitive info like IP addresses and balances are now obscured.');
+        } else {
+          document.body.classList.remove('apparatus-privacy-active');
+          if (privBadge) {
+            privBadge.textContent = 'Visible (Disabled)';
+            privBadge.className = 'apparatus-setting-badge apparatus-badge-privacy inactive';
+          }
+          showToast('info', 'Privacy Filter Disabled', 'Sensitive information is now visible.');
+        }
+      });
+    }
+
+    // 2. Wallpaper Presets Events
+    const wpCards = setView.querySelectorAll('.apparatus-wp-preset-card');
+    const customWpInput = setView.querySelector('#apparatus-custom-wp-input');
+    wpCards.forEach(function (card) {
+      card.addEventListener('click', function () {
+        const wpVal = card.getAttribute('data-wp');
+        wpCards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        if (customWpInput && wpVal !== 'desert' && wpVal !== 'dark') {
+          customWpInput.value = wpVal;
+        } else if (customWpInput) {
+          customWpInput.value = '';
+        }
+        localStorage.setItem('apparatus_wallpaper', wpVal);
+        applyWallpaper(wpVal);
+        const name = card.querySelector('.apparatus-wp-name') ? card.querySelector('.apparatus-wp-name').textContent : 'Wallpaper';
+        showToast('success', 'Theme Updated', 'Applied ' + name + ' background.');
+      });
+    });
+
+    // Custom Wallpaper Apply & Reset
+    const applyWpBtn = setView.querySelector('#apparatus-apply-custom-wp-btn');
+    if (applyWpBtn && customWpInput) {
+      applyWpBtn.addEventListener('click', function () {
+        const url = customWpInput.value.trim();
+        if (!url) {
+          showToast('error', 'Invalid URL', 'Please enter a valid image URL.');
+          return;
+        }
+        localStorage.setItem('apparatus_wallpaper', url);
+        applyWallpaper(url);
+        wpCards.forEach(c => c.classList.remove('active'));
+        showToast('success', 'Custom Wallpaper Applied', 'Custom background loaded successfully.');
+      });
+    }
+
+    const resetWpBtn = setView.querySelector('#apparatus-reset-wp-btn');
+    if (resetWpBtn) {
+      resetWpBtn.addEventListener('click', function () {
+        localStorage.setItem('apparatus_wallpaper', 'desert');
+        applyWallpaper('desert');
+        if (customWpInput) customWpInput.value = '';
+        wpCards.forEach(function (c) {
+          if (c.getAttribute('data-wp') === 'desert') c.classList.add('active');
+          else c.classList.remove('active');
+        });
+        showToast('info', 'Wallpaper Reset', 'Restored Desert Sunset Parallax.');
+      });
+    }
+
+    // 3. Frosted Glass Blur Density Buttons
+    const blurBtns = setView.querySelectorAll('.apparatus-blur-opt-btn');
+    blurBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        blurBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const bVal = btn.getAttribute('data-blur');
+        localStorage.setItem('apparatus_glass_blur', bVal);
+        document.documentElement.style.setProperty('--apparatus-glass-blur', bVal);
+        showToast('success', 'Glass Blur Updated', 'Frosted glass blur set to ' + bVal + '.');
+      });
+    });
+
+    // 4. Parallax Toggle
+    const parallaxToggle = setView.querySelector('#apparatus-setting-parallax-toggle');
+    if (parallaxToggle) {
+      parallaxToggle.checked = localStorage.getItem('apparatus_parallax') !== 'false';
+      parallaxToggle.addEventListener('change', function () {
+        const isEnabled = parallaxToggle.checked;
+        localStorage.setItem('apparatus_parallax', isEnabled ? 'true' : 'false');
+        if (isEnabled) {
+          document.body.classList.remove('apparatus-no-parallax');
+          showToast('success', 'Parallax Active', 'Interactive 3D mouse parallax is enabled.');
+        } else {
+          document.body.classList.add('apparatus-no-parallax');
+          showToast('info', 'Parallax Paused', 'Interactive parallax motion is paused.');
+        }
+      });
+    }
+
+    // 5. Low-Spec Mode Toggle
+    const lowSpecToggle = setView.querySelector('#apparatus-setting-lowspec-toggle');
+    if (lowSpecToggle) {
+      lowSpecToggle.checked = localStorage.getItem('apparatus_low_spec') === 'true';
+      lowSpecToggle.addEventListener('change', function () {
+        const isLow = lowSpecToggle.checked;
+        localStorage.setItem('apparatus_low_spec', isLow ? 'true' : 'false');
+        if (isLow) {
+          document.body.classList.add('apparatus-low-spec');
+          showToast('success', 'Battery Saver Enabled', 'Backdrop blur disabled for maximum performance.');
+        } else {
+          document.body.classList.remove('apparatus-low-spec');
+          showToast('info', 'Normal Graphics Restored', 'Backdrop glass blur re-enabled.');
+        }
+      });
+    }
+
+    // 6. Reduce Motion Toggle
+    const redMotionToggle = setView.querySelector('#apparatus-setting-reducemotion-toggle');
+    if (redMotionToggle) {
+      redMotionToggle.checked = localStorage.getItem('apparatus_reduce_motion') === 'true';
+      redMotionToggle.addEventListener('change', function () {
+        const isRed = redMotionToggle.checked;
+        localStorage.setItem('apparatus_reduce_motion', isRed ? 'true' : 'false');
+        if (isRed) {
+          document.body.classList.add('apparatus-reduce-motion');
+          showToast('info', 'Reduced Motion Active', 'Animations minimized for accessibility.');
+        } else {
+          document.body.classList.remove('apparatus-reduce-motion');
+          showToast('info', 'Animations Restored', 'Standard smooth transitions active.');
+        }
+      });
+    }
+
+    // 7. Tactile Sound Toggle & Test
+    const soundToggle = setView.querySelector('#apparatus-setting-sound-toggle');
+    if (soundToggle) {
+      soundToggle.checked = localStorage.getItem('apparatus_sound') === 'true';
+      soundToggle.addEventListener('change', function () {
+        const isSnd = soundToggle.checked;
+        localStorage.setItem('apparatus_sound', isSnd ? 'true' : 'false');
+        if (isSnd) {
+          playClickSound(true);
+          showToast('success', 'Interface Audio Enabled', 'Click audio feedback is now active.');
+        } else {
+          showToast('info', 'Interface Audio Muted', 'Click audio feedback disabled.');
+        }
+      });
+    }
+
+    const testSndBtn = setView.querySelector('#apparatus-test-sound-btn');
+    if (testSndBtn) {
+      testSndBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        playClickSound(true);
+      });
+    }
+
+    // 8. Toast Alerts Toggle
+    const toastToggle = setView.querySelector('#apparatus-setting-toasts-toggle');
+    if (toastToggle) {
+      toastToggle.checked = localStorage.getItem('apparatus_toast_enabled') !== 'false';
+      toastToggle.addEventListener('change', function () {
+        const isToast = toastToggle.checked;
+        localStorage.setItem('apparatus_toast_enabled', isToast ? 'true' : 'false');
+        if (isToast) {
+          showToast('success', 'Toast Alerts Active', 'System alerts will pop up normally.');
+        }
+      });
+    }
+
+    renderSettingsPage();
+  }
+
   function initSidebar() {
     if (isAuthPage() || isUnauthorizedAdminAttempt()) {
       const existing = document.getElementById('apparatus-sidebar');
@@ -2130,9 +2834,10 @@
       document.body.classList.remove('apparatus-is-admin');
     }
 
-    // Initialize 4-card transparent dashboard and resource view
+    // Initialize 4-card transparent dashboard, resource view, and settings view
     initDashboardView();
     initResourceView();
+    initSettingsView();
 
     let sidebar = document.getElementById('apparatus-sidebar');
     if (!sidebar) {
@@ -2392,15 +3097,31 @@
         });
       }
 
-      // Panel Settings category click handlers
-      const panelSettingsLinks = [
-        { selector: '.apparatus-panel-settings-link', title: 'Panel Settings', msg: 'Opening Panel Settings configuration...' },
+      // Dedicated Panel Settings navigation (for all users)
+      const panelSettingsBtn = sidebar.querySelector('.apparatus-panel-settings-link');
+      if (panelSettingsBtn) {
+        panelSettingsBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          const rawP = window.location.pathname || '/';
+          const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard';
+          if (!onHome) {
+            window.location.href = '/#panel-settings';
+          } else {
+            window.location.hash = '#panel-settings';
+            applyViewMode();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      }
+
+      // Admin-only placeholder settings links
+      const adminPanelSettingsLinks = [
         { selector: '.apparatus-panel-editor-link', title: 'Panel Editor', msg: 'Opening Panel Editor customization module...' },
         { selector: '.apparatus-settings-link', title: 'Apparatus Settings', msg: 'Opening Apparatus Theme configuration...' },
         { selector: '.apparatus-addon-settings-link', title: 'Addon Settings', msg: 'Opening Addon Settings configuration...' }
       ];
 
-      panelSettingsLinks.forEach(function (item) {
+      adminPanelSettingsLinks.forEach(function (item) {
         const btn = sidebar.querySelector(item.selector);
         if (btn) {
           btn.addEventListener('click', function (e) {
@@ -2533,12 +3254,15 @@
           <img src="/themes/apparatus/desert/img-7.svg" alt="" class="parallax-layer layer-7" />
         </div>
 
+        <div id="apparatus-custom-bg" class="apparatus-custom-bg"></div>
+
         <div class="login-card" id="apparatus-card-slot"></div>
       `;
 
       document.body.prepend(wrapper);
     }
     setupParallax();
+    applyGlobalStoredSettings();
 
     const bgTitle = document.getElementById('apparatus-bg-title');
     const bgSubtitle = document.getElementById('apparatus-bg-subtitle');
@@ -3187,6 +3911,7 @@
 
     // Mouse parallax tracking
     window.addEventListener('mousemove', function (e) {
+      if (document.body.classList.contains('apparatus-no-parallax') || document.body.classList.contains('apparatus-reduce-motion')) return;
       const x = (e.clientX / window.innerWidth - 0.5) * 2;
       layers.forEach(function (layerNum) {
         const depth = layerNum * 10;
@@ -3206,6 +3931,13 @@
       });
     });
   }
+
+  // Global tactile feedback click interceptor
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('button, a, input[type="checkbox"], input[type="radio"], .apparatus-blur-opt-btn, .apparatus-wp-preset-card')) {
+      playClickSound();
+    }
+  }, true);
 
   // Initialize and Handle Navigation
   if (document.readyState === 'loading') {

@@ -3552,3 +3552,600 @@ body.apparatus-page-resource #apparatus-dashboard-view {
   align-items: center;
   gap: 0.35rem;
 }
+
+
+/* ==============================================================================
+   PANEL SETTINGS & PRIVACY VIEW (Client Experience Customizer)
+   ============================================================================== */
+.apparatus-settings-view {
+  position: relative;
+  z-index: 30;
+  width: 100%;
+  display: none;
+}
+
+body.apparatus-page-settings #apparatus-settings-view {
+  display: block !important;
+}
+
+body.apparatus-page-settings #apparatus-dashboard-view,
+body.apparatus-page-settings #apparatus-resource-view {
+  display: none !important;
+}
+
+body.apparatus-page-resource #apparatus-settings-view {
+  display: none !important;
+}
+
+body.apparatus-page-settings div[class*="AccountOverviewContainer"],
+body.apparatus-page-settings div[class*="AccountApiContainer"],
+body.apparatus-page-settings div[class*="AccountSSHContainer"],
+body.apparatus-page-settings div[class*="ActivityLogContainer"],
+body.apparatus-page-settings .sc-12to0iy-1,
+body.apparatus-page-settings .sc-1c4s3nm-0,
+body.apparatus-page-settings .sc-yksipt-0,
+body.apparatus-page-settings p[class*="DashboardContainer"],
+body.apparatus-page-settings .sc-1topkxf-3 {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------------------
+   DYNAMIC WALLPAPER & GRAPHICS ENGINE
+   ------------------------------------------------------------------------------ */
+.apparatus-custom-bg {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 1 !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  pointer-events: none !important;
+  transition: opacity 0.4s ease, filter 0.4s ease !important;
+  opacity: 0;
+  display: none;
+}
+
+body.apparatus-has-custom-wallpaper .apparatus-custom-bg {
+  opacity: 1 !important;
+  display: block !important;
+}
+
+body.apparatus-has-custom-wallpaper #apparatus-parallax {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+body.apparatus-no-parallax .parallax-layer {
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Low-Spec & Accessibility Motion Overrides */
+body.apparatus-low-spec .apparatus-card,
+body.apparatus-low-spec .apparatus-sidebar,
+body.apparatus-low-spec .apparatus-resource-stat-tile,
+body.apparatus-low-spec .apparatus-setting-card,
+body.apparatus-low-spec .desert-wrapper {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: rgba(18, 16, 26, 0.95) !important;
+}
+
+body.apparatus-reduce-motion *,
+body.apparatus-reduce-motion *::before,
+body.apparatus-reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  transform: none !important;
+}
+
+/* ------------------------------------------------------------------------------
+   PRIVACY FILTER (DEFAULT ACTIVE: BLURRED SENSITIVE CLIENT DATA)
+   ------------------------------------------------------------------------------ */
+body.apparatus-privacy-active .apparatus-blur-sensitive,
+body.apparatus-privacy-active .apparatus-privacy-val,
+body.apparatus-privacy-active .apparatus-balance-value,
+body.apparatus-privacy-active .apparatus-referral-code-text,
+body.apparatus-privacy-active #apparatus-metric-email,
+body.apparatus-privacy-active .apparatus-user-email,
+body.apparatus-privacy-active #apparatus-res-coin-val,
+body.apparatus-privacy-active .apparatus-res-coins-num,
+body.apparatus-privacy-active [data-sensitive="true"],
+body.apparatus-privacy-active .apparatus-server-node {
+  filter: blur(5.5px) !important;
+  -webkit-filter: blur(5.5px) !important;
+  user-select: none !important;
+  cursor: pointer !important;
+  transition: filter 0.25s cubic-bezier(0.16, 1, 0.3, 1), -webkit-filter 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease !important;
+}
+
+/* Interactive Hover Reveal */
+body.apparatus-privacy-active .apparatus-blur-sensitive:hover,
+body.apparatus-privacy-active .apparatus-privacy-val:hover,
+body.apparatus-privacy-active .apparatus-balance-value:hover,
+body.apparatus-privacy-active .apparatus-referral-code-text:hover,
+body.apparatus-privacy-active #apparatus-metric-email:hover,
+body.apparatus-privacy-active .apparatus-user-email:hover,
+body.apparatus-privacy-active #apparatus-res-coin-val:hover,
+body.apparatus-privacy-active .apparatus-res-coins-num:hover,
+body.apparatus-privacy-active [data-sensitive="true"]:hover,
+body.apparatus-privacy-active .apparatus-server-node:hover {
+  filter: blur(0px) !important;
+  -webkit-filter: blur(0px) !important;
+  user-select: auto !important;
+  color: #c4b5fd !important;
+}
+
+/* When Privacy is toggled off, show clean crisp values */
+body:not(.apparatus-privacy-active) .apparatus-blur-sensitive,
+body:not(.apparatus-privacy-active) .apparatus-privacy-val {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+/* ------------------------------------------------------------------------------
+   SETTINGS PAGE LAYOUT & CARDS
+   ------------------------------------------------------------------------------ */
+.apparatus-settings-header-card {
+  margin-bottom: 1.5rem;
+}
+
+.apparatus-settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.apparatus-setting-card {
+  padding: 1.75rem;
+  border-radius: 16px;
+  background: rgba(18, 18, 24, 0.65);
+  backdrop-filter: blur(var(--apparatus-glass-blur, 16px));
+  -webkit-backdrop-filter: blur(var(--apparatus-glass-blur, 16px));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.apparatus-setting-card-privacy {
+  border-color: rgba(167, 139, 250, 0.25);
+  background: linear-gradient(135deg, rgba(30, 24, 46, 0.72) 0%, rgba(18, 18, 24, 0.65) 100%);
+}
+
+.apparatus-setting-card-head {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.apparatus-setting-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.apparatus-setting-title-meta {
+  flex: 1;
+}
+
+.apparatus-setting-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.apparatus-setting-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.apparatus-setting-desc {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0.25rem 0 0 0;
+}
+
+.apparatus-setting-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.apparatus-badge-privacy.active {
+  background: rgba(167, 139, 250, 0.18);
+  color: #c4b5fd;
+  border: 1px solid rgba(167, 139, 250, 0.4);
+}
+
+.apparatus-badge-privacy.inactive {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+.apparatus-setting-explanation {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.5;
+  margin: 0 0 1rem 0;
+}
+
+/* Privacy Sandbox Preview Box */
+.apparatus-privacy-preview-box {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 1.15rem 1.25rem;
+}
+
+.apparatus-privacy-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.apparatus-privacy-preview-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #c4b5fd;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.apparatus-privacy-preview-sub {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.apparatus-privacy-chips-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.85rem;
+}
+
+.apparatus-privacy-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.apparatus-privacy-chip-lbl {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.apparatus-privacy-val {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #fff;
+  font-family: monospace;
+}
+
+/* ------------------------------------------------------------------------------
+   WALLPAPER PRESETS GRID
+   ------------------------------------------------------------------------------ */
+.apparatus-setting-sublabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 0.85rem;
+}
+
+.apparatus-wallpaper-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.apparatus-wp-preset-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.apparatus-wp-preset-card:hover {
+  border-color: rgba(167, 139, 250, 0.4);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.apparatus-wp-preset-card.active {
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.35);
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.apparatus-wp-preview {
+  height: 80px;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.apparatus-wp-preview-desert {
+  background: linear-gradient(135deg, #f7abae 0%, #d9777f 40%, #5b2149 100%);
+}
+
+.apparatus-wp-preview-dark {
+  background: radial-gradient(circle at 50% 30%, #2e2646 0%, #0d0b14 100%);
+}
+
+.apparatus-wp-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.apparatus-wp-meta {
+  padding: 0.75rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.apparatus-wp-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.apparatus-wp-type {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Custom Wallpaper URL Bar */
+.apparatus-custom-wp-bar {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.apparatus-input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  color: #fff;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.apparatus-input:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.25);
+}
+
+.apparatus-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Blur Presets & Parallax Sub-grid */
+.apparatus-setting-sub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.apparatus-blur-btn-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.apparatus-blur-opt-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.75);
+  border-radius: 8px;
+  padding: 0.6rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.apparatus-blur-opt-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.apparatus-blur-opt-btn.active {
+  background: rgba(139, 92, 246, 0.25);
+  border-color: #8b5cf6;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+}
+
+.apparatus-setting-row-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.apparatus-setting-sub-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.apparatus-setting-sub-desc {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0.2rem 0 0 0;
+}
+
+/* ------------------------------------------------------------------------------
+   MODERN FROSTED SWITCH / TOGGLE
+   ------------------------------------------------------------------------------ */
+.apparatus-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.apparatus-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.apparatus-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 34px;
+}
+
+.apparatus-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #fff;
+  transition: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+}
+
+.apparatus-switch input:checked + .apparatus-slider {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  border-color: #a78bfa;
+}
+
+.apparatus-switch input:checked + .apparatus-slider:before {
+  transform: translateX(22px);
+  background-color: #fff;
+}
+
+/* ------------------------------------------------------------------------------
+   SETTINGS LIST ROWS (Performance & Audio)
+   ------------------------------------------------------------------------------ */
+.apparatus-setting-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.apparatus-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+
+.apparatus-setting-row:hover {
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.apparatus-setting-info {
+  flex: 1;
+}
+
+.apparatus-setting-row-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.apparatus-setting-row-desc {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+.apparatus-btn-sm {
+  padding: 0.4rem 0.85rem !important;
+  font-size: 0.78rem !important;
+}
+
+@media (max-width: 768px) {
+  .apparatus-setting-card {
+    padding: 1.25rem;
+  }
+  .apparatus-custom-wp-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .apparatus-setting-sub-grid {
+    grid-template-columns: 1fr;
+  }
+  .apparatus-setting-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .apparatus-setting-ctrl {
+    align-self: flex-end;
+  }
+}
