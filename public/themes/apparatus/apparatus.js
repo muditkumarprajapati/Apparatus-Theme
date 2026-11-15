@@ -197,6 +197,10 @@
         const vBtn = document.getElementById('apparatus-tab-btn-vps');
         if (sBtn) sBtn.classList.add('active');
         if (vBtn) vBtn.classList.remove('active');
+        const deployBtn = document.getElementById('apparatus-hub-deploy-btn');
+        if (deployBtn) {
+          deployBtn.innerHTML = '<i class="ri-add-line"></i> Deploy Server';
+        }
       } else {
         document.body.classList.add('apparatus-page-dashboard');
         document.body.classList.remove('apparatus-page-servers');
@@ -1101,22 +1105,11 @@
                 </p>
                 <div class="apparatus-empty-actions">
                   <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
-                    <i class="ri-rocket-line"></i> Deploy Server
+                    <i class="ri-add-line"></i> Deploy Server
                   </a>
                   <a href="#resource" class="apparatus-btn apparatus-btn-glass" id="apparatus-empty-view-res-btn">
                     <i class="ri-cpu-line"></i> View Resources
                   </a>
-                </div>
-                <div class="apparatus-empty-features">
-                  <div class="apparatus-feature-chip">
-                    <i class="ri-flashlight-line" style="color: #fbbf24;"></i> Instant Setup
-                  </div>
-                  <div class="apparatus-feature-chip">
-                    <i class="ri-shield-check-line" style="color: #34d399;"></i> 3.2 Tbps DDoS Defense
-                  </div>
-                  <div class="apparatus-feature-chip">
-                    <i class="ri-cpu-line" style="color: #38bdf8;"></i> AMD EPYC &bull; Gen4 NVMe
-                  </div>
                 </div>
               </div>
             `;
@@ -1222,22 +1215,11 @@
           </p>
           <div class="apparatus-empty-actions">
             <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
-              <i class="ri-rocket-line"></i> Deploy Server
+              <i class="ri-add-line"></i> Deploy Server
             </a>
             <a href="#resource" class="apparatus-btn apparatus-btn-glass" id="apparatus-empty-view-res-btn">
               <i class="ri-cpu-line"></i> View Resources
             </a>
-          </div>
-          <div class="apparatus-empty-features">
-            <div class="apparatus-feature-chip">
-              <i class="ri-flashlight-line" style="color: #fbbf24;"></i> Instant Setup
-            </div>
-            <div class="apparatus-feature-chip">
-              <i class="ri-shield-check-line" style="color: #34d399;"></i> 3.2 Tbps DDoS Defense
-            </div>
-            <div class="apparatus-feature-chip">
-              <i class="ri-cpu-line" style="color: #38bdf8;"></i> AMD EPYC &bull; Gen4 NVMe
-            </div>
           </div>
         </div>
       `;

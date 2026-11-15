@@ -865,6 +865,11 @@ body.apparatus-page-servers .apparatus-hub-header {
   margin-bottom: 1.25rem !important;
 }
 
+/* On /servers: completely remove the corner Deploy Cloud VPS button */
+body.apparatus-page-servers .apparatus-hub-actions {
+  display: none !important;
+}
+
 /* Visible Content on Non-Dashboard/Non-Servers Pages (Account, API Keys, SSH Keys, Activity, Server details, etc.) */
 body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers) div[class*="DashboardContainer"] {
   display: flex !important;
