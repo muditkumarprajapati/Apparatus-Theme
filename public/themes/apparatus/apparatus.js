@@ -409,6 +409,7 @@
       if (code && imgEl) {
         imgEl.src = 'https://flagcdn.com/20x15/' + code + '.png';
         imgEl.style.display = 'inline-block';
+        imgEl.title = code.toUpperCase();
       }
       return;
     }
@@ -419,6 +420,7 @@
         if (imgEl) {
           imgEl.src = 'https://flagcdn.com/20x15/' + cached + '.png';
           imgEl.style.display = 'inline-block';
+          imgEl.title = cached.toUpperCase();
         }
         return;
       }
@@ -435,13 +437,14 @@
           if (imgEl) {
             imgEl.src = 'https://flagcdn.com/20x15/' + code + '.png';
             imgEl.style.display = 'inline-block';
+            imgEl.title = code.toUpperCase();
           }
         }
       }
     } catch (e) {}
   }
 
-  // Activity Log IP Blur & Flag enhancement (No capsule, smooth blur reveal like dashboard email)
+  // Activity Log IP Blur & Flag enhancement (Clean inline layout, no box badge, no globe icon)
   function enhanceActivityLogIps() {
     const card = document.querySelector('.bg-gray-700');
     if (!card) return;
@@ -464,41 +467,48 @@
           container.href = lookupUrl;
           container.target = '_blank';
           container.rel = 'noopener noreferrer';
-          container.className = 'apparatus-ip-container';
+          container.className = 'apparatus-ip-container apparatus-ip-link';
           container.title = 'Click to check IP location (' + ip + ')';
 
           const isLocal = isPrivateIp(ip);
           if (isLocal) {
-            container.innerHTML = '<i class="ri-shield-keyhole-line apparatus-ip-local-icon" title="Localhost / Proxy IP"></i><span class="apparatus-ip-blurred">' + ip + '</span>';
+            const localIcon = document.createElement('i');
+            localIcon.className = 'ri-shield-keyhole-line apparatus-ip-local-icon';
+            localIcon.title = 'Localhost / Private Network';
+            container.appendChild(localIcon);
           } else {
             const flagImg = document.createElement('img');
             flagImg.className = 'apparatus-ip-flag';
-            flagImg.alt = 'Flag';
+            flagImg.alt = 'Country flag';
             flagImg.style.display = 'none';
 
-            const fallbackIcon = document.createElement('i');
-            fallbackIcon.className = 'ri-global-line apparatus-ip-global-icon';
-
-            container.appendChild(flagImg);
-            container.appendChild(fallbackIcon);
-
-            const ipSpan = document.createElement('span');
-            ipSpan.className = 'apparatus-ip-blurred';
-            ipSpan.textContent = ip;
-            container.appendChild(ipSpan);
-
             flagImg.onload = function () {
-              fallbackIcon.style.display = 'none';
+              flagImg.style.display = 'inline-block';
+            };
+            flagImg.onerror = function () {
+              flagImg.style.display = 'none';
             };
 
+            container.appendChild(flagImg);
             resolveIpCountry(ip, flagImg);
           }
 
+          const ipSpan = document.createElement('span');
+          ipSpan.className = 'apparatus-ip-blurred';
+          ipSpan.textContent = ip;
+          container.appendChild(ipSpan);
+
+          // Click reveal support
+          container.addEventListener('click', function () {
+            ipSpan.classList.add('revealed');
+          });
+
           s.innerHTML = '';
           s.appendChild(container);
+
           const divider = document.createElement('span');
-          divider.className = 'text-gray-400';
-          divider.innerHTML = '&nbsp;|&nbsp;';
+          divider.className = 'apparatus-ip-divider';
+          divider.innerHTML = '&bull;';
           s.appendChild(divider);
           break;
         }

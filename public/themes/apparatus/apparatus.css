@@ -1873,9 +1873,9 @@ body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid > div:nth-
   padding-left: 0 !important;
 }
 
-/* Activity Log event links & badges */
-body:not(.apparatus-auth) div[class*="ActivityLogContainer"] a,
-body:not(.apparatus-auth) div.bg-gray-700 a {
+/* Activity Log event links & badges (Exclude apparatus-ip links) */
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] a:not([class*="apparatus-ip"]),
+body:not(.apparatus-auth) div.bg-gray-700 a:not([class*="apparatus-ip"]) {
   background: rgba(236, 72, 153, 0.22) !important;
   color: #fce7f3 !important;
   border: 1px solid rgba(236, 72, 153, 0.4) !important;
@@ -1889,8 +1889,8 @@ body:not(.apparatus-auth) div.bg-gray-700 a {
   transition: all 0.2s ease !important;
 }
 
-body:not(.apparatus-auth) div[class*="ActivityLogContainer"] a:hover,
-body:not(.apparatus-auth) div.bg-gray-700 a:hover {
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] a:not([class*="apparatus-ip"]):hover,
+body:not(.apparatus-auth) div.bg-gray-700 a:not([class*="apparatus-ip"]):hover {
   background: rgba(236, 72, 153, 0.38) !important;
   border-color: rgba(236, 72, 153, 0.6) !important;
   color: #ffffff !important;
@@ -1899,28 +1899,50 @@ body:not(.apparatus-auth) div.bg-gray-700 a:hover {
 }
 
 /* ==============================================================================
-   ACTIVITY LOG IP BLURRED WITH FLAG (NO CAPSULE, LIKE DASHBOARD EMAIL)
+   ACTIVITY LOG IP BLURRED WITH FLAG (SEAMLESS INLINE, NO BOX/CAPSULE)
    ============================================================================== */
+body:not(.apparatus-auth) a.apparatus-ip-container,
+body:not(.apparatus-auth) div.bg-gray-700 a.apparatus-ip-container,
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] a.apparatus-ip-container,
 body:not(.apparatus-auth) .apparatus-ip-container {
   display: inline-flex !important;
   align-items: center !important;
   gap: 0.35rem !important;
   text-decoration: none !important;
   background: transparent !important;
+  background-color: transparent !important;
   border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
   padding: 0 !important;
   margin: 0 !important;
+  border-radius: 0 !important;
   vertical-align: middle !important;
+  color: inherit !important;
+  font-size: 0.82rem !important;
+  font-weight: normal !important;
+}
+
+body:not(.apparatus-auth) a.apparatus-ip-container:hover,
+body:not(.apparatus-auth) div.bg-gray-700 a.apparatus-ip-container:hover,
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] a.apparatus-ip-container:hover,
+body:not(.apparatus-auth) .apparatus-ip-container:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
 body:not(.apparatus-auth) .apparatus-ip-flag {
   width: 17px !important;
   height: 12px !important;
-  border-radius: 2px !important;
+  border-radius: 2.5px !important;
   object-fit: cover !important;
   display: inline-block !important;
   vertical-align: middle !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) !important;
+  flex-shrink: 0 !important;
 }
 
 body:not(.apparatus-auth) .apparatus-ip-local-icon {
@@ -1928,13 +1950,7 @@ body:not(.apparatus-auth) .apparatus-ip-local-icon {
   font-size: 0.85rem !important;
   display: inline-block !important;
   vertical-align: middle !important;
-}
-
-body:not(.apparatus-auth) .apparatus-ip-global-icon {
-  color: #94a3b8 !important;
-  font-size: 0.85rem !important;
-  display: inline-block !important;
-  vertical-align: middle !important;
+  flex-shrink: 0 !important;
 }
 
 body:not(.apparatus-auth) .apparatus-ip-blurred {
@@ -1942,15 +1958,18 @@ body:not(.apparatus-auth) .apparatus-ip-blurred {
   -webkit-filter: blur(5px) !important;
   cursor: pointer !important;
   user-select: none !important;
-  transition: filter 0.25s ease, -webkit-filter 0.25s ease, color 0.2s ease !important;
+  transition: filter 0.25s cubic-bezier(0.16, 1, 0.3, 1), -webkit-filter 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease !important;
   display: inline-block !important;
-  color: rgba(255, 255, 255, 0.82) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
   text-decoration: none !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   padding: 0 !important;
   font-family: inherit !important;
+  font-size: 0.82rem !important;
+  line-height: inherit !important;
+  vertical-align: middle !important;
 }
 
 body:not(.apparatus-auth) .apparatus-ip-container:hover .apparatus-ip-blurred,
@@ -1962,4 +1981,14 @@ body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid:hover .app
   -webkit-filter: blur(0px) !important;
   user-select: text !important;
   color: #f472b6 !important;
+}
+
+body:not(.apparatus-auth) .apparatus-ip-divider {
+  display: inline-block !important;
+  margin: 0 0.45rem !important;
+  color: rgba(255, 255, 255, 0.35) !important;
+  font-size: 0.65rem !important;
+  vertical-align: middle !important;
+  line-height: 1 !important;
+  user-select: none !important;
 }
