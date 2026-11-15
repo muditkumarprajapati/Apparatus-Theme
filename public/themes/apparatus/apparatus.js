@@ -1271,14 +1271,13 @@
                   <div class="apparatus-referral-header">
                     <div class="apparatus-referral-header-left">
                       <div class="apparatus-referral-icon">
-                        <i class="ri-copper-coin-line"></i>
+                        <i class="ri-gift-2-line"></i>
                       </div>
                       <div class="apparatus-referral-titles">
                         <span class="apparatus-referral-title">Referral Program</span>
                         <span class="apparatus-referral-subtitle">Earn 10 coins per friend invited</span>
                       </div>
                     </div>
-                    <span class="apparatus-referral-badge">+10 Coins</span>
                   </div>
 
                   <div class="apparatus-referral-box">
