@@ -1799,12 +1799,14 @@ body:not(.apparatus-auth) .bg-gray-700 {
   margin-bottom: 2rem !important;
 }
 
-/* Activity rows */
+/* Activity rows: flex layout so circular avatar is side-by-side with text details */
 body:not(.apparatus-auth) div.bg-gray-700 > div.grid,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid,
 body:not(.apparatus-auth) div[class*="ActivityLogEntry"] {
-  display: grid !important;
-  grid-template-columns: auto 1fr auto !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 1.25rem !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   padding: 1.15rem 1.4rem !important;
   transition: all 0.2s ease !important;
@@ -1825,11 +1827,42 @@ body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid:last-child
 }
 
 /* Activity Log Avatar icon container */
+body:not(.apparatus-auth) div.bg-gray-700 > div.grid > div:first-child,
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid > div:first-child {
+  display: flex !important;
+  flex-shrink: 0 !important;
+  width: auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 body:not(.apparatus-auth) div.bg-gray-700 .bg-gray-600,
 body:not(.apparatus-auth) .bg-gray-600 {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
   background: rgba(236, 72, 153, 0.2) !important;
-  border: 1px solid rgba(236, 72, 153, 0.45) !important;
+  border: 1.5px solid rgba(236, 72, 153, 0.45) !important;
   box-shadow: 0 0 12px rgba(236, 72, 153, 0.25) !important;
+}
+
+body:not(.apparatus-auth) div.bg-gray-700 .bg-gray-600 svg {
+  width: 44px !important;
+  height: 44px !important;
+}
+
+/* Activity Log text details beside avatar */
+body:not(.apparatus-auth) div.bg-gray-700 > div.grid > div:nth-child(2),
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid > div:nth-child(2) {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  padding-left: 0 !important;
 }
 
 /* Activity Log event links & badges */
