@@ -760,10 +760,11 @@
     return (mb / 1024).toFixed(1) + ' GB';
   }
 
-  // Lenis Smooth Scroll Instance (Calm glide, 0.1 lerp - 1:1 match to moradosolution.in)
+  // Lenis Smooth Scroll Instance (Crisp, responsive, 60/120fps synchronized)
   let lenisInstance = null;
 
   function initSmoothScroll() {
+    if (lenisInstance) return; // STRICT SINGLETON: Never duplicate instance or RAF loop
     const LenisClass = window.Lenis || globalThis.Lenis;
     if (typeof LenisClass === 'undefined') return;
 
@@ -771,12 +772,9 @@
     if (prefersReducedMotion) return;
 
     try {
-      if (lenisInstance) {
-        try { lenisInstance.destroy(); } catch (err) {}
-      }
-
       lenisInstance = new LenisClass({
-        lerp: 0.1, // Matches moradosolution.in: calm glide rather than a flick
+        lerp: 0.16, // Snappy & silky: zero sluggish lag, crisp response
+        wheelMultiplier: 1.15,
         smoothWheel: true,
         syncTouch: false,
         autoRaf: false,
@@ -792,41 +790,31 @@
         }
       });
 
-      function lenisRaf(time) {
-        if (lenisInstance) {
-          lenisInstance.raf(time);
-          requestAnimationFrame(lenisRaf);
+      // Synchronize with GSAP ticker loop for hardware v-sync matching
+      if (typeof gsap !== 'undefined' && gsap.ticker) {
+        gsap.ticker.add(function (time) {
+          if (lenisInstance) lenisInstance.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+      } else {
+        function lenisRaf(time) {
+          if (lenisInstance) {
+            lenisInstance.raf(time);
+            requestAnimationFrame(lenisRaf);
+          }
         }
+        requestAnimationFrame(lenisRaf);
       }
-      requestAnimationFrame(lenisRaf);
 
       window.__apparatusLenis = lenisInstance;
     } catch (e) {
       console.warn('Apparatus Lenis initialization skipped:', e);
     }
-
-    // Capture-phase wheel isolation: Ensure mouse scrolling inside sidebar, menus, or modals never moves the main page
-    if (!window.__apparatusWheelIsolated) {
-      window.__apparatusWheelIsolated = true;
-      window.addEventListener('wheel', function (e) {
-        if (!e.target || typeof e.target.closest !== 'function') return;
-        const scrollable = e.target.closest(
-          '#apparatus-sidebar, .apparatus-sidebar, .apparatus-sidebar-scroll, ' +
-          'aside, nav, #SubNavigation, [class*="SubNavigation"], [class*="NavigationBar"], ' +
-          '[data-lenis-prevent], [data-lenis-prevent-wheel], .apparatus-activity-list, ' +
-          '[class*="Modal"], [class*="Terminal"], [class*="FileManager"], ' +
-          '.overflow-y-auto, .overflow-y-scroll'
-        );
-        if (scrollable) {
-          e.stopImmediatePropagation();
-        }
-      }, { capture: true, passive: true });
-    }
   }
 
   function smoothScrollToTop() {
     if (lenisInstance) {
-      lenisInstance.scrollTo(0, { duration: 1.1 });
+      lenisInstance.scrollTo(0, { duration: 0.8 });
     } else {
       window.scrollTo(0, 0);
     }
@@ -835,7 +823,7 @@
   function smoothScrollToElement(el, highlight) {
     if (!el) return;
     if (lenisInstance) {
-      lenisInstance.scrollTo(el, { offset: -24, duration: 1.2 });
+      lenisInstance.scrollTo(el, { offset: -24, duration: 0.8 });
     } else {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -5314,27 +5302,33 @@
       repeat: -1
     });
 
-    // Mouse parallax tracking
+    // Mouse parallax tracking (Throttled with requestAnimationFrame for 60/120fps performance)
+    let mouseRafId = null;
     window.addEventListener('mousemove', function (e) {
       if (document.body.classList.contains('apparatus-no-parallax') || document.body.classList.contains('apparatus-reduce-motion')) return;
-      const x = (e.clientX / window.innerWidth - 0.5) * 2;
-      layers.forEach(function (layerNum) {
-        const depth = layerNum * 10;
-        gsap.to('.layer-' + layerNum, {
-          x: -x * depth,
-          duration: 1,
+      if (mouseRafId) return;
+      const clientX = e.clientX;
+      mouseRafId = requestAnimationFrame(function () {
+        mouseRafId = null;
+        const x = (clientX / window.innerWidth - 0.5) * 2;
+        layers.forEach(function (layerNum) {
+          const depth = layerNum * 8;
+          gsap.to('.layer-' + layerNum, {
+            x: -x * depth,
+            duration: 0.8,
+            ease: 'power2.out',
+            overwrite: 'auto'
+          });
+        });
+
+        gsap.to('.layer-text', {
+          x: -x * 24,
+          duration: 0.8,
           ease: 'power2.out',
           overwrite: 'auto'
         });
       });
-
-      gsap.to('.layer-text', {
-        x: -x * 30,
-        duration: 1,
-        ease: 'power2.out',
-        overwrite: 'auto'
-      });
-    });
+    }, { passive: true });
   }
 
   // Global tactile feedback click interceptor
@@ -5402,18 +5396,23 @@
 
 
 
-  // Dynamic cleanup and route sync observer for Pterodactyl SPA updates
+  // Dynamic cleanup and route sync observer for Pterodactyl SPA updates (RAF Debounced)
   let lastObservedPath = window.location.pathname;
+  let observerRafId = null;
   const apparatusObserver = new MutationObserver(function () {
-    if (!isAuthPage() && !isUnauthorizedAdminAttempt()) {
-      cleanPterodactylElements();
-      if (window.location.pathname !== lastObservedPath) {
-        lastObservedPath = window.location.pathname;
-        applyViewMode();
+    if (observerRafId) return;
+    observerRafId = requestAnimationFrame(function () {
+      observerRafId = null;
+      if (!isAuthPage() && !isUnauthorizedAdminAttempt()) {
+        cleanPterodactylElements();
+        if (window.location.pathname !== lastObservedPath) {
+          lastObservedPath = window.location.pathname;
+          applyViewMode();
+        }
       }
-    }
+    });
   });
-  apparatusObserver.observe(document.documentElement, { childList: true, subtree: true });
+  apparatusObserver.observe(document.body || document.documentElement, { childList: true, subtree: true });
 
   window.addEventListener('popstate', function () {
     initApparatus();

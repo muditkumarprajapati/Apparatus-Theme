@@ -4381,20 +4381,38 @@ html.lenis body {
   }
 }
 
-/* 3. Interactive Micro-Interactions (Hover, Active & Press Feedback) */
+/* 3. Interactive Micro-Interactions (GPU Optimized, No GSAP Collisions) */
 .apparatus-btn,
 .apparatus-tab-btn,
 .apparatus-upgrade-pill,
-.apparatus-copy-ref-btn,
+.apparatus-copy-ref-btn {
+  position: relative;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s ease,
+              background 0.2s ease,
+              border-color 0.2s ease;
+}
+
 .apparatus-metric-tile,
 .apparatus-server-card,
 .apparatus-act-row {
   position: relative;
-  overflow: hidden;
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              background 0.22s ease,
-              border-color 0.22s ease !important;
+  transition: box-shadow 0.2s ease,
+              background 0.2s ease,
+              border-color 0.2s ease;
+}
+
+/* GPU Hardware Acceleration for Compositing & Backdrop Filters */
+.apparatus-card,
+.apparatus-sidebar,
+.apparatus-metric-tile,
+.desert-wrapper,
+.parallax-container,
+.parallax-layer {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .apparatus-btn:hover {
