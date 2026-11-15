@@ -16,7 +16,7 @@ body {
   padding: 0 !important;
   width: 100% !important;
   min-height: 100% !important;
-  background-color: #F7ABAE !important;
+  background-color: var(--apparatus-bg-color, #F7ABAE) !important;
 }
 
 body.apparatus-auth {
@@ -201,7 +201,7 @@ div[class*="sc-cyh04c-7"] {
   justify-content: center !important;
   align-items: center !important;
   font-family: var(--apparatus-font) !important;
-  background-color: #F7ABAE !important;
+  background-color: var(--apparatus-bg-color, #F7ABAE) !important;
   z-index: 0 !important;
   pointer-events: none !important;
 }

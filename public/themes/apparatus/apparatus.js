@@ -2158,10 +2158,11 @@
   // Motion and Static Wallpaper Definitions
   const MOTION_THEMES = ['desert', 'motion-cyberpunk', 'motion-nebula', 'motion-aurora'];
   const STATIC_WALLPAPERS = {
-    'static-cyber': 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=2560&q=85',
-    'static-galaxy': 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=2560&q=85',
-    'static-synthwave': 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=2560&q=85',
     'static-obsidian': 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=2560&q=85',
+    'static-neondusk': 'https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=2560&q=85',
+    'static-electric': 'https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?auto=format&fit=crop&w=2560&q=85',
+    'static-cybersilk': 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=2560&q=85',
+    'static-amethyst': 'https://images.unsplash.com/photo-1618005198920-f0cb6201c115?auto=format&fit=crop&w=2560&q=85',
     'dark': 'dark'
   };
 
@@ -2201,7 +2202,10 @@
     const subText = (bgSubtitle && bgSubtitle.textContent) || 'CLOUD & INFRASTRUCTURES';
 
     if (theme === 'motion-cyberpunk') {
-      if (wrapper) wrapper.style.backgroundColor = '#0b0618';
+      if (wrapper) {
+        wrapper.style.backgroundColor = '#0b0618';
+        document.documentElement.style.setProperty('--apparatus-bg-color', '#0b0618');
+      }
       parallaxEl.innerHTML = `
         <svg class="parallax-layer layer-bg" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
           <rect width="2048" height="1373" fill="url(#cyberBgGrad)"/>
@@ -2279,7 +2283,10 @@
         </svg>
       `;
     } else if (theme === 'motion-nebula') {
-      if (wrapper) wrapper.style.backgroundColor = '#05030d';
+      if (wrapper) {
+        wrapper.style.backgroundColor = '#05030d';
+        document.documentElement.style.setProperty('--apparatus-bg-color', '#05030d');
+      }
       parallaxEl.innerHTML = `
         <svg class="parallax-layer layer-bg" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
           <rect width="2048" height="1373" fill="url(#nebulaBgGrad)"/>
@@ -2363,7 +2370,10 @@
         </svg>
       `;
     } else if (theme === 'motion-aurora') {
-      if (wrapper) wrapper.style.backgroundColor = '#030e17';
+      if (wrapper) {
+        wrapper.style.backgroundColor = '#030e17';
+        document.documentElement.style.setProperty('--apparatus-bg-color', '#030e17');
+      }
       parallaxEl.innerHTML = `
         <svg class="parallax-layer layer-bg" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
           <rect width="2048" height="1373" fill="url(#auroraSkyGrad)"/>
@@ -2437,22 +2447,25 @@
       `;
     } else {
       // Default: Desert Sunset
-      if (wrapper) wrapper.style.backgroundColor = '#F7ABAE';
+      if (wrapper) {
+        wrapper.style.backgroundColor = '#F7ABAE';
+        document.documentElement.style.setProperty('--apparatus-bg-color', '#F7ABAE');
+      }
       parallaxEl.innerHTML = `
-        <img src="/themes/apparatus/img-bg.svg" alt="" class="parallax-layer layer-bg" />
-        <img src="/themes/apparatus/img-1.svg" alt="" class="parallax-layer layer-1" />
-        <img src="/themes/apparatus/img-2.svg" alt="" class="parallax-layer layer-2" />
-        <img src="/themes/apparatus/img-3.svg" alt="" class="parallax-layer layer-3" />
+        <img src="/themes/apparatus/desert/img-bg.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-bg.svg';}" alt="" class="parallax-layer layer-bg" />
+        <img src="/themes/apparatus/desert/img-1.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-1.svg';}" alt="" class="parallax-layer layer-1" />
+        <img src="/themes/apparatus/desert/img-2.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-2.svg';}" alt="" class="parallax-layer layer-2" />
+        <img src="/themes/apparatus/desert/img-3.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-3.svg';}" alt="" class="parallax-layer layer-3" />
         
         <div class="parallax-layer layer-text">
           <h1 class="background-title" id="apparatus-bg-title">${titleText}</h1>
           <p class="background-subtitle" id="apparatus-bg-subtitle">${subText}</p>
         </div>
 
-        <img src="/themes/apparatus/img-4.svg" alt="" class="parallax-layer layer-4" />
-        <img src="/themes/apparatus/img-5.svg" alt="" class="parallax-layer layer-5" />
-        <img src="/themes/apparatus/img-6.svg" alt="" class="parallax-layer layer-6" />
-        <img src="/themes/apparatus/img-7.svg" alt="" class="parallax-layer layer-7" />
+        <img src="/themes/apparatus/desert/img-4.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-4.svg';}" alt="" class="parallax-layer layer-4" />
+        <img src="/themes/apparatus/desert/img-5.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-5.svg';}" alt="" class="parallax-layer layer-5" />
+        <img src="/themes/apparatus/desert/img-6.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-6.svg';}" alt="" class="parallax-layer layer-6" />
+        <img src="/themes/apparatus/desert/img-7.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/desert/img-7.svg';}" alt="" class="parallax-layer layer-7" />
       `;
     }
 
@@ -2754,34 +2767,7 @@
 
                 <div class="apparatus-wallpaper-presets-grid" id="apparatus-static-presets">
                   
-                  <!-- Static 1: Cyber Metropolis -->
-                  <div class="apparatus-wp-preset-card" data-wp="static-cyber">
-                    <div class="apparatus-wp-preview" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=350&q=70');"></div>
-                    <div class="apparatus-wp-meta">
-                      <span class="apparatus-wp-name">Cyber Metropolis</span>
-                      <span class="apparatus-wp-type">4K Futuristic Night City</span>
-                    </div>
-                  </div>
-
-                  <!-- Static 2: Cosmic Galaxy -->
-                  <div class="apparatus-wp-preset-card" data-wp="static-galaxy">
-                    <div class="apparatus-wp-preview" style="background-image: url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=350&q=70');"></div>
-                    <div class="apparatus-wp-meta">
-                      <span class="apparatus-wp-name">Cosmic Galaxy</span>
-                      <span class="apparatus-wp-type">Deep Space Starfield</span>
-                    </div>
-                  </div>
-
-                  <!-- Static 3: Neon Synthwave -->
-                  <div class="apparatus-wp-preset-card" data-wp="static-synthwave">
-                    <div class="apparatus-wp-preview" style="background-image: url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=350&q=70');"></div>
-                    <div class="apparatus-wp-meta">
-                      <span class="apparatus-wp-name">Neon Synthwave</span>
-                      <span class="apparatus-wp-type">Retro Horizon Skyline</span>
-                    </div>
-                  </div>
-
-                  <!-- Static 4: Obsidian Glass -->
+                  <!-- Static 1: Obsidian Glass (User favorite) -->
                   <div class="apparatus-wp-preset-card" data-wp="static-obsidian">
                     <div class="apparatus-wp-preview" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=350&q=70');"></div>
                     <div class="apparatus-wp-meta">
@@ -2790,7 +2776,43 @@
                     </div>
                   </div>
 
-                  <!-- Static 5: Pure Dark Glass -->
+                  <!-- Static 2: Neon Dusk Waves -->
+                  <div class="apparatus-wp-preset-card" data-wp="static-neondusk">
+                    <div class="apparatus-wp-preview" style="background-image: url('https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=350&q=70');"></div>
+                    <div class="apparatus-wp-meta">
+                      <span class="apparatus-wp-name">Neon Dusk</span>
+                      <span class="apparatus-wp-type">Sunset Fluid Ribbon</span>
+                    </div>
+                  </div>
+
+                  <!-- Static 3: Electric Horizon -->
+                  <div class="apparatus-wp-preset-card" data-wp="static-electric">
+                    <div class="apparatus-wp-preview" style="background-image: url('https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?auto=format&fit=crop&w=350&q=70');"></div>
+                    <div class="apparatus-wp-meta">
+                      <span class="apparatus-wp-name">Electric Horizon</span>
+                      <span class="apparatus-wp-type">Cyan &amp; Violet 3D Flow</span>
+                    </div>
+                  </div>
+
+                  <!-- Static 4: Cyber Silk -->
+                  <div class="apparatus-wp-preset-card" data-wp="static-cybersilk">
+                    <div class="apparatus-wp-preview" style="background-image: url('https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=350&q=70');"></div>
+                    <div class="apparatus-wp-meta">
+                      <span class="apparatus-wp-name">Cyber Silk</span>
+                      <span class="apparatus-wp-type">Vibrant Satin Curves</span>
+                    </div>
+                  </div>
+
+                  <!-- Static 5: Amethyst Liquid -->
+                  <div class="apparatus-wp-preset-card" data-wp="static-amethyst">
+                    <div class="apparatus-wp-preview" style="background-image: url('https://images.unsplash.com/photo-1618005198920-f0cb6201c115?auto=format&fit=crop&w=350&q=70');"></div>
+                    <div class="apparatus-wp-meta">
+                      <span class="apparatus-wp-name">Amethyst Liquid</span>
+                      <span class="apparatus-wp-type">Deep Purple Waves</span>
+                    </div>
+                  </div>
+
+                  <!-- Static 6: Pure Dark Glass -->
                   <div class="apparatus-wp-preset-card" data-wp="dark">
                     <div class="apparatus-wp-preview apparatus-wp-preview-dark"></div>
                     <div class="apparatus-wp-meta">
