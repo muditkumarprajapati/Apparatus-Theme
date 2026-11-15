@@ -893,17 +893,24 @@
   }
 
   function getReferralCode(user) {
-    const u = (user && user.username) ? user.username : ((window.PterodactylUser && window.PterodactylUser.username) || 'USER');
-    const cleanU = u.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const saved = localStorage.getItem('apparatus_referral_code');
+    const u = (user && user.username) ? user.username : ((window.PterodactylUser && window.PterodactylUser.username) || '');
+    if (saved && (!u || saved.includes(u.toUpperCase().slice(0, 3)))) {
+      return saved;
+    }
+    const cleanU = (u || 'ARIX').toUpperCase().replace(/[^A-Z0-9]/g, '');
     const prefix = (cleanU.length >= 3 ? cleanU.slice(0, 4) : cleanU).padEnd(4, 'X');
-    const seed = (user && user.email ? user.email : '') + u + (user && user.id ? user.id : '');
     let hash = 5381;
-    for (let i = 0; i < seed.length; i++) {
-      hash = ((hash << 5) + hash) + seed.charCodeAt(i);
+    for (let i = 0; i < cleanU.length; i++) {
+      hash = ((hash << 5) + hash) + cleanU.charCodeAt(i);
       hash |= 0;
     }
     const suffix = Math.abs(hash).toString(36).toUpperCase().padStart(4, '0').slice(-4);
-    return 'AB-' + prefix + '-' + suffix;
+    const code = 'AB-' + prefix + '-' + suffix;
+    if (u) {
+      localStorage.setItem('apparatus_referral_code', code);
+    }
+    return code;
   }
 
   function initReferralCode() {
@@ -2240,6 +2247,963 @@
     });
   }
 
+  const INLINE_MOTION_SCENES = {
+    'cyberpunk': {
+      back: `<svg class="parallax-layer layer-bg" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberSky" x1="1024" y1="0" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#050212"/>
+        <stop offset="0.45" stop-color="#140428"/>
+        <stop offset="0.72" stop-color="#2d0847"/>
+        <stop offset="0.9" stop-color="#550b64"/>
+        <stop offset="1" stop-color="#7a0d78"/>
+      </linearGradient>
+      <radialGradient id="cyberHorizonGlow" cx="1024" cy="760" r="800" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ff007f" stop-opacity="0.45"/>
+        <stop offset="0.4" stop-color="#ff5500" stop-opacity="0.2"/>
+        <stop offset="1" stop-color="#050212" stop-opacity="0"/>
+      </radialGradient>
+    
+</defs>
+
+      <rect width="2048" height="1373" fill="url(#cyberSky)"/>
+      <rect x="0" y="400" width="2048" height="973" fill="url(#cyberHorizonGlow)"/>
+      <g>
+        <line x1="1024" y1="760" x2="-500" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="-360" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="-220" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="-80" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="60" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="200" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="340" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="480" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="620" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="760" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="900" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1040" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1180" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1320" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1460" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1600" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1740" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="1880" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="2020" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="2160" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="2300" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="2440" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="1024" y1="760" x2="2580" y2="1373" stroke="#00f0ff" stroke-width="1.5" opacity="0.3"/><line x1="0" y1="770" x2="2048" y2="770" stroke="#ff007f" stroke-width="2" opacity="0.15"/><line x1="0" y1="785" x2="2048" y2="785" stroke="#ff007f" stroke-width="2" opacity="0.16"/><line x1="0" y1="805" x2="2048" y2="805" stroke="#ff007f" stroke-width="2" opacity="0.17"/><line x1="0" y1="835" x2="2048" y2="835" stroke="#ff007f" stroke-width="2" opacity="0.19"/><line x1="0" y1="875" x2="2048" y2="875" stroke="#ff007f" stroke-width="2" opacity="0.22"/><line x1="0" y1="930" x2="2048" y2="930" stroke="#ff007f" stroke-width="2" opacity="0.26"/><line x1="0" y1="1005" x2="2048" y2="1005" stroke="#ff007f" stroke-width="2" opacity="0.31"/><line x1="0" y1="1100" x2="2048" y2="1100" stroke="#ff007f" stroke-width="2" opacity="0.37"/><line x1="0" y1="1220" x2="2048" y2="1220" stroke="#ff007f" stroke-width="2" opacity="0.45"/><line x1="0" y1="1370" x2="2048" y2="1370" stroke="#ff007f" stroke-width="2" opacity="0.55"/>
+      </g>
+    
+</svg>
+<svg class="parallax-layer layer-1" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberSunGrad" x1="1024" y1="330" x2="1024" y2="910" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ff007f"/>
+        <stop offset="0.4" stop-color="#ff3366"/>
+        <stop offset="0.75" stop-color="#ff7700"/>
+        <stop offset="1" stop-color="#ffdd00"/>
+      </linearGradient>
+      <radialGradient id="sunAura" cx="1024" cy="620" r="450" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ff007f" stop-opacity="0.35"/>
+        <stop offset="0.5" stop-color="#ff5500" stop-opacity="0.15"/>
+        <stop offset="1" stop-color="#050212" stop-opacity="0"/>
+      </radialGradient>
+      <clipPath id="sunClip">
+        <circle cx="1024" cy="620" r="290"/>
+      </clipPath>
+    
+</defs>
+
+      <circle cx="1024" cy="620" r="450" fill="url(#sunAura)"/>
+      <g clip-path="url(#sunClip)">
+        <rect x="650" y="300" width="750" height="240" fill="url(#cyberSunGrad)"/><rect x="650" y="540" width="750" height="24" fill="url(#cyberSunGrad)"/><rect x="650" y="568" width="750" height="22" fill="url(#cyberSunGrad)"/><rect x="650" y="597" width="750" height="20" fill="url(#cyberSunGrad)"/><rect x="650" y="627" width="750" height="18" fill="url(#cyberSunGrad)"/><rect x="650" y="658" width="750" height="16" fill="url(#cyberSunGrad)"/><rect x="650" y="690" width="750" height="14" fill="url(#cyberSunGrad)"/><rect x="650" y="723" width="750" height="12" fill="url(#cyberSunGrad)"/><rect x="650" y="757" width="750" height="10" fill="url(#cyberSunGrad)"/><rect x="650" y="792" width="750" height="8" fill="url(#cyberSunGrad)"/><rect x="650" y="828" width="750" height="8" fill="url(#cyberSunGrad)"/><rect x="650" y="867" width="750" height="8" fill="url(#cyberSunGrad)"/><rect x="650" y="909" width="750" height="8" fill="url(#cyberSunGrad)"/>
+      </g>
+      
+      <!-- Flying aerocar 1 -->
+      <path d="M420 410 L480 405 L490 412 L430 415 Z" fill="#00f0ff" opacity="0.8"/>
+      <line x1="320" y1="413" x2="420" y2="410" stroke="#00f0ff" stroke-width="2" opacity="0.6"/>
+      <!-- Flying aerocar 2 -->
+      <path d="M1580 340 L1630 336 L1640 342 L1590 344 Z" fill="#ff007f" opacity="0.8"/>
+      <line x1="1640" y1="340" x2="1760" y2="337" stroke="#ff007f" stroke-width="2" opacity="0.6"/>
+      <!-- Flying aerocar 3 -->
+      <path d="M820 280 L860 277 L868 282 L828 284 Z" fill="#00f0ff" opacity="0.6"/>
+      <line x1="740" y1="282" x2="820" y2="280" stroke="#00f0ff" stroke-width="1.5" opacity="0.4"/>
+    
+    
+</svg>
+<svg class="parallax-layer layer-2" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberSkylineDistant" x1="1024" y1="500" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#140628" stop-opacity="0.9"/>
+        <stop offset="1" stop-color="#220b3e"/>
+      </linearGradient>
+    
+</defs>
+
+      <path d="M0 1373 V820 L40 810 L45 680 L50 680 L55 810 L90 820 L120 780 L125 580 L130 580 L135 780 L180 790 L210 750 L213 520 L217 520 L220 750 L260 770 L300 740 L305 630 L310 630 L315 740 L380 770 L410 790 L450 730 L455 600 L460 600 L465 730 L520 780 L560 820 L600 790 L630 760 L633 550 L637 550 L640 760 L690 770 L720 750 L725 610 L730 610 L735 750 L780 780 L820 800 L1220 800 L1260 770 L1265 620 L1270 620 L1275 770 L1320 750 L1323 540 L1327 540 L1330 750 L1380 770 L1420 740 L1425 590 L1430 590 L1435 740 L1490 780 L1530 810 L1580 780 L1610 750 L1613 510 L1617 510 L1620 750 L1670 770 L1710 730 L1715 620 L1720 620 L1725 730 L1780 760 L1820 790 L1860 740 L1865 570 L1870 570 L1875 740 L1930 770 L1970 810 L2048 820 V1373 H0 Z" fill="url(#cyberSkylineDistant)"/>
+      
+      <circle cx="48" cy="678" r="3" fill="#ff0055"/>
+      <circle cx="128" cy="578" r="3.5" fill="#00f0ff"/>
+      <circle cx="215" cy="518" r="4" fill="#ff0055"/>
+      <circle cx="308" cy="628" r="3" fill="#ffbf00"/>
+      <circle cx="458" cy="598" r="3" fill="#00f0ff"/>
+      <circle cx="635" cy="548" r="3.5" fill="#ff0055"/>
+      <circle cx="728" cy="608" r="3" fill="#00f0ff"/>
+      <circle cx="1268" cy="618" r="3" fill="#ff0055"/>
+      <circle cx="1325" cy="538" r="4" fill="#00f0ff"/>
+      <circle cx="1428" cy="588" r="3" fill="#ffbf00"/>
+      <circle cx="1615" cy="508" r="4" fill="#ff0055"/>
+      <circle cx="1718" cy="618" r="3" fill="#00f0ff"/>
+      <circle cx="1868" cy="568" r="3.5" fill="#ff0055"/>
+    
+    
+</svg>
+<svg class="parallax-layer layer-3" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+  <linearGradient id="cyberMidTowers" x1="1024" y1="650" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#1b0a33"/>
+    <stop offset="0.6" stop-color="#280e46"/>
+    <stop offset="1" stop-color="#3d1463"/>
+  </linearGradient>
+  <pattern id="cyberWindows" width="24" height="28" patternUnits="userSpaceOnUse">
+    <rect x="3" y="3" width="7" height="9" rx="1" fill="#00f0ff" opacity="0.75"/>
+    <rect x="13" y="3" width="7" height="9" rx="1" fill="#ffdd55" opacity="0.6"/>
+    <rect x="3" y="15" width="7" height="9" rx="1" fill="#ff007f" opacity="0.6"/>
+    <rect x="13" y="15" width="7" height="9" rx="1" fill="#00f0ff" opacity="0.8"/>
+  </pattern>
+</defs>
+<!-- Tower blocks with stepbacks -->
+<polygon points="20,1373 20,830 80,830 80,800 140,800 140,780 200,780 200,850 220,850 220,1373" fill="url(#cyberMidTowers)"/>
+<polygon points="20,1373 20,830 80,830 80,800 140,800 140,780 200,780 200,850 220,850 220,1373" fill="url(#cyberWindows)" opacity="0.5"/>
+
+<polygon points="230,1373 230,760 290,760 290,720 350,720 350,760 380,760 380,1373" fill="url(#cyberMidTowers)"/>
+<polygon points="230,1373 230,760 290,760 290,720 350,720 350,760 380,760 380,1373" fill="url(#cyberWindows)" opacity="0.45"/>
+
+<polygon points="400,1373 400,810 470,810 470,770 530,770 530,830 570,830 570,1373" fill="url(#cyberMidTowers)"/>
+<polygon points="400,1373 400,810 470,810 470,770 530,770 530,830 570,830 570,1373" fill="url(#cyberWindows)" opacity="0.5"/>
+
+<polygon points="590,1373 590,790 660,790 660,750 710,750 710,810 750,810 750,1373" fill="url(#cyberMidTowers)"/>
+<polygon points="590,1373 590,790 660,790 660,750 710,750 710,810 750,810 750,1373" fill="url(#cyberWindows)" opacity="0.45"/>
+
+<!-- Skybridge left -->
+<rect x="180" y="820" width="120" height="12" fill="#00f0ff" opacity="0.6"/>
+<rect x="360" y="780" width="70" height="10" fill="#ff007f" opacity="0.7"/>
+
+<!-- Right cluster -->
+<polygon points="1280,1373 1280,810 1340,810 1340,750 1410,750 1410,830 1450,830 1450,1373" fill="url(#cyberMidTowers)"/>
+<polygon points="1280,1373 1280,810 1340,810 1340,750 1410,750 1410,830 1450,830 1450,1373" fill="url(#cyberWindows)" opacity="0.45"/>
+
+<polygon points="1470,1373 1470,760 1530,760 1530,710 1600,710 1600,770 1650,770 1650,1373" fill="url(#cyberMidTowers)"/>
+<polygon points="1470,1373 1470,760 1530,760 1530,710 1600,710 1600,770 1650,770 1650,1373" fill="url(#cyberWindows)" opacity="0.5"/>
+
+<polygon points="1670,1373 1670,820 1740,820 1740,770 1810,770 1810,840 1860,840 1860,1373" fill="url(#cyberMidTowers)"/>
+<polygon points="1670,1373 1670,820 1740,820 1740,770 1810,770 1810,840 1860,840 1860,1373" fill="url(#cyberWindows)" opacity="0.45"/>
+
+<polygon points="1880,1373 1880,790 1950,790 1950,740 2020,740 2020,1373" fill="url(#cyberMidTowers)"/>
+<polygon points="1880,1373 1880,790 1950,790 1950,740 2020,740 2020,1373" fill="url(#cyberWindows)" opacity="0.5"/>
+
+<!-- Skybridge right -->
+<rect x="1430" y="780" width="60" height="10" fill="#00f0ff" opacity="0.7"/>
+<rect x="1620" y="790" width="80" height="12" fill="#ff007f" opacity="0.6"/>
+</svg>`,
+      front: `<svg class="parallax-layer layer-4" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberLayer4Grad" x1="1024" y1="800" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#120524"/>
+        <stop offset="0.7" stop-color="#1e0836"/>
+        <stop offset="1" stop-color="#290b47"/>
+      </linearGradient>
+      <linearGradient id="maglevGlow" x1="0" y1="960" x2="2048" y2="960" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#00f0ff"/>
+        <stop offset="0.5" stop-color="#ff007f"/>
+        <stop offset="1" stop-color="#00f0ff"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Left massive tower -->
+      <polygon points="0,1373 0,860 180,820 280,820 280,870 340,870 340,1373" fill="url(#cyberLayer4Grad)"/>
+      <line x1="180" y1="820" x2="180" y2="1373" stroke="#00f0ff" stroke-width="2" opacity="0.6"/>
+
+      <!-- Center-left tower -->
+      <polygon points="460,1373 460,890 560,870 660,870 660,930 720,930 720,1373" fill="url(#cyberLayer4Grad)"/>
+      <line x1="560" y1="870" x2="560" y2="1373" stroke="#ff007f" stroke-width="2" opacity="0.6"/>
+
+      <!-- Center-right tower -->
+      <polygon points="1320,1373 1320,910 1390,880 1480,880 1480,940 1560,940 1560,1373" fill="url(#cyberLayer4Grad)"/>
+      <line x1="1390" y1="880" x2="1390" y2="1373" stroke="#00f0ff" stroke-width="2" opacity="0.6"/>
+
+      <!-- Right massive tower -->
+      <polygon points="1680,1373 1680,840 1780,800 1900,800 1900,860 2048,860 2048,1373" fill="url(#cyberLayer4Grad)"/>
+      <line x1="1780" y1="800" x2="1780" y2="1373" stroke="#ff007f" stroke-width="2" opacity="0.6"/>
+    
+
+      <!-- Monorail support pillars -->
+      <rect x="220" y="960" width="30" height="413" fill="#0d041a"/>
+      <rect x="580" y="980" width="30" height="393" fill="#0d041a"/>
+      <rect x="1000" y="995" width="32" height="378" fill="#0d041a"/>
+      <rect x="1440" y="980" width="30" height="393" fill="#0d041a"/>
+      <rect x="1820" y="960" width="30" height="413" fill="#0d041a"/>
+
+      <!-- Track beam -->
+      <path d="M-50 970 Q1024 1020 2098 970 L2098 995 Q1024 1045 -50 995 Z" fill="#140624"/>
+      <!-- Glowing light rail top -->
+      <path d="M-50 968 Q1024 1018 2098 968" stroke="url(#maglevGlow)" stroke-width="4" fill="none"/>
+      <!-- Glowing light rail bottom -->
+      <path d="M-50 995 Q1024 1045 2098 995" stroke="#00f0ff" stroke-width="2" fill="none" opacity="0.8"/>
+
+      <!-- High-speed Maglev Train crossing track -->
+      <g>
+        <!-- Train body -->
+        <path d="M850 975 Q960 985 1070 985 Q1180 985 1250 977 L1248 992 Q1180 1000 1070 1000 Q960 1000 852 990 Z" fill="#e0f7fa"/>
+        <!-- Window strip -->
+        <path d="M880 979 L1220 982 L1218 986 L880 983 Z" fill="#00f0ff"/>
+        <!-- Motion blur trail -->
+        <line x1="720" y1="980" x2="850" y2="980" stroke="#00f0ff" stroke-width="3" opacity="0.6"/>
+        <line x1="680" y1="984" x2="850" y2="984" stroke="#ff007f" stroke-width="2" opacity="0.5"/>
+      </g>
+    
+</svg>
+<svg class="parallax-layer layer-5" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberLayer5Grad" x1="1024" y1="920" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0b0318"/>
+        <stop offset="0.6" stop-color="#150628"/>
+        <stop offset="1" stop-color="#1f0836"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Left side complex -->
+      <polygon points="0,1373 0,980 140,980 140,950 260,950 320,1020 320,1373" fill="url(#cyberLayer5Grad)"/>
+      <!-- Rooftop water tank -->
+      <rect x="60" y="930" width="50" height="50" rx="4" fill="#080212"/>
+      <line x1="70" y1="980" x2="60" y2="1010" stroke="#00f0ff" stroke-width="2"/>
+      <line x1="100" y1="980" x2="110" y2="1010" stroke="#00f0ff" stroke-width="2"/>
+      <!-- AC ducts -->
+      <rect x="160" y="920" width="70" height="30" fill="#0c0418"/>
+      <circle cx="195" cy="935" r="10" stroke="#ff007f" stroke-width="2" fill="none"/>
+
+      <!-- Large Neon Billboard Left: "ARIX" -->
+      <g>
+        <rect x="420" y="950" width="180" height="70" rx="6" fill="#05010d" stroke="#00f0ff" stroke-width="3"/>
+        <text x="510" y="998" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="34" fill="#00f0ff" text-anchor="middle" letter-spacing="4">ARIX</text>
+        <!-- Support scaffolding -->
+        <line x1="440" y1="1020" x2="430" y2="1080" stroke="#00f0ff" stroke-width="2" opacity="0.6"/>
+        <line x1="580" y1="1020" x2="590" y2="1080" stroke="#00f0ff" stroke-width="2" opacity="0.6"/>
+        <line x1="440" y1="1020" x2="590" y2="1080" stroke="#00f0ff" stroke-width="1.5" opacity="0.4"/>
+      </g>
+
+      <!-- Center satellite dishes -->
+      <path d="M960 1060 Q990 1020 1030 1030 L1000 1070 Z" fill="#080212" stroke="#00f0ff" stroke-width="1.5"/>
+      <line x1="995" y1="1070" x2="995" y2="1110" stroke="#ff007f" stroke-width="2"/>
+
+      <!-- Large Neon Sign Right: "CYBER" -->
+      <g>
+        <rect x="1460" y="960" width="200" height="75" rx="6" fill="#05010d" stroke="#ff007f" stroke-width="3"/>
+        <text x="1560" y="1010" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="32" fill="#ff007f" text-anchor="middle" letter-spacing="5">CYBER</text>
+        <line x1="1490" y1="1035" x2="1480" y2="1090" stroke="#ff007f" stroke-width="2" opacity="0.6"/>
+        <line x1="1630" y1="1035" x2="1640" y2="1090" stroke="#ff007f" stroke-width="2" opacity="0.6"/>
+      </g>
+
+      <!-- Right side complex -->
+      <polygon points="1740,1373 1740,1030 1820,970 1940,970 1940,1010 2048,1010 2048,1373" fill="url(#cyberLayer5Grad)"/>
+    
+</svg>
+<svg class="parallax-layer layer-6" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberLayer6Grad" x1="1024" y1="980" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#06020e"/>
+        <stop offset="0.6" stop-color="#0f031c"/>
+        <stop offset="1" stop-color="#18052a"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Left foreground high-rise flank -->
+      <polygon points="0,1373 0,1020 180,990 280,1040 380,1040 380,1373" fill="url(#cyberLayer6Grad)"/>
+
+      <!-- Vertical Neon Signboard Left (Glowing Cyan & Pink) -->
+      <g>
+        <rect x="220" y="1030" width="36" height="220" rx="4" fill="#04010a" stroke="#00f0ff" stroke-width="2.5"/>
+        <text x="238" y="1070" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#00f0ff" text-anchor="middle">ク</text>
+        <text x="238" y="1115" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#00f0ff" text-anchor="middle">ラ</text>
+        <text x="238" y="1160" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#00f0ff" text-anchor="middle">ウ</text>
+        <text x="238" y="1205" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#00f0ff" text-anchor="middle">ド</text>
+      </g>
+
+      <!-- Right foreground high-rise flank -->
+      <polygon points="1680,1373 1680,1050 1780,1010 1920,1010 2048,1040 2048,1373" fill="url(#cyberLayer6Grad)"/>
+
+      <!-- Vertical Neon Signboard Right (Glowing Magenta & Yellow) -->
+      <g>
+        <rect x="1800" y="1020" width="36" height="240" rx="4" fill="#04010a" stroke="#ff007f" stroke-width="2.5"/>
+        <text x="1818" y="1065" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#ff007f" text-anchor="middle">電</text>
+        <text x="1818" y="1115" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#ff007f" text-anchor="middle">脳</text>
+        <text x="1818" y="1165" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#ff007f" text-anchor="middle">都</text>
+        <text x="1818" y="1215" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#ff007f" text-anchor="middle">市</text>
+      </g>
+
+      <!-- Crane Arm silhouette on top of building -->
+      <path d="M1720 1050 L1720 940 L1600 890 L1840 890 L1720 940" stroke="#00f0ff" stroke-width="2" fill="none" opacity="0.7"/>
+      <line x1="1650" y1="890" x2="1650" y2="950" stroke="#00f0ff" stroke-width="1.5" opacity="0.6"/>
+
+      <!-- Catenary high-voltage power cables spanning across -->
+      <path d="M0 1060 Q500 1140 1000 1110 Q1500 1080 2048 1070" stroke="#00f0ff" stroke-width="1.8" fill="none" opacity="0.4"/>
+      <path d="M0 1090 Q500 1170 1000 1140 Q1500 1110 2048 1100" stroke="#ff007f" stroke-width="1.5" fill="none" opacity="0.35"/>
+    
+</svg>
+<svg class="parallax-layer layer-7" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cyberLayer7Grad" x1="1024" y1="1100" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#020006"/>
+        <stop offset="1" stop-color="#080210"/>
+      </linearGradient>
+      <radialGradient id="droneGlow" cx="620" cy="1130" r="30" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#00f0ff"/>
+        <stop offset="0.5" stop-color="#00f0ff" stop-opacity="0.4"/>
+        <stop offset="1" stop-color="#020006" stop-opacity="0"/>
+      </radialGradient>
+    
+</defs>
+
+      <!-- Foreground rooftop ledge with edge profile -->
+      <polygon points="0,1373 0,1190 480,1190 540,1230 1520,1230 1580,1190 2048,1190 2048,1373" fill="url(#cyberLayer7Grad)"/>
+
+      <!-- Industrial safety railing along the roof edge -->
+      <g stroke="#1a0a2a" stroke-width="4">
+        <line x1="0" y1="1150" x2="480" y2="1150"/>
+        <line x1="0" y1="1170" x2="480" y2="1170"/>
+        <line x1="80" y1="1150" x2="80" y2="1190"/>
+        <line x1="200" y1="1150" x2="200" y2="1190"/>
+        <line x1="320" y1="1150" x2="320" y2="1190"/>
+        <line x1="440" y1="1150" x2="440" y2="1190"/>
+
+        <line x1="1580" y1="1150" x2="2048" y2="1150"/>
+        <line x1="1580" y1="1170" x2="2048" y2="1170"/>
+        <line x1="1640" y1="1150" x2="1640" y2="1190"/>
+        <line x1="1760" y1="1150" x2="1760" y2="1190"/>
+        <line x1="1880" y1="1150" x2="1880" y2="1190"/>
+        <line x1="2000" y1="1150" x2="2000" y2="1190"/>
+      </g>
+
+      <!-- Hovering Cyber Surveillance Drone -->
+      <g>
+        <!-- Drone chassis -->
+        <rect x="580" y="1120" width="80" height="20" rx="5" fill="#04010a"/>
+        <!-- Rotor arms -->
+        <line x1="560" y1="1115" x2="600" y2="1125" stroke="#1f0a33" stroke-width="3"/>
+        <line x1="680" y1="1115" x2="640" y2="1125" stroke="#1f0a33" stroke-width="3"/>
+        <!-- Rotor discs -->
+        <ellipse cx="550" cy="1115" rx="25" ry="3" fill="#00f0ff" opacity="0.6"/>
+        <ellipse cx="690" cy="1115" rx="25" ry="3" fill="#00f0ff" opacity="0.6"/>
+        <!-- Glowing sensor eye -->
+        <circle cx="620" cy="1130" r="16" fill="url(#droneGlow)"/>
+        <circle cx="620" cy="1130" r="5" fill="#00f0ff"/>
+      </g>
+
+      <!-- Foreground thick cables framing top-left and top-right -->
+      <path d="M0 0 Q400 120 700 80" stroke="#04010a" stroke-width="5" fill="none"/>
+      <path d="M0 30 Q450 160 720 110" stroke="#04010a" stroke-width="4" fill="none"/>
+      <path d="M1400 70 Q1700 140 2048 20" stroke="#04010a" stroke-width="5" fill="none"/>
+    
+</svg>`
+    },
+    'aurora': {
+      back: `<svg class="parallax-layer layer-bg" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="auroraSky" x1="1024" y1="0" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#01060f"/>
+        <stop offset="0.45" stop-color="#021422"/>
+        <stop offset="0.75" stop-color="#042638"/>
+        <stop offset="1" stop-color="#073a4d"/>
+      </linearGradient>
+    
+</defs>
+
+      <rect width="2048" height="1373" fill="url(#auroraSky)"/>
+      <g>
+        <circle cx="53" cy="29" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="180" cy="112" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="307" cy="195" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="434" cy="278" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="561" cy="361" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="688" cy="444" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="815" cy="527" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="942" cy="610" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="1069" cy="693" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="1196" cy="76" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="1323" cy="159" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="1450" cy="242" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="1577" cy="325" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="1704" cy="408" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="1831" cy="491" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="1958" cy="574" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="37" cy="657" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="164" cy="40" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="291" cy="123" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="418" cy="206" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="545" cy="289" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="672" cy="372" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="799" cy="455" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="926" cy="538" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="1053" cy="621" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="1180" cy="4" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="1307" cy="87" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="1434" cy="170" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="1561" cy="253" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="1688" cy="336" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="1815" cy="419" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="1942" cy="502" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="21" cy="585" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="148" cy="668" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="275" cy="51" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="402" cy="134" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="529" cy="217" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="656" cy="300" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="783" cy="383" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="910" cy="466" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="1037" cy="549" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="1164" cy="632" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="1291" cy="15" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="1418" cy="98" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="1545" cy="181" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="1672" cy="264" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="1799" cy="347" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="1926" cy="430" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="5" cy="513" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="132" cy="596" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="259" cy="679" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="386" cy="62" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="513" cy="145" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="640" cy="228" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="767" cy="311" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="894" cy="394" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="1021" cy="477" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="1148" cy="560" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="1275" cy="643" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="1402" cy="26" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="1529" cy="109" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="1656" cy="192" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="1783" cy="275" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="1910" cy="358" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="2037" cy="441" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="116" cy="524" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="243" cy="607" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="370" cy="690" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="497" cy="73" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="624" cy="156" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="751" cy="239" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="878" cy="322" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="1005" cy="405" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="1132" cy="488" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="1259" cy="571" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="1386" cy="654" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="1513" cy="37" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="1640" cy="120" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="1767" cy="203" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="1894" cy="286" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="2021" cy="369" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="100" cy="452" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="227" cy="535" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="354" cy="618" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="481" cy="1" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="608" cy="84" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="735" cy="167" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="862" cy="250" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="989" cy="333" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="1116" cy="416" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="1243" cy="499" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="1370" cy="582" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="1497" cy="665" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="1624" cy="48" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="1751" cy="131" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="1878" cy="214" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="2005" cy="297" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="84" cy="380" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="211" cy="463" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="338" cy="546" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="465" cy="629" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="592" cy="12" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="719" cy="95" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="846" cy="178" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="973" cy="261" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="1100" cy="344" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="1227" cy="427" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="1354" cy="510" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="1481" cy="593" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="1608" cy="676" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="1735" cy="59" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="1862" cy="142" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="1989" cy="225" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="68" cy="308" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="195" cy="391" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="322" cy="474" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="449" cy="557" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="576" cy="640" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="703" cy="23" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="830" cy="106" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="957" cy="189" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="1084" cy="272" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="1211" cy="355" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="1338" cy="438" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="1465" cy="521" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="1592" cy="604" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="1719" cy="687" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="1846" cy="70" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="1973" cy="153" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="52" cy="236" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="179" cy="319" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="306" cy="402" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="433" cy="485" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="560" cy="568" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="687" cy="651" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="814" cy="34" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="941" cy="117" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="1068" cy="200" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="1195" cy="283" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="1322" cy="366" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="1449" cy="449" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="1576" cy="532" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="1703" cy="615" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="1830" cy="698" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="1957" cy="81" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="36" cy="164" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="163" cy="247" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="290" cy="330" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="417" cy="413" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="544" cy="496" r="1.0" fill="#e6f7ff" opacity="0.93"/><circle cx="671" cy="579" r="0.8" fill="#e6f7ff" opacity="0.30"/><circle cx="798" cy="662" r="2.4" fill="#e6f7ff" opacity="0.37"/><circle cx="925" cy="45" r="2.2" fill="#e6f7ff" opacity="0.44"/><circle cx="1052" cy="128" r="2.1" fill="#e6f7ff" opacity="0.51"/><circle cx="1179" cy="211" r="1.9" fill="#e6f7ff" opacity="0.58"/><circle cx="1306" cy="294" r="1.7" fill="#e6f7ff" opacity="0.65"/><circle cx="1433" cy="377" r="1.5" fill="#e6f7ff" opacity="0.72"/><circle cx="1560" cy="460" r="1.3" fill="#e6f7ff" opacity="0.79"/><circle cx="1687" cy="543" r="1.2" fill="#e6f7ff" opacity="0.86"/><circle cx="1814" cy="626" r="1.0" fill="#e6f7ff" opacity="0.93"/>
+      </g>
+    
+</svg>
+<svg class="parallax-layer layer-1" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="auroraCurtain1" x1="200" y1="150" x2="1800" y2="600" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#00ff88" stop-opacity="0.85"/>
+        <stop offset="0.4" stop-color="#00e5ff" stop-opacity="0.9"/>
+        <stop offset="0.7" stop-color="#38bdf8" stop-opacity="0.6"/>
+        <stop offset="1" stop-color="#a855f7" stop-opacity="0.3"/>
+      </linearGradient>
+      <linearGradient id="auroraCurtain2" x1="100" y1="250" x2="1900" y2="650" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#10b981" stop-opacity="0.75"/>
+        <stop offset="0.5" stop-color="#06b6d4" stop-opacity="0.85"/>
+        <stop offset="1" stop-color="#8b5cf6" stop-opacity="0.4"/>
+      </linearGradient>
+      <radialGradient id="moonGlow" cx="1720" cy="240" r="120" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#e0f2fe" stop-opacity="0.3"/>
+        <stop offset="1" stop-color="#021422" stop-opacity="0"/>
+      </radialGradient>
+    
+</defs>
+
+      <!-- Crescent moon with halo -->
+      <circle cx="1720" cy="240" r="100" fill="url(#moonGlow)"/>
+      <circle cx="1720" cy="240" r="32" fill="#f0f9ff"/>
+      <circle cx="1732" cy="235" r="28" fill="#021422"/>
+
+      <!-- Aurora Wave Ribbon 1 (Top Harmonic) -->
+      <path d="M-100 360 Q380 140 850 310 Q1320 480 1780 260 Q1980 180 2150 280 L2150 580 Q1780 480 1320 620 Q850 490 -100 580 Z" fill="url(#auroraCurtain1)" opacity="0.8"/>
+
+      <!-- Aurora Wave Ribbon 2 (Lower Harmonic) -->
+      <path d="M-100 440 Q450 220 980 390 Q1510 560 2150 340 L2150 680 Q1510 680 980 540 Q450 720 -100 640 Z" fill="url(#auroraCurtain2)" opacity="0.65"/>
+    
+</svg>
+<svg class="parallax-layer layer-2" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="auroraGlaciers" x1="1024" y1="480" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0a2538"/>
+        <stop offset="0.5" stop-color="#0f344c"/>
+        <stop offset="1" stop-color="#154260"/>
+      </linearGradient>
+      <linearGradient id="snowGlow" x1="1024" y1="480" x2="1024" y2="850" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#a7f3d0" stop-opacity="0.8"/>
+        <stop offset="1" stop-color="#0a2538" stop-opacity="0"/>
+      </linearGradient>
+    
+</defs>
+
+      <path d="
+      M0 1373 
+      V760 L90 710 L160 740 L260 660 L380 720 L510 590 L620 680 L760 520 L870 660 L990 560 
+      L1120 690 L1260 530 L1380 670 L1520 570 L1650 710 L1780 610 L1910 730 L2048 640 
+      V1373 H0 Z
+    " fill="url(#auroraGlaciers)"/>
+      
+      <polygon points="510,590 480,680 510,700 550,670" fill="url(#snowGlow)"/>
+      <polygon points="760,520 720,620 760,650 800,610" fill="url(#snowGlow)"/>
+      <polygon points="990,560 950,650 990,670 1030,640" fill="url(#snowGlow)"/>
+      <polygon points="1260,530 1220,630 1260,660 1300,620" fill="url(#snowGlow)"/>
+      <polygon points="1520,570 1480,660 1520,680 1560,650" fill="url(#snowGlow)"/>
+      <polygon points="1780,610 1740,690 1780,710 1820,680" fill="url(#snowGlow)"/>
+    
+    
+</svg>
+<svg class="parallax-layer layer-3" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="auroraMidCliffs" x1="1024" y1="680" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#081e2b"/>
+        <stop offset="0.6" stop-color="#0d2b3c"/>
+        <stop offset="1" stop-color="#12384e"/>
+      </linearGradient>
+    
+</defs>
+<path d="
+      M0 1373 
+      V840 L120 790 L240 850 L380 770 L520 840 L680 750 L840 830 L980 760 
+      L1140 840 L1310 750 L1480 840 L1660 760 L1840 850 L2048 780 
+      V1373 H0 Z
+    " fill="url(#auroraMidCliffs)"/>
+</svg>`,
+      front: `<svg class="parallax-layer layer-4" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="fjordWater" x1="1024" y1="840" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#051824"/>
+        <stop offset="0.5" stop-color="#092332"/>
+        <stop offset="1" stop-color="#0f3448"/>
+      </linearGradient>
+      <linearGradient id="waterReflection" x1="0" y1="900" x2="2048" y2="900" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#00ff88" stop-opacity="0.15"/>
+        <stop offset="0.3" stop-color="#00e5ff" stop-opacity="0.3"/>
+        <stop offset="0.7" stop-color="#00ff88" stop-opacity="0.35"/>
+        <stop offset="1" stop-color="#00e5ff" stop-opacity="0.15"/>
+      </linearGradient>
+    
+</defs>
+
+      <rect y="840" width="2048" height="533" fill="url(#fjordWater)"/>
+      <g>
+        <ellipse cx="1024" cy="860" rx="400" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="864" rx="160" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="866" rx="160" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="872" rx="496" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="876" rx="198" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="878" rx="198" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="884" rx="592" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="888" rx="237" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="890" rx="237" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="896" rx="688" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="900" rx="275" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="902" rx="275" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="908" rx="784" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="912" rx="314" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="914" rx="314" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="920" rx="880" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="924" rx="352" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="926" rx="352" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="932" rx="976" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="936" rx="390" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="938" rx="390" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="944" rx="1072" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="948" rx="429" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="950" rx="429" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1024" cy="956" rx="1168" ry="2" fill="url(#waterReflection)"/><ellipse cx="450" cy="960" rx="467" ry="1.5" fill="url(#waterReflection)"/><ellipse cx="1600" cy="962" rx="467" ry="1.5" fill="url(#waterReflection)"/>
+      </g>
+    
+</svg>
+<svg class="parallax-layer layer-5" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="auroraPinesMid" x1="1024" y1="860" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#041520"/>
+        <stop offset="0.5" stop-color="#07202e"/>
+        <stop offset="1" stop-color="#0a2a3b"/>
+      </linearGradient>
+    
+</defs>
+<path d="M0 1373 V920 L-10 930 L0 904 L10 930 L20 930 L30 904 L40 930 L50 930 L60 908 L70 930 L80 930 L90 910 L100 930 L110 930 L120 908 L130 930 L140 930 L150 902 L160 930 L170 930 L180 896 L190 930 L200 930 L210 894 L220 930 L230 930 L240 900 L250 930 L260 930 L270 909 L280 930 L290 930 L300 917 L310 930 L320 930 L330 921 L340 930 L350 930 L360 918 L370 930 L380 930 L390 915 L400 930 L410 930 L420 914 L430 930 L440 930 L450 918 L460 930 L470 930 L480 926 L490 930 L500 930 L510 930 L520 930 L530 930 L540 928 L550 930 L560 930 L570 920 L580 930 L590 930 L600 911 L610 930 L620 930 L630 904 L640 930 L650 930 L660 904 L670 930 L680 930 L690 908 L700 930 L710 930 L720 910 L730 930 L740 930 L750 908 L760 930 L770 930 L780 902 L790 930 L800 930 L810 895 L820 930 L830 930 L840 894 L850 930 L860 930 L870 900 L880 930 L890 930 L900 910 L910 930 L920 930 L930 917 L940 930 L950 930 L960 921 L970 930 L980 930 L990 918 L1000 930 L1010 930 L1020 914 L1030 930 L1040 930 L1050 914 L1060 930 L1070 930 L1080 919 L1090 930 L1100 930 L1110 926 L1120 930 L1130 930 L1140 930 L1150 930 L1160 930 L1170 927 L1180 930 L1190 930 L1200 919 L1210 930 L1220 930 L1230 910 L1240 930 L1250 930 L1260 904 L1270 930 L1280 930 L1290 904 L1300 930 L1310 930 L1320 908 L1330 930 L1340 930 L1350 910 L1360 930 L1370 930 L1380 908 L1390 930 L1400 930 L1410 901 L1420 930 L1430 930 L1440 895 L1450 930 L1460 930 L1470 894 L1480 930 L1490 930 L1500 900 L1510 930 L1520 930 L1530 910 L1540 930 L1550 930 L1560 918 L1570 930 L1580 930 L1590 920 L1600 930 L1610 930 L1620 918 L1630 930 L1640 930 L1650 914 L1660 930 L1670 930 L1680 914 L1690 930 L1700 930 L1710 919 L1720 930 L1730 930 L1740 926 L1750 930 L1760 930 L1770 930 L1780 930 L1790 930 L1800 927 L1810 930 L1820 930 L1830 918 L1840 930 L1850 930 L1860 910 L1870 930 L1880 930 L1890 904 L1900 930 L1910 930 L1920 904 L1930 930 L1940 930 L1950 908 L1960 930 L1970 930 L1980 910 L1990 930 L2000 930 L2010 908 L2020 930 L2030 930 L2040 901 L2050 930 L2060 930 L2070 895 L2080 930 V1373 H0 Z" fill="url(#auroraPinesMid)"/>
+</svg>
+<svg class="parallax-layer layer-6" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="auroraCliffsClose" x1="1024" y1="960" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#030e16"/>
+        <stop offset="0.5" stop-color="#051722"/>
+        <stop offset="1" stop-color="#08202d"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Left granite crag -->
+      <path d="M0 1373 V940 Q180 960 320 1020 Q440 1080 540 1140 L500 1373 H0 Z" fill="url(#auroraCliffsClose)"/>
+      <!-- Wind-swept pine on left rock -->
+      <polygon points="280,1020 270,960 280,960 275,920 285,920 280,880 290,920 285,920 295,960 285,960 300,1020" fill="#02080d"/>
+
+      <!-- Right granite crag -->
+      <path d="M2048 1373 V950 Q1860 970 1720 1030 Q1600 1090 1500 1160 L1560 1373 H2048 Z" fill="url(#auroraCliffsClose)"/>
+      <!-- Wind-swept pine on right rock -->
+      <polygon points="1760,1020 1750,950 1760,950 1755,910 1765,910 1760,870 1770,910 1765,910 1775,950 1765,950 1780,1020" fill="#02080d"/>
+    
+</svg>
+<svg class="parallax-layer layer-7" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cabinWindowGlow" x1="1680" y1="1170" x2="1710" y2="1200" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ffbf00"/>
+        <stop offset="1" stop-color="#ff7700"/>
+      </linearGradient>
+      <radialGradient id="windowHalo" cx="1695" cy="1185" r="45" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ffaa00" stop-opacity="0.4"/>
+        <stop offset="1" stop-color="#02080c" stop-opacity="0"/>
+      </radialGradient>
+    
+</defs>
+
+      <!-- Tall ancient pine tree left -->
+      <polygon points="120,1373 110,1100 60,1120 110,1040 70,1055 110,980 80,990 110,920 90,930 115,860 125,860 145,930 130,920 155,990 130,980 165,1055 130,1040 180,1120 130,1100 140,1373" fill="#01060a"/>
+      <!-- Secondary pine left -->
+      <polygon points="40,1373 30,1150 0,1165 30,1100 5,1115 30,1050 15,1060 35,990 45,990 60,1060 45,1050 70,1115 45,1100 80,1165 50,1150 60,1373" fill="#01060a"/>
+    
+
+      <!-- Foreground shore -->
+      <path d="M0 1373 L0 1260 Q500 1240 1024 1250 Q1600 1260 2048 1220 L2048 1373 Z" fill="#01060a"/>
+
+      <!-- Right foreground pine -->
+      <polygon points="1920,1373 1910,1060 1860,1080 1910,1000 1870,1015 1910,940 1880,950 1910,880 1890,890 1915,820 1925,820 1945,890 1930,880 1955,950 1930,940 1965,1015 1930,1000 1980,1080 1930,1060 1940,1373" fill="#01060a"/>
+
+      <!-- Cozy wooden cabin -->
+      <g>
+        <!-- Cabin roof -->
+        <polygon points="1640,1160 1700,1110 1760,1160" fill="#01060a"/>
+        <!-- Cabin body -->
+        <rect x="1650" y="1160" width="100" height="70" fill="#01060a"/>
+        <!-- Window halo and warm glowing window -->
+        <circle cx="1695" cy="1185" r="45" fill="url(#windowHalo)"/>
+        <rect x="1680" y="1170" width="30" height="30" rx="3" fill="url(#cabinWindowGlow)"/>
+        <!-- Window cross pane -->
+        <line x1="1695" y1="1170" x2="1695" y2="1200" stroke="#01060a" stroke-width="2"/>
+        <line x1="1680" y1="1185" x2="1710" y2="1185" stroke="#01060a" stroke-width="2"/>
+      </g>
+    
+</svg>`
+    },
+    'nebula': {
+      back: `<svg class="parallax-layer layer-bg" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="spaceVoid" x1="1024" y1="0" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#020008"/>
+        <stop offset="0.5" stop-color="#08021c"/>
+        <stop offset="1" stop-color="#140532"/>
+      </linearGradient>
+    
+</defs>
+
+      <rect width="2048" height="1373" fill="url(#spaceVoid)"/>
+      <g>
+        <circle cx="31" cy="47" r="0.8" fill="#c084fc" opacity="0.35"/><circle cx="188" cy="156" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="345" cy="265" r="2.0" fill="#ffffff" opacity="0.59"/><circle cx="502" cy="374" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="659" cy="483" r="1.2" fill="#c084fc" opacity="0.83"/><circle cx="816" cy="592" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="973" cy="701" r="2.4" fill="#ffffff" opacity="0.47"/><circle cx="1130" cy="810" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="1287" cy="919" r="1.6" fill="#c084fc" opacity="0.71"/><circle cx="1444" cy="1028" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="1601" cy="1137" r="0.8" fill="#ffffff" opacity="0.35"/><circle cx="1758" cy="1246" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="1915" cy="1355" r="2.0" fill="#c084fc" opacity="0.59"/><circle cx="24" cy="91" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="181" cy="200" r="1.2" fill="#ffffff" opacity="0.83"/><circle cx="338" cy="309" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="495" cy="418" r="2.4" fill="#c084fc" opacity="0.47"/><circle cx="652" cy="527" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="809" cy="636" r="1.6" fill="#ffffff" opacity="0.71"/><circle cx="966" cy="745" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="1123" cy="854" r="0.8" fill="#c084fc" opacity="0.35"/><circle cx="1280" cy="963" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="1437" cy="1072" r="2.0" fill="#ffffff" opacity="0.59"/><circle cx="1594" cy="1181" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="1751" cy="1290" r="1.2" fill="#c084fc" opacity="0.83"/><circle cx="1908" cy="26" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="17" cy="135" r="2.4" fill="#ffffff" opacity="0.47"/><circle cx="174" cy="244" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="331" cy="353" r="1.6" fill="#c084fc" opacity="0.71"/><circle cx="488" cy="462" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="645" cy="571" r="0.8" fill="#ffffff" opacity="0.35"/><circle cx="802" cy="680" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="959" cy="789" r="2.0" fill="#c084fc" opacity="0.59"/><circle cx="1116" cy="898" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="1273" cy="1007" r="1.2" fill="#ffffff" opacity="0.83"/><circle cx="1430" cy="1116" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="1587" cy="1225" r="2.4" fill="#c084fc" opacity="0.47"/><circle cx="1744" cy="1334" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="1901" cy="70" r="1.6" fill="#ffffff" opacity="0.71"/><circle cx="10" cy="179" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="167" cy="288" r="0.8" fill="#c084fc" opacity="0.35"/><circle cx="324" cy="397" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="481" cy="506" r="2.0" fill="#ffffff" opacity="0.59"/><circle cx="638" cy="615" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="795" cy="724" r="1.2" fill="#c084fc" opacity="0.83"/><circle cx="952" cy="833" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="1109" cy="942" r="2.4" fill="#ffffff" opacity="0.47"/><circle cx="1266" cy="1051" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="1423" cy="1160" r="1.6" fill="#c084fc" opacity="0.71"/><circle cx="1580" cy="1269" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="1737" cy="5" r="0.8" fill="#ffffff" opacity="0.35"/><circle cx="1894" cy="114" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="3" cy="223" r="2.0" fill="#c084fc" opacity="0.59"/><circle cx="160" cy="332" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="317" cy="441" r="1.2" fill="#ffffff" opacity="0.83"/><circle cx="474" cy="550" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="631" cy="659" r="2.4" fill="#c084fc" opacity="0.47"/><circle cx="788" cy="768" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="945" cy="877" r="1.6" fill="#ffffff" opacity="0.71"/><circle cx="1102" cy="986" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="1259" cy="1095" r="0.8" fill="#c084fc" opacity="0.35"/><circle cx="1416" cy="1204" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="1573" cy="1313" r="2.0" fill="#ffffff" opacity="0.59"/><circle cx="1730" cy="49" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="1887" cy="158" r="1.2" fill="#c084fc" opacity="0.83"/><circle cx="2044" cy="267" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="153" cy="376" r="2.4" fill="#ffffff" opacity="0.47"/><circle cx="310" cy="485" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="467" cy="594" r="1.6" fill="#c084fc" opacity="0.71"/><circle cx="624" cy="703" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="781" cy="812" r="0.8" fill="#ffffff" opacity="0.35"/><circle cx="938" cy="921" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="1095" cy="1030" r="2.0" fill="#c084fc" opacity="0.59"/><circle cx="1252" cy="1139" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="1409" cy="1248" r="1.2" fill="#ffffff" opacity="0.83"/><circle cx="1566" cy="1357" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="1723" cy="93" r="2.4" fill="#c084fc" opacity="0.47"/><circle cx="1880" cy="202" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="2037" cy="311" r="1.6" fill="#ffffff" opacity="0.71"/><circle cx="146" cy="420" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="303" cy="529" r="0.8" fill="#c084fc" opacity="0.35"/><circle cx="460" cy="638" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="617" cy="747" r="2.0" fill="#ffffff" opacity="0.59"/><circle cx="774" cy="856" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="931" cy="965" r="1.2" fill="#c084fc" opacity="0.83"/><circle cx="1088" cy="1074" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="1245" cy="1183" r="2.4" fill="#ffffff" opacity="0.47"/><circle cx="1402" cy="1292" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="1559" cy="28" r="1.6" fill="#c084fc" opacity="0.71"/><circle cx="1716" cy="137" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="1873" cy="246" r="0.8" fill="#ffffff" opacity="0.35"/><circle cx="2030" cy="355" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="139" cy="464" r="2.0" fill="#c084fc" opacity="0.59"/><circle cx="296" cy="573" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="453" cy="682" r="1.2" fill="#ffffff" opacity="0.83"/><circle cx="610" cy="791" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="767" cy="900" r="2.4" fill="#c084fc" opacity="0.47"/><circle cx="924" cy="1009" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="1081" cy="1118" r="1.6" fill="#ffffff" opacity="0.71"/><circle cx="1238" cy="1227" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="1395" cy="1336" r="0.8" fill="#c084fc" opacity="0.35"/><circle cx="1552" cy="72" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="1709" cy="181" r="2.0" fill="#ffffff" opacity="0.59"/><circle cx="1866" cy="290" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="2023" cy="399" r="1.2" fill="#c084fc" opacity="0.83"/><circle cx="132" cy="508" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="289" cy="617" r="2.4" fill="#ffffff" opacity="0.47"/><circle cx="446" cy="726" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="603" cy="835" r="1.6" fill="#c084fc" opacity="0.71"/><circle cx="760" cy="944" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="917" cy="1053" r="0.8" fill="#ffffff" opacity="0.35"/><circle cx="1074" cy="1162" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="1231" cy="1271" r="2.0" fill="#c084fc" opacity="0.59"/><circle cx="1388" cy="7" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="1545" cy="116" r="1.2" fill="#ffffff" opacity="0.83"/><circle cx="1702" cy="225" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="1859" cy="334" r="2.4" fill="#c084fc" opacity="0.47"/><circle cx="2016" cy="443" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="125" cy="552" r="1.6" fill="#ffffff" opacity="0.71"/><circle cx="282" cy="661" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="439" cy="770" r="0.8" fill="#c084fc" opacity="0.35"/><circle cx="596" cy="879" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="753" cy="988" r="2.0" fill="#ffffff" opacity="0.59"/><circle cx="910" cy="1097" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="1067" cy="1206" r="1.2" fill="#c084fc" opacity="0.83"/><circle cx="1224" cy="1315" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="1381" cy="51" r="2.4" fill="#ffffff" opacity="0.47"/><circle cx="1538" cy="160" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="1695" cy="269" r="1.6" fill="#c084fc" opacity="0.71"/><circle cx="1852" cy="378" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="2009" cy="487" r="0.8" fill="#ffffff" opacity="0.35"/><circle cx="118" cy="596" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="275" cy="705" r="2.0" fill="#c084fc" opacity="0.59"/><circle cx="432" cy="814" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="589" cy="923" r="1.2" fill="#ffffff" opacity="0.83"/><circle cx="746" cy="1032" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="903" cy="1141" r="2.4" fill="#c084fc" opacity="0.47"/><circle cx="1060" cy="1250" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="1217" cy="1359" r="1.6" fill="#ffffff" opacity="0.71"/><circle cx="1374" cy="95" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="1531" cy="204" r="0.8" fill="#c084fc" opacity="0.35"/><circle cx="1688" cy="313" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="1845" cy="422" r="2.0" fill="#ffffff" opacity="0.59"/><circle cx="2002" cy="531" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="111" cy="640" r="1.2" fill="#c084fc" opacity="0.83"/><circle cx="268" cy="749" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="425" cy="858" r="2.4" fill="#ffffff" opacity="0.47"/><circle cx="582" cy="967" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="739" cy="1076" r="1.6" fill="#c084fc" opacity="0.71"/><circle cx="896" cy="1185" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="1053" cy="1294" r="0.8" fill="#ffffff" opacity="0.35"/><circle cx="1210" cy="30" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="1367" cy="139" r="2.0" fill="#c084fc" opacity="0.59"/><circle cx="1524" cy="248" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="1681" cy="357" r="1.2" fill="#ffffff" opacity="0.83"/><circle cx="1838" cy="466" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="1995" cy="575" r="2.4" fill="#c084fc" opacity="0.47"/><circle cx="104" cy="684" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="261" cy="793" r="1.6" fill="#ffffff" opacity="0.71"/><circle cx="418" cy="902" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="575" cy="1011" r="0.8" fill="#c084fc" opacity="0.35"/><circle cx="732" cy="1120" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="889" cy="1229" r="2.0" fill="#ffffff" opacity="0.59"/><circle cx="1046" cy="1338" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="1203" cy="74" r="1.2" fill="#c084fc" opacity="0.83"/><circle cx="1360" cy="183" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="1517" cy="292" r="2.4" fill="#ffffff" opacity="0.47"/><circle cx="1674" cy="401" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="1831" cy="510" r="1.6" fill="#c084fc" opacity="0.71"/><circle cx="1988" cy="619" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="97" cy="728" r="0.8" fill="#ffffff" opacity="0.35"/><circle cx="254" cy="837" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="411" cy="946" r="2.0" fill="#c084fc" opacity="0.59"/><circle cx="568" cy="1055" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="725" cy="1164" r="1.2" fill="#ffffff" opacity="0.83"/><circle cx="882" cy="1273" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="1039" cy="9" r="2.4" fill="#c084fc" opacity="0.47"/><circle cx="1196" cy="118" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="1353" cy="227" r="1.6" fill="#ffffff" opacity="0.71"/><circle cx="1510" cy="336" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="1667" cy="445" r="0.8" fill="#c084fc" opacity="0.35"/><circle cx="1824" cy="554" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="1981" cy="663" r="2.0" fill="#ffffff" opacity="0.59"/><circle cx="90" cy="772" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="247" cy="881" r="1.2" fill="#c084fc" opacity="0.83"/><circle cx="404" cy="990" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="561" cy="1099" r="2.4" fill="#ffffff" opacity="0.47"/><circle cx="718" cy="1208" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="875" cy="1317" r="1.6" fill="#c084fc" opacity="0.71"/><circle cx="1032" cy="53" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="1189" cy="162" r="0.8" fill="#ffffff" opacity="0.35"/><circle cx="1346" cy="271" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="1503" cy="380" r="2.0" fill="#c084fc" opacity="0.59"/><circle cx="1660" cy="489" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="1817" cy="598" r="1.2" fill="#ffffff" opacity="0.83"/><circle cx="1974" cy="707" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="83" cy="816" r="2.4" fill="#c084fc" opacity="0.47"/><circle cx="240" cy="925" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="397" cy="1034" r="1.6" fill="#ffffff" opacity="0.71"/><circle cx="554" cy="1143" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="711" cy="1252" r="0.8" fill="#c084fc" opacity="0.35"/><circle cx="868" cy="1361" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="1025" cy="97" r="2.0" fill="#ffffff" opacity="0.59"/><circle cx="1182" cy="206" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="1339" cy="315" r="1.2" fill="#c084fc" opacity="0.83"/><circle cx="1496" cy="424" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="1653" cy="533" r="2.4" fill="#ffffff" opacity="0.47"/><circle cx="1810" cy="642" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="1967" cy="751" r="1.6" fill="#c084fc" opacity="0.71"/><circle cx="76" cy="860" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="233" cy="969" r="0.8" fill="#ffffff" opacity="0.35"/><circle cx="390" cy="1078" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="547" cy="1187" r="2.0" fill="#c084fc" opacity="0.59"/><circle cx="704" cy="1296" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="861" cy="32" r="1.2" fill="#ffffff" opacity="0.83"/><circle cx="1018" cy="141" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="1175" cy="250" r="2.4" fill="#c084fc" opacity="0.47"/><circle cx="1332" cy="359" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="1489" cy="468" r="1.6" fill="#ffffff" opacity="0.71"/><circle cx="1646" cy="577" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="1803" cy="686" r="0.8" fill="#c084fc" opacity="0.35"/><circle cx="1960" cy="795" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="69" cy="904" r="2.0" fill="#ffffff" opacity="0.59"/><circle cx="226" cy="1013" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="383" cy="1122" r="1.2" fill="#c084fc" opacity="0.83"/><circle cx="540" cy="1231" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="697" cy="1340" r="2.4" fill="#ffffff" opacity="0.47"/><circle cx="854" cy="76" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="1011" cy="185" r="1.6" fill="#c084fc" opacity="0.71"/><circle cx="1168" cy="294" r="2.2" fill="#ffffff" opacity="0.53"/><circle cx="1325" cy="403" r="0.8" fill="#ffffff" opacity="0.35"/><circle cx="1482" cy="512" r="1.4" fill="#ffffff" opacity="0.77"/><circle cx="1639" cy="621" r="2.0" fill="#c084fc" opacity="0.59"/><circle cx="1796" cy="730" r="2.6" fill="#ffffff" opacity="0.41"/><circle cx="1953" cy="839" r="1.2" fill="#ffffff" opacity="0.83"/><circle cx="62" cy="948" r="1.8" fill="#ffffff" opacity="0.65"/><circle cx="219" cy="1057" r="2.4" fill="#c084fc" opacity="0.47"/><circle cx="376" cy="1166" r="1.0" fill="#ffffff" opacity="0.89"/><circle cx="533" cy="1275" r="1.6" fill="#ffffff" opacity="0.71"/><circle cx="690" cy="11" r="2.2" fill="#ffffff" opacity="0.53"/>
+      </g>
+    
+</svg>
+<svg class="parallax-layer layer-1" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <radialGradient id="nebulaCore" cx="700" cy="520" r="600" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#c084fc" stop-opacity="0.8"/>
+        <stop offset="0.35" stop-color="#9333ea" stop-opacity="0.5"/>
+        <stop offset="0.7" stop-color="#3b82f6" stop-opacity="0.25"/>
+        <stop offset="1" stop-color="#08021c" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="nebulaCyan" cx="1300" cy="450" r="500" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#06b6d4" stop-opacity="0.7"/>
+        <stop offset="0.4" stop-color="#3b82f6" stop-opacity="0.35"/>
+        <stop offset="1" stop-color="#08021c" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="galaxyNucleus" cx="420" cy="300" r="160" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ffffff"/>
+        <stop offset="0.2" stop-color="#fde047" stop-opacity="0.9"/>
+        <stop offset="0.6" stop-color="#ec4899" stop-opacity="0.5"/>
+        <stop offset="1" stop-color="#020008" stop-opacity="0"/>
+      </radialGradient>
+    
+</defs>
+
+      <!-- Main cosmic nebula clouds -->
+      <ellipse cx="700" cy="520" rx="600" ry="380" fill="url(#nebulaCore)" transform="rotate(-15 700 520)"/>
+      <ellipse cx="1300" cy="450" rx="520" ry="320" fill="url(#nebulaCyan)" transform="rotate(18 1300 450)"/>
+
+      <!-- Distant tilted spiral galaxy -->
+      <g transform="rotate(-28 420 300)">
+        <ellipse cx="420" cy="300" rx="160" ry="45" fill="url(#galaxyNucleus)"/>
+        <ellipse cx="420" cy="300" rx="220" ry="25" stroke="#ec4899" stroke-width="6" fill="none" opacity="0.6"/>
+        <ellipse cx="420" cy="300" rx="280" ry="15" stroke="#38bdf8" stroke-width="4" fill="none" opacity="0.4"/>
+      </g>
+    
+</svg>
+<svg class="parallax-layer layer-2" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="planetSphere" x1="1400" y1="360" x2="1680" y2="680" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#e0e7ff"/>
+        <stop offset="0.25" stop-color="#a5b4fc"/>
+        <stop offset="0.55" stop-color="#6366f1"/>
+        <stop offset="0.85" stop-color="#312e81"/>
+        <stop offset="1" stop-color="#0f0e2b"/>
+      </linearGradient>
+      <linearGradient id="ringGrad" x1="1100" y1="520" x2="2000" y2="520" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#c084fc" stop-opacity="0.9"/>
+        <stop offset="0.4" stop-color="#38bdf8" stop-opacity="0.8"/>
+        <stop offset="0.7" stop-color="#818cf8" stop-opacity="0.85"/>
+        <stop offset="1" stop-color="#c084fc" stop-opacity="0.9"/>
+      </linearGradient>
+    
+</defs>
+
+      <g transform="rotate(-16 1560 520)">
+        <!-- Back half of rings -->
+        <ellipse cx="1560" cy="520" rx="320" ry="58" stroke="url(#ringGrad)" stroke-width="26" fill="none" opacity="0.85"/>
+        <ellipse cx="1560" cy="520" rx="360" ry="66" stroke="#38bdf8" stroke-width="12" fill="none" opacity="0.5"/>
+
+        <!-- Gas giant planet sphere -->
+        <circle cx="1560" cy="520" r="150" fill="url(#planetSphere)"/>
+        
+        <!-- Planet atmospheric shadow and cloud band lines -->
+        <path d="M1410 520 Q1560 560 1710 520" stroke="#312e81" stroke-width="12" fill="none" opacity="0.6"/>
+        <path d="M1410 470 Q1560 510 1710 470" stroke="#4338ca" stroke-width="8" fill="none" opacity="0.5"/>
+
+        <!-- Front half of rings overlapping the planet -->
+        <path d="M1240 520 A320 58 0 0 0 1880 520" stroke="url(#ringGrad)" stroke-width="26" fill="none" opacity="0.95"/>
+        <path d="M1200 520 A360 66 0 0 0 1920 520" stroke="#38bdf8" stroke-width="12" fill="none" opacity="0.6"/>
+      </g>
+
+      <!-- Orbiting Moons -->
+      <circle cx="1240" cy="460" r="18" fill="#e2e8f0"/>
+      <circle cx="1244" cy="458" r="16" fill="#1e1b4b"/>
+      <circle cx="1820" cy="680" r="10" fill="#cbd5e1"/>
+    
+</svg>
+<svg class="parallax-layer layer-3" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="asteroidRock" x1="0" y1="0" x2="1" y2="1">
+        <stop stop-color="#475569"/>
+        <stop offset="0.6" stop-color="#1e293b"/>
+        <stop offset="1" stop-color="#0f172a"/>
+      </linearGradient>
+    
+</defs>
+<g><polygon points="320,658 342,673 335,702 307,698 298,680" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="380,706 394,716 390,734 372,731 366,720" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="460,642 478,655 473,678 449,674 442,660" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="540,698 552,706 548,722 533,720 528,710" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="680,614 706,632 698,666 664,661 654,640" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="780,674 796,685 791,706 770,703 764,690" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="920,610 940,624 934,650 908,646 900,630" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="1050,655 1065,666 1060,685 1041,682 1035,670" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="1180,616 1204,633 1197,664 1166,659 1156,640" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="1320,682 1338,695 1333,718 1309,714 1302,700" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="1450,636 1464,646 1460,664 1442,661 1436,650" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/><polygon points="1750,700 1770,714 1764,740 1738,736 1730,720" fill="url(#asteroidRock)" stroke="#64748b" stroke-width="1.5"/></g>
+</svg>`,
+      front: `<svg class="parallax-layer layer-4" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="crystalFacet1" x1="0" y1="0" x2="1" y2="1">
+        <stop stop-color="#c084fc"/>
+        <stop offset="1" stop-color="#1e1b4b"/>
+      </linearGradient>
+      <linearGradient id="crystalFacet2" x1="0" y1="0" x2="1" y2="1">
+        <stop stop-color="#38bdf8"/>
+        <stop offset="1" stop-color="#0f172a"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Large floating crystalline asteroid left -->
+      <g transform="translate(180, 780)">
+        <polygon points="0,0 80,-40 140,20 60,80 -20,50" fill="url(#crystalFacet1)" stroke="#c084fc" stroke-width="2"/>
+        <polygon points="0,0 60,80 -20,50" fill="#0f0728" opacity="0.6"/>
+      </g>
+      <!-- Large floating crystalline asteroid right -->
+      <g transform="translate(1620, 800)">
+        <polygon points="0,-20 90,-50 150,30 70,90 -10,40" fill="url(#crystalFacet2)" stroke="#38bdf8" stroke-width="2"/>
+        <polygon points="0,-20 70,90 -10,40" fill="#030b1c" opacity="0.6"/>
+      </g>
+    
+</svg>
+<svg class="parallax-layer layer-5" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="lunarSurface" x1="1024" y1="840" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0e0722"/>
+        <stop offset="0.5" stop-color="#180c38"/>
+        <stop offset="1" stop-color="#241250"/>
+      </linearGradient>
+    
+</defs>
+<path d="
+      M0 1373 
+      V960 Q180 920 380 950 Q560 980 740 920 Q920 860 1120 930 
+      Q1340 1000 1560 910 Q1780 840 2048 930 
+      V1373 H0 Z
+    " fill="url(#lunarSurface)"/>
+</svg>
+<svg class="parallax-layer layer-6" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="stationGrad" x1="1024" y1="920" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#080214"/>
+        <stop offset="1" stop-color="#14062a"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Orbital space station silhouette -->
+      <g transform="translate(860, 940)">
+        <!-- Central hub -->
+        <rect x="140" y="40" width="60" height="120" rx="8" fill="url(#stationGrad)" stroke="#38bdf8" stroke-width="2"/>
+        <!-- Habitation ring -->
+        <ellipse cx="170" cy="100" rx="140" ry="24" stroke="#c084fc" stroke-width="8" fill="none"/>
+        <ellipse cx="170" cy="100" rx="140" ry="24" stroke="#38bdf8" stroke-width="2" fill="none"/>
+        <!-- Solar panel wings -->
+        <rect x="0" y="75" width="120" height="50" fill="#0f172a" stroke="#00f0ff" stroke-width="1.5"/>
+        <line x1="40" y1="75" x2="40" y2="125" stroke="#00f0ff" stroke-width="1"/>
+        <line x1="80" y1="75" x2="80" y2="125" stroke="#00f0ff" stroke-width="1"/>
+        <rect x="220" y="75" width="120" height="50" fill="#0f172a" stroke="#00f0ff" stroke-width="1.5"/>
+        <line x1="260" y1="75" x2="260" y2="125" stroke="#00f0ff" stroke-width="1"/>
+        <line x1="300" y1="75" x2="300" y2="125" stroke="#00f0ff" stroke-width="1"/>
+        <!-- Communications spire & beacon -->
+        <line x1="170" y1="40" x2="170" y2="0" stroke="#c084fc" stroke-width="3"/>
+        <circle cx="170" cy="0" r="4" fill="#00f0ff"/>
+        <!-- Thruster glows -->
+        <circle cx="160" cy="165" r="5" fill="#00f0ff"/>
+        <circle cx="180" cy="165" r="5" fill="#00f0ff"/>
+      </g>
+    
+</svg>
+<svg class="parallax-layer layer-7" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="cockpitStrut" x1="1024" y1="1050" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#030008"/>
+        <stop offset="1" stop-color="#0a0218"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Cockpit bottom console rim -->
+      <polygon points="0,1373 0,1180 340,1150 780,1220 1268,1220 1708,1150 2048,1180 2048,1373" fill="url(#cockpitStrut)"/>
+      <!-- Diagonal windshield structural pillars -->
+      <polygon points="0,0 80,0 420,1160 340,1160" fill="url(#cockpitStrut)"/>
+      <polygon points="2048,0 1968,0 1628,1160 1708,1160" fill="url(#cockpitStrut)"/>
+      <!-- Small instrument lights on console -->
+      <circle cx="820" cy="1250" r="4" fill="#00f0ff"/>
+      <circle cx="850" cy="1250" r="4" fill="#22c55e"/>
+      <circle cx="880" cy="1250" r="4" fill="#ff007f"/>
+      <circle cx="1180" cy="1250" r="4" fill="#ffbb00"/>
+      <circle cx="1210" cy="1250" r="4" fill="#00f0ff"/>
+    
+</svg>`
+    },
+    'shogun': {
+      back: `<svg class="parallax-layer layer-bg" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="shogunSky" x1="1024" y1="0" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0f0106"/>
+        <stop offset="0.35" stop-color="#2a0410"/>
+        <stop offset="0.6" stop-color="#5c0a1f"/>
+        <stop offset="0.82" stop-color="#a81a2f"/>
+        <stop offset="0.94" stop-color="#ea580c"/>
+        <stop offset="1" stop-color="#fbbf24"/>
+      </linearGradient>
+    
+</defs>
+<rect width="2048" height="1373" fill="url(#shogunSky)"/>
+</svg>
+<svg class="parallax-layer layer-1" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="shogunSun" x1="1024" y1="420" x2="1024" y2="1020" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#e11d48"/>
+        <stop offset="0.6" stop-color="#f43f5e"/>
+        <stop offset="1" stop-color="#fb7185"/>
+      </linearGradient>
+      <radialGradient id="sunGlowShogun" cx="1024" cy="700" r="420" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#e11d48" stop-opacity="0.45"/>
+        <stop offset="0.6" stop-color="#ea580c" stop-opacity="0.2"/>
+        <stop offset="1" stop-color="#0f0106" stop-opacity="0"/>
+      </radialGradient>
+    
+</defs>
+
+      <circle cx="1024" cy="700" r="420" fill="url(#sunGlowShogun)"/>
+      <circle cx="1024" cy="700" r="280" fill="url(#shogunSun)"/>
+      
+      <!-- Flying crane 1 -->
+      <path d="M840 460 Q860 445 880 460 Q910 420 930 460 L870 470 Z" fill="#0f0106"/>
+      <!-- Flying crane 2 -->
+      <path d="M960 410 Q975 398 990 410 Q1015 375 1030 410 L985 418 Z" fill="#0f0106"/>
+      <!-- Flying crane 3 -->
+      <path d="M1120 450 Q1135 438 1150 450 Q1175 415 1190 450 L1145 458 Z" fill="#0f0106"/>
+    
+    
+</svg>
+<svg class="parallax-layer layer-2" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="fujiMountain" x1="1024" y1="560" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#2d0614"/>
+        <stop offset="0.6" stop-color="#450b20"/>
+        <stop offset="1" stop-color="#621230"/>
+      </linearGradient>
+      <linearGradient id="fujiSnow" x1="1024" y1="560" x2="1024" y2="760" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#fff1f2"/>
+        <stop offset="0.5" stop-color="#fecdd3"/>
+        <stop offset="1" stop-color="#fda4af" stop-opacity="0.8"/>
+      </linearGradient>
+    
+</defs>
+
+      <path d="
+      M0 1373 
+      V920 L580 920 
+      Q840 840 960 620 L1024 590 L1088 620 Q1208 840 1468 920 
+      L2048 920 V1373 H0 Z
+    " fill="url(#fujiMountain)"/>
+      
+      <path d="M960 620 L1024 590 L1088 620 Q1060 680 1050 710 L1030 670 L1018 730 L1000 680 L980 720 Z" fill="url(#fujiSnow)"/>
+    
+    
+</svg>
+<svg class="parallax-layer layer-3" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="hakoneHills" x1="1024" y1="780" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#22040e"/>
+        <stop offset="0.5" stop-color="#380819"/>
+        <stop offset="1" stop-color="#4f0d25"/>
+      </linearGradient>
+    
+</defs>
+<path d="
+      M0 1373 
+      V880 Q240 830 480 870 Q720 910 960 850 Q1200 790 1440 860 Q1680 920 2048 860 
+      V1373 H0 Z
+    " fill="url(#hakoneHills)"/>
+</svg>`,
+      front: `<svg class="parallax-layer layer-4" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="lakeAshi" x1="1024" y1="900" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#140209"/>
+        <stop offset="0.5" stop-color="#250412"/>
+        <stop offset="1" stop-color="#3a071d"/>
+      </linearGradient>
+      <linearGradient id="lakeGlow" x1="0" y1="960" x2="2048" y2="960" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#f43f5e" stop-opacity="0.1"/>
+        <stop offset="0.4" stop-color="#fbbf24" stop-opacity="0.35"/>
+        <stop offset="0.6" stop-color="#f43f5e" stop-opacity="0.4"/>
+        <stop offset="1" stop-color="#fbbf24" stop-opacity="0.1"/>
+      </linearGradient>
+    
+</defs>
+
+      <rect y="900" width="2048" height="473" fill="url(#lakeAshi)"/>
+      <g>
+        <ellipse cx="1024" cy="920" rx="350" ry="2.5" fill="url(#lakeGlow)"/><ellipse cx="1024" cy="934" rx="462" ry="2.5" fill="url(#lakeGlow)"/><ellipse cx="1024" cy="948" rx="574" ry="2.5" fill="url(#lakeGlow)"/><ellipse cx="1024" cy="962" rx="686" ry="2.5" fill="url(#lakeGlow)"/><ellipse cx="1024" cy="976" rx="798" ry="2.5" fill="url(#lakeGlow)"/><ellipse cx="1024" cy="990" rx="910" ry="2.5" fill="url(#lakeGlow)"/><ellipse cx="1024" cy="1004" rx="1022" ry="2.5" fill="url(#lakeGlow)"/><ellipse cx="1024" cy="1018" rx="1134" ry="2.5" fill="url(#lakeGlow)"/>
+      </g>
+    
+</svg>
+<svg class="parallax-layer layer-5" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="pagodaRidge" x1="1024" y1="940" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#100107"/>
+        <stop offset="0.6" stop-color="#1e030f"/>
+        <stop offset="1" stop-color="#2e0618"/>
+      </linearGradient>
+    
+</defs>
+
+      <path d="
+      M0 1373 V980 Q300 960 600 970 Q900 980 1200 960 Q1600 950 2048 980 V1373 H0 Z
+    " fill="url(#pagodaRidge)"/>
+      
+      <g>
+        <!-- Spire finial (sorin) -->
+        <line x1="480" y1="800" x2="480" y2="840" stroke="#0a0104" stroke-width="3"/>
+        <circle cx="480" cy="800" r="3" fill="#fbbf24"/>
+        <!-- Tier 5 -->
+        <polygon points="450,852 480,840 510,852" fill="#0a0104"/>
+        <rect x="468" y="852" width="24" height="15" fill="#0a0104"/>
+        <!-- Tier 4 -->
+        <polygon points="442,875 480,864 518,875" fill="#0a0104"/>
+        <rect x="464" y="875" width="32" height="16" fill="#0a0104"/>
+        <!-- Tier 3 -->
+        <polygon points="434,900 480,888 526,900" fill="#0a0104"/>
+        <rect x="460" y="900" width="40" height="18" fill="#0a0104"/>
+        <!-- Tier 2 -->
+        <polygon points="426,928 480,915 534,928" fill="#0a0104"/>
+        <rect x="456" y="928" width="48" height="20" fill="#0a0104"/>
+        <!-- Tier 1 Base -->
+        <polygon points="418,958 480,944 542,958" fill="#0a0104"/>
+        <rect x="452" y="958" width="56" height="25" fill="#0a0104"/>
+      </g>
+    
+    
+</svg>
+<svg class="parallax-layer layer-6" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="toriiGrad" x1="1024" y1="940" x2="1024" y2="1373" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0a0104"/>
+        <stop offset="1" stop-color="#18020a"/>
+      </linearGradient>
+    
+</defs>
+
+      <!-- Left shoreline rock outcrop with stone lantern (toro) -->
+      <path d="M0 1373 V1040 Q160 1020 280 1090 Q400 1160 480 1373 H0 Z" fill="url(#toriiGrad)"/>
+      <path d="M1200 1373 Q1320 1080 1620 1080 Q1880 1080 2048 1040 V1373 H1200 Z" fill="url(#toriiGrad)"/>
+      
+      <g>
+        <!-- Top curved lintel (kasagi) -->
+        <path d="M1350 928 Q1460 910 1570 928 L1565 942 Q1460 926 1355 942 Z" fill="#b91c1c"/>
+        <!-- Sub-lintel (shimaki) -->
+        <rect x="1365" y="940" width="190" height="10" fill="#b91c1c"/>
+        <!-- Tie beam (nuki) -->
+        <rect x="1375" y="970" width="170" height="12" fill="#b91c1c"/>
+        <!-- Central strut (gakuzuka) with tablet -->
+        <rect x="1452" y="946" width="16" height="28" fill="#0a0104"/>
+        <!-- Main pillars (hashira) slightly leaning inward -->
+        <polygon points="1395,948 1407,948 1412,1100 1392,1100" fill="#991b1b"/>
+        <polygon points="1513,948 1525,948 1528,1100 1508,1100" fill="#991b1b"/>
+        <!-- Torii water reflection -->
+        <ellipse cx="1460" cy="1105" rx="70" ry="4" fill="#fbbf24" opacity="0.3"/>
+      </g>
+    
+    
+</svg>
+<svg class="parallax-layer layer-7" viewBox="0 0 2048 1373" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+<defs>
+
+      <linearGradient id="sakuraPetal" x1="0" y1="0" x2="1" y2="1">
+        <stop stop-color="#fff1f2"/>
+        <stop offset="0.6" stop-color="#fbcfe8"/>
+        <stop offset="1" stop-color="#f43f5e"/>
+      </linearGradient>
+    
+</defs>
+
+      <path d="M2048 0 Q1800 60 1640 180 Q1480 300 1380 260 Q1300 230 1200 290 Q1120 340 1050 320" stroke="#080104" stroke-width="18" stroke-linecap="round" fill="none"/>
+      <!-- Sub-branches -->
+      <path d="M1640 180 Q1560 120 1480 140" stroke="#080104" stroke-width="9" stroke-linecap="round" fill="none"/>
+      <path d="M1480 300 Q1420 380 1340 410" stroke="#080104" stroke-width="8" stroke-linecap="round" fill="none"/>
+      <path d="M1200 290 Q1160 380 1100 420" stroke="#080104" stroke-width="7" stroke-linecap="round" fill="none"/>
+    
+<circle cx="1656.0" cy="180.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1644.9" cy="195.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1627.1" cy="189.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1627.1" cy="170.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1644.9" cy="164.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1640" cy="180" r="4" fill="#fbbf24"/><circle cx="1576.0" cy="120.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1564.9" cy="135.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1547.1" cy="129.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1547.1" cy="110.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1564.9" cy="104.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1560" cy="120" r="4" fill="#fbbf24"/><circle cx="1496.0" cy="140.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1484.9" cy="155.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1467.1" cy="149.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1467.1" cy="130.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1484.9" cy="124.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1480" cy="140" r="4" fill="#fbbf24"/><circle cx="1536.0" cy="220.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1524.9" cy="235.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1507.1" cy="229.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1507.1" cy="210.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1524.9" cy="204.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1520" cy="220" r="4" fill="#fbbf24"/><circle cx="1436.0" cy="380.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1424.9" cy="395.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1407.1" cy="389.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1407.1" cy="370.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1424.9" cy="364.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1420" cy="380" r="4" fill="#fbbf24"/><circle cx="1356.0" cy="410.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1344.9" cy="425.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1327.1" cy="419.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1327.1" cy="400.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1344.9" cy="394.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1340" cy="410" r="4" fill="#fbbf24"/><circle cx="1396.0" cy="260.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1384.9" cy="275.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1367.1" cy="269.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1367.1" cy="250.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1384.9" cy="244.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1380" cy="260" r="4" fill="#fbbf24"/><circle cx="1216.0" cy="290.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1204.9" cy="305.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1187.1" cy="299.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1187.1" cy="280.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1204.9" cy="274.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1200" cy="290" r="4" fill="#fbbf24"/><circle cx="1176.0" cy="380.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1164.9" cy="395.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1147.1" cy="389.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1147.1" cy="370.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1164.9" cy="364.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1160" cy="380" r="4" fill="#fbbf24"/><circle cx="1116.0" cy="420.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1104.9" cy="435.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1087.1" cy="429.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1087.1" cy="410.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1104.9" cy="404.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1100" cy="420" r="4" fill="#fbbf24"/><circle cx="1066.0" cy="320.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1054.9" cy="335.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1037.1" cy="329.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1037.1" cy="310.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1054.9" cy="304.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1050" cy="320" r="4" fill="#fbbf24"/><circle cx="1036.0" cy="360.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1024.9" cy="375.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1007.1" cy="369.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1007.1" cy="350.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1024.9" cy="344.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1020" cy="360" r="4" fill="#fbbf24"/><circle cx="1296.0" cy="240.0" r="9" fill="url(#sakuraPetal)"/><circle cx="1284.9" cy="255.2" r="9" fill="url(#sakuraPetal)"/><circle cx="1267.1" cy="249.4" r="9" fill="url(#sakuraPetal)"/><circle cx="1267.1" cy="230.6" r="9" fill="url(#sakuraPetal)"/><circle cx="1284.9" cy="224.8" r="9" fill="url(#sakuraPetal)"/><circle cx="1280" cy="240" r="4" fill="#fbbf24"/>
+<ellipse cx="920" cy="480" rx="10" ry="5" fill="url(#sakuraPetal)" transform="rotate(-25 920 480)" opacity="0.85"/><ellipse cx="840" cy="560" rx="10" ry="5" fill="url(#sakuraPetal)" transform="rotate(15 840 560)" opacity="0.85"/><ellipse cx="760" cy="680" rx="10" ry="5" fill="url(#sakuraPetal)" transform="rotate(-40 760 680)" opacity="0.85"/><ellipse cx="680" cy="790" rx="10" ry="5" fill="url(#sakuraPetal)" transform="rotate(30 680 790)" opacity="0.85"/><ellipse cx="560" cy="920" rx="10" ry="5" fill="url(#sakuraPetal)" transform="rotate(-15 560 920)" opacity="0.85"/><ellipse cx="1280" cy="520" rx="10" ry="5" fill="url(#sakuraPetal)" transform="rotate(35 1280 520)" opacity="0.85"/><ellipse cx="1380" cy="640" rx="10" ry="5" fill="url(#sakuraPetal)" transform="rotate(-20 1380 640)" opacity="0.85"/><ellipse cx="1480" cy="760" rx="10" ry="5" fill="url(#sakuraPetal)" transform="rotate(45 1480 760)" opacity="0.85"/>
+<path d="M0 1373 V1260 Q600 1240 1024 1250 Q1500 1260 2048 1230 V1373 H0 Z" fill="#060103"/>
+</svg>`
+    },
+  };
+
   // Renders dynamic multi-layered vector SVG scenes for motion themes (all 7+ layers)
   function renderMotionTheme(theme) {
     const parallaxEl = document.getElementById('apparatus-parallax');
@@ -2259,23 +3223,36 @@
       document.documentElement.style.setProperty('--apparatus-bg-color', cfg.bgColor);
     }
 
-    const folder = cfg.folder;
-    parallaxEl.innerHTML = `
-      <img src="/themes/apparatus/${folder}/img-bg.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-bg.svg';}" alt="" class="parallax-layer layer-bg" />
-      <img src="/themes/apparatus/${folder}/img-1.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-1.svg';}" alt="" class="parallax-layer layer-1" />
-      <img src="/themes/apparatus/${folder}/img-2.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-2.svg';}" alt="" class="parallax-layer layer-2" />
-      <img src="/themes/apparatus/${folder}/img-3.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-3.svg';}" alt="" class="parallax-layer layer-3" />
-      
-      <div class="parallax-layer layer-text">
-        <h1 class="background-title" id="apparatus-bg-title" style="${cfg.titleStyle}">${titleText}</h1>
-        <p class="background-subtitle" id="apparatus-bg-subtitle" style="${cfg.subStyle}">${subText}</p>
-      </div>
+    const scene = INLINE_MOTION_SCENES[normKey];
+    if (scene) {
+      parallaxEl.innerHTML = `
+        ${scene.back}
+        <div class="parallax-layer layer-text">
+          <h1 class="background-title" id="apparatus-bg-title" style="${cfg.titleStyle}">${titleText}</h1>
+          <p class="background-subtitle" id="apparatus-bg-subtitle" style="${cfg.subStyle}">${subText}</p>
+        </div>
+        ${scene.front}
+      `;
+    } else {
+      // Default: Desert Sunset
+      const folder = 'desert';
+      parallaxEl.innerHTML = `
+        <img src="/themes/apparatus/${folder}/img-bg.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-bg.svg';}" alt="" class="parallax-layer layer-bg" />
+        <img src="/themes/apparatus/${folder}/img-1.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-1.svg';}" alt="" class="parallax-layer layer-1" />
+        <img src="/themes/apparatus/${folder}/img-2.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-2.svg';}" alt="" class="parallax-layer layer-2" />
+        <img src="/themes/apparatus/${folder}/img-3.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-3.svg';}" alt="" class="parallax-layer layer-3" />
+        
+        <div class="parallax-layer layer-text">
+          <h1 class="background-title" id="apparatus-bg-title" style="${cfg.titleStyle}">${titleText}</h1>
+          <p class="background-subtitle" id="apparatus-bg-subtitle" style="${cfg.subStyle}">${subText}</p>
+        </div>
 
-      <img src="/themes/apparatus/${folder}/img-4.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-4.svg';}" alt="" class="parallax-layer layer-4" />
-      <img src="/themes/apparatus/${folder}/img-5.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-5.svg';}" alt="" class="parallax-layer layer-5" />
-      <img src="/themes/apparatus/${folder}/img-6.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-6.svg';}" alt="" class="parallax-layer layer-6" />
-      <img src="/themes/apparatus/${folder}/img-7.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-7.svg';}" alt="" class="parallax-layer layer-7" />
-    `;
+        <img src="/themes/apparatus/${folder}/img-4.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-4.svg';}" alt="" class="parallax-layer layer-4" />
+        <img src="/themes/apparatus/${folder}/img-5.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-5.svg';}" alt="" class="parallax-layer layer-5" />
+        <img src="/themes/apparatus/${folder}/img-6.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-6.svg';}" alt="" class="parallax-layer layer-6" />
+        <img src="/themes/apparatus/${folder}/img-7.svg" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src='/${folder}/img-7.svg';}" alt="" class="parallax-layer layer-7" />
+      `;
+    }
 
     restartParallaxAnimations();
   }
@@ -3350,6 +4327,9 @@
           const tab = this.getAttribute('data-tab');
           if (!tab || (tab !== 'dashboard' && tab !== 'servers' && tab !== 'vps')) return;
 
+          e.preventDefault();
+          window.location.hash = '';
+
           const rawP = window.location.pathname || '/';
           const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard';
 
@@ -3365,25 +4345,47 @@
             return;
           }
 
-          // If already on home (between /, /servers, /vps), switch smoothly
-          e.preventDefault();
+          // If already on home (between /, /servers, /vps), switch smoothly and clear hash
           if (tab === 'servers') {
             if (window.location.pathname !== '/servers') {
               history.pushState(null, '', '/servers');
+            } else {
+              history.replaceState(null, '', '/servers');
             }
           } else if (tab === 'vps') {
             if (window.location.pathname !== '/vps') {
               history.pushState(null, '', '/vps');
+            } else {
+              history.replaceState(null, '', '/vps');
             }
           } else if (tab === 'dashboard') {
             if (window.location.pathname !== '/') {
               history.pushState(null, '', '/');
+            } else {
+              history.replaceState(null, '', '/');
             }
           }
           applyViewMode();
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       });
+
+      // Sidebar brand click to navigate to dashboard
+      const brand = sidebar.querySelector('.apparatus-sidebar-brand');
+      if (brand) {
+        brand.style.cursor = 'pointer';
+        brand.addEventListener('click', function (e) {
+          e.preventDefault();
+          window.location.hash = '';
+          if (window.location.pathname !== '/') {
+            history.pushState(null, '', '/');
+          } else {
+            history.replaceState(null, '', '/');
+          }
+          applyViewMode();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
 
       // Mobile toggle button
       let toggle = document.getElementById('apparatus-mobile-toggle');

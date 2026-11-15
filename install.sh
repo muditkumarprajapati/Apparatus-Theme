@@ -71,14 +71,17 @@ install_theme() {
   fi
 
   # Step 2: Download Assets
-  echo -e "${BLUE}[2/4] Deploying theme assets (Desert Parallax SVGs, CSS, JS)...${NC}"
-  mkdir -p "$ASSET_DIR/desert"
+  echo -e "${BLUE}[2/4] Deploying theme assets (7-Layer Parallax SVGs, CSS, JS)...${NC}"
   TS=$(date +%s)
 
-  for file in img-bg.svg img-1.svg img-2.svg img-3.svg img-4.svg img-5.svg img-6.svg img-7.svg favicon.png; do
-    echo -e "  -> Downloading $file..."
-    curl -s -L "$RAW_BASE/public/desert/$file?v=$TS" -o "$ASSET_DIR/desert/$file"
+  for theme in desert cyberpunk aurora nebula shogun; do
+    echo -e "  -> Downloading $theme parallax layers..."
+    mkdir -p "$ASSET_DIR/$theme"
+    for file in img-bg.svg img-1.svg img-2.svg img-3.svg img-4.svg img-5.svg img-6.svg img-7.svg; do
+      curl -s -L "$RAW_BASE/public/themes/apparatus/$theme/$file?v=$TS" -o "$ASSET_DIR/$theme/$file"
+    done
   done
+  curl -s -L "$RAW_BASE/public/themes/apparatus/desert/favicon.png?v=$TS" -o "$ASSET_DIR/desert/favicon.png" || true
 
   echo -e "  -> Downloading apparatus.css..."
   curl -s -L "$RAW_BASE/public/themes/apparatus/apparatus.css?v=$TS" -o "$ASSET_DIR/apparatus.css"
