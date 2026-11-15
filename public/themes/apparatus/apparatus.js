@@ -66,19 +66,25 @@
     return true;
   }
 
-  // Lightweight Web Audio API tactile feedback
+  // Lightweight Web Audio API tactile feedback (Optimized Singleton - Zero Click Delay)
   function playClickSound(force) {
     if (!force && localStorage.getItem('apparatus_sound') !== 'true') return;
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (!AudioCtx) return;
-      const ctx = new AudioCtx();
+      if (!window._apparatusAudioCtx || window._apparatusAudioCtx.state === 'closed') {
+        window._apparatusAudioCtx = new AudioCtx();
+      }
+      const ctx = window._apparatusAudioCtx;
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(580, ctx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.04);
-      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -149,7 +155,7 @@
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
     const isResourceTab = window.location.hash === '#resource' || currentPath === '/billing/resource' || currentPath === '/resource';
-    const isSettingsTab = !isResourceTab && (window.location.hash === '#panel-settings' || window.location.hash === '#settings' || currentPath === '/settings');
+    const isSettingsTab = !isResourceTab && (window.location.hash === '#panel-settings' || window.location.hash === '#apparatus-settings' || window.location.hash === '#settings' || currentPath === '/settings');
     const isVpsTab = !isResourceTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
     const isServerTab = !isResourceTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
     const isDashboardTab = !isResourceTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
@@ -195,7 +201,7 @@
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
     const isResourceTab = window.location.hash === '#resource' || currentPath === '/billing/resource' || currentPath === '/resource';
-    const isSettingsTab = !isResourceTab && (window.location.hash === '#panel-settings' || window.location.hash === '#settings' || currentPath === '/settings');
+    const isSettingsTab = !isResourceTab && (window.location.hash === '#panel-settings' || window.location.hash === '#apparatus-settings' || window.location.hash === '#settings' || currentPath === '/settings');
     const isVpsTab = !isResourceTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
     const isServerTab = !isResourceTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
     const isDashboardTab = !isResourceTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
@@ -425,7 +431,7 @@
     // 4. Proper Transparency & Styling for ContentBox cards (.sc-mjlt6f-2) across /account, /account/api, /account/ssh
     const contentCards = document.querySelectorAll('.sc-mjlt6f-2, [class*="sc-mjlt6f-2"], div[class*="ContentBox___StyledDiv"]');
     contentCards.forEach(function (card) {
-      card.style.setProperty('background', 'radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.15), transparent 55%), rgba(255, 255, 255, 0.04)', 'important');
+      card.style.setProperty('background', 'radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.15), transparent 60%), var(--apparatus-card-bg, rgba(22, 16, 32, 0.82))', 'important');
       card.style.setProperty('backdrop-filter', 'blur(20px) saturate(180%)', 'important');
       card.style.setProperty('-webkit-backdrop-filter', 'blur(20px) saturate(180%)', 'important');
       card.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.18)', 'important');
@@ -3601,6 +3607,82 @@
   }
 
   // Initialize the Dedicated Panel Settings View
+
+  // SEO & Metadata Dynamic Manager
+  function applySeoMetadata() {
+    try {
+      const savedSeo = localStorage.getItem('apparatus_seo_settings');
+      if (!savedSeo) return;
+      const seo = JSON.parse(savedSeo);
+
+      if (seo.title) {
+        document.title = seo.title;
+      }
+      if (seo.description) {
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) {
+          metaDesc = document.createElement('meta');
+          metaDesc.name = 'description';
+          document.head.appendChild(metaDesc);
+        }
+        metaDesc.content = seo.description;
+
+        let ogDesc = document.querySelector('meta[property="og:description"]');
+        if (!ogDesc) {
+          ogDesc = document.createElement('meta');
+          ogDesc.setAttribute('property', 'og:description');
+          document.head.appendChild(ogDesc);
+        }
+        ogDesc.content = seo.description;
+      }
+      if (seo.keywords) {
+        let metaKw = document.querySelector('meta[name="keywords"]');
+        if (!metaKw) {
+          metaKw = document.createElement('meta');
+          metaKw.name = 'keywords';
+          document.head.appendChild(metaKw);
+        }
+        metaKw.content = seo.keywords;
+      }
+      if (seo.ogTitle) {
+        let ogTitle = document.querySelector('meta[property="og:title"]');
+        if (!ogTitle) {
+          ogTitle = document.createElement('meta');
+          ogTitle.setAttribute('property', 'og:title');
+          document.head.appendChild(ogTitle);
+        }
+        ogTitle.content = seo.ogTitle;
+      }
+      if (seo.ogImage) {
+        let ogImg = document.querySelector('meta[property="og:image"]');
+        if (!ogImg) {
+          ogImg = document.createElement('meta');
+          ogImg.setAttribute('property', 'og:image');
+          document.head.appendChild(ogImg);
+        }
+        ogImg.content = seo.ogImage;
+      }
+      if (seo.favicon) {
+        let iconLink = document.querySelector('link[rel*="icon"]');
+        if (!iconLink) {
+          iconLink = document.createElement('link');
+          iconLink.rel = 'shortcut icon';
+          document.head.appendChild(iconLink);
+        }
+        iconLink.href = seo.favicon;
+      }
+      if (seo.robots) {
+        let metaRobots = document.querySelector('meta[name="robots"]');
+        if (!metaRobots) {
+          metaRobots = document.createElement('meta');
+          metaRobots.name = 'robots';
+          document.head.appendChild(metaRobots);
+        }
+        metaRobots.content = seo.robots;
+      }
+    } catch (e) {}
+  }
+
   function initSettingsView() {
     let setView = document.getElementById('apparatus-settings-view');
     if (setView) return;
@@ -3974,6 +4056,131 @@
             </div>
           </div>
 
+          <!-- CARD 5: GLASS TRANSPARENCY & OPACITY LINE SLIDER -->
+          <div class="apparatus-card apparatus-setting-card">
+            <div class="apparatus-setting-card-head">
+              <div class="apparatus-setting-icon-box" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">
+                <i class="ri-contrast-2-line"></i>
+              </div>
+              <div class="apparatus-setting-title-meta">
+                <div class="apparatus-setting-title-row">
+                  <h2 class="apparatus-setting-title">Glass Transparency &amp; Opacity</h2>
+                  <span class="apparatus-range-value-pill" id="apparatus-opacity-val-badge">82% Opacity</span>
+                </div>
+                <p class="apparatus-setting-desc">Slide to choose the exact transparency of cards, panels, and sidebars across the theme.</p>
+              </div>
+            </div>
+
+            <div class="apparatus-setting-body">
+              <div class="apparatus-slider-line-container">
+                <div class="apparatus-slider-line-labels">
+                  <span><i class="ri-blur-off-line"></i> Ultra Glass (25%)</span>
+                  <span><i class="ri-contrast-drop-line"></i> Balanced (80%)</span>
+                  <span><i class="ri-shield-fill"></i> Rich Solid (95%)</span>
+                </div>
+                <div class="apparatus-slider-line-track">
+                  <input type="range" min="25" max="95" value="82" step="1" class="apparatus-line-slider" id="apparatus-card-opacity-slider">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 6: APPARATUS SETTINGS - SEO & METADATA SUITE -->
+          <div class="apparatus-card apparatus-setting-card" id="apparatus-seo-suite-card">
+            <div class="apparatus-setting-card-head">
+              <div class="apparatus-setting-icon-box" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8;">
+                <i class="ri-global-line"></i>
+              </div>
+              <div class="apparatus-setting-title-meta">
+                <div class="apparatus-setting-title-row">
+                  <h2 class="apparatus-setting-title">Apparatus SEO, Meta Data &amp; Branding</h2>
+                  <span class="apparatus-setting-badge apparatus-badge-privacy active">Production Suite</span>
+                </div>
+                <p class="apparatus-setting-desc">Configure search engine indexing, browser title branding, OpenGraph social cards, and favicon.</p>
+              </div>
+            </div>
+
+            <div class="apparatus-setting-body">
+              <div class="apparatus-seo-form-grid">
+                
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="apparatus-seo-title">Site Title / Browser Tab Title</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                    </span>
+                    <input type="text" id="apparatus-seo-title" class="apparatus-prof-input with-icon" placeholder="ArixByte Cloud — Game &amp; VPS Infrastructure">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="apparatus-seo-desc">Meta Description (Search &amp; Social Previews)</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    </span>
+                    <input type="text" id="apparatus-seo-desc" class="apparatus-prof-input with-icon" placeholder="Deploy and manage high-performance game servers, Cloud VPS, and infrastructure with Apparatus Theme.">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="apparatus-seo-keywords">Meta Keywords (Comma Separated)</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                    </span>
+                    <input type="text" id="apparatus-seo-keywords" class="apparatus-prof-input with-icon" placeholder="pterodactyl, game servers, cloud vps, hosting, arixbyte">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="apparatus-seo-ogimg">OpenGraph Social Banner URL (Discord / Twitter)</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </span>
+                    <input type="text" id="apparatus-seo-ogimg" class="apparatus-prof-input with-icon" placeholder="https://arixbyte.com/banner.png">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="apparatus-seo-favicon">Custom Favicon URL</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                    </span>
+                    <input type="text" id="apparatus-seo-favicon" class="apparatus-prof-input with-icon" placeholder="https://arixbyte.com/favicon.ico">
+                  </div>
+                </div>
+
+                <div class="apparatus-prof-field">
+                  <label class="apparatus-prof-label" for="apparatus-seo-robots">Search Engine Robots Policy</label>
+                  <div class="apparatus-prof-input-wrap">
+                    <span class="apparatus-prof-input-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </span>
+                    <select id="apparatus-seo-robots" class="apparatus-prof-input with-icon apparatus-prof-select">
+                      <option value="index, follow">Publicly Indexed (index, follow)</option>
+                      <option value="noindex, nofollow">Private Panel (noindex, nofollow)</option>
+                      <option value="noindex, follow">Unlisted (noindex, follow)</option>
+                    </select>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="apparatus-seo-actions-bar" style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.85rem;">
+                <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-seo-reset-btn">
+                  <i class="ri-refresh-line"></i> Reset Defaults
+                </button>
+                <button type="button" class="apparatus-btn apparatus-btn-primary" id="apparatus-seo-save-btn">
+                  <i class="ri-check-line"></i> Save SEO &amp; Meta Data
+                </button>
+              </div>
+
+            </div>
+          </div>
+
         </div>
 
       </div>
@@ -4050,6 +4257,77 @@
         showToast('success', 'Theme Updated', 'Applied ' + name + '.');
       });
     });
+
+    // Glass Card Opacity / Transparency Line Slider Event
+    const opacitySlider = setView.querySelector('#apparatus-card-opacity-slider');
+    const opacityBadge = setView.querySelector('#apparatus-opacity-val-badge');
+    const curOpacity = localStorage.getItem('apparatus_card_opacity') || '82';
+    if (opacitySlider) {
+      opacitySlider.value = curOpacity;
+      if (opacityBadge) opacityBadge.textContent = curOpacity + '% Opacity';
+      opacitySlider.addEventListener('input', function () {
+        const val = this.value;
+        if (opacityBadge) opacityBadge.textContent = val + '% Opacity';
+        const decVal = (val / 100).toFixed(2);
+        document.documentElement.style.setProperty('--apparatus-card-opacity', decVal);
+      });
+      opacitySlider.addEventListener('change', function () {
+        const val = this.value;
+        localStorage.setItem('apparatus_card_opacity', val);
+        showToast('success', 'Transparency Updated', 'Applied ' + val + '% glass opacity.');
+      });
+    }
+
+    // SEO & Metadata Form Handlers
+    const seoTitleInp = setView.querySelector('#apparatus-seo-title');
+    const seoDescInp = setView.querySelector('#apparatus-seo-desc');
+    const seoKwInp = setView.querySelector('#apparatus-seo-keywords');
+    const seoOgImgInp = setView.querySelector('#apparatus-seo-ogimg');
+    const seoFavInp = setView.querySelector('#apparatus-seo-favicon');
+    const seoRobotsInp = setView.querySelector('#apparatus-seo-robots');
+    const seoSaveBtn = setView.querySelector('#apparatus-seo-save-btn');
+    const seoResetBtn = setView.querySelector('#apparatus-seo-reset-btn');
+
+    try {
+      const storedSeo = JSON.parse(localStorage.getItem('apparatus_seo_settings') || '{}');
+      if (seoTitleInp) seoTitleInp.value = storedSeo.title || document.title || 'ArixByte Cloud — Game & VPS Infrastructure';
+      if (seoDescInp) seoDescInp.value = storedSeo.description || 'Deploy and manage high-performance game servers, Cloud VPS, and infrastructure with Apparatus Theme.';
+      if (seoKwInp) seoKwInp.value = storedSeo.keywords || 'pterodactyl, game servers, cloud vps, hosting, arixbyte';
+      if (seoOgImgInp) seoOgImgInp.value = storedSeo.ogImage || '';
+      if (seoFavInp) seoFavInp.value = storedSeo.favicon || '';
+      if (seoRobotsInp && storedSeo.robots) seoRobotsInp.value = storedSeo.robots;
+    } catch (e) {}
+
+    if (seoSaveBtn) {
+      seoSaveBtn.addEventListener('click', function () {
+        const seoData = {
+          title: seoTitleInp ? seoTitleInp.value.trim() : '',
+          description: seoDescInp ? seoDescInp.value.trim() : '',
+          keywords: seoKwInp ? seoKwInp.value.trim() : '',
+          ogTitle: seoTitleInp ? seoTitleInp.value.trim() : '',
+          ogImage: seoOgImgInp ? seoOgImgInp.value.trim() : '',
+          favicon: seoFavInp ? seoFavInp.value.trim() : '',
+          robots: seoRobotsInp ? seoRobotsInp.value : 'index, follow'
+        };
+        localStorage.setItem('apparatus_seo_settings', JSON.stringify(seoData));
+        applySeoMetadata();
+        showToast('success', 'SEO & Metadata Saved', 'Site meta tags and branding updated live!');
+      });
+    }
+
+    if (seoResetBtn) {
+      seoResetBtn.addEventListener('click', function () {
+        localStorage.removeItem('apparatus_seo_settings');
+        if (seoTitleInp) seoTitleInp.value = 'ArixByte Cloud — Game & VPS Infrastructure';
+        if (seoDescInp) seoDescInp.value = 'Deploy and manage high-performance game servers, Cloud VPS, and infrastructure with Apparatus Theme.';
+        if (seoKwInp) seoKwInp.value = 'pterodactyl, game servers, cloud vps, hosting, arixbyte';
+        if (seoOgImgInp) seoOgImgInp.value = '';
+        if (seoFavInp) seoFavInp.value = '';
+        if (seoRobotsInp) seoRobotsInp.value = 'index, follow';
+        applySeoMetadata();
+        showToast('info', 'SEO Reset', 'Default SEO values restored.');
+      });
+    }
 
     // Custom Wallpaper Apply & Reset
     const applyWpBtn = setView.querySelector('#apparatus-apply-custom-wp-btn');
@@ -4338,7 +4616,16 @@
             </div>
 
             <div class="apparatus-prof-field">
-              <label class="apparatus-prof-label" for="apparatus-prof-avatar-url">Custom Image URL</label>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <label class="apparatus-prof-label" for="apparatus-prof-avatar-url" style="margin-bottom: 0;">Profile Icon / Avatar</label>
+                <div class="apparatus-prof-upload-action">
+                  <input type="file" id="apparatus-prof-file-input" accept="image/*" style="display: none;">
+                  <button type="button" class="apparatus-btn apparatus-btn-glass apparatus-btn-sm" id="apparatus-prof-upload-btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; gap: 0.4rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Upload Icon
+                  </button>
+                </div>
+              </div>
               <div class="apparatus-prof-url-input-wrap">
                 <div class="apparatus-prof-input-wrap" style="flex: 1;">
                   <span class="apparatus-prof-input-icon">
@@ -4384,10 +4671,43 @@
       mainContainer.prepend(section);
     }
 
-    // Wire up Avatar Preview from URL input
+    // Wire up Avatar Preview, Presets, and Local File Upload
     const avatarImg = section.querySelector('#apparatus-prof-avatar-img');
     const avatarUrlInput = section.querySelector('#apparatus-prof-avatar-url');
     const applyUrlBtn = section.querySelector('#apparatus-prof-apply-url-btn');
+    const uploadBtn = section.querySelector('#apparatus-prof-upload-btn');
+    const fileInp = section.querySelector('#apparatus-prof-file-input');
+
+    if (uploadBtn && fileInp) {
+      uploadBtn.addEventListener('click', function () {
+        fileInp.click();
+      });
+
+      fileInp.addEventListener('change', function () {
+        const file = this.files && this.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+          showToast('error', 'Invalid File', 'Please select an image file (PNG, JPG, SVG, WebP, GIF).');
+          return;
+        }
+        if (file.size > 3 * 1024 * 1024) {
+          showToast('error', 'File Too Large', 'Please select an image under 3MB.');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const dataUrl = e.target.result;
+          if (avatarImg) avatarImg.src = dataUrl;
+          if (avatarUrlInput) avatarUrlInput.value = dataUrl;
+          showToast('success', 'Profile Icon Uploaded', 'New profile icon loaded! Click "Save Profile Changes" to apply.');
+        };
+        reader.onerror = function () {
+          showToast('error', 'Upload Error', 'Could not read selected file.');
+        };
+        reader.readAsDataURL(file);
+      });
+    }
 
     if (applyUrlBtn && avatarUrlInput && avatarImg) {
       applyUrlBtn.addEventListener('click', function () {
@@ -4808,7 +5128,7 @@
       // Admin-only placeholder settings links
       const adminPanelSettingsLinks = [
         { selector: '.apparatus-panel-editor-link', title: 'Panel Editor', msg: 'Opening Panel Editor customization module...' },
-        { selector: '.apparatus-settings-link', title: 'Apparatus Settings', msg: 'Opening Apparatus Theme configuration...' },
+        // apparatus-settings handled dedicatedly below
         { selector: '.apparatus-addon-settings-link', title: 'Addon Settings', msg: 'Opening Addon Settings configuration...' }
       ];
 
@@ -4933,6 +5253,9 @@
 
   function initApparatus() {
     initSmoothScroll();
+    applySeoMetadata();
+    const storedOp = localStorage.getItem('apparatus_card_opacity') || '82';
+    document.documentElement.style.setProperty('--apparatus-card-opacity', (parseInt(storedOp, 10) / 100).toFixed(2));
     const isAuth = isAuthPage();
     const isHacking = isUnauthorizedAdminAttempt();
 
@@ -5720,21 +6043,28 @@
 
 
 
-  // Dynamic cleanup and route sync observer for Pterodactyl SPA updates (RAF Debounced)
+  // Dynamic cleanup and route sync observer for Pterodactyl SPA updates (Smart 120ms Throttled)
   let lastObservedPath = window.location.pathname;
-  let observerRafId = null;
-  const apparatusObserver = new MutationObserver(function () {
-    if (observerRafId) return;
-    observerRafId = requestAnimationFrame(function () {
-      observerRafId = null;
+  let observerTimer = null;
+  const apparatusObserver = new MutationObserver(function (mutations) {
+    // Only process if path changed or substantial non-apparatus nodes added
+    const curP = window.location.pathname;
+    const pathChanged = curP !== lastObservedPath;
+
+    if (pathChanged) {
+      lastObservedPath = curP;
+      applyViewMode();
+      cleanPterodactylElements();
+      return;
+    }
+
+    if (observerTimer) return;
+    observerTimer = setTimeout(function () {
+      observerTimer = null;
       if (!isAuthPage() && !isUnauthorizedAdminAttempt()) {
         cleanPterodactylElements();
-        if (window.location.pathname !== lastObservedPath) {
-          lastObservedPath = window.location.pathname;
-          applyViewMode();
-        }
       }
-    });
+    }, 120);
   });
   apparatusObserver.observe(document.body || document.documentElement, { childList: true, subtree: true });
 

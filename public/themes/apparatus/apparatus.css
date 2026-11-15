@@ -7,6 +7,8 @@
 
 :root {
   --apparatus-font: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --apparatus-card-opacity: 0.82;
+  --apparatus-card-bg: rgba(22, 16, 32, var(--apparatus-card-opacity, 0.82));
 }
 
 html,
@@ -992,8 +994,8 @@ body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-ser
   height: auto !important;
   min-height: calc(100vh - 120px) !important;
   opacity: 1 !important;
-  width: 100% !important;
-  max-width: 1200px !important;
+  width: 90% !important;
+  max-width: 90% !important;
   margin: 0 auto !important;
   padding: 1.5rem 1.5rem 4rem 1.5rem !important;
   box-sizing: border-box !important;
@@ -1008,8 +1010,8 @@ body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-ser
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
-  width: 100% !important;
-  max-width: 1200px !important;
+  width: 90% !important;
+  max-width: 90% !important;
   margin: 0 auto !important;
 }
 
@@ -1033,16 +1035,27 @@ body.apparatus-auth #apparatus-mobile-toggle {
   width: 100%;
 }
 
+/* 90% Panel Width Architecture */
 .apparatus-dashboard-container {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  max-width: 1380px;
-  margin: 1.5rem auto 3.5rem auto;
-  padding: 0 1.5rem;
+  width: 90% !important;
+  max-width: 90% !important;
+  margin: 1.5rem auto 3.5rem auto !important;
+  padding: 0 1rem;
   position: relative;
   z-index: 30;
   box-sizing: border-box;
+}
+
+.apparatus-settings-grid,
+.apparatus-resource-header-card,
+.apparatus-resource-main-grid {
+  width: 90% !important;
+  max-width: 90% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 @media (max-width: 1080px) {
@@ -1175,7 +1188,7 @@ body.apparatus-auth #apparatus-mobile-toggle {
 
 /* Truly Transparent Glass Card */
 .apparatus-card {
-  background: rgba(14, 10, 22, 0.3) !important;
+  background: var(--apparatus-card-bg, rgba(22, 16, 32, 0.82)) !important;
   backdrop-filter: blur(24px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -4760,11 +4773,11 @@ html.lenis body {
    Account View: User Profile Studio (Full-Width, Non-Capsule Luxury Layout)
    ============================================================================== */
 
-/* Account View Page Spacing: Generous top padding so card never hugs top bar */
+/* Account View Page Spacing (Refined Balanced Gap - No Excess Spacing!) */
 div[class*="AccountOverviewContainer"],
 div[class*="PageContentBlock"] {
-  padding-top: 3.5rem !important;
-  padding-bottom: 4rem !important;
+  padding-top: 1.5rem !important;
+  padding-bottom: 3rem !important;
   padding-left: 1.5rem !important;
   padding-right: 1.5rem !important;
   box-sizing: border-box !important;
@@ -4774,17 +4787,17 @@ div[class*="AccountOverviewContainer"],
 div[class*="PageContentBlock"] > div {
   display: flex !important;
   flex-direction: column !important;
-  width: 100% !important;
-  max-width: 1200px !important;
+  width: 90% !important;
+  max-width: 90% !important;
   margin: 0 auto !important;
-  gap: 2rem !important;
+  gap: 1.25rem !important;
 }
 
 /* Ensure the native cards row sits in a clean 3-column grid under User Profile */
 div[class*="AccountOverviewContainer"] > div:not(.apparatus-user-profile-section) {
   display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 1.5rem !important;
+  gap: 1.25rem !important;
   width: 100% !important;
   align-items: stretch !important;
 }
@@ -4799,8 +4812,8 @@ div[class*="AccountOverviewContainer"] > div:not(.apparatus-user-profile-section
   width: 100% !important;
   display: block !important;
   box-sizing: border-box !important;
-  margin-top: 1rem !important;
-  margin-bottom: 2rem !important;
+  margin-top: 0 !important;
+  margin-bottom: 1.25rem !important;
   animation: apparatusViewEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -4808,13 +4821,13 @@ div[class*="AccountOverviewContainer"] > div:not(.apparatus-user-profile-section
 .apparatus-user-profile-card {
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 2rem 2.25rem !important;
-  background: radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.16), transparent 55%), rgba(255, 255, 255, 0.04) !important;
+  padding: 1.75rem 2rem !important;
+  background: radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.16), transparent 60%), var(--apparatus-card-bg, rgba(22, 16, 32, 0.82)) !important;
   backdrop-filter: blur(24px) saturate(140%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
   border-radius: 20px !important;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 }
 
 /* Top Identity Bar */
@@ -5137,4 +5150,100 @@ div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+/* ------------------------------------------------------------------------------
+   GLASS TRANSPARENCY LINE SLIDER & SEO FORM STYLES
+   ------------------------------------------------------------------------------ */
+.apparatus-slider-line-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+}
+
+.apparatus-slider-line-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.apparatus-slider-line-labels span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.apparatus-slider-line-track {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.apparatus-line-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(236, 72, 153, 0.4), rgba(236, 72, 153, 0.9), #ec4899);
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.apparatus-line-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #ec4899;
+  box-shadow: 0 0 14px rgba(236, 72, 153, 0.6);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.apparatus-line-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.18);
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.85);
+}
+
+.apparatus-line-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #ec4899;
+  box-shadow: 0 0 14px rgba(236, 72, 153, 0.6);
+  cursor: pointer;
+}
+
+.apparatus-range-value-pill {
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  background: rgba(236, 72, 153, 0.2);
+  border: 1px solid rgba(236, 72, 153, 0.45);
+  color: #f472b6;
+}
+
+/* SEO & Metadata Form Grid */
+.apparatus-seo-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .apparatus-seo-form-grid {
+    grid-template-columns: 1fr;
+  }
 }
