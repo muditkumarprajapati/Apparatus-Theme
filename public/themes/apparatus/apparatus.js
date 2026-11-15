@@ -4415,10 +4415,18 @@
         if (bgTitle) bgTitle.textContent = b.watermarkTitle || 'ARIXBYTE';
         if (bgSubtitle) bgSubtitle.textContent = b.watermarkSubtitle || 'CLOUD & INFRASTRUCTURES';
       }
+      const brandImgEls = document.querySelectorAll('.apparatus-sidebar-brand .apparatus-sidebar-brand-img');
       const brandTextEls = document.querySelectorAll('.apparatus-sidebar-brand .brand-text');
-      brandTextEls.forEach(function (el) {
-        el.textContent = b.brandName || 'ARIXBYTE CLOUD';
-      });
+      if (b.brandName && b.brandName !== 'ARIXBYTE CLOUD' && b.brandName !== 'arixbyte.com') {
+        brandImgEls.forEach(function (el) { el.style.display = 'none'; });
+        brandTextEls.forEach(function (el) {
+          el.style.display = 'inline';
+          el.textContent = b.brandName;
+        });
+      } else {
+        brandImgEls.forEach(function (el) { el.style.display = 'block'; });
+        brandTextEls.forEach(function (el) { el.style.display = 'none'; });
+      }
       const copyrightEls = document.querySelectorAll('.apparatus-footer-copyright, #apparatus-footer-copyright');
       copyrightEls.forEach(function (el) {
         el.textContent = b.footerText || '© 2026 ArixByte Cloud. All rights reserved.';
@@ -5392,8 +5400,9 @@
 
       sidebar.innerHTML = `
         <div class="apparatus-sidebar-header">
-          <div class="apparatus-sidebar-brand">
-            <span class="brand-text">ARIXBYTE CLOUD</span>
+          <div class="apparatus-sidebar-brand" title="arixbyte.com">
+            <img src="/themes/apparatus/arixbyte-logo.png" alt="arixbyte.com" class="apparatus-sidebar-brand-img" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline';">
+            <span class="brand-text" style="display:none;">ARIXBYTE CLOUD</span>
           </div>
         </div>
 
