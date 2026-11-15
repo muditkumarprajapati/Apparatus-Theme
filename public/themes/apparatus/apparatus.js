@@ -69,9 +69,12 @@
     toast.id = 'apparatus-toast';
     toast.className = 'apparatus-toast apparatus-toast-' + type;
 
-    const iconSvg = type === 'success' 
-      ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
-      : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+    let iconSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+    if (type === 'success') {
+      iconSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+    } else if (type === 'error') {
+      iconSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+    }
 
     toast.innerHTML = 
       '<div class="apparatus-toast-icon">' + iconSvg + '</div>' +
@@ -86,12 +89,11 @@
       toast.classList.add('apparatus-toast-show');
     }, 20);
 
-    if (type !== 'success') {
-      setTimeout(function () {
-        toast.classList.remove('apparatus-toast-show');
-        setTimeout(function () { toast.remove(); }, 400);
-      }, 5000);
-    }
+    const dismissMs = type === 'success' ? 4000 : 5000;
+    setTimeout(function () {
+      toast.classList.remove('apparatus-toast-show');
+      setTimeout(function () { toast.remove(); }, 400);
+    }, dismissMs);
   }
 
   // React Synthetic Input Helper
@@ -584,6 +586,187 @@
     return past.toLocaleDateString();
   }
 
+  function getGreeting() {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  }
+
+  function formatBytesToGB(mb) {
+    if (!mb || mb <= 0) return '0.0 GB';
+    return (mb / 1024).toFixed(1) + ' GB';
+  }
+
+  function initInstanceTabs() {
+    const tabServers = document.getElementById('apparatus-tab-btn-servers');
+    const tabVps = document.getElementById('apparatus-tab-btn-vps');
+    const paneServers = document.getElementById('apparatus-pane-servers');
+    const paneVps = document.getElementById('apparatus-pane-vps');
+    const deployBtn = document.getElementById('apparatus-hub-deploy-btn');
+    const heroVpsBtn = document.getElementById('apparatus-hero-vps-btn');
+
+    function selectTab(target) {
+      if (target === 'vps') {
+        if (tabVps) tabVps.classList.add('active');
+        if (tabServers) tabServers.classList.remove('active');
+        if (paneVps) paneVps.style.display = 'block';
+        if (paneServers) paneServers.style.display = 'none';
+        if (deployBtn) {
+          deployBtn.innerHTML = '<i class="ri-rocket-line"></i> Deploy Cloud VPS';
+          deployBtn.onclick = function () { window.open('https://arixbyte.com', '_blank'); };
+        }
+      } else {
+        if (tabServers) tabServers.classList.add('active');
+        if (tabVps) tabVps.classList.remove('active');
+        if (paneServers) paneServers.style.display = 'block';
+        if (paneVps) paneVps.style.display = 'none';
+        if (deployBtn) {
+          deployBtn.innerHTML = '<i class="ri-add-line"></i> Deploy Server';
+          deployBtn.onclick = function () { window.open('https://arixbyte.com', '_blank'); };
+        }
+      }
+    }
+
+    if (tabServers) {
+      tabServers.addEventListener('click', function () { selectTab('servers'); });
+    }
+    if (tabVps) {
+      tabVps.addEventListener('click', function () { selectTab('vps'); });
+    }
+    if (heroVpsBtn) {
+      heroVpsBtn.addEventListener('click', function () {
+        selectTab('vps');
+        const hub = document.getElementById('apparatus-area-4');
+        if (hub) hub.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    const heroStoreBtn = document.getElementById('apparatus-hero-store-btn');
+    if (heroStoreBtn) {
+      heroStoreBtn.addEventListener('click', function () {
+        const billing = document.getElementById('apparatus-area-billing');
+        if (billing) {
+          billing.scrollIntoView({ behavior: 'smooth' });
+          billing.style.transition = 'box-shadow 0.3s ease';
+          billing.style.boxShadow = '0 0 25px rgba(236, 72, 153, 0.45)';
+          setTimeout(function () { billing.style.boxShadow = ''; }, 1500);
+        } else {
+          window.open('https://arixbyte.com', '_blank');
+        }
+      });
+    }
+
+    const vpsRefreshBtn = document.getElementById('apparatus-vps-refresh-btn');
+    if (vpsRefreshBtn) {
+      vpsRefreshBtn.addEventListener('click', function () {
+        showToast('info', 'Cloud VPS Sync', 'Checking active KVM cloud instances...');
+        setTimeout(function () {
+          showToast('success', 'VPS Synced', '0 active KVM instances found. Deploy one to begin!');
+        }, 1000);
+      });
+    }
+  }
+
+  function initDailyReward() {
+    const dailyBtn = document.getElementById('apparatus-daily-reward-btn');
+    const coinDisplay = document.getElementById('apparatus-coin-count');
+    const metricCoins = document.getElementById('apparatus-metric-coins');
+
+    let coins = parseInt(localStorage.getItem('apparatus_coins') || '100', 10);
+    if (isNaN(coins) || coins < 0) coins = 100;
+
+    function refreshCoinDisplays() {
+      if (coinDisplay) coinDisplay.textContent = coins.toLocaleString();
+      if (metricCoins) metricCoins.textContent = coins.toLocaleString();
+    }
+    refreshCoinDisplays();
+
+    if (!dailyBtn) return;
+
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+    const lastClaim = localStorage.getItem('apparatus_last_daily_claim');
+    const now = Date.now();
+
+    if (lastClaim && (now - parseInt(lastClaim, 10)) < ONE_DAY) {
+      const hoursLeft = Math.ceil((ONE_DAY - (now - parseInt(lastClaim, 10))) / (60 * 60 * 1000));
+      dailyBtn.disabled = true;
+      dailyBtn.innerHTML = '<i class="ri-check-line"></i> Claimed (' + hoursLeft + 'h left)';
+      dailyBtn.classList.add('apparatus-btn-disabled');
+    }
+
+    dailyBtn.addEventListener('click', function () {
+      const curNow = Date.now();
+      const curLast = localStorage.getItem('apparatus_last_daily_claim');
+      if (curLast && (curNow - parseInt(curLast, 10)) < ONE_DAY) {
+        showToast('info', 'Daily Reward', 'Already claimed today! Please check back tomorrow.');
+        return;
+      }
+
+      coins += 25;
+      localStorage.setItem('apparatus_coins', coins.toString());
+      localStorage.setItem('apparatus_last_daily_claim', curNow.toString());
+      refreshCoinDisplays();
+
+      dailyBtn.disabled = true;
+      dailyBtn.innerHTML = '<i class="ri-check-line"></i> Claimed (24h left)';
+      dailyBtn.classList.add('apparatus-btn-disabled');
+      showToast('success', 'Daily Reward Claimed!', '🎉 +25 Coins added! Your total is now ' + coins + ' 🪙');
+    });
+  }
+
+  function initBillingActions() {
+    const topupBtn = document.getElementById('apparatus-wallet-topup-btn');
+    const ribbonTopup = document.getElementById('apparatus-ribbon-topup');
+
+    function openTopupModal() {
+      showToast('info', 'INR Wallet Top-Up', 'Redirecting to Instant UPI / NetBanking Gateway...');
+      setTimeout(function () {
+        window.open('https://arixbyte.com', '_blank');
+      }, 1000);
+    }
+
+    if (topupBtn) topupBtn.addEventListener('click', openTopupModal);
+    if (ribbonTopup) ribbonTopup.addEventListener('click', openTopupModal);
+
+    const upgradePills = document.querySelectorAll('.apparatus-upgrade-pill');
+    upgradePills.forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        const item = pill.dataset.upgrade || 'Resource Addon';
+        const price = pill.dataset.price || '₹99';
+        showToast('success', 'Order Selected', 'Selected ' + item + ' for ' + price + '/mo. Redirecting to billing...');
+        setTimeout(function () {
+          window.open('https://arixbyte.com', '_blank');
+        }, 1200);
+      });
+    });
+  }
+
+  function updateResourceGauges(totalRamMB, totalCpuPercent, totalDiskMB) {
+    const ramText = document.getElementById('apparatus-gauge-ram-text');
+    const ramBar = document.getElementById('apparatus-gauge-ram-bar');
+    const cpuText = document.getElementById('apparatus-gauge-cpu-text');
+    const cpuBar = document.getElementById('apparatus-gauge-cpu-bar');
+    const diskText = document.getElementById('apparatus-gauge-disk-text');
+    const diskBar = document.getElementById('apparatus-gauge-disk-bar');
+
+    const ramGB = (totalRamMB / 1024).toFixed(1);
+    const diskGB = (totalDiskMB / 1024).toFixed(1);
+
+    if (ramText) ramText.textContent = ramGB + ' GB Allocated';
+    if (cpuText) cpuText.textContent = totalCpuPercent + '% Compute';
+    if (diskText) diskText.textContent = diskGB + ' GB NVMe';
+
+    // Width percentages for visually pleasing gauges
+    const ramPct = Math.min(100, Math.max(8, (totalRamMB / 32768) * 100));
+    const cpuPct = Math.min(100, Math.max(8, (totalCpuPercent / 800) * 100));
+    const diskPct = Math.min(100, Math.max(8, (totalDiskMB / 102400) * 100));
+
+    if (ramBar) ramBar.style.width = ramPct + '%';
+    if (cpuBar) cpuBar.style.width = cpuPct + '%';
+    if (diskBar) diskBar.style.width = diskPct + '%';
+  }
+
   // Load API Data for Dashboard (Servers, Activities, Account Details)
   async function loadDashboardApiData() {
     // 1. Fetch user data if not fully provided
@@ -603,7 +786,9 @@
         if (attr.admin !== undefined) {
           const isAdmin = !!attr.admin;
           const rEl = document.getElementById('apparatus-stat-role');
+          const mRole = document.getElementById('apparatus-metric-role');
           if (rEl) rEl.textContent = isAdmin ? 'Administrator' : 'User';
+          if (mRole) mRole.textContent = isAdmin ? 'Administrator' : 'User';
 
           if (isAdmin) {
             document.body.classList.add('apparatus-is-admin');
@@ -616,12 +801,18 @@
       }
     } catch (e) {}
 
-    // 2. Fetch Servers
+    // 2. Fetch Servers & aggregate capacity
     try {
       const srvRes = await fetch('/api/client', { headers: { Accept: 'application/json' } });
       const container = document.getElementById('apparatus-servers-list');
       const countBadge = document.getElementById('apparatus-server-badge');
       const ownedStat = document.getElementById('apparatus-stat-servers-owned');
+
+      const mInstances = document.getElementById('apparatus-metric-instances');
+      const mInstancesSub = document.getElementById('apparatus-metric-instances-sub');
+      const mRam = document.getElementById('apparatus-metric-ram');
+      const mCpu = document.getElementById('apparatus-metric-cpu');
+      const mDisk = document.getElementById('apparatus-metric-disk');
 
       if (srvRes.ok) {
         const srvData = await srvRes.json();
@@ -630,21 +821,40 @@
           ? srvData.meta.pagination.total
           : servers.length;
 
-        if (countBadge) countBadge.textContent = total + (total === 1 ? ' Server' : ' Servers');
+        if (countBadge) countBadge.textContent = total;
         if (ownedStat) ownedStat.textContent = total;
+        if (mInstances) mInstances.textContent = total;
+        if (mInstancesSub) mInstancesSub.innerHTML = total + (total === 1 ? ' Server' : ' Servers') + ' &bull; 0 VPS';
+
+        let totalRamMB = 0;
+        let totalCpuPercent = 0;
+        let totalDiskMB = 0;
+
+        servers.forEach(function (s) {
+          const limits = (s.attributes && s.attributes.limits) || {};
+          if (typeof limits.memory === 'number') totalRamMB += limits.memory;
+          if (typeof limits.cpu === 'number') totalCpuPercent += limits.cpu;
+          if (typeof limits.disk === 'number') totalDiskMB += limits.disk;
+        });
+
+        if (mRam) mRam.textContent = (totalRamMB / 1024).toFixed(1) + ' GB';
+        if (mCpu) mCpu.textContent = totalCpuPercent + '% CPU';
+        if (mDisk) mDisk.textContent = (totalDiskMB / 1024).toFixed(1) + ' GB NVMe';
+
+        updateResourceGauges(totalRamMB, totalCpuPercent, totalDiskMB);
 
         if (servers.length === 0) {
           if (container) {
             container.innerHTML = `
               <div class="apparatus-empty-servers">
                 <div class="apparatus-empty-icon"><i class="ri-server-line"></i></div>
-                <h3 class="apparatus-empty-title">No Servers Found</h3>
+                <h3 class="apparatus-empty-title">No Game Servers Active</h3>
                 <p class="apparatus-empty-desc">
-                  You don't have any active servers. Purchase one from our website to get started.
+                  You don't have any provisioned game servers yet. Deploy a high-tickrate game server or Cloud VPS to get started!
                 </p>
                 <div class="apparatus-empty-actions">
                   <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
-                    Purchase Now from our Website <i class="ri-external-link-line"></i>
+                    <i class="ri-shopping-cart-2-line"></i> Deploy Server (INR ₹) <i class="ri-external-link-line"></i>
                   </a>
                 </div>
               </div>
@@ -657,14 +867,20 @@
               const attr = s.attributes || {};
               const id = attr.identifier || attr.uuid || '';
               const name = attr.name || 'Server';
-              const node = attr.node || 'ArixByte';
+              const node = attr.node || 'ArixByte Node';
               const mem = attr.limits && attr.limits.memory !== undefined ? (attr.limits.memory === 0 ? 'Unlimited' : attr.limits.memory + ' MB') : 'Standard';
               const cpu = attr.limits && attr.limits.cpu !== undefined ? (attr.limits.cpu === 0 ? 'Unlimited' : attr.limits.cpu + '%') : 'Standard';
               const disk = attr.limits && attr.limits.disk !== undefined ? (attr.limits.disk === 0 ? 'Unlimited' : attr.limits.disk + ' MB') : 'Standard';
 
               html += `
                 <div class="apparatus-server-item">
-                  <div>
+                  <div class="apparatus-server-main">
+                    <div class="apparatus-server-top">
+                      <div class="apparatus-server-badge-online">
+                        <span class="apparatus-status-dot"></span> Active
+                      </div>
+                      <span class="apparatus-server-node"><i class="ri-router-line"></i> ${node}</span>
+                    </div>
                     <h4 class="apparatus-server-name">${name}</h4>
                     <div class="apparatus-server-stats">
                       <span><i class="ri-cpu-line"></i> ${cpu}</span>
@@ -672,9 +888,11 @@
                       <span><i class="ri-hard-drive-line"></i> ${disk}</span>
                     </div>
                   </div>
-                  <a href="/server/${id}" class="apparatus-server-btn">
-                    Manage <i class="ri-arrow-right-s-line"></i>
-                  </a>
+                  <div class="apparatus-server-action-wrap">
+                    <a href="/server/${id}" class="apparatus-server-btn">
+                      Manage <i class="ri-arrow-right-s-line"></i>
+                    </a>
+                  </div>
                 </div>
               `;
             });
@@ -728,18 +946,22 @@
   function renderDefaultEmptyServers() {
     const container = document.getElementById('apparatus-servers-list');
     const countBadge = document.getElementById('apparatus-server-badge');
-    if (countBadge) countBadge.textContent = '0 Servers';
+    const mInstances = document.getElementById('apparatus-metric-instances');
+    const mInstancesSub = document.getElementById('apparatus-metric-instances-sub');
+    if (countBadge) countBadge.textContent = '0';
+    if (mInstances) mInstances.textContent = '0';
+    if (mInstancesSub) mInstancesSub.innerHTML = '0 Servers &bull; 0 VPS';
     if (container) {
       container.innerHTML = `
         <div class="apparatus-empty-servers">
           <div class="apparatus-empty-icon"><i class="ri-server-line"></i></div>
-          <h3 class="apparatus-empty-title">No Servers Found</h3>
+          <h3 class="apparatus-empty-title">No Game Servers Active</h3>
           <p class="apparatus-empty-desc">
-            You don't have any active servers. Purchase one from our website to get started.
+            You don't have any provisioned game servers yet. Deploy a high-tickrate game server or Cloud VPS to get started!
           </p>
           <div class="apparatus-empty-actions">
             <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
-              Purchase Now from our Website <i class="ri-external-link-line"></i>
+              <i class="ri-shopping-cart-2-line"></i> Deploy Server (INR ₹) <i class="ri-external-link-line"></i>
             </a>
           </div>
         </div>
@@ -747,7 +969,7 @@
     }
   }
 
-  // Initialize the 4-Card Transparent Dashboard
+  // Initialize the Transparent Futuristic Dashboard
   function initDashboardView() {
     let dash = document.getElementById('apparatus-dashboard-view');
     if (dash) return;
@@ -761,110 +983,326 @@
     const email = user.email || 'user@arixbyte.com';
     const isRootAdmin = !!user.root_admin;
     const useTotp = !!user.use_totp;
+    const greeting = getGreeting();
 
     dash.innerHTML = `
       <div class="apparatus-dashboard-container">
-        <!-- Left Column: Area 1 (Welcome) & Area 4 (Servers) -->
-        <div class="apparatus-dash-col apparatus-dash-left">
-          
-          <!-- Area 1: Welcome -->
-          <div class="apparatus-card apparatus-card-welcome" id="apparatus-area-1">
-            <div class="apparatus-welcome-content">
-              <h1 class="apparatus-welcome-title">Hello, <span class="apparatus-user-name" id="apparatus-welcome-username">${username}</span></h1>
-              <p class="apparatus-welcome-desc">Welcome to your server control panel.</p>
-              <div class="apparatus-welcome-actions">
-                <a href="/servers" class="apparatus-btn apparatus-btn-primary" id="apparatus-btn-to-servers">
-                  <i class="ri-server-line"></i> View Servers
-                </a>
-                <a href="/account" class="apparatus-btn apparatus-btn-glass">
-                  <i class="ri-user-settings-line"></i> Account Settings
-                </a>
-                <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass">
-                  <i class="ri-discord-fill"></i> Discord
-                </a>
-              </div>
+        
+        <!-- Top Section: Dynamic Hero Banner -->
+        <div class="apparatus-card apparatus-card-welcome" id="apparatus-area-1">
+          <div class="apparatus-welcome-content">
+            <div class="apparatus-status-pill">
+              <span class="apparatus-status-dot"></span>
+              <span class="apparatus-status-text">All Systems Operational</span>
             </div>
-            <div class="apparatus-welcome-decor" aria-hidden="true">
-              <i class="ri-cloud-line"></i>
+            <h1 class="apparatus-welcome-title">${greeting}, <span class="apparatus-user-name" id="apparatus-welcome-username">${username}</span></h1>
+            <p class="apparatus-welcome-desc">ArixByte Cloud Console &bull; High Performance Game Servers &amp; KVM Cloud VPS</p>
+            <div class="apparatus-welcome-actions">
+              <a href="/servers" class="apparatus-btn apparatus-btn-primary" id="apparatus-btn-to-servers">
+                <i class="ri-server-line"></i> View Servers
+              </a>
+              <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-hero-vps-btn">
+                <i class="ri-hard-drive-3-line"></i> Cloud VPS
+              </button>
+              <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-hero-store-btn">
+                <i class="ri-shopping-bag-3-line"></i> Billing &amp; Store
+              </button>
+              <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass">
+                <i class="ri-discord-fill"></i> Discord Community
+              </a>
+            </div>
+          </div>
+          <div class="apparatus-welcome-decor" aria-hidden="true">
+            <i class="ri-cloud-line"></i>
+          </div>
+        </div>
+
+        <!-- Top Metric Ribbon (4 Modern Glass Tiles) -->
+        <div class="apparatus-metrics-ribbon" id="apparatus-metrics-ribbon">
+          <!-- Metric 1: Active Instances -->
+          <div class="apparatus-metric-tile">
+            <div class="apparatus-metric-icon apparatus-icon-purple">
+              <i class="ri-server-line"></i>
+            </div>
+            <div class="apparatus-metric-body">
+              <span class="apparatus-metric-label">Active Instances</span>
+              <div class="apparatus-metric-num">
+                <span class="apparatus-metric-val" id="apparatus-metric-instances">0</span>
+                <span class="apparatus-metric-unit">Active</span>
+              </div>
+              <span class="apparatus-metric-sub" id="apparatus-metric-instances-sub">0 Servers &bull; 0 VPS</span>
             </div>
           </div>
 
-          <!-- Area 4: Servers -->
-          <div class="apparatus-card apparatus-card-servers" id="apparatus-area-4">
-            <div class="apparatus-card-header">
-              <h2 class="apparatus-card-title">Servers</h2>
-              <span class="apparatus-pill" id="apparatus-server-badge">0 Servers</span>
+          <!-- Metric 2: INR Balance & Coins -->
+          <div class="apparatus-metric-tile">
+            <div class="apparatus-metric-icon apparatus-icon-emerald">
+              <i class="ri-wallet-3-line"></i>
             </div>
-            <div class="apparatus-servers-content" id="apparatus-servers-list">
-              <div class="apparatus-empty-msg">Loading servers...</div>
+            <div class="apparatus-metric-body">
+              <span class="apparatus-metric-label">Cash Balance</span>
+              <div class="apparatus-metric-num">
+                <span class="apparatus-metric-val" id="apparatus-metric-balance">₹0.00</span>
+                <span class="apparatus-metric-unit">INR</span>
+              </div>
+              <span class="apparatus-metric-sub">
+                <span id="apparatus-metric-coins">100</span> Coins &bull; <a href="javascript:void(0)" class="apparatus-metric-sublink" id="apparatus-ribbon-topup">Top Up</a>
+              </span>
+            </div>
+          </div>
+
+          <!-- Metric 3: Resource Capacity -->
+          <div class="apparatus-metric-tile">
+            <div class="apparatus-metric-icon apparatus-icon-cyan">
+              <i class="ri-cpu-line"></i>
+            </div>
+            <div class="apparatus-metric-body">
+              <span class="apparatus-metric-label">Allocated Resources</span>
+              <div class="apparatus-metric-num">
+                <span class="apparatus-metric-val" id="apparatus-metric-ram">0.0 GB</span>
+                <span class="apparatus-metric-unit">RAM</span>
+              </div>
+              <span class="apparatus-metric-sub" id="apparatus-metric-sub-res">
+                <span id="apparatus-metric-cpu">0% CPU</span> &bull; <span id="apparatus-metric-disk">0.0 GB NVMe</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Metric 4: Security & Access -->
+          <div class="apparatus-metric-tile">
+            <div class="apparatus-metric-icon apparatus-icon-pink">
+              <i class="ri-shield-check-line"></i>
+            </div>
+            <div class="apparatus-metric-body">
+              <span class="apparatus-metric-label">Security &amp; Role</span>
+              <div class="apparatus-metric-num">
+                <span class="apparatus-metric-val" id="apparatus-metric-role">${isRootAdmin ? 'Administrator' : 'User'}</span>
+              </div>
+              <span class="apparatus-metric-sub">
+                2FA: <span id="apparatus-metric-2fa" class="${useTotp ? 'status-on' : 'status-off'}">${useTotp ? 'Active &bull; Protected' : 'Disabled'}</span>
+              </span>
             </div>
           </div>
         </div>
 
-        <!-- Right Column: Area 2 (Recent Activity) & Area 3 (Account) -->
-        <div class="apparatus-dash-col apparatus-dash-right">
-          
-          <!-- Area 2: Recent Activity -->
-          <div class="apparatus-card apparatus-card-activity" id="apparatus-area-2">
-            <div class="apparatus-card-header">
-              <h2 class="apparatus-card-title">Recent Activity</h2>
-              <a href="/account/activity" class="apparatus-link">View All <i class="ri-arrow-right-s-line"></i></a>
-            </div>
-            <div class="apparatus-activity-list" id="apparatus-activity-list">
-              <div class="apparatus-empty-msg">Loading activity...</div>
+        <!-- Main 2-Column Content Grid -->
+        <div class="apparatus-dash-main-grid">
+          <!-- Left Column: Dual Instances Hub (Area 4) -->
+          <div class="apparatus-dash-col apparatus-dash-left">
+            <div class="apparatus-card apparatus-card-servers" id="apparatus-area-4">
+              <div class="apparatus-card-header apparatus-hub-header">
+                <div class="apparatus-tabs-nav">
+                  <button type="button" class="apparatus-tab-btn active" data-tab="servers" id="apparatus-tab-btn-servers">
+                    <i class="ri-gamepad-line"></i> Game Servers
+                    <span class="apparatus-tab-badge" id="apparatus-server-badge">0</span>
+                  </button>
+                  <button type="button" class="apparatus-tab-btn" data-tab="vps" id="apparatus-tab-btn-vps">
+                    <i class="ri-hard-drive-3-line"></i> Cloud VPS
+                    <span class="apparatus-tab-badge apparatus-tab-badge-accent">KVM</span>
+                  </button>
+                </div>
+                <div class="apparatus-hub-actions">
+                  <button type="button" class="apparatus-btn apparatus-btn-primary apparatus-btn-sm" id="apparatus-hub-deploy-btn">
+                    <i class="ri-add-line"></i> Deploy Server
+                  </button>
+                </div>
+              </div>
+
+              <!-- Tab 1: Game Servers List -->
+              <div class="apparatus-tab-pane active" id="apparatus-pane-servers">
+                <div class="apparatus-servers-content" id="apparatus-servers-list">
+                  <div class="apparatus-empty-msg">
+                    <i class="ri-loader-4-line apparatus-spin"></i> Loading servers...
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab 2: Cloud VPS Hub -->
+              <div class="apparatus-tab-pane" id="apparatus-pane-vps" style="display: none;">
+                <div class="apparatus-vps-showcase">
+                  <div class="apparatus-vps-banner">
+                    <div class="apparatus-vps-badge">
+                      <span class="apparatus-status-dot"></span> Next-Gen KVM Architecture
+                    </div>
+                    <h3 class="apparatus-vps-title">High-Performance Cloud VPS Instances</h3>
+                    <p class="apparatus-vps-desc">
+                      Deploy ultra-low latency Cloud VPS powered by AMD EPYC &amp; Intel Xeon NVMe storage with 10Gbps DDoS protection and full root SSH access.
+                    </p>
+                    
+                    <div class="apparatus-vps-specs-grid">
+                      <div class="apparatus-vps-spec-item">
+                        <i class="ri-cpu-line"></i>
+                        <div>
+                          <span class="spec-label">Processors</span>
+                          <span class="spec-val">Dedicated vCPU</span>
+                        </div>
+                      </div>
+                      <div class="apparatus-vps-spec-item">
+                        <i class="ri-flashlight-line"></i>
+                        <div>
+                          <span class="spec-label">Storage</span>
+                          <span class="spec-val">PCIe 4.0 NVMe SSD</span>
+                        </div>
+                      </div>
+                      <div class="apparatus-vps-spec-item">
+                        <i class="ri-shield-flash-line"></i>
+                        <div>
+                          <span class="spec-label">Protection</span>
+                          <span class="spec-val">3.2 Tbps DDoS Defense</span>
+                        </div>
+                      </div>
+                      <div class="apparatus-vps-spec-item">
+                        <i class="ri-global-line"></i>
+                        <div>
+                          <span class="spec-label">Regions</span>
+                          <span class="spec-val">India (Mumbai/Delhi) &amp; Global</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="apparatus-vps-actions">
+                      <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
+                        <i class="ri-rocket-line"></i> Deploy Cloud VPS (Starting ₹149/mo)
+                      </a>
+                      <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-vps-refresh-btn">
+                        <i class="ri-refresh-line"></i> Refresh VPS
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div id="apparatus-vps-list">
+                    <!-- Dynamic VPS items placeholder -->
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Area 3: Account Credentials -->
-          <div class="apparatus-card apparatus-card-account" id="apparatus-area-3">
-            <div class="apparatus-card-header">
-              <h2 class="apparatus-card-title">Account</h2>
-              <span class="apparatus-pill apparatus-pill-green">Active</span>
+          <!-- Right Column: Billing/Wallet, Resource Allocation, and Recent Activity -->
+          <div class="apparatus-dash-col apparatus-dash-right">
+            
+            <!-- Card 1: Billing & INR Wallet -->
+            <div class="apparatus-card apparatus-card-billing" id="apparatus-area-billing">
+              <div class="apparatus-card-header">
+                <h2 class="apparatus-card-title">
+                  <i class="ri-money-rupee-circle-line" style="color: #34d399;"></i> Billing &amp; Wallet
+                </h2>
+                <span class="apparatus-pill apparatus-pill-green">INR (₹)</span>
+              </div>
+
+              <div class="apparatus-billing-balances">
+                <!-- Cash Wallet -->
+                <div class="apparatus-balance-box apparatus-balance-cash">
+                  <span class="apparatus-balance-label">Cash Balance</span>
+                  <div class="apparatus-balance-value">₹0.00</div>
+                  <span class="apparatus-balance-note">Instant UPI / NetBanking / Cards</span>
+                </div>
+
+                <!-- Coins Balance -->
+                <div class="apparatus-balance-box apparatus-balance-coins">
+                  <span class="apparatus-balance-label">Reward Coins</span>
+                  <div class="apparatus-balance-value">
+                    <span id="apparatus-coin-count">100</span> <span class="apparatus-coin-symbol">🪙</span>
+                  </div>
+                  <span class="apparatus-balance-note">Redeem for discounts &amp; upgrades</span>
+                </div>
+              </div>
+
+              <div class="apparatus-billing-actions">
+                <button type="button" class="apparatus-btn apparatus-btn-primary apparatus-btn-full" id="apparatus-wallet-topup-btn">
+                  <i class="ri-add-circle-line"></i> Top Up Balance (INR ₹)
+                </button>
+                <button type="button" class="apparatus-btn apparatus-btn-glass apparatus-btn-full" id="apparatus-daily-reward-btn">
+                  <i class="ri-gift-line"></i> Claim Daily Reward (+25 🪙)
+                </button>
+              </div>
+
+              <!-- Quick Resource Upgrades -->
+              <div class="apparatus-upgrades-section">
+                <span class="apparatus-upgrades-title">
+                  <i class="ri-flashlight-line"></i> Quick Server Upgrades
+                </span>
+                <div class="apparatus-upgrades-grid">
+                  <button type="button" class="apparatus-upgrade-pill" data-upgrade="+2 GB DDR4 RAM" data-price="₹99">
+                    <span class="upgrade-name">+2 GB RAM</span>
+                    <span class="upgrade-price">₹99/mo</span>
+                  </button>
+                  <button type="button" class="apparatus-upgrade-pill" data-upgrade="+100% Dedicated CPU" data-price="₹79">
+                    <span class="upgrade-name">+100% CPU</span>
+                    <span class="upgrade-price">₹79/mo</span>
+                  </button>
+                  <button type="button" class="apparatus-upgrade-pill" data-upgrade="+20 GB NVMe Storage" data-price="₹49">
+                    <span class="upgrade-name">+20 GB NVMe</span>
+                    <span class="upgrade-price">₹49/mo</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <div class="apparatus-account-rows">
-              <!-- Email (Blurred, cursor hover reveals) -->
-              <div class="apparatus-row">
-                <span class="apparatus-row-label">Email</span>
-                <span class="apparatus-email-blurred" id="apparatus-email-val" title="Hover to reveal">${email}</span>
+            <!-- Card 2: Resource Allocation -->
+            <div class="apparatus-card apparatus-card-resources" id="apparatus-area-resources">
+              <div class="apparatus-card-header">
+                <h2 class="apparatus-card-title">
+                  <i class="ri-dashboard-3-line" style="color: #38bdf8;"></i> Resource Capacity
+                </h2>
+                <span class="apparatus-pill" id="apparatus-resource-status">Allocated</span>
               </div>
 
-              <!-- Servers Owned -->
-              <div class="apparatus-row">
-                <span class="apparatus-row-label">Servers Owned</span>
-                <span class="apparatus-row-val" id="apparatus-stat-servers-owned">0</span>
+              <div class="apparatus-gauges-list">
+                <!-- Memory Bar -->
+                <div class="apparatus-gauge-row">
+                  <div class="apparatus-gauge-header">
+                    <span class="gauge-label"><i class="ri-database-2-line"></i> Memory (RAM)</span>
+                    <span class="gauge-val" id="apparatus-gauge-ram-text">0.0 GB Allocated</span>
+                  </div>
+                  <div class="apparatus-progress-track">
+                    <div class="apparatus-progress-bar apparatus-progress-ram" id="apparatus-gauge-ram-bar" style="width: 20%;"></div>
+                  </div>
+                </div>
+
+                <!-- CPU Bar -->
+                <div class="apparatus-gauge-row">
+                  <div class="apparatus-gauge-header">
+                    <span class="gauge-label"><i class="ri-cpu-line"></i> CPU Compute</span>
+                    <span class="gauge-val" id="apparatus-gauge-cpu-text">0% Allocated</span>
+                  </div>
+                  <div class="apparatus-progress-track">
+                    <div class="apparatus-progress-bar apparatus-progress-cpu" id="apparatus-gauge-cpu-bar" style="width: 15%;"></div>
+                  </div>
+                </div>
+
+                <!-- Disk Bar -->
+                <div class="apparatus-gauge-row">
+                  <div class="apparatus-gauge-header">
+                    <span class="gauge-label"><i class="ri-hard-drive-line"></i> NVMe Storage</span>
+                    <span class="gauge-val" id="apparatus-gauge-disk-text">0.0 GB Allocated</span>
+                  </div>
+                  <div class="apparatus-progress-track">
+                    <div class="apparatus-progress-bar apparatus-progress-disk" id="apparatus-gauge-disk-bar" style="width: 25%;"></div>
+                  </div>
+                </div>
               </div>
 
-              <!-- Active Tickets -->
-              <div class="apparatus-row">
-                <span class="apparatus-row-label">Active Tickets</span>
-                <span class="apparatus-row-val">
-                  0 Active &middot; <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-inline-link">Support</a>
-                </span>
-              </div>
-
-              <!-- 2FA -->
-              <div class="apparatus-row">
-                <span class="apparatus-row-label">Two-Factor Auth</span>
-                <span class="apparatus-row-val" id="apparatus-stat-2fa">
-                  ${useTotp ? '<span class="status-on">Enabled</span>' : '<span class="status-off">Disabled</span>'}
-                </span>
-              </div>
-
-              <!-- Role -->
-              <div class="apparatus-row">
-                <span class="apparatus-row-label">Role</span>
-                <span class="apparatus-row-val" id="apparatus-stat-role">
-                  ${isRootAdmin ? 'Administrator' : 'User'}
-                </span>
+              <!-- Blurred Email Quick Row -->
+              <div class="apparatus-account-quick-row">
+                <span class="apparatus-row-label">Account Email</span>
+                <span class="apparatus-email-blurred" id="apparatus-email-val" title="Click or hover to reveal">${email}</span>
               </div>
             </div>
 
-            <div class="apparatus-account-footer">
-              <a href="/account" class="apparatus-btn apparatus-btn-glass apparatus-btn-full">
-                Manage Account
-              </a>
+            <!-- Card 3: Recent Activity (Area 2) -->
+            <div class="apparatus-card apparatus-card-activity" id="apparatus-area-2">
+              <div class="apparatus-card-header">
+                <h2 class="apparatus-card-title">
+                  <i class="ri-history-line" style="color: #f472b6;"></i> Recent Activity
+                </h2>
+                <a href="/account/activity" class="apparatus-link">View All <i class="ri-arrow-right-s-line"></i></a>
+              </div>
+              <div class="apparatus-activity-list" id="apparatus-activity-list">
+                <div class="apparatus-empty-msg">Loading activity...</div>
+              </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -902,6 +1340,11 @@
         emailEl.classList.toggle('revealed');
       });
     }
+
+    // Initialize interactive tabs, coins, and billing
+    initInstanceTabs();
+    initDailyReward();
+    initBillingActions();
 
     // Load dynamic data
     loadDashboardApiData();
@@ -1110,7 +1553,15 @@
       if (vpsBtn) {
         vpsBtn.addEventListener('click', function (e) {
           e.preventDefault();
-          showToast('info', 'VPS Cloud', 'VPS management panel is coming soon!');
+          const vpsTab = document.getElementById('apparatus-tab-btn-vps');
+          if (vpsTab) {
+            vpsTab.click();
+            const hub = document.getElementById('apparatus-area-4');
+            if (hub) hub.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            showToast('info', 'Cloud VPS Hub', 'High-Performance KVM VPS starting at ₹149/mo.');
+            window.location.href = '/';
+          }
         });
       }
 
@@ -1119,7 +1570,15 @@
       if (resourceBtn) {
         resourceBtn.addEventListener('click', function (e) {
           e.preventDefault();
-          showToast('info', 'Resources', 'Resource management & upgrades coming soon!');
+          const resCard = document.getElementById('apparatus-area-resources') || document.getElementById('apparatus-area-billing');
+          if (resCard) {
+            resCard.scrollIntoView({ behavior: 'smooth' });
+            resCard.style.transition = 'box-shadow 0.3s ease';
+            resCard.style.boxShadow = '0 0 25px rgba(56, 189, 248, 0.45)';
+            setTimeout(function () { resCard.style.boxShadow = ''; }, 1500);
+          } else {
+            showToast('info', 'Resource Allocation', 'View and scale your compute, RAM & NVMe storage capacity.');
+          }
         });
       }
 
@@ -1127,7 +1586,16 @@
       if (storeBtn) {
         storeBtn.addEventListener('click', function (e) {
           e.preventDefault();
-          showToast('info', 'Store', 'Cloud Addon & Server Store coming soon!');
+          const billCard = document.getElementById('apparatus-area-billing');
+          if (billCard) {
+            billCard.scrollIntoView({ behavior: 'smooth' });
+            billCard.style.transition = 'box-shadow 0.3s ease';
+            billCard.style.boxShadow = '0 0 25px rgba(236, 72, 153, 0.45)';
+            setTimeout(function () { billCard.style.boxShadow = ''; }, 1500);
+          } else {
+            showToast('info', 'Cloud Store (INR)', 'Opening ArixByte Store...');
+            setTimeout(function () { window.open('https://arixbyte.com', '_blank'); }, 800);
+          }
         });
       }
 
@@ -1135,7 +1603,13 @@
       if (earnBtn) {
         earnBtn.addEventListener('click', function (e) {
           e.preventDefault();
-          showToast('info', 'Earn', 'Rewards and Earn system coming soon!');
+          const dailyBtn = document.getElementById('apparatus-daily-reward-btn');
+          if (dailyBtn) {
+            dailyBtn.scrollIntoView({ behavior: 'smooth' });
+            dailyBtn.click();
+          } else {
+            showToast('info', 'Daily Earn', 'Claim daily reward coins and redeem for server discounts!');
+          }
         });
       }
 

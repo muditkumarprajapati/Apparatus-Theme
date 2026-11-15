@@ -32,7 +32,7 @@ echo -e "${CYAN}================================================================
 # Verify Root Privileges
 if [ "$EUID" -ne 0 ]; then
   echo -e "${RED}[ERROR] Please run this script as root:${NC}"
-  echo -e "${YELLOW}sudo bash <(curl -s https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/main/install.sh)${NC}"
+  echo -e "${YELLOW}curl -sSL https://raw.githubusercontent.com/muditkumarprajapati/Apparatus-Theme/main/install.sh -o install.sh && bash install.sh${NC}"
   exit 1
 fi
 

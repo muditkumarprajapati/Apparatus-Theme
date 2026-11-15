@@ -484,6 +484,10 @@ body.apparatus-auth .desert-wrapper {
   border-left: 5px solid #ef4444 !important;
 }
 
+.apparatus-toast-info {
+  border-left: 5px solid #38bdf8 !important;
+}
+
 .apparatus-toast-icon {
   display: flex !important;
   align-items: center !important;
@@ -800,16 +804,22 @@ body.apparatus-page-servers #apparatus-dashboard-view {
 
 /* Dedicated Servers Page Layout (/servers) */
 body.apparatus-page-servers .apparatus-dashboard-container {
-  grid-template-columns: 1fr !important;
   max-width: 1200px !important;
 }
 
+body.apparatus-page-servers #apparatus-area-1,
+body.apparatus-page-servers #apparatus-metrics-ribbon,
 body.apparatus-page-servers .apparatus-dash-right {
   display: none !important;
 }
 
-body.apparatus-page-servers #apparatus-area-1 {
-  display: none !important;
+body.apparatus-page-servers .apparatus-dash-main-grid {
+  grid-template-columns: 1fr !important;
+  width: 100% !important;
+}
+
+body.apparatus-page-servers .apparatus-dash-left {
+  width: 100% !important;
 }
 
 body.apparatus-page-servers #apparatus-area-4 {
@@ -865,11 +875,11 @@ body.apparatus-auth #apparatus-mobile-toggle {
 }
 
 .apparatus-dashboard-container {
-  display: grid;
-  grid-template-columns: 1.7fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 1.25rem;
   max-width: 1380px;
-  margin: 1.5rem auto 3rem auto;
+  margin: 1.5rem auto 3.5rem auto;
   padding: 0 1.5rem;
   position: relative;
   z-index: 30;
@@ -878,9 +888,22 @@ body.apparatus-auth #apparatus-mobile-toggle {
 
 @media (max-width: 1080px) {
   .apparatus-dashboard-container {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
+}
+
+.apparatus-dash-main-grid {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+@media (max-width: 1080px) {
+  .apparatus-dash-main-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
-    padding: 0 1rem;
   }
 }
 
@@ -994,6 +1017,35 @@ body.apparatus-auth #apparatus-mobile-toggle {
   position: relative;
   z-index: 2;
   max-width: 640px;
+}
+
+.apparatus-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.28);
+  color: #4ade80;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 0.85rem;
+  letter-spacing: 0.02em;
+}
+
+.apparatus-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+  animation: apparatus-pulse 2s infinite;
+}
+
+@keyframes apparatus-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.85); }
 }
 
 .apparatus-welcome-title {
@@ -1313,6 +1365,544 @@ body:not(.apparatus-auth) span.apparatus-user-name {
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
+}
+
+/* Server Item Top Status & Node */
+.apparatus-server-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+}
+
+.apparatus-server-badge-online {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #4ade80;
+}
+
+.apparatus-server-node {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Loading Spin Animation */
+.apparatus-spin {
+  display: inline-block;
+  animation: apparatus-spin-kf 1s linear infinite;
+}
+
+@keyframes apparatus-spin-kf {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Disabled Button Utility */
+.apparatus-btn-disabled,
+.apparatus-btn:disabled {
+  opacity: 0.65 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  transform: none !important;
+}
+
+/* ==============================================================================
+   METRIC RIBBON (4 FUTURISTIC GLASS TILES)
+   ============================================================================== */
+.apparatus-metrics-ribbon {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .apparatus-metrics-ribbon {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .apparatus-metrics-ribbon {
+    grid-template-columns: 1fr;
+  }
+}
+
+.apparatus-metric-tile {
+  background: rgba(14, 10, 22, 0.3) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  padding: 1.15rem 1.25rem !important;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.apparatus-metric-tile:hover {
+  transform: translateY(-2px);
+  background: rgba(14, 10, 22, 0.42) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 12px 35px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+.apparatus-metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.45rem;
+  flex-shrink: 0;
+}
+
+.apparatus-icon-purple {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.apparatus-icon-emerald {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.apparatus-icon-cyan {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.apparatus-icon-pink {
+  background: rgba(244, 114, 182, 0.15);
+  color: #f472b6;
+  border: 1px solid rgba(244, 114, 182, 0.3);
+}
+
+.apparatus-metric-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.apparatus-metric-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 0.2rem;
+}
+
+.apparatus-metric-num {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.apparatus-metric-val {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.apparatus-metric-unit {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.apparatus-metric-sub {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.apparatus-metric-sublink {
+  color: #f472b6 !important;
+  font-weight: 600;
+  text-decoration: underline !important;
+  cursor: pointer;
+}
+
+.apparatus-metric-sublink:hover {
+  color: #fff !important;
+}
+
+/* ==============================================================================
+   INSTANCES HUB (GAME SERVERS & CLOUD VPS TABS)
+   ============================================================================== */
+.apparatus-hub-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.apparatus-tabs-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(0, 0, 0, 0.28);
+  padding: 0.3rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.apparatus-tab-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 0.95rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.apparatus-tab-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.apparatus-tab-btn.active {
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.apparatus-tab-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.12rem 0.45rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.apparatus-tab-badge-accent {
+  background: rgba(236, 72, 153, 0.25);
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.35);
+}
+
+.apparatus-btn-sm {
+  padding: 0.45rem 0.9rem !important;
+  font-size: 0.82rem !important;
+}
+
+/* Cloud VPS Showcase */
+.apparatus-vps-banner {
+  background: radial-gradient(ellipse at 90% 20%, rgba(168, 85, 247, 0.18), transparent 65%), rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: 14px;
+  padding: 1.75rem;
+}
+
+.apparatus-vps-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 9999px;
+  background: rgba(168, 85, 247, 0.18);
+  color: #d8b4fe;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.apparatus-vps-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 0.4rem 0;
+}
+
+.apparatus-vps-desc {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.5;
+  margin: 0 0 1.25rem 0;
+}
+
+.apparatus-vps-specs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.35rem;
+}
+
+.apparatus-vps-spec-item {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.apparatus-vps-spec-item i {
+  font-size: 1.25rem;
+  color: #c084fc;
+}
+
+.spec-label {
+  display: block;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.spec-val {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.apparatus-vps-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ==============================================================================
+   BILLING & INR WALLET WIDGET
+   ============================================================================== */
+.apparatus-card-billing {
+  position: relative;
+}
+
+.apparatus-billing-balances {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 480px) {
+  .apparatus-billing-balances {
+    grid-template-columns: 1fr;
+  }
+}
+
+.apparatus-balance-box {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.95rem 1.05rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.apparatus-balance-cash {
+  border-color: rgba(52, 211, 153, 0.25);
+  background: radial-gradient(circle at 90% 10%, rgba(52, 211, 153, 0.12), transparent 70%), rgba(0, 0, 0, 0.25);
+}
+
+.apparatus-balance-coins {
+  border-color: rgba(251, 191, 36, 0.25);
+  background: radial-gradient(circle at 90% 10%, rgba(251, 191, 36, 0.12), transparent 70%), rgba(0, 0, 0, 0.25);
+}
+
+.apparatus-balance-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.apparatus-balance-value {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.apparatus-balance-note {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 0.35rem;
+}
+
+.apparatus-billing-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.apparatus-upgrades-section {
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.apparatus-upgrades-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.apparatus-upgrades-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .apparatus-upgrades-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.apparatus-upgrade-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.6rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.apparatus-upgrade-pill:hover {
+  background: rgba(236, 72, 153, 0.15);
+  border-color: rgba(236, 72, 153, 0.4);
+  transform: translateY(-2px);
+}
+
+.upgrade-name {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.upgrade-price {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #f472b6;
+  margin-top: 0.15rem;
+}
+
+/* ==============================================================================
+   RESOURCE CAPACITY GAUGES
+   ============================================================================== */
+.apparatus-gauges-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.apparatus-gauge-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.apparatus-gauge-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+.gauge-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.gauge-val {
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.apparatus-progress-track {
+  width: 100%;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.apparatus-progress-bar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.apparatus-progress-ram {
+  background: linear-gradient(90deg, #a855f7, #c084fc);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+}
+
+.apparatus-progress-cpu {
+  background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.apparatus-progress-disk {
+  background: linear-gradient(90deg, #ec4899, #f43f5e);
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
+}
+
+.apparatus-account-quick-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.95rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* ==============================================================================
