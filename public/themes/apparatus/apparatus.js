@@ -2245,6 +2245,37 @@
             </ul>
           </div>
 
+          <!-- Panel Settings -->
+          <div class="apparatus-nav-category">
+            <div class="apparatus-category-title">Panel Settings</div>
+            <ul class="apparatus-nav-list">
+              <li>
+                <a href="#panel-settings" class="apparatus-nav-link apparatus-panel-settings-link" data-tab="panel-settings">
+                  <i class="ri-settings-3-line apparatus-nav-icon"></i>
+                  <span>Panel Settings</span>
+                </a>
+              </li>
+              <li>
+                <a href="#hyper-editor" class="apparatus-nav-link apparatus-hyper-editor-link" data-tab="hyper-editor">
+                  <i class="ri-sparkling-2-line apparatus-nav-icon"></i>
+                  <span>Hyper Editor</span>
+                </a>
+              </li>
+              <li>
+                <a href="#hyper-settings" class="apparatus-nav-link apparatus-hyper-settings-link" data-tab="hyper-settings">
+                  <i class="ri-settings-4-line apparatus-nav-icon"></i>
+                  <span>Hyper Settings</span>
+                </a>
+              </li>
+              <li>
+                <a href="#addon-settings" class="apparatus-nav-link apparatus-addon-settings-link" data-tab="addon-settings">
+                  <i class="ri-stack-line apparatus-nav-icon"></i>
+                  <span>Addon Settings</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
           <!-- Socials -->
           <div class="apparatus-nav-category">
             <div class="apparatus-category-title">Socials</div>
@@ -2358,6 +2389,24 @@
           showToast('success', 'Tickets', 'Ticket support system is coming soon!');
         });
       }
+
+      // Panel Settings category click handlers
+      const panelSettingsLinks = [
+        { selector: '.apparatus-panel-settings-link', title: 'Panel Settings', msg: 'Opening Panel Settings configuration...' },
+        { selector: '.apparatus-hyper-editor-link', title: 'Hyper Editor', msg: 'Opening Hyper Editor customization module...' },
+        { selector: '.apparatus-hyper-settings-link', title: 'Hyper Settings', msg: 'Opening Hyper Settings preferences...' },
+        { selector: '.apparatus-addon-settings-link', title: 'Addon Settings', msg: 'Opening Addon Settings configuration...' }
+      ];
+
+      panelSettingsLinks.forEach(function (item) {
+        const btn = sidebar.querySelector(item.selector);
+        if (btn) {
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            showToast('info', item.title, item.msg);
+          });
+        }
+      });
 
       // Logout handler
       const logoutBtn = sidebar.querySelector('.apparatus-logout-link');
