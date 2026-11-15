@@ -1019,21 +1019,6 @@ body.apparatus-auth #apparatus-mobile-toggle {
   max-width: 640px;
 }
 
-.apparatus-status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.3rem 0.85rem;
-  border-radius: 9999px;
-  background: rgba(34, 197, 94, 0.12);
-  border: 1px solid rgba(34, 197, 94, 0.28);
-  color: #4ade80;
-  font-size: 0.78rem;
-  font-weight: 600;
-  margin-bottom: 0.85rem;
-  letter-spacing: 0.02em;
-}
-
 .apparatus-status-dot {
   width: 7px;
   height: 7px;
@@ -1089,24 +1074,45 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 
 .apparatus-welcome-decor {
   position: absolute;
-  right: 1.85rem;
+  right: 2.25rem;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 6.5rem;
-  line-height: 1;
-  color: rgba(255, 255, 255, 0.04);
   pointer-events: none;
   user-select: none;
   z-index: 1;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.apparatus-ab-watermark {
+  height: 110px;
+  width: auto;
+  max-width: 185px;
+  opacity: 0.16;
+  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.25));
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
 }
 
 .apparatus-card-welcome:hover .apparatus-welcome-decor {
-  color: rgba(244, 114, 182, 0.09);
-  transform: translateY(-50%) scale(1.06);
+  transform: translateY(-50%) scale(1.05);
 }
 
-@media (max-width: 768px) {
+.apparatus-card-welcome:hover .apparatus-ab-watermark {
+  opacity: 0.38;
+  filter: drop-shadow(0 0 28px rgba(124, 58, 237, 0.5));
+}
+
+@media (max-width: 900px) {
+  .apparatus-ab-watermark {
+    height: 80px;
+    opacity: 0.12;
+  }
+}
+
+@media (max-width: 640px) {
   .apparatus-welcome-decor {
     display: none;
   }

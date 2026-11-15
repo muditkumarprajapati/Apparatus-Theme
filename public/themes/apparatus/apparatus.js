@@ -991,10 +991,6 @@
         <!-- Top Section: Dynamic Hero Banner -->
         <div class="apparatus-card apparatus-card-welcome" id="apparatus-area-1">
           <div class="apparatus-welcome-content">
-            <div class="apparatus-status-pill">
-              <span class="apparatus-status-dot"></span>
-              <span class="apparatus-status-text">All Systems Operational</span>
-            </div>
             <h1 class="apparatus-welcome-title">${greeting}, <span class="apparatus-user-name" id="apparatus-welcome-username">${username}</span></h1>
             <p class="apparatus-welcome-desc">ArixByte Cloud Console &bull; High Performance Game Servers &amp; KVM Cloud VPS</p>
             <div class="apparatus-welcome-actions">
@@ -1012,8 +1008,8 @@
               </a>
             </div>
           </div>
-          <div class="apparatus-welcome-decor" aria-hidden="true">
-            <i class="ri-cloud-line"></i>
+          <div class="apparatus-welcome-decor apparatus-welcome-decor-ab" aria-hidden="true">
+            <img src="/themes/apparatus/ab-logo.png" class="apparatus-ab-watermark" alt="ArixByte">
           </div>
         </div>
 
