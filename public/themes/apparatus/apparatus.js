@@ -700,6 +700,8 @@
     function refreshCoinDisplays() {
       if (coinDisplay) coinDisplay.textContent = coins.toLocaleString();
       if (metricCoins) metricCoins.textContent = coins.toLocaleString();
+      const rCoins = document.getElementById('res-coin-count');
+      if (rCoins) rCoins.textContent = coins.toLocaleString();
     }
     refreshCoinDisplays();
 
@@ -928,6 +930,13 @@
     if (vCpu) vCpu.textContent = res.vps.cpu;
     const vDisk = document.getElementById('res-vps-disk');
     if (vDisk) vDisk.textContent = res.vps.disk;
+
+    // Coins Balance
+    const rCoins = document.getElementById('res-coin-count');
+    if (rCoins) {
+      const curCoins = parseInt(localStorage.getItem('apparatus_coins') || '100', 10);
+      rCoins.textContent = (isNaN(curCoins) ? 100 : curCoins).toLocaleString();
+    }
   }
 
   // Load API Data for Dashboard (Servers, Activities, Account Details)
@@ -1737,99 +1746,185 @@
             </div>
           </div>
 
-          <!-- Column 2: VPS Resources -->
-          <div class="apparatus-card apparatus-resource-card">
-            <div class="apparatus-card-header apparatus-res-card-header">
-              <div class="apparatus-res-card-title-group">
-                <div class="apparatus-res-badge-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
-                  <i class="ri-hard-drive-3-line"></i>
+          <!-- Column 2: Right Column (VPS Resources & Coins) -->
+          <div class="apparatus-resource-col-right">
+
+            <!-- Card 2: VPS Resources -->
+            <div class="apparatus-card apparatus-resource-card">
+              <div class="apparatus-card-header apparatus-res-card-header">
+                <div class="apparatus-res-card-title-group">
+                  <div class="apparatus-res-badge-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+                    <i class="ri-hard-drive-3-line"></i>
+                  </div>
+                  <div>
+                    <h2 class="apparatus-card-title">VPS Resources</h2>
+                    <span class="apparatus-res-card-sub">Cloud KVM Virtual Private Server</span>
+                  </div>
                 </div>
-                <div>
-                  <h2 class="apparatus-card-title">VPS Resources</h2>
-                  <span class="apparatus-res-card-sub">Cloud KVM Virtual Private Server</span>
-                </div>
+                <span class="apparatus-pill" style="border-color: rgba(56, 189, 248, 0.3); color: #38bdf8; background: rgba(56, 189, 248, 0.1);">KVM Cloud</span>
               </div>
-              <span class="apparatus-pill" style="border-color: rgba(56, 189, 248, 0.3); color: #38bdf8; background: rgba(56, 189, 248, 0.1);">KVM Cloud</span>
+
+              <div class="apparatus-res-items-list">
+                
+                <!-- VPS SLOTS -->
+                <div class="apparatus-res-row">
+                  <div class="apparatus-res-row-left">
+                    <div class="apparatus-res-row-icon"><i class="ri-server-line"></i></div>
+                    <div class="apparatus-res-row-info">
+                      <span class="apparatus-res-row-title">VPS SLOTS</span>
+                      <span class="apparatus-res-row-desc">Total deployable VPS instances</span>
+                    </div>
+                  </div>
+                  <div class="apparatus-res-row-right">
+                    <span class="apparatus-res-badge-val" id="res-vps-slots">0</span>
+                  </div>
+                </div>
+
+                <!-- ALLOCATED NODE -->
+                <div class="apparatus-res-row">
+                  <div class="apparatus-res-row-left">
+                    <div class="apparatus-res-row-icon"><i class="ri-global-line"></i></div>
+                    <div class="apparatus-res-row-info">
+                      <span class="apparatus-res-row-title">ALLOCATED NODE</span>
+                      <span class="apparatus-res-row-desc">Assigned hypervisor node</span>
+                    </div>
+                  </div>
+                  <div class="apparatus-res-row-right">
+                    <span class="apparatus-res-badge-val" id="res-vps-node">0</span>
+                  </div>
+                </div>
+
+                <!-- RAM -->
+                <div class="apparatus-res-row">
+                  <div class="apparatus-res-row-left">
+                    <div class="apparatus-res-row-icon"><i class="ri-database-2-line"></i></div>
+                    <div class="apparatus-res-row-info">
+                      <span class="apparatus-res-row-title">RAM</span>
+                      <span class="apparatus-res-row-desc">Dedicated physical memory</span>
+                    </div>
+                  </div>
+                  <div class="apparatus-res-row-right">
+                    <span class="apparatus-res-badge-val" id="res-vps-ram">0 GB</span>
+                  </div>
+                </div>
+
+                <!-- CPU -->
+                <div class="apparatus-res-row">
+                  <div class="apparatus-res-row-left">
+                    <div class="apparatus-res-row-icon"><i class="ri-dashboard-3-line"></i></div>
+                    <div class="apparatus-res-row-info">
+                      <span class="apparatus-res-row-title">CPU</span>
+                      <span class="apparatus-res-row-desc">Dedicated virtual CPU cores</span>
+                    </div>
+                  </div>
+                  <div class="apparatus-res-row-right">
+                    <span class="apparatus-res-badge-val" id="res-vps-cpu">0 vCPU</span>
+                  </div>
+                </div>
+
+                <!-- DISK -->
+                <div class="apparatus-res-row">
+                  <div class="apparatus-res-row-left">
+                    <div class="apparatus-res-row-icon"><i class="ri-hard-drive-line"></i></div>
+                    <div class="apparatus-res-row-info">
+                      <span class="apparatus-res-row-title">DISK</span>
+                      <span class="apparatus-res-row-desc">Dedicated NVMe block storage</span>
+                    </div>
+                  </div>
+                  <div class="apparatus-res-row-right">
+                    <span class="apparatus-res-badge-val" id="res-vps-disk">0 GB</span>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="apparatus-res-card-footer">
+                <i class="ri-information-line"></i>
+                <span>Cloud VPS instances and node allocations are provisioned by administrators.</span>
+              </div>
             </div>
 
-            <div class="apparatus-res-items-list">
-              
-              <!-- VPS SLOTS -->
-              <div class="apparatus-res-row">
-                <div class="apparatus-res-row-left">
-                  <div class="apparatus-res-row-icon"><i class="ri-server-line"></i></div>
-                  <div class="apparatus-res-row-info">
-                    <span class="apparatus-res-row-title">VPS SLOTS</span>
-                    <span class="apparatus-res-row-desc">Total deployable VPS instances</span>
+            <!-- Card 3: Reward Coins -->
+            <div class="apparatus-card apparatus-resource-card apparatus-res-coins-card">
+              <div class="apparatus-card-header apparatus-res-card-header">
+                <div class="apparatus-res-card-title-group">
+                  <div class="apparatus-res-badge-icon" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24;">
+                    <i class="ri-copper-coin-line"></i>
+                  </div>
+                  <div>
+                    <h2 class="apparatus-card-title">Reward Coins</h2>
+                    <span class="apparatus-res-card-sub">Available Balance &amp; Earnings</span>
                   </div>
                 </div>
-                <div class="apparatus-res-row-right">
-                  <span class="apparatus-res-badge-val" id="res-vps-slots">0</span>
+                <span class="apparatus-pill" style="border-color: rgba(251, 191, 36, 0.3); color: #fbbf24; background: rgba(251, 191, 36, 0.1);">Coin Wallet</span>
+              </div>
+
+              <!-- Main Coin Balance Box -->
+              <div class="apparatus-res-coins-box">
+                <div class="apparatus-res-coins-meta">
+                  <span class="apparatus-res-coins-lbl">AVAILABLE COINS</span>
+                  <div class="apparatus-res-coins-num">
+                    <span id="res-coin-count">0</span>
+                    <span class="apparatus-coin-icon-gold">🪙</span>
+                  </div>
+                </div>
+                <div class="apparatus-res-coins-badge">
+                  <i class="ri-sparkling-fill" style="color: #fbbf24;"></i> Active Wallet
                 </div>
               </div>
 
-              <!-- ALLOCATED NODE -->
-              <div class="apparatus-res-row">
-                <div class="apparatus-res-row-left">
-                  <div class="apparatus-res-row-icon"><i class="ri-global-line"></i></div>
-                  <div class="apparatus-res-row-info">
-                    <span class="apparatus-res-row-title">ALLOCATED NODE</span>
-                    <span class="apparatus-res-row-desc">Assigned hypervisor node</span>
+              <div class="apparatus-res-items-list">
+                
+                <!-- Referral Bonus -->
+                <div class="apparatus-res-row">
+                  <div class="apparatus-res-row-left">
+                    <div class="apparatus-res-row-icon" style="color: #fbbf24;"><i class="ri-gift-2-line"></i></div>
+                    <div class="apparatus-res-row-info">
+                      <span class="apparatus-res-row-title">REFERRAL BONUS</span>
+                      <span class="apparatus-res-row-desc">Earn per friend who registers with your code</span>
+                    </div>
+                  </div>
+                  <div class="apparatus-res-row-right">
+                    <span class="apparatus-res-badge-val" style="color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);">+10 Coins</span>
                   </div>
                 </div>
-                <div class="apparatus-res-row-right">
-                  <span class="apparatus-res-badge-val" id="res-vps-node">0</span>
-                </div>
-              </div>
 
-              <!-- RAM -->
-              <div class="apparatus-res-row">
-                <div class="apparatus-res-row-left">
-                  <div class="apparatus-res-row-icon"><i class="ri-database-2-line"></i></div>
-                  <div class="apparatus-res-row-info">
-                    <span class="apparatus-res-row-title">RAM</span>
-                    <span class="apparatus-res-row-desc">Dedicated physical memory</span>
+                <!-- Daily Bonus -->
+                <div class="apparatus-res-row">
+                  <div class="apparatus-res-row-left">
+                    <div class="apparatus-res-row-icon" style="color: #34d399;"><i class="ri-calendar-check-line"></i></div>
+                    <div class="apparatus-res-row-info">
+                      <span class="apparatus-res-row-title">DAILY BONUS</span>
+                      <span class="apparatus-res-row-desc">Claim free bonus coins every 24 hours</span>
+                    </div>
+                  </div>
+                  <div class="apparatus-res-row-right">
+                    <span class="apparatus-res-badge-val" style="color: #34d399; border-color: rgba(52, 211, 153, 0.3);">+25 Coins</span>
                   </div>
                 </div>
-                <div class="apparatus-res-row-right">
-                  <span class="apparatus-res-badge-val" id="res-vps-ram">0 GB</span>
-                </div>
-              </div>
 
-              <!-- CPU -->
-              <div class="apparatus-res-row">
-                <div class="apparatus-res-row-left">
-                  <div class="apparatus-res-row-icon"><i class="ri-dashboard-3-line"></i></div>
-                  <div class="apparatus-res-row-info">
-                    <span class="apparatus-res-row-title">CPU</span>
-                    <span class="apparatus-res-row-desc">Dedicated virtual CPU cores</span>
+                <!-- Coin Redemption -->
+                <div class="apparatus-res-row">
+                  <div class="apparatus-res-row-left">
+                    <div class="apparatus-res-row-icon" style="color: #f472b6;"><i class="ri-exchange-funds-line"></i></div>
+                    <div class="apparatus-res-row-info">
+                      <span class="apparatus-res-row-title">REDEMPTION</span>
+                      <span class="apparatus-res-row-desc">Redeem coins for RAM, CPU &amp; discounts</span>
+                    </div>
+                  </div>
+                  <div class="apparatus-res-row-right">
+                    <span class="apparatus-res-badge-val" style="color: #f472b6; border-color: rgba(244, 114, 182, 0.3);">Available</span>
                   </div>
                 </div>
-                <div class="apparatus-res-row-right">
-                  <span class="apparatus-res-badge-val" id="res-vps-cpu">0 vCPU</span>
-                </div>
+
               </div>
 
-              <!-- DISK -->
-              <div class="apparatus-res-row">
-                <div class="apparatus-res-row-left">
-                  <div class="apparatus-res-row-icon"><i class="ri-hard-drive-line"></i></div>
-                  <div class="apparatus-res-row-info">
-                    <span class="apparatus-res-row-title">DISK</span>
-                    <span class="apparatus-res-row-desc">Dedicated NVMe block storage</span>
-                  </div>
-                </div>
-                <div class="apparatus-res-row-right">
-                  <span class="apparatus-res-badge-val" id="res-vps-disk">0 GB</span>
-                </div>
+              <div class="apparatus-res-card-footer">
+                <i class="ri-information-line"></i>
+                <span>Coins can be earned through daily logins and referrals to upgrade server limits.</span>
               </div>
-
             </div>
 
-            <div class="apparatus-res-card-footer">
-              <i class="ri-information-line"></i>
-              <span>Cloud VPS instances and node allocations are provisioned by administrators.</span>
-            </div>
           </div>
 
         </div>
