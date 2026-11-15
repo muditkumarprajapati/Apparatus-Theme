@@ -1463,18 +1463,18 @@
           <div class="apparatus-welcome-content">
             <h1 class="apparatus-welcome-title">${greeting}, <span class="apparatus-user-name" id="apparatus-welcome-username">${username}</span>!</h1>
             <p class="apparatus-welcome-desc">Deploy and manage your game servers, cloud VPS, and infrastructure.</p>
-            <div class="apparatus-welcome-actions">
-              <a href="/servers" class="apparatus-btn apparatus-btn-primary" id="apparatus-btn-to-servers">
-                <i class="ri-server-line"></i> <span>View Servers</span>
+            <div class="apparatus-welcome-actions apparatus-welcome-socials">
+              <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass apparatus-social-btn apparatus-social-web" title="ArixByte Official Website">
+                <i class="ri-global-line"></i> <span>Website</span> <i class="ri-arrow-right-up-line apparatus-btn-ext"></i>
               </a>
-              <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-hero-vps-btn">
-                <i class="ri-hard-drive-3-line"></i> <span>Cloud VPS</span>
-              </button>
-              <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-hero-store-btn">
-                <i class="ri-wallet-3-line"></i> <span>Billing &amp; Store</span>
-              </button>
-              <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass">
-                <i class="ri-discord-fill"></i> <span>Discord Community</span> <i class="ri-arrow-right-up-line apparatus-btn-ext"></i>
+              <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass apparatus-social-btn apparatus-social-discord" title="Discord Community">
+                <i class="ri-discord-fill"></i> <span>Discord</span> <i class="ri-arrow-right-up-line apparatus-btn-ext"></i>
+              </a>
+              <a href="https://instagram.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass apparatus-social-btn apparatus-social-insta" title="Instagram">
+                <i class="ri-instagram-line"></i> <span>Instagram</span> <i class="ri-arrow-right-up-line apparatus-btn-ext"></i>
+              </a>
+              <a href="https://wa.me/918218444633" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass apparatus-social-btn apparatus-social-wa" title="WhatsApp Support">
+                <i class="ri-whatsapp-line"></i> <span>WhatsApp</span> <i class="ri-arrow-right-up-line apparatus-btn-ext"></i>
               </a>
             </div>
           </div>

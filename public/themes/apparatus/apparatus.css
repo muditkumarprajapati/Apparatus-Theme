@@ -4636,3 +4636,95 @@ html.lenis body {
     background-position: -200% 0;
   }
 }
+
+
+/* Hero Social Action Buttons */
+.apparatus-welcome-socials {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.apparatus-social-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.05rem !important;
+  height: 36px !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  border-radius: 999px !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  text-decoration: none !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.2s ease,
+              border-color 0.2s ease,
+              box-shadow 0.2s ease !important;
+}
+
+.apparatus-social-btn i:first-child {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  transition: transform 0.2s ease, opacity 0.2s ease, color 0.2s ease;
+}
+
+.apparatus-social-btn .apparatus-btn-ext {
+  font-size: 0.7rem;
+  opacity: 0.45;
+  margin-left: -2px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.apparatus-social-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+}
+
+.apparatus-social-btn:hover i:first-child {
+  transform: scale(1.12);
+  opacity: 1;
+}
+
+.apparatus-social-btn:hover .apparatus-btn-ext {
+  opacity: 0.9;
+  transform: translate(1px, -1px);
+}
+
+.apparatus-social-web:hover {
+  border-color: rgba(56, 189, 248, 0.45) !important;
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.18) !important;
+}
+.apparatus-social-web:hover i:first-child {
+  color: #38bdf8;
+}
+
+.apparatus-social-discord:hover {
+  border-color: rgba(88, 101, 242, 0.45) !important;
+  box-shadow: 0 6px 20px rgba(88, 101, 242, 0.2) !important;
+}
+.apparatus-social-discord:hover i:first-child {
+  color: #5865f2;
+}
+
+.apparatus-social-insta:hover {
+  border-color: rgba(225, 48, 108, 0.45) !important;
+  box-shadow: 0 6px 20px rgba(225, 48, 108, 0.2) !important;
+}
+.apparatus-social-insta:hover i:first-child {
+  color: #e1306c;
+}
+
+.apparatus-social-wa:hover {
+  border-color: rgba(37, 211, 102, 0.45) !important;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.2) !important;
+}
+.apparatus-social-wa:hover i:first-child {
+  color: #25d366;
+}
