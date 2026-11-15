@@ -510,19 +510,29 @@
     // 7. Ensure "Recent Activity" title is present above the activity card on /account/activity (clean, matching Add SSH Key)
     const rawPathname = window.location.pathname || '';
     if (rawPathname.startsWith('/account/activity')) {
-      const actCard = document.querySelector('.bg-gray-700') || document.querySelector('div[class*="ActivityLogContainer"] > div');
+      const actContainer = document.querySelector('div[class*="ActivityLogContainer"]');
+      const actCard = document.querySelector('.bg-gray-700') || (actContainer ? actContainer.firstElementChild : null);
       let header = document.getElementById('apparatus-activity-header');
-      if (!header && actCard) {
+      if (!header && (actCard || actContainer)) {
         header = document.createElement('h2');
         header.id = 'apparatus-activity-header';
         header.className = 'sc-mjlt6f-0 apparatus-activity-title';
         header.textContent = 'Recent Activity';
-        if (actCard.parentElement) {
-          actCard.parentElement.style.setProperty('display', 'flex', 'important');
-          actCard.parentElement.style.setProperty('flex-direction', 'column', 'important');
-          actCard.parentElement.style.setProperty('align-items', 'flex-start', 'important');
-          actCard.parentElement.style.setProperty('text-align', 'left', 'important');
-          actCard.parentElement.insertBefore(header, actCard);
+        const targetParent = (actCard && actCard.parentElement) || actContainer;
+        if (targetParent) {
+          targetParent.style.setProperty('display', 'flex', 'important');
+          targetParent.style.setProperty('flex-direction', 'column', 'important');
+          targetParent.style.setProperty('align-items', 'flex-start', 'important');
+          targetParent.style.setProperty('text-align', 'left', 'important');
+          targetParent.style.setProperty('width', '100%', 'important');
+          targetParent.style.setProperty('max-width', '100%', 'important');
+          targetParent.style.setProperty('margin-left', '0', 'important');
+          targetParent.style.setProperty('margin-right', '0', 'important');
+          if (actCard && actCard.parentElement === targetParent) {
+            targetParent.insertBefore(header, actCard);
+          } else {
+            targetParent.prepend(header);
+          }
         }
       } else if (header) {
         // If an old header or breadcrumb/subtitle markup exists, clean it up to just the pure title
@@ -530,6 +540,19 @@
           header.className = 'sc-mjlt6f-0 apparatus-activity-title';
           header.textContent = 'Recent Activity';
         }
+      }
+
+      if (actCard) {
+        actCard.style.setProperty('width', '100%', 'important');
+        actCard.style.setProperty('max-width', '100%', 'important');
+        actCard.style.setProperty('margin-left', '0', 'important');
+        actCard.style.setProperty('margin-right', '0', 'important');
+      }
+      if (actContainer) {
+        actContainer.style.setProperty('width', '100%', 'important');
+        actContainer.style.setProperty('max-width', '100%', 'important');
+        actContainer.style.setProperty('margin-left', '0', 'important');
+        actContainer.style.setProperty('margin-right', '0', 'important');
       }
 
       // 8. Enhance Activity Log IP addresses with Flag, Blur, and Clickable Location Lookup

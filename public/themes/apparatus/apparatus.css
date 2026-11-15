@@ -87,9 +87,7 @@ body:not(.apparatus-auth) .apparatus-settings-grid,
 body:not(.apparatus-auth) div[class*="AccountOverviewContainer"],
 body:not(.apparatus-auth) div[class*="AccountApiContainer"],
 body:not(.apparatus-auth) div[class*="AccountSSHContainer"],
-body:not(.apparatus-auth) div[class*="ActivityLogContainer"],
 body:not(.apparatus-auth) div[class*="PageContentBlock"],
-body:not(.apparatus-auth) div[class*="PageContentBlock"] > div,
 body:not(.apparatus-auth) div[class*="ServerViewContainer"],
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"],
 body:not(.apparatus-auth) div[class*="ServerDetailsBlock"],
@@ -1049,7 +1047,6 @@ body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-ser
 }
 
 body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="PageContentBlock"],
-body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="ActivityLogContainer"],
 body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="AccountApiContainer"],
 body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="AccountSSHContainer"],
 body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="AccountOverviewContainer"] {
@@ -2985,13 +2982,18 @@ body:not(.apparatus-auth) div[class*="ModalMask"] > div {
 /* ==============================================================================
    ACTIVITY LOG PAGE GLASSMORPHISM & IMPROVEMENTS
    ============================================================================== */
-/* Ensure parent container is left-aligned */
+/* Ensure parent container is left-aligned and spans 100% width of PageContentBlock */
 div[class*="ActivityLogContainer"] {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
   justify-content: flex-start !important;
   text-align: left !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
 }
 
@@ -3006,6 +3008,8 @@ h2.apparatus-activity-title {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35) !important;
   margin-top: 0 !important;
   margin-bottom: 0.85rem !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
   padding-left: 0.25rem !important;
   padding-right: 0.25rem !important;
   display: block !important;
@@ -3033,8 +3037,13 @@ body:not(.apparatus-auth) .apparatus-section-title {
 
 body:not(.apparatus-auth) div.bg-gray-700,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.bg-gray-700,
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] > div,
 body:not(.apparatus-auth) .bg-gray-700 {
   display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
   background: rgba(26, 16, 38, 0.28) !important;
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
@@ -4904,7 +4913,7 @@ div[class*="PageContentBlock"] {
 }
 
 div[class*="AccountOverviewContainer"],
-div[class*="PageContentBlock"] > div {
+div[class*="PageContentBlock"] > div:not([class*="ActivityLogContainer"]) {
   display: flex !important;
   flex-direction: column !important;
   width: 90% !important;
