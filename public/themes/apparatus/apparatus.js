@@ -288,12 +288,12 @@
     // 4. Proper Transparency & Styling for ContentBox cards (.sc-mjlt6f-2) across /account, /account/api, /account/ssh
     const contentCards = document.querySelectorAll('.sc-mjlt6f-2, [class*="sc-mjlt6f-2"], div[class*="ContentBox___StyledDiv"]');
     contentCards.forEach(function (card) {
-      card.style.setProperty('background', 'rgba(14, 10, 24, 0.45)', 'important');
-      card.style.setProperty('backdrop-filter', 'blur(16px) saturate(180%)', 'important');
-      card.style.setProperty('-webkit-backdrop-filter', 'blur(16px) saturate(180%)', 'important');
-      card.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.12)', 'important');
+      card.style.setProperty('background', 'rgba(26, 16, 38, 0.28)', 'important');
+      card.style.setProperty('backdrop-filter', 'blur(20px) saturate(180%)', 'important');
+      card.style.setProperty('-webkit-backdrop-filter', 'blur(20px) saturate(180%)', 'important');
+      card.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.18)', 'important');
       card.style.setProperty('border-radius', '16px', 'important');
-      card.style.setProperty('box-shadow', '0 12px 32px 0 rgba(0, 0, 0, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)', 'important');
+      card.style.setProperty('box-shadow', '0 16px 40px 0 rgba(0, 0, 0, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.2)', 'important');
       if (card.parentElement && !card.parentElement.style.height) {
         card.parentElement.style.display = 'flex';
         card.parentElement.style.flexDirection = 'column';
@@ -301,12 +301,26 @@
       }
     });
 
+    // Strip borders, backgrounds and shadows from any transition/fade wrappers inside cards
+    document.querySelectorAll('.sc-mjlt6f-2 [class*="Fade"], .sc-mjlt6f-2 [class*="sc-1p0gm8n"], div[class*="Fade__Container"]').forEach(function (fade) {
+      fade.style.setProperty('border', 'none', 'important');
+      fade.style.setProperty('background', 'transparent', 'important');
+      fade.style.setProperty('box-shadow', 'none', 'important');
+      if (!fade.textContent || !fade.textContent.trim()) {
+        fade.style.setProperty('display', 'none', 'important');
+        fade.style.setProperty('height', '0', 'important');
+        fade.style.setProperty('min-height', '0', 'important');
+        fade.style.setProperty('margin', '0', 'important');
+        fade.style.setProperty('padding', '0', 'important');
+      }
+    });
+
     // 5. Ensure inputs and textareas on account pages are properly translucent
     document.querySelectorAll('.sc-19rce1w-0, .sc-19rce1w-1, .sc-lcvdq4-0, .sc-plts88-0').forEach(function (inp) {
-      inp.style.setProperty('background', 'rgba(0, 0, 0, 0.35)', 'important');
+      inp.style.setProperty('background', 'rgba(0, 0, 0, 0.2)', 'important');
       inp.style.setProperty('backdrop-filter', 'blur(8px)', 'important');
       inp.style.setProperty('-webkit-backdrop-filter', 'blur(8px)', 'important');
-      inp.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.15)', 'important');
+      inp.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.16)', 'important');
       inp.style.setProperty('border-radius', '10px', 'important');
       inp.style.setProperty('color', '#ffffff', 'important');
     });

@@ -1454,17 +1454,13 @@ body:not(.apparatus-auth) div:has(> div[class*="sc-mjlt6f-2"]) > div[class*="sc-
 body:not(.apparatus-auth) .sc-mjlt6f-2,
 body:not(.apparatus-auth) div[class*="sc-mjlt6f-2"],
 body:not(.apparatus-auth) div[class*="ContentBox___StyledDiv"],
-body:not(.apparatus-auth) .bg-neutral-800,
-body:not(.apparatus-auth) .bg-neutral-700,
-body:not(.apparatus-auth) div[class*="TitledGreyBox"],
-body:not(.apparatus-auth) div[class*="ContentBox"] > div:not([class*="FlashMessage"]),
-body:not(.apparatus-auth) div[class*="Card"] {
-  background: rgba(14, 10, 24, 0.45) !important;
-  backdrop-filter: blur(16px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+body:not(.apparatus-auth) div[class*="TitledGreyBox"] {
+  background: rgba(26, 16, 38, 0.28) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
   border-radius: 16px !important;
-  box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.2) !important;
   overflow: hidden !important;
   margin-bottom: 1.5rem !important;
   transition: all 0.25s ease !important;
@@ -1473,11 +1469,39 @@ body:not(.apparatus-auth) div[class*="Card"] {
 body:not(.apparatus-auth) .sc-mjlt6f-2:hover,
 body:not(.apparatus-auth) div[class*="sc-mjlt6f-2"]:hover,
 body:not(.apparatus-auth) div[class*="ContentBox___StyledDiv"]:hover,
-body:not(.apparatus-auth) .bg-neutral-800:hover,
-body:not(.apparatus-auth) .bg-neutral-700:hover,
 body:not(.apparatus-auth) div[class*="TitledGreyBox"]:hover {
-  border-color: rgba(255, 255, 255, 0.22) !important;
-  box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.32), inset 0 1px 0 0 rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(236, 72, 153, 0.45) !important;
+  box-shadow: 0 20px 48px 0 rgba(0, 0, 0, 0.28), inset 0 1px 0 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Strip unwanted lines and borders inside ContentBox cards */
+body:not(.apparatus-auth) .sc-mjlt6f-2 > div,
+body:not(.apparatus-auth) div[class*="ContentBox___StyledDiv"] > div,
+body:not(.apparatus-auth) .sc-mjlt6f-2 form,
+body:not(.apparatus-auth) .sc-mjlt6f-2 form > div,
+body:not(.apparatus-auth) .sc-mjlt6f-2 hr,
+body:not(.apparatus-auth) .sc-mjlt6f-2 [class*="Fade"],
+body:not(.apparatus-auth) .sc-mjlt6f-2 [class*="sc-1p0gm8n"],
+body:not(.apparatus-auth) .sc-mjlt6f-2 [class*="SpinnerOverlay"],
+body:not(.apparatus-auth) div[class*="Fade__Container"] {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Hide empty fade and spinner containers completely so they don't produce any phantom lines */
+body:not(.apparatus-auth) .sc-mjlt6f-2 div[class*="Fade__Container"]:empty,
+body:not(.apparatus-auth) div[class*="Fade__Container"]:empty {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
 }
 
 /* Card Header in TitledGreyBox */
@@ -1512,11 +1536,11 @@ body:not(.apparatus-auth) .sc-mjlt6f-2 > p.text-center,
 body:not(.apparatus-auth) .sc-mjlt6f-2 > p,
 body:not(.apparatus-auth) div.bg-neutral-700 > p.text-center,
 body:not(.apparatus-auth) div[class*="ContentBox"] p.text-center {
-  background: rgba(255, 255, 255, 0.03) !important;
-  border: 1px dashed rgba(255, 255, 255, 0.16) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px dashed rgba(255, 255, 255, 0.22) !important;
   border-radius: 12px !important;
   padding: 1.5rem 1.25rem !important;
-  color: rgba(255, 255, 255, 0.75) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
   font-size: 0.92rem !important;
   font-weight: 500 !important;
   margin: 0.5rem 0 !important;
@@ -1568,10 +1592,10 @@ body:not(.apparatus-auth) textarea,
 body:not(.apparatus-auth) select,
 body:not(.apparatus-auth) div[class*="Input"] input,
 body:not(.apparatus-auth) div[class*="Input___StyledInput"] {
-  background: rgba(0, 0, 0, 0.35) !important;
+  background: rgba(0, 0, 0, 0.2) !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
   border-radius: 10px !important;
   color: #ffffff !important;
   padding: 0.75rem 1rem !important;
@@ -1579,7 +1603,7 @@ body:not(.apparatus-auth) div[class*="Input___StyledInput"] {
   font-size: 0.92rem !important;
   transition: all 0.2s ease !important;
   outline: none !important;
-  box-shadow: none !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15) !important;
 }
 
 body:not(.apparatus-auth) input.sc-19rce1w-0:focus,
@@ -1593,7 +1617,7 @@ body:not(.apparatus-auth) textarea[class*="sc-plts88"]:focus,
 body:not(.apparatus-auth) input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):focus,
 body:not(.apparatus-auth) textarea:focus,
 body:not(.apparatus-auth) select:focus {
-  background: rgba(0, 0, 0, 0.5) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
   border-color: #ec4899 !important;
   box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25) !important;
   outline: none !important;
