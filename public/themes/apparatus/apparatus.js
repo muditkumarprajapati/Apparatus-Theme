@@ -4196,11 +4196,16 @@
       return;
     }
 
-    const container = document.querySelector('div[class*="AccountOverviewContainer"]') || 
-                      document.querySelector('div[class*="PageContentBlock"] > div');
-    if (!container) return;
-
     if (document.getElementById('apparatus-user-profile-section')) return;
+
+    // Locate the native account cards row or container
+    const contentBox = document.querySelector('.sc-mjlt6f-2') || document.querySelector('[class*="ContentBox"]');
+    const cardsRow = contentBox ? contentBox.parentElement : null;
+    const mainContainer = document.querySelector('div[class*="AccountOverviewContainer"]') || 
+                          (cardsRow ? cardsRow.parentElement : null) || 
+                          document.querySelector('div[class*="PageContentBlock"] > div');
+
+    if (!mainContainer && !cardsRow) return;
 
     const user = window.PterodactylUser || {};
     const username = localStorage.getItem('apparatus_profile_username') || user.username || 'mudit';
@@ -4213,8 +4218,7 @@
     const timezone = localStorage.getItem('apparatus_profile_timezone') || 'Asia/Kolkata';
     const isAdmin = !!user.root_admin;
     const is2fa = !!user.use_totp;
-    const memberYear = user.created_at ? new Date(user.created_at).getFullYear() : '2024';
-    const points = localStorage.getItem('apparatus_coins') || '125';
+    const memberYear = user.created_at ? new Date(user.created_at).getFullYear() : '2026';
 
     const section = document.createElement('div');
     section.id = 'apparatus-user-profile-section';
@@ -4222,51 +4226,92 @@
 
     section.innerHTML = `
       <div class="apparatus-card apparatus-user-profile-card">
-        <!-- Profile Header with Badges -->
-        <div class="apparatus-prof-header">
-          <div class="apparatus-prof-header-left">
-            <div class="apparatus-prof-title-row">
-              <h2 class="apparatus-prof-title"><i class="ri-user-smile-line"></i> User Profile</h2>
-              <span class="apparatus-prof-badge apparatus-prof-badge-admin">
-                <i class="ri-shield-check-fill"></i> ${isAdmin ? 'Administrator' : 'Standard Member'}
-              </span>
-              <span class="apparatus-prof-badge apparatus-prof-badge-since">
-                <i class="ri-calendar-line"></i> Member since ${memberYear}
-              </span>
-              <span class="apparatus-prof-badge apparatus-prof-badge-2fa ${is2fa ? 'active' : ''}">
-                <i class="${is2fa ? 'ri-lock-check-fill' : 'ri-lock-unlock-line'}"></i> ${is2fa ? '2FA Active' : '2FA Inactive'}
-              </span>
-              <span class="apparatus-prof-badge apparatus-prof-badge-pts">
-                <i class="ri-copper-coin-fill"></i> ${points} Points
-              </span>
+        <!-- Top Profile Banner & Meta (No capsules, clean minimal typography) -->
+        <div class="apparatus-prof-top-bar">
+          <div class="apparatus-prof-identity-group">
+            <div class="apparatus-prof-avatar-ring">
+              <img src="${avatar}" id="apparatus-prof-avatar-img" class="apparatus-prof-avatar-img" alt="Avatar" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=mudit';">
+              <span class="apparatus-prof-online-dot" title="Account Status: Online"></span>
             </div>
-            <p class="apparatus-prof-desc">Customize your personal identity, avatar icon, account details, and regional preferences.</p>
+            <div class="apparatus-prof-identity-text">
+              <div class="apparatus-prof-name-row">
+                <h2 class="apparatus-prof-display-name" id="apparatus-prof-preview-name">${firstName} ${lastName}</h2>
+                <span class="apparatus-prof-handle" id="apparatus-prof-preview-handle">@${username}</span>
+              </div>
+              <p class="apparatus-prof-meta-line">
+                <span class="apparatus-prof-role-label ${isAdmin ? 'admin' : ''}">${isAdmin ? 'Administrator' : 'Standard Member'}</span>
+                <span class="apparatus-prof-sep">•</span>
+                <span>Member since ${memberYear}</span>
+                <span class="apparatus-prof-sep">•</span>
+                <span class="${is2fa ? 'apparatus-prof-2fa-on' : 'apparatus-prof-2fa-off'}">${is2fa ? '2FA Enabled' : '2FA Inactive'}</span>
+              </p>
+            </div>
           </div>
         </div>
 
-        <!-- Profile Body (2 Columns) -->
-        <div class="apparatus-prof-grid">
-          <!-- Left Column: Avatar & Preset Studio -->
-          <div class="apparatus-prof-avatar-col">
-            <div class="apparatus-prof-avatar-preview-wrap">
-              <div class="apparatus-prof-avatar-ring">
-                <img src="${avatar}" id="apparatus-prof-avatar-img" class="apparatus-prof-avatar-img" alt="Avatar" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=mudit';">
-                <span class="apparatus-prof-online-dot" title="Account Status: Online"></span>
-              </div>
-              <div class="apparatus-prof-avatar-meta">
-                <span class="apparatus-prof-display-name" id="apparatus-prof-preview-name">${firstName} ${lastName}</span>
-                <span class="apparatus-prof-display-handle" id="apparatus-prof-preview-handle">@${username}</span>
+        <!-- Form Body: Clean 3-Column / 2-Column Grid with Title Case Labels -->
+        <div class="apparatus-prof-form-body">
+          <div class="apparatus-prof-row-3col">
+            <div class="apparatus-prof-field">
+              <label class="apparatus-prof-label" for="apparatus-prof-username">Username <span class="apparatus-prof-req">*</span></label>
+              <div class="apparatus-prof-input-wrap">
+                <i class="ri-at-line apparatus-prof-input-icon"></i>
+                <input type="text" id="apparatus-prof-username" class="apparatus-prof-input with-icon" value="${username}" placeholder="Username">
               </div>
             </div>
 
-            <!-- Avatar Preset Picker -->
-            <div class="apparatus-prof-presets-section">
-              <span class="apparatus-prof-label">Quick Avatar Presets</span>
+            <div class="apparatus-prof-field">
+              <label class="apparatus-prof-label" for="apparatus-prof-firstname">First Name</label>
+              <div class="apparatus-prof-input-wrap">
+                <i class="ri-user-line apparatus-prof-input-icon"></i>
+                <input type="text" id="apparatus-prof-firstname" class="apparatus-prof-input with-icon" value="${firstName}" placeholder="First Name">
+              </div>
+            </div>
+
+            <div class="apparatus-prof-field">
+              <label class="apparatus-prof-label" for="apparatus-prof-lastname">Last Name</label>
+              <div class="apparatus-prof-input-wrap">
+                <i class="ri-user-line apparatus-prof-input-icon"></i>
+                <input type="text" id="apparatus-prof-lastname" class="apparatus-prof-input with-icon" value="${lastName}" placeholder="Last Name">
+              </div>
+            </div>
+          </div>
+
+          <div class="apparatus-prof-row-2col">
+            <div class="apparatus-prof-field">
+              <label class="apparatus-prof-label" for="apparatus-prof-bio">Status / Bio Tagline</label>
+              <div class="apparatus-prof-input-wrap">
+                <i class="ri-chat-smile-2-line apparatus-prof-input-icon"></i>
+                <input type="text" id="apparatus-prof-bio" class="apparatus-prof-input with-icon" value="${bio}" placeholder="e.g. Infrastructure Engineer & Gamer">
+              </div>
+            </div>
+
+            <div class="apparatus-prof-field">
+              <label class="apparatus-prof-label" for="apparatus-prof-timezone">Account Timezone</label>
+              <div class="apparatus-prof-input-wrap">
+                <i class="ri-time-line apparatus-prof-input-icon"></i>
+                <select id="apparatus-prof-timezone" class="apparatus-prof-input with-icon apparatus-prof-select">
+                  <option value="Asia/Kolkata" ${timezone === 'Asia/Kolkata' ? 'selected' : ''}>Asia/Kolkata (IST +5:30)</option>
+                  <option value="UTC" ${timezone === 'UTC' ? 'selected' : ''}>UTC (Universal Time)</option>
+                  <option value="America/New_York" ${timezone === 'America/New_York' ? 'selected' : ''}>America/New_York (EST)</option>
+                  <option value="America/Los_Angeles" ${timezone === 'America/Los_Angeles' ? 'selected' : ''}>America/Los_Angeles (PST)</option>
+                  <option value="Europe/London" ${timezone === 'Europe/London' ? 'selected' : ''}>Europe/London (GMT)</option>
+                  <option value="Europe/Berlin" ${timezone === 'Europe/Berlin' ? 'selected' : ''}>Europe/Berlin (CET)</option>
+                  <option value="Asia/Singapore" ${timezone === 'Asia/Singapore' ? 'selected' : ''}>Asia/Singapore (SGT)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Avatar & Customization Row -->
+          <div class="apparatus-prof-row-2col">
+            <div class="apparatus-prof-field">
+              <label class="apparatus-prof-label">Quick Avatar Presets</label>
               <div class="apparatus-prof-preset-row">
                 <button type="button" class="apparatus-prof-preset-btn" data-avatar="https://api.dicebear.com/7.x/bottts/svg?seed=ArixGamer" title="Cyber Bot">
                   <img src="https://api.dicebear.com/7.x/bottts/svg?seed=ArixGamer" alt="Bot">
                 </button>
-                <button type="button" class="apparatus-prof-preset-btn" data-avatar="https://api.dicebear.com/7.x/shapes/svg?seed=CyberCore" title="Geometric Luxury">
+                <button type="button" class="apparatus-prof-preset-btn" data-avatar="https://api.dicebear.com/7.x/shapes/svg?seed=CyberCore" title="Geometric Shapes">
                   <img src="https://api.dicebear.com/7.x/shapes/svg?seed=CyberCore" alt="Shapes">
                 </button>
                 <button type="button" class="apparatus-prof-preset-btn" data-avatar="https://api.dicebear.com/7.x/pixel-art/svg?seed=ArixByte" title="Pixel Retro">
@@ -4281,7 +4326,6 @@
               </div>
             </div>
 
-            <!-- Custom Avatar URL Input -->
             <div class="apparatus-prof-field">
               <label class="apparatus-prof-label" for="apparatus-prof-avatar-url">Custom Image URL</label>
               <div class="apparatus-prof-url-input-wrap">
@@ -4291,105 +4335,38 @@
             </div>
           </div>
 
-          <!-- Right Column: Personal Information & Settings -->
-          <div class="apparatus-prof-fields-col">
-            <div class="apparatus-prof-row-2col">
-              <div class="apparatus-prof-field">
-                <label class="apparatus-prof-label" for="apparatus-prof-username">Username <span class="apparatus-prof-req">*</span></label>
-                <div class="apparatus-prof-input-wrap">
-                  <i class="ri-at-line apparatus-prof-input-icon"></i>
-                  <input type="text" id="apparatus-prof-username" class="apparatus-prof-input with-icon" value="${username}" placeholder="Username">
-                </div>
-              </div>
-              <div class="apparatus-prof-field">
-                <label class="apparatus-prof-label" for="apparatus-prof-email">Account Email</label>
-                <div class="apparatus-prof-input-wrap">
-                  <i class="ri-mail-line apparatus-prof-input-icon"></i>
-                  <input type="email" id="apparatus-prof-email" class="apparatus-prof-input with-icon" value="${email}" readonly title="To update your primary email, use the Update Email Address card below">
-                </div>
+          <!-- Bottom Actions & Privacy Row -->
+          <div class="apparatus-prof-footer-bar">
+            <div class="apparatus-prof-privacy-group">
+              <label class="apparatus-switch">
+                <input type="checkbox" id="apparatus-prof-privacy-toggle" ${localStorage.getItem('apparatus_privacy') !== 'false' ? 'checked' : ''}>
+                <span class="apparatus-slider"></span>
+              </label>
+              <div class="apparatus-prof-privacy-text">
+                <span class="apparatus-prof-privacy-title">Privacy Blur Mode</span>
+                <span class="apparatus-prof-privacy-desc">Blur sensitive credentials & financial balances</span>
               </div>
             </div>
 
-            <div class="apparatus-prof-row-2col">
-              <div class="apparatus-prof-field">
-                <label class="apparatus-prof-label" for="apparatus-prof-firstname">First Name</label>
-                <div class="apparatus-prof-input-wrap">
-                  <i class="ri-user-line apparatus-prof-input-icon"></i>
-                  <input type="text" id="apparatus-prof-firstname" class="apparatus-prof-input with-icon" value="${firstName}" placeholder="First Name">
-                </div>
-              </div>
-              <div class="apparatus-prof-field">
-                <label class="apparatus-prof-label" for="apparatus-prof-lastname">Last Name</label>
-                <div class="apparatus-prof-input-wrap">
-                  <i class="ri-user-line apparatus-prof-input-icon"></i>
-                  <input type="text" id="apparatus-prof-lastname" class="apparatus-prof-input with-icon" value="${lastName}" placeholder="Last Name">
-                </div>
-              </div>
-            </div>
-
-            <div class="apparatus-prof-field">
-              <label class="apparatus-prof-label" for="apparatus-prof-bio">Status / Bio Tagline</label>
-              <div class="apparatus-prof-input-wrap">
-                <i class="ri-chat-smile-2-line apparatus-prof-input-icon"></i>
-                <input type="text" id="apparatus-prof-bio" class="apparatus-prof-input with-icon" value="${bio}" placeholder="e.g. Infrastructure Engineer & Gamer">
-              </div>
-            </div>
-
-            <div class="apparatus-prof-row-2col">
-              <div class="apparatus-prof-field">
-                <label class="apparatus-prof-label" for="apparatus-prof-timezone">Account Timezone</label>
-                <div class="apparatus-prof-input-wrap">
-                  <i class="ri-time-line apparatus-prof-input-icon"></i>
-                  <select id="apparatus-prof-timezone" class="apparatus-prof-input with-icon apparatus-prof-select">
-                    <option value="Asia/Kolkata" ${timezone === 'Asia/Kolkata' ? 'selected' : ''}>Asia/Kolkata (IST +5:30)</option>
-                    <option value="UTC" ${timezone === 'UTC' ? 'selected' : ''}>UTC (Universal Time)</option>
-                    <option value="America/New_York" ${timezone === 'America/New_York' ? 'selected' : ''}>America/New_York (EST/EDT)</option>
-                    <option value="America/Los_Angeles" ${timezone === 'America/Los_Angeles' ? 'selected' : ''}>America/Los_Angeles (PST/PDT)</option>
-                    <option value="Europe/London" ${timezone === 'Europe/London' ? 'selected' : ''}>Europe/London (GMT/BST)</option>
-                    <option value="Europe/Berlin" ${timezone === 'Europe/Berlin' ? 'selected' : ''}>Europe/Berlin (CET/CEST)</option>
-                    <option value="Asia/Singapore" ${timezone === 'Asia/Singapore' ? 'selected' : ''}>Asia/Singapore (SGT +8:00)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="apparatus-prof-field apparatus-prof-field-center">
-                <div class="apparatus-prof-toggle-info">
-                  <label class="apparatus-prof-label" for="apparatus-prof-privacy-toggle" style="margin: 0; cursor: pointer;">Privacy Blur Mode</label>
-                  <span class="apparatus-prof-subtext">Blur financial balances & email</span>
-                </div>
-                <label class="apparatus-switch">
-                  <input type="checkbox" id="apparatus-prof-privacy-toggle" ${localStorage.getItem('apparatus_privacy') !== 'false' ? 'checked' : ''}>
-                  <span class="apparatus-slider"></span>
-                </label>
-              </div>
-            </div>
-
-            <!-- Action Buttons -->
             <div class="apparatus-prof-actions">
+              <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-prof-reset-btn">
+                <i class="ri-refresh-line"></i> <span>Reset</span>
+              </button>
               <button type="button" class="apparatus-btn apparatus-btn-primary" id="apparatus-prof-save-btn">
                 <i class="ri-check-line"></i> <span>Save Profile Changes</span>
               </button>
-              <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-prof-reset-btn">
-                <i class="ri-refresh-line"></i> <span>Reset Default</span>
-              </button>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section Divider Header for Security Cards (Update Password, Update Email, 2FA) -->
-      <div class="apparatus-account-sec-divider" id="apparatus-account-sec-divider">
-        <div class="apparatus-sec-divider-head">
-          <div class="apparatus-sec-divider-icon"><i class="ri-shield-keyhole-line"></i></div>
-          <div class="apparatus-sec-divider-meta">
-            <h3 class="apparatus-sec-divider-title">Security &amp; Credentials</h3>
-            <p class="apparatus-sec-divider-desc">Manage your authentication credentials, account password, and two-factor verification.</p>
           </div>
         </div>
       </div>
     `;
 
-    container.prepend(section);
+    // Insert section BEFORE the cards row so the cards row sits cleanly underneath it
+    if (cardsRow && cardsRow.parentElement) {
+      cardsRow.parentElement.insertBefore(section, cardsRow);
+    } else if (mainContainer) {
+      mainContainer.prepend(section);
+    }
 
     // Wire up Avatar Preview from URL input
     const avatarImg = section.querySelector('#apparatus-prof-avatar-img');
@@ -4485,7 +4462,7 @@
         const heroU = document.getElementById('apparatus-welcome-username');
         if (heroU) heroU.textContent = newU;
 
-        showToast('success', 'Profile Updated', '🎉 Your profile details and avatar have been saved successfully!');
+        showToast('success', 'Profile Updated', 'Your profile details and avatar have been saved successfully!');
       });
     }
 
