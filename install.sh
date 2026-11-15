@@ -98,6 +98,17 @@ install_theme() {
   chown www-data:www-data "$CTRL_FILE"
   chmod 644 "$CTRL_FILE"
 
+  # Deploy custom 403 Hacking Attempt error page for /admin access denial
+  ERR_403_DIR="$PTERO_DIR/resources/views/errors"
+  ERR_403_FILE="$ERR_403_DIR/403.blade.php"
+  mkdir -p "$ERR_403_DIR"
+  if [ -f "$ERR_403_FILE" ] && [ ! -f "$ERR_403_FILE.apparatus.bak" ]; then
+    cp "$ERR_403_FILE" "$ERR_403_FILE.apparatus.bak"
+  fi
+  curl -s -L "$RAW_BASE/resources/views/errors/403.blade.php?v=$TS" -o "$ERR_403_FILE"
+  chown www-data:www-data "$ERR_403_FILE"
+  chmod 644 "$ERR_403_FILE"
+
   # Step 3: Inject Into Wrapper and Error Views cleanly with timestamp cache-buster
   echo -e "${BLUE}[3/4] Linking Apparatus Theme with GSAP Parallax...${NC}"
 
@@ -197,6 +208,16 @@ remove_theme() {
     cp "$CTRL_FILE.apparatus.bak" "$CTRL_FILE"
     rm -f "$CTRL_FILE.apparatus.bak"
     echo -e "${GREEN}✓ Restored original ForgotPasswordController.php.${NC}"
+  fi
+
+  # Restore 403 error page
+  ERR_403_FILE="$PTERO_DIR/resources/views/errors/403.blade.php"
+  if [ -f "$ERR_403_FILE.apparatus.bak" ]; then
+    cp "$ERR_403_FILE.apparatus.bak" "$ERR_403_FILE"
+    rm -f "$ERR_403_FILE.apparatus.bak"
+    echo -e "${GREEN}✓ Restored original 403.blade.php.${NC}"
+  elif [ -f "$ERR_403_FILE" ]; then
+    rm -f "$ERR_403_FILE"
   fi
 
   # Clear Cache
