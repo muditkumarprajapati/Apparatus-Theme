@@ -1041,13 +1041,19 @@ body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-ser
 }
 
 body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="PageContentBlock"],
-body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="ActivityLogContainer"] {
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="ActivityLogContainer"],
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="AccountApiContainer"],
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="AccountSSHContainer"],
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="AccountOverviewContainer"] {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
   width: 90% !important;
-  max-width: 90% !important;
+  max-width: 1380px !important;
   margin: 0 auto !important;
+  padding-top: 2.25rem !important;
+  padding-bottom: 3.5rem !important;
+  box-sizing: border-box !important;
 }
 
 #apparatus-dashboard-view {
@@ -2967,6 +2973,34 @@ body:not(.apparatus-auth) div[class*="ModalMask"] > div {
    ACTIVITY LOG PAGE GLASSMORPHISM & IMPROVEMENTS
    ============================================================================== */
 /* Recent Activity Page Header */
+.apparatus-activity-header-bar {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.35rem !important;
+  margin-bottom: 1.5rem !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.apparatus-activity-main-title {
+  font-family: var(--apparatus-font) !important;
+  font-size: 1.65rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.65rem !important;
+  margin: 0.25rem 0 0.15rem 0 !important;
+}
+
+.apparatus-activity-subtitle {
+  font-size: 0.9rem !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
 body:not(.apparatus-auth) #apparatus-activity-header,
 body:not(.apparatus-auth) .apparatus-section-title {
   font-family: var(--apparatus-font) !important;
@@ -2975,7 +3009,7 @@ body:not(.apparatus-auth) .apparatus-section-title {
   letter-spacing: -0.01em !important;
   color: #ffffff !important;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35) !important;
-  margin-top: 1.75rem !important;
+  margin-top: 0 !important;
   margin-bottom: 1.25rem !important;
   padding-left: 0.25rem !important;
   padding-right: 0.25rem !important;
@@ -3070,6 +3104,17 @@ body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid > div:nth-
   flex: 1 1 auto !important;
   min-width: 0 !important;
   padding-left: 0 !important;
+}
+
+/* Activity Log timestamp column: nicely right-aligned across full card */
+body:not(.apparatus-auth) div.bg-gray-700 > div.grid > div:nth-child(3),
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid > div:nth-child(3) {
+  margin-left: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  text-align: right !important;
+  flex-shrink: 0 !important;
 }
 
 /* Activity Log Event Circular Status Icon (Green Tick for Success, Red Cross for Error, etc.) */

@@ -510,12 +510,26 @@
     // 7. Ensure "Recent Activity" header text is present above the activity card on /account/activity
     const rawPathname = window.location.pathname || '';
     if (rawPathname.startsWith('/account/activity')) {
-      const actCard = document.querySelector('.bg-gray-700');
+      const actCard = document.querySelector('.bg-gray-700') || document.querySelector('div[class*="ActivityLogContainer"] > div');
       if (actCard && !document.getElementById('apparatus-activity-header')) {
-        const header = document.createElement('h2');
+        const header = document.createElement('div');
         header.id = 'apparatus-activity-header';
-        header.className = 'apparatus-section-title';
-        header.innerHTML = '<i class="ri-history-line" style="color: #ffffff;"></i> Recent Activity';
+        header.className = 'apparatus-activity-header-bar';
+        header.innerHTML = `
+          <div class="apparatus-resource-breadcrumbs">
+            <a href="/account" class="apparatus-breadcrumb-link">
+              <i class="ri-arrow-left-s-line"></i> Account
+            </a>
+            <span class="apparatus-breadcrumb-sep">/</span>
+            <span class="apparatus-breadcrumb-current">Recent Activity</span>
+          </div>
+          <h1 class="apparatus-activity-main-title">
+            <i class="ri-history-line" style="color: #ec4899;"></i> Recent Activity
+          </h1>
+          <p class="apparatus-activity-subtitle">
+            Audit trail of your account sign-ins, IP addresses, and security activity.
+          </p>
+        `;
         if (actCard.parentElement) {
           actCard.parentElement.insertBefore(header, actCard);
         }
