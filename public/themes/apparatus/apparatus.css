@@ -80,8 +80,6 @@ body:not(.apparatus-auth) #app {
    ============================================================================== */
 body:not(.apparatus-auth) .apparatus-dashboard-container,
 body:not(.apparatus-auth) .apparatus-settings-grid,
-body:not(.apparatus-auth) .apparatus-resource-header-card,
-body:not(.apparatus-auth) .apparatus-resource-main-grid,
 body:not(.apparatus-auth) div[class*="AccountOverviewContainer"],
 body:not(.apparatus-auth) div[class*="AccountApiContainer"],
 body:not(.apparatus-auth) div[class*="AccountSSHContainer"],
@@ -1090,9 +1088,7 @@ body.apparatus-auth #apparatus-mobile-toggle {
   box-sizing: border-box;
 }
 
-.apparatus-settings-grid,
-.apparatus-resource-header-card,
-.apparatus-resource-main-grid {
+.apparatus-settings-grid {
   width: 90% !important;
   max-width: 90% !important;
   margin-left: auto !important;
@@ -2982,64 +2978,24 @@ div[class*="ActivityLogContainer"] {
   box-sizing: border-box !important;
 }
 
-/* Recent Activity Page Header */
+/* Recent Activity Page Title (Exact match to Add SSH Key / Pterodactyl Section Headings) */
 #apparatus-activity-header,
-.apparatus-activity-header-bar {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  justify-content: flex-start !important;
-  text-align: left !important;
-  gap: 0.35rem !important;
-  margin-top: 0 !important;
-  margin-bottom: 1.5rem !important;
-  margin-left: 0 !important;
-  margin-right: auto !important;
-  padding: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  align-self: flex-start !important;
-}
-
-#apparatus-activity-header .apparatus-resource-breadcrumbs {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  text-align: left !important;
-  align-self: flex-start !important;
-  margin: 0 0 0.35rem 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-}
-
-#apparatus-activity-header .apparatus-activity-main-title {
+h2.apparatus-activity-title {
   font-family: var(--apparatus-font) !important;
-  font-size: 1.65rem !important;
-  font-weight: 800 !important;
-  letter-spacing: -0.02em !important;
+  font-size: 1.28rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
   color: #ffffff !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  text-align: left !important;
-  align-self: flex-start !important;
-  gap: 0.65rem !important;
-  margin: 0.15rem 0 0.15rem 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-}
-
-#apparatus-activity-header .apparatus-activity-subtitle {
-  font-size: 0.9rem !important;
-  color: rgba(255, 255, 255, 0.7) !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35) !important;
+  margin-top: 0 !important;
+  margin-bottom: 0.85rem !important;
+  padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
   display: block !important;
   text-align: left !important;
   align-self: flex-start !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  line-height: 1.4 !important;
   width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 body:not(.apparatus-auth) .apparatus-section-title {
@@ -3056,16 +3012,6 @@ body:not(.apparatus-auth) .apparatus-section-title {
   display: flex !important;
   align-items: center !important;
   gap: 0.6rem !important;
-}
-
-body:not(.apparatus-auth) #apparatus-activity-header i:not([style*="color"]) {
-  color: #ffffff !important;
-}
-body:not(.apparatus-auth) #apparatus-activity-header i {
-  text-shadow: none !important;
-  filter: none !important;
-  box-shadow: none !important;
-  background: none !important;
 }
 
 body:not(.apparatus-auth) div.bg-gray-700,
@@ -3411,6 +3357,9 @@ body.apparatus-hacking-mode .background-subtitle {
   position: relative;
   z-index: 30;
   width: 100%;
+  padding-top: 2rem !important;
+  padding-bottom: 4rem !important;
+  box-sizing: border-box !important;
 }
 
 body.apparatus-page-resource #apparatus-resource-view {
@@ -3421,7 +3370,33 @@ body.apparatus-page-resource #apparatus-dashboard-view {
   display: none !important;
 }
 
+.apparatus-resource-view .apparatus-dashboard-container {
+  width: 90% !important;
+  max-width: 1380px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.25rem !important;
+  box-sizing: border-box !important;
+}
+
+.apparatus-resource-view .apparatus-resource-header-card,
+.apparatus-resource-view .apparatus-resource-overview-ribbon,
+.apparatus-resource-view .apparatus-res-gauges-card,
+.apparatus-resource-view .apparatus-resource-main-grid,
+.apparatus-resource-view .apparatus-resource-grid {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
 .apparatus-resource-header-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
   display: flex;
   align-items: center;
   justify-content: space-between;

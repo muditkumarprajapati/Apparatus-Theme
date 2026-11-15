@@ -507,35 +507,28 @@
       if (existingProf) existingProf.remove();
     }
 
-    // 7. Ensure "Recent Activity" header text is present above the activity card on /account/activity
+    // 7. Ensure "Recent Activity" title is present above the activity card on /account/activity (clean, matching Add SSH Key)
     const rawPathname = window.location.pathname || '';
     if (rawPathname.startsWith('/account/activity')) {
       const actCard = document.querySelector('.bg-gray-700') || document.querySelector('div[class*="ActivityLogContainer"] > div');
-      if (actCard && !document.getElementById('apparatus-activity-header')) {
-        const header = document.createElement('div');
+      let header = document.getElementById('apparatus-activity-header');
+      if (!header && actCard) {
+        header = document.createElement('h2');
         header.id = 'apparatus-activity-header';
-        header.className = 'apparatus-activity-header-bar';
-        header.innerHTML = `
-          <div class="apparatus-resource-breadcrumbs">
-            <a href="/account" class="apparatus-breadcrumb-link">
-              <i class="ri-arrow-left-s-line"></i> Account
-            </a>
-            <span class="apparatus-breadcrumb-sep">/</span>
-            <span class="apparatus-breadcrumb-current">Recent Activity</span>
-          </div>
-          <h1 class="apparatus-activity-main-title">
-            <i class="ri-history-line" style="color: #ec4899;"></i> Recent Activity
-          </h1>
-          <p class="apparatus-activity-subtitle">
-            Audit trail of your account sign-ins, IP addresses, and security activity.
-          </p>
-        `;
+        header.className = 'sc-mjlt6f-0 apparatus-activity-title';
+        header.textContent = 'Recent Activity';
         if (actCard.parentElement) {
           actCard.parentElement.style.setProperty('display', 'flex', 'important');
           actCard.parentElement.style.setProperty('flex-direction', 'column', 'important');
           actCard.parentElement.style.setProperty('align-items', 'flex-start', 'important');
           actCard.parentElement.style.setProperty('text-align', 'left', 'important');
           actCard.parentElement.insertBefore(header, actCard);
+        }
+      } else if (header) {
+        // If an old header or breadcrumb/subtitle markup exists, clean it up to just the pure title
+        if (header.tagName !== 'H2' || header.innerHTML.includes('apparatus-resource-breadcrumbs') || header.innerHTML.includes('apparatus-activity-subtitle')) {
+          header.className = 'sc-mjlt6f-0 apparatus-activity-title';
+          header.textContent = 'Recent Activity';
         }
       }
 
