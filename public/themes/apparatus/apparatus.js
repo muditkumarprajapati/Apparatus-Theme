@@ -203,7 +203,11 @@
       if (hero) hero.style.display = 'none';
       if (setView) setView.style.display = 'none';
       if (resView) {
+        const wasHidden = resView.style.display === 'none';
         resView.style.display = 'block';
+        if (wasHidden && typeof gsap !== 'undefined') {
+          gsap.fromTo(resView, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+        }
         if (typeof renderResourcePage === 'function') renderResourcePage();
       }
       document.body.classList.add('apparatus-page-resource');
@@ -217,7 +221,11 @@
       if (hero) hero.style.display = 'none';
       if (resView) resView.style.display = 'none';
       if (setView) {
+        const wasHidden = setView.style.display === 'none';
         setView.style.display = 'block';
+        if (wasHidden && typeof gsap !== 'undefined') {
+          gsap.fromTo(setView, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+        }
         if (typeof renderSettingsPage === 'function') renderSettingsPage();
       }
       document.body.classList.add('apparatus-page-settings');
@@ -746,6 +754,19 @@
     return (mb / 1024).toFixed(1) + ' GB';
   }
 
+  function smoothScrollToElement(el, highlight) {
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (highlight) {
+      el.classList.remove('apparatus-target-highlight');
+      void el.offsetWidth;
+      el.classList.add('apparatus-target-highlight');
+      setTimeout(function () {
+        el.classList.remove('apparatus-target-highlight');
+      }, 1500);
+    }
+  }
+
   function initInstanceTabs() {
     const tabServers = document.getElementById('apparatus-tab-btn-servers');
     const tabVps = document.getElementById('apparatus-tab-btn-vps');
@@ -758,7 +779,10 @@
       if (target === 'vps') {
         if (tabVps) tabVps.classList.add('active');
         if (tabServers) tabServers.classList.remove('active');
-        if (paneVps) paneVps.style.display = 'block';
+        if (paneVps) {
+          paneVps.style.display = 'block';
+          if (typeof gsap !== 'undefined') gsap.fromTo(paneVps, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' });
+        }
         if (paneServers) paneServers.style.display = 'none';
         if (deployBtn) {
           deployBtn.innerHTML = '<i class="ri-add-line"></i> Deploy Cloud VPS';
@@ -767,7 +791,10 @@
       } else {
         if (tabServers) tabServers.classList.add('active');
         if (tabVps) tabVps.classList.remove('active');
-        if (paneServers) paneServers.style.display = 'block';
+        if (paneServers) {
+          paneServers.style.display = 'block';
+          if (typeof gsap !== 'undefined') gsap.fromTo(paneServers, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' });
+        }
         if (paneVps) paneVps.style.display = 'none';
         if (deployBtn) {
           deployBtn.innerHTML = '<i class="ri-add-line"></i> Deploy Server';
@@ -786,7 +813,7 @@
       heroVpsBtn.addEventListener('click', function () {
         selectTab('vps');
         const hub = document.getElementById('apparatus-area-4');
-        if (hub) hub.scrollIntoView({ behavior: 'smooth' });
+        if (hub) smoothScrollToElement(hub, true);
       });
     }
 
@@ -795,10 +822,7 @@
       heroStoreBtn.addEventListener('click', function () {
         const billing = document.getElementById('apparatus-area-billing');
         if (billing) {
-          billing.scrollIntoView({ behavior: 'smooth' });
-          billing.style.transition = 'box-shadow 0.3s ease';
-          billing.style.boxShadow = '0 0 25px rgba(236, 72, 153, 0.45)';
-          setTimeout(function () { billing.style.boxShadow = ''; }, 1500);
+          smoothScrollToElement(billing, true);
         } else {
           window.open('https://arixbyte.com', '_blank');
         }
@@ -1227,6 +1251,12 @@
             });
             html += '</div>';
             container.innerHTML = html;
+            if (typeof gsap !== 'undefined') {
+              gsap.fromTo(container.querySelectorAll('.apparatus-server-card'),
+                { autoAlpha: 0, y: 14 },
+                { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.06, ease: 'power2.out' }
+              );
+            }
           }
         }
       } else {
@@ -1261,7 +1291,15 @@
               </div>
             `;
           });
-          if (actContainer) actContainer.innerHTML = html;
+          if (actContainer) {
+            actContainer.innerHTML = html;
+            if (typeof gsap !== 'undefined') {
+              gsap.fromTo(actContainer.querySelectorAll('.apparatus-act-row'),
+                { autoAlpha: 0, x: -10 },
+                { autoAlpha: 1, x: 0, duration: 0.35, stagger: 0.05, ease: 'power2.out' }
+              );
+            }
+          }
         }
       } else {
         if (actContainer) actContainer.innerHTML = '<div class="apparatus-empty-msg">No recent activity.</div>';
@@ -1299,6 +1337,35 @@
         </div>
       `;
     }
+  }
+
+  // Trigger Staggered Dashboard Opening Animation via GSAP & Fallbacks
+  function triggerDashboardEntrance() {
+    if (typeof gsap === 'undefined') return;
+    try {
+      gsap.fromTo('#apparatus-area-1', 
+        { autoAlpha: 0, y: 24, scale: 0.985 }, 
+        { autoAlpha: 1, y: 0, scale: 1, duration: 0.65, ease: 'power3.out' }
+      );
+      gsap.fromTo('.apparatus-metric-tile', 
+        { autoAlpha: 0, y: 20, scale: 0.96 }, 
+        { autoAlpha: 1, y: 0, scale: 1, duration: 0.55, stagger: 0.07, ease: 'power3.out', delay: 0.09 }
+      );
+      gsap.fromTo('.apparatus-dash-row-top .apparatus-card', 
+        { autoAlpha: 0, y: 22, scale: 0.98 }, 
+        { autoAlpha: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.09, ease: 'power3.out', delay: 0.2 }
+      );
+      gsap.fromTo('.apparatus-dash-row-bottom .apparatus-card', 
+        { autoAlpha: 0, y: 22, scale: 0.98 }, 
+        { autoAlpha: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.09, ease: 'power3.out', delay: 0.3 }
+      );
+      const ramBar = document.getElementById('apparatus-gauge-ram-bar');
+      const cpuBar = document.getElementById('apparatus-gauge-cpu-bar');
+      const diskBar = document.getElementById('apparatus-gauge-disk-bar');
+      if (ramBar) gsap.fromTo(ramBar, { width: '0%' }, { width: ramBar.style.width || '20%', duration: 1.2, ease: 'power2.out', delay: 0.45 });
+      if (cpuBar) gsap.fromTo(cpuBar, { width: '0%' }, { width: cpuBar.style.width || '15%', duration: 1.2, ease: 'power2.out', delay: 0.5 });
+      if (diskBar) gsap.fromTo(diskBar, { width: '0%' }, { width: diskBar.style.width || '25%', duration: 1.2, ease: 'power2.out', delay: 0.55 });
+    } catch (err) {}
   }
 
   // Initialize the Transparent Futuristic Dashboard
@@ -1439,8 +1506,27 @@
               <!-- Tab 1: Game Servers List -->
               <div class="apparatus-tab-pane active" id="apparatus-pane-servers">
                 <div class="apparatus-servers-content" id="apparatus-servers-list">
-                  <div class="apparatus-empty-msg">
-                    <i class="ri-loader-4-line apparatus-spin"></i> Loading servers...
+                  <div class="apparatus-loading-state">
+                    <div class="apparatus-loader-ring">
+                      <div class="apparatus-loader-core"></div>
+                    </div>
+                    <span class="apparatus-loading-text">Connecting to server instances...</span>
+                    <div class="apparatus-skeleton-grid">
+                      <div class="apparatus-skeleton-card">
+                        <div class="apparatus-skeleton apparatus-skeleton-icon"></div>
+                        <div class="apparatus-skeleton-lines">
+                          <div class="apparatus-skeleton apparatus-skel-line" style="width: 50%; height: 13px;"></div>
+                          <div class="apparatus-skeleton apparatus-skel-line" style="width: 32%; height: 9px; margin-top: 6px;"></div>
+                        </div>
+                      </div>
+                      <div class="apparatus-skeleton-card">
+                        <div class="apparatus-skeleton apparatus-skeleton-icon"></div>
+                        <div class="apparatus-skeleton-lines">
+                          <div class="apparatus-skeleton apparatus-skel-line" style="width: 60%; height: 13px;"></div>
+                          <div class="apparatus-skeleton apparatus-skel-line" style="width: 38%; height: 9px; margin-top: 6px;"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1616,7 +1702,29 @@
                 <a href="/account/activity" class="apparatus-link">View All <i class="ri-arrow-right-s-line"></i></a>
               </div>
               <div class="apparatus-activity-list" id="apparatus-activity-list">
-                <div class="apparatus-empty-msg">Loading activity...</div>
+                <div class="apparatus-loading-state" style="padding: 1.5rem 0.5rem; min-height: 180px;">
+                  <div class="apparatus-loader-ring" style="width: 36px; height: 36px;">
+                    <div class="apparatus-loader-core" style="width: 10px; height: 10px;"></div>
+                  </div>
+                  <span class="apparatus-loading-text" style="font-size: 0.8rem;">Retrieving recent activity...</span>
+                  <div class="apparatus-skeleton-act-list">
+                    <div class="apparatus-skeleton-act-row">
+                      <div class="apparatus-skeleton apparatus-skeleton-dot"></div>
+                      <div class="apparatus-skeleton apparatus-skel-line" style="width: 55%; height: 11px;"></div>
+                      <div class="apparatus-skeleton apparatus-skel-line" style="width: 18%; height: 9px; margin-left: auto;"></div>
+                    </div>
+                    <div class="apparatus-skeleton-act-row">
+                      <div class="apparatus-skeleton apparatus-skeleton-dot"></div>
+                      <div class="apparatus-skeleton apparatus-skel-line" style="width: 48%; height: 11px;"></div>
+                      <div class="apparatus-skeleton apparatus-skel-line" style="width: 18%; height: 9px; margin-left: auto;"></div>
+                    </div>
+                    <div class="apparatus-skeleton-act-row">
+                      <div class="apparatus-skeleton apparatus-skeleton-dot"></div>
+                      <div class="apparatus-skeleton apparatus-skel-line" style="width: 62%; height: 11px;"></div>
+                      <div class="apparatus-skeleton apparatus-skel-line" style="width: 18%; height: 9px; margin-left: auto;"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1630,6 +1738,7 @@
     } else {
       document.body.appendChild(dash);
     }
+    triggerDashboardEntrance();
 
     const toServersBtn = document.getElementById('apparatus-btn-to-servers');
     if (toServersBtn) {
@@ -1641,11 +1750,18 @@
           return;
         }
         e.preventDefault();
-        if (window.location.pathname !== '/servers') {
-          history.pushState(null, '', '/servers');
+        const hub = document.getElementById('apparatus-area-4');
+        if (hub) {
+          const tabServers = document.getElementById('apparatus-tab-btn-servers');
+          if (tabServers) tabServers.click();
+          smoothScrollToElement(hub, true);
+        } else {
+          if (window.location.pathname !== '/servers') {
+            history.pushState(null, '', '/servers');
+          }
+          applyViewMode();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        applyViewMode();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     }
 
@@ -5160,6 +5276,42 @@
       initApparatus();
     }
   }, true);
+
+  // Global tactile feedback: Glass Ripple on click/tap for interactive controls
+
+  document.addEventListener('pointerdown', function (e) {
+
+    const target = e.target.closest('.apparatus-btn, .apparatus-tab-btn, .apparatus-upgrade-pill, .apparatus-copy-ref-btn, .apparatus-metric-tile, .apparatus-nav-link, .apparatus-link, .apparatus-server-card');
+
+    if (!target) return;
+
+    const rect = target.getBoundingClientRect();
+
+    const ripple = document.createElement('span');
+
+    ripple.className = 'apparatus-click-ripple';
+
+    const size = Math.max(rect.width, rect.height) * 1.6;
+
+    ripple.style.width = size + 'px';
+
+    ripple.style.height = size + 'px';
+
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+
+    target.appendChild(ripple);
+
+    setTimeout(function () {
+
+      try { ripple.remove(); } catch (err) {}
+
+    }, 600);
+
+  });
+
+
 
   // Dynamic cleanup and route sync observer for Pterodactyl SPA updates
   let lastObservedPath = window.location.pathname;

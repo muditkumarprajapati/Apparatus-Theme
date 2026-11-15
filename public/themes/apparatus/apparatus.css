@@ -4302,3 +4302,288 @@ body:not(.apparatus-privacy-active) #apparatus-metric-balance {
     align-self: flex-end;
   }
 }
+
+
+/* ==========================================================================
+   Apparatus Animation Suite: Smooth Scroll, Micro-Interactions, Openings & Loaders
+   ========================================================================== */
+
+/* 1. Global Smooth Scroll & Dark Luxury Scrollbars */
+html {
+  scroll-behavior: smooth !important;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 12, 34, 0.45);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(236, 72, 153, 0.55);
+}
+
+/* 2. Target Highlight Pulse (when navigating to sections) */
+.apparatus-target-highlight {
+  animation: apparatusTargetPulse 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes apparatusTargetPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0), 0 0 0 0 rgba(168, 85, 247, 0);
+  }
+  25% {
+    box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.6), 0 12px 35px rgba(236, 72, 153, 0.35);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0), 0 8px 32px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* 3. Interactive Micro-Interactions (Hover, Active & Press Feedback) */
+.apparatus-btn,
+.apparatus-tab-btn,
+.apparatus-upgrade-pill,
+.apparatus-copy-ref-btn,
+.apparatus-metric-tile,
+.apparatus-server-card,
+.apparatus-act-row {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.22s ease,
+              border-color 0.22s ease !important;
+}
+
+.apparatus-btn:hover {
+  transform: translateY(-2px);
+}
+
+.apparatus-btn:active,
+.apparatus-tab-btn:active,
+.apparatus-upgrade-pill:active,
+.apparatus-copy-ref-btn:active {
+  transform: scale(0.96) !important;
+  transition: transform 0.08s ease !important;
+}
+
+.apparatus-tab-btn:hover:not(.active) {
+  transform: translateY(-1px);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.apparatus-upgrade-pill:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-color: rgba(236, 72, 153, 0.45);
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.2);
+}
+
+.apparatus-server-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.apparatus-act-row:hover {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.apparatus-metric-tile:hover {
+  transform: translateY(-3px) scale(1.01);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
+}
+
+/* Glass Ripple Effect on Pointer Click */
+.apparatus-click-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, rgba(236, 72, 153, 0.25) 50%, rgba(255, 255, 255, 0) 75%);
+  transform: scale(0);
+  animation: apparatusRippleWave 0.6s cubic-bezier(0.1, 0.7, 0.2, 1) forwards;
+  z-index: 10;
+}
+
+@keyframes apparatusRippleWave {
+  0% {
+    transform: scale(0);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+/* 4. Opening & Entrance Animations */
+.apparatus-dashboard-view,
+.apparatus-resource-view,
+.apparatus-settings-view {
+  animation: apparatusViewEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes apparatusViewEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.992);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.apparatus-welcome-decor-ab .apparatus-ab-watermark {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+}
+
+.apparatus-card-welcome:hover .apparatus-ab-watermark {
+  transform: translateY(-4px) scale(1.03);
+  opacity: 0.32;
+}
+
+/* 5. Dual-Orbital Glowing Loader & Shimmer Skeletons */
+.apparatus-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.25rem 1rem;
+  width: 100%;
+  min-height: 220px;
+  gap: 1rem;
+}
+
+.apparatus-loader-ring {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.08);
+  border-top-color: #ec4899;
+  border-right-color: #a855f7;
+  animation: apparatusOrbitalSpin 0.9s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.apparatus-loader-core {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ec4899, #a855f7);
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.7);
+  animation: apparatusCorePulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes apparatusOrbitalSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes apparatusCorePulse {
+  0% { transform: scale(0.75); opacity: 0.5; }
+  100% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 8px #ec4899); }
+}
+
+.apparatus-loading-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.02em;
+}
+
+/* Shimmer Skeleton Loaders */
+.apparatus-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  margin-top: 0.75rem;
+}
+
+.apparatus-skeleton-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 1.15rem;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+}
+
+.apparatus-skeleton-lines {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.apparatus-skeleton-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.apparatus-skeleton-act-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.apparatus-skeleton-act-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.apparatus-skeleton-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.apparatus-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: apparatusShimmerSweep 1.6s infinite ease-in-out;
+  border-radius: 6px;
+}
+
+@keyframes apparatusShimmerSweep {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
