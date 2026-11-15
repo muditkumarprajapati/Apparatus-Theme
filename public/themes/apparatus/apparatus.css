@@ -2981,17 +2981,16 @@ body:not(.apparatus-auth) div[class*="ModalMask"] > div {
 /* ==============================================================================
    ACTIVITY LOG PAGE GLASSMORPHISM & IMPROVEMENTS
    ============================================================================== */
-/* Ensure parent container is left-aligned and spans 100% width of PageContentBlock */
+/* Ensure parent container is left-aligned and has exact 90% dashboard margin */
 div[class*="ActivityLogContainer"] {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
   justify-content: flex-start !important;
   text-align: left !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+  width: 90% !important;
+  max-width: 1380px !important;
+  margin: 2rem auto 3.5rem auto !important;
   padding: 0 !important;
   box-sizing: border-box !important;
 }

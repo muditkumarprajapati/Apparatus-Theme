@@ -524,10 +524,6 @@
           targetParent.style.setProperty('flex-direction', 'column', 'important');
           targetParent.style.setProperty('align-items', 'flex-start', 'important');
           targetParent.style.setProperty('text-align', 'left', 'important');
-          targetParent.style.setProperty('width', '100%', 'important');
-          targetParent.style.setProperty('max-width', '100%', 'important');
-          targetParent.style.setProperty('margin-left', '0', 'important');
-          targetParent.style.setProperty('margin-right', '0', 'important');
           if (actCard && actCard.parentElement === targetParent) {
             targetParent.insertBefore(header, actCard);
           } else {
@@ -549,11 +545,15 @@
         actCard.style.setProperty('margin-right', '0', 'important');
       }
       if (actContainer) {
-        actContainer.style.setProperty('width', '100%', 'important');
-        actContainer.style.setProperty('max-width', '100%', 'important');
-        actContainer.style.setProperty('margin-left', '0', 'important');
-        actContainer.style.setProperty('margin-right', '0', 'important');
+        actContainer.style.setProperty('width', '90%', 'important');
+        actContainer.style.setProperty('max-width', '1380px', 'important');
+        actContainer.style.setProperty('margin-left', 'auto', 'important');
+        actContainer.style.setProperty('margin-right', 'auto', 'important');
+        actContainer.style.setProperty('margin-top', '2rem', 'important');
         actContainer.style.setProperty('padding', '0', 'important');
+        actContainer.style.setProperty('display', 'flex', 'important');
+        actContainer.style.setProperty('flex-direction', 'column', 'important');
+        actContainer.style.setProperty('align-items', 'flex-start', 'important');
       }
 
       // 8. Enhance Activity Log IP addresses with Flag, Blur, and Clickable Location Lookup
