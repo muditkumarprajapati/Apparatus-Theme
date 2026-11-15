@@ -1016,7 +1016,8 @@ body.apparatus-auth #apparatus-mobile-toggle {
 .apparatus-welcome-content {
   position: relative;
   z-index: 2;
-  max-width: 640px;
+  max-width: calc(100% - 210px);
+  width: 100%;
 }
 
 .apparatus-status-dot {
@@ -1061,15 +1062,89 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 .apparatus-welcome-desc {
   font-size: 0.95rem;
   color: rgba(255, 255, 255, 0.72);
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 1.35rem 0;
   line-height: 1.5;
 }
 
 .apparatus-welcome-actions {
   display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  gap: 0.65rem;
+  flex-wrap: nowrap;
   align-items: center;
+  width: 100%;
+}
+
+.apparatus-welcome-actions .apparatus-btn {
+  flex-shrink: 0;
+  padding: 0.58rem 1.05rem !important;
+  font-size: 0.84rem !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  border-radius: 11px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.45rem !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.apparatus-welcome-actions .apparatus-btn-primary {
+  background: linear-gradient(135deg, #ec4899, #db2777) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.38) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+}
+
+.apparatus-welcome-actions .apparatus-btn-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.52) !important;
+  filter: brightness(1.08) !important;
+}
+
+.apparatus-welcome-actions .apparatus-btn-glass {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16) !important;
+}
+
+.apparatus-welcome-actions .apparatus-btn-glass:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25) !important;
+  color: #ffffff !important;
+}
+
+.apparatus-btn-icon-servers {
+  color: #ffffff !important;
+  font-size: 0.95rem !important;
+}
+
+.apparatus-btn-icon-vps {
+  color: #c084fc !important;
+  font-size: 0.95rem !important;
+}
+
+.apparatus-btn-icon-store {
+  color: #34d399 !important;
+  font-size: 0.95rem !important;
+}
+
+.apparatus-btn-icon-discord {
+  color: #818cf8 !important;
+  font-size: 0.95rem !important;
+}
+
+@media (max-width: 1080px) {
+  .apparatus-welcome-content {
+    max-width: 100% !important;
+  }
+  .apparatus-welcome-actions {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
 }
 
 .apparatus-welcome-decor {

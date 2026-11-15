@@ -995,16 +995,16 @@
             <p class="apparatus-welcome-desc">ArixByte Cloud Console &bull; High Performance Game Servers &amp; KVM Cloud VPS</p>
             <div class="apparatus-welcome-actions">
               <a href="/servers" class="apparatus-btn apparatus-btn-primary" id="apparatus-btn-to-servers">
-                <i class="ri-server-line"></i> View Servers
+                <i class="ri-server-line apparatus-btn-icon-servers"></i> View Servers
               </a>
               <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-hero-vps-btn">
-                <i class="ri-hard-drive-3-line"></i> Cloud VPS
+                <i class="ri-hard-drive-3-line apparatus-btn-icon-vps"></i> Cloud VPS
               </button>
               <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-hero-store-btn">
-                <i class="ri-shopping-bag-3-line"></i> Billing &amp; Store
+                <i class="ri-shopping-bag-3-line apparatus-btn-icon-store"></i> Billing &amp; Store
               </button>
               <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass">
-                <i class="ri-discord-fill"></i> Discord Community
+                <i class="ri-discord-fill apparatus-btn-icon-discord"></i> Discord Community
               </a>
             </div>
           </div>
