@@ -870,10 +870,18 @@
     const ribbonTopup = document.getElementById('apparatus-ribbon-topup');
 
     function openTopupModal() {
-      showToast('info', 'INR Wallet Top-Up', 'Redirecting to Instant UPI / NetBanking Gateway...');
-      setTimeout(function () {
-        window.open('https://arixbyte.com', '_blank');
-      }, 1000);
+      const billing = document.getElementById('apparatus-area-billing');
+      if (billing) {
+        billing.scrollIntoView({ behavior: 'smooth' });
+        billing.style.transition = 'box-shadow 0.3s ease';
+        billing.style.boxShadow = '0 0 25px rgba(236, 72, 153, 0.45)';
+        setTimeout(function () { billing.style.boxShadow = ''; }, 1500);
+      } else {
+        showToast('info', 'INR Wallet Top-Up', 'Redirecting to Instant UPI / NetBanking Gateway...');
+        setTimeout(function () {
+          window.open('https://arixbyte.com', '_blank');
+        }, 800);
+      }
     }
 
     if (topupBtn) topupBtn.addEventListener('click', openTopupModal);
@@ -1334,7 +1342,10 @@
             </div>
           </div>
           <div class="apparatus-welcome-decor apparatus-welcome-decor-ab" aria-hidden="true">
-            <img src="/themes/apparatus/ab-logo.png" class="apparatus-ab-watermark" alt="ArixByte">
+            <div class="apparatus-hero-badge-wrap">
+              <div class="apparatus-hero-badge-glow"></div>
+              <img src="/themes/apparatus/ab-logo-white.png?v=2" class="apparatus-ab-watermark" alt="ArixByte Cloud" onerror="this.src='/themes/apparatus/ab-logo.png';">
+            </div>
           </div>
         </div>
 
@@ -1366,9 +1377,16 @@
                 <span class="apparatus-metric-val" id="apparatus-metric-balance">₹0.00</span>
                 <span class="apparatus-metric-unit">INR</span>
               </div>
-              <span class="apparatus-metric-sub">
-                <span class="apparatus-blur-sensitive"><span id="apparatus-metric-coins">100</span> Referral Points</span> &bull; <a href="javascript:void(0)" class="apparatus-metric-sublink" id="apparatus-ribbon-topup">Top Up</a>
-              </span>
+              <div class="apparatus-metric-cash-sub">
+                <span class="apparatus-metric-points-wrap">
+                  <i class="ri-copper-coin-line"></i>
+                  <span id="apparatus-metric-coins" class="apparatus-blur-sensitive">100</span> Referral Points
+                </span>
+                <span class="apparatus-metric-sub-divider">&bull;</span>
+                <a href="javascript:void(0)" class="apparatus-metric-topup-btn" id="apparatus-ribbon-topup">
+                  <i class="ri-add-line"></i> Top Up
+                </a>
+              </div>
             </div>
           </div>
 
