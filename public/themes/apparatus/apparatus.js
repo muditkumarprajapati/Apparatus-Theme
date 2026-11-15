@@ -1550,9 +1550,6 @@
           </div>
 
           <div class="apparatus-resource-header-right">
-            <div class="apparatus-resource-meta-pill">
-              <span class="apparatus-status-dot"></span> Admin Provisioned
-            </div>
             <a href="/" class="apparatus-btn apparatus-btn-glass" id="apparatus-res-back-btn-2">
               <i class="ri-dashboard-line"></i> Back to Dashboard
             </a>
@@ -1607,7 +1604,6 @@
                   <span class="apparatus-res-card-sub">Pterodactyl Game Server Allocation</span>
                 </div>
               </div>
-              <span class="apparatus-pill" style="border-color: rgba(244, 114, 182, 0.3); color: #f472b6; background: rgba(244, 114, 182, 0.1);">Game Hosting</span>
             </div>
 
             <div class="apparatus-res-items-list">
@@ -1761,7 +1757,6 @@
                     <span class="apparatus-res-card-sub">Cloud KVM Virtual Private Server</span>
                   </div>
                 </div>
-                <span class="apparatus-pill" style="border-color: rgba(56, 189, 248, 0.3); color: #38bdf8; background: rgba(56, 189, 248, 0.1);">KVM Cloud</span>
               </div>
 
               <div class="apparatus-res-items-list">
@@ -1856,7 +1851,6 @@
                     <span class="apparatus-res-card-sub">Available Balance &amp; Earnings</span>
                   </div>
                 </div>
-                <span class="apparatus-pill" style="border-color: rgba(251, 191, 36, 0.3); color: #fbbf24; background: rgba(251, 191, 36, 0.1);">Coin Wallet</span>
               </div>
 
               <!-- Main Coin Balance Box -->
@@ -1867,9 +1861,6 @@
                     <span id="res-coin-count">0</span>
                     <span class="apparatus-coin-icon-gold">🪙</span>
                   </div>
-                </div>
-                <div class="apparatus-res-coins-badge">
-                  <i class="ri-sparkling-fill" style="color: #fbbf24;"></i> Active Wallet
                 </div>
               </div>
 
