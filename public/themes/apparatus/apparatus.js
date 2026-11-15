@@ -154,9 +154,9 @@
     // Normalize path by stripping trailing slash (unless root '/')
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
-    const isResourceTab = window.location.hash === '#resource' || currentPath === '/billing/resource' || currentPath === '/resource';
-    const isApparatusSettingsTab = !isResourceTab && (window.location.hash === '#apparatus-settings');
-    const isPanelSettingsTab = !isResourceTab && !isApparatusSettingsTab && (window.location.hash === '#panel-settings' || window.location.hash === '#settings' || currentPath === '/settings');
+    const isResourceTab = currentPath === '/resource' || currentPath === '/billing/resource' || window.location.hash === '#resource';
+    const isApparatusSettingsTab = !isResourceTab && (currentPath === '/apparatus-settings' || window.location.hash === '#apparatus-settings');
+    const isPanelSettingsTab = !isResourceTab && !isApparatusSettingsTab && (currentPath === '/panel-settings' || currentPath === '/settings' || window.location.hash === '#panel-settings' || window.location.hash === '#settings');
     const isSettingsTab = isPanelSettingsTab || isApparatusSettingsTab;
     const isVpsTab = !isResourceTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
     const isServerTab = !isResourceTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
@@ -170,11 +170,11 @@
 
       let isActive = false;
 
-      if (tab === 'resource' || p === '/billing/resource' || p === '/resource') {
+      if (tab === 'resource' || p === '/resource' || p === '/billing/resource') {
         isActive = isResourceTab;
-      } else if (tab === 'panel-settings' || tab === 'settings' || p === '/settings') {
+      } else if (tab === 'panel-settings' || p === '/panel-settings' || tab === 'settings' || p === '/settings') {
         isActive = isPanelSettingsTab;
-      } else if (tab === 'apparatus-settings') {
+      } else if (tab === 'apparatus-settings' || p === '/apparatus-settings') {
         isActive = isApparatusSettingsTab;
       } else if (tab === 'dashboard' || p === '/') {
         isActive = isDashboardTab;
@@ -184,10 +184,10 @@
         isActive = isVpsTab;
       } else if (p === '/account') {
         // Account Credentials should ONLY be active on exact /account, NOT on /account/api, /account/ssh, etc.
-        isActive = currentPath === '/account' && !window.location.hash;
+        isActive = currentPath === '/account' && !window.location.hash && !isResourceTab && !isSettingsTab;
       } else if (p) {
         // Sub-routes such as /account/api, /account/ssh, /account/activity, /admin
-        isActive = (currentPath === p || currentPath.startsWith(p + '/')) && !window.location.hash;
+        isActive = (currentPath === p || currentPath.startsWith(p + '/')) && !window.location.hash && !isResourceTab && !isSettingsTab;
       }
 
       if (isActive) {
@@ -201,12 +201,21 @@
   function applyViewMode() {
     if (isAuthPage() || isUnauthorizedAdminAttempt()) return;
 
+    // Normalize legacy hash slugs into clean, modern path slugs
+    if (window.location.hash === '#resource') {
+      history.replaceState(null, '', '/resource');
+    } else if (window.location.hash === '#panel-settings' || window.location.hash === '#settings') {
+      history.replaceState(null, '', '/panel-settings');
+    } else if (window.location.hash === '#apparatus-settings') {
+      history.replaceState(null, '', '/apparatus-settings');
+    }
+
     const rawPath = window.location.pathname || '/';
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
-    const isResourceTab = window.location.hash === '#resource' || currentPath === '/billing/resource' || currentPath === '/resource';
-    const isApparatusSettingsTab = !isResourceTab && (window.location.hash === '#apparatus-settings');
-    const isPanelSettingsTab = !isResourceTab && !isApparatusSettingsTab && (window.location.hash === '#panel-settings' || window.location.hash === '#settings' || currentPath === '/settings');
+    const isResourceTab = currentPath === '/resource' || currentPath === '/billing/resource' || window.location.hash === '#resource';
+    const isApparatusSettingsTab = !isResourceTab && (currentPath === '/apparatus-settings' || window.location.hash === '#apparatus-settings');
+    const isPanelSettingsTab = !isResourceTab && !isApparatusSettingsTab && (currentPath === '/panel-settings' || currentPath === '/settings' || window.location.hash === '#panel-settings' || window.location.hash === '#settings');
     const isSettingsTab = isPanelSettingsTab || isApparatusSettingsTab;
     const isVpsTab = !isResourceTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
     const isServerTab = !isResourceTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
@@ -234,7 +243,7 @@
       document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
 
       // Hide all account containers and native server messages
-      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"]').forEach(function (el) {
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
         el.style.setProperty('display', 'none', 'important');
       });
     } else if (isPanelSettingsTab) {
@@ -253,7 +262,7 @@
       document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-apparatus-settings');
 
       // Hide all account containers and native server messages
-      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"]').forEach(function (el) {
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
         el.style.setProperty('display', 'none', 'important');
       });
     } else if (isApparatusSettingsTab) {
@@ -271,7 +280,7 @@
       document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-settings');
 
       // Hide all account containers and native server messages
-      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"]').forEach(function (el) {
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
         el.style.setProperty('display', 'none', 'important');
       });
     } else if (isHomeRoute) {
@@ -487,14 +496,17 @@
       }
     });
 
-    // 4b. Hide native Pterodactyl empty server messages and dashboard leaks on Dashboard and Servers tabs
+    // 4b. Hide native Pterodactyl empty server messages and dashboard leaks on Dashboard and custom tabs
     const rawP = window.location.pathname || '/';
     const curP = (rawP.length > 1 && rawP.endsWith('/')) ? rawP.slice(0, -1) : rawP;
     const isSrv = curP === '/servers' || curP.startsWith('/servers/') || window.location.hash === '#servers';
     const isVps = curP === '/vps' || curP.startsWith('/vps/') || window.location.hash === '#vps';
-    const isDash = (curP === '/' || curP === '/dashboard') && !isSrv && !isVps;
-    if (isDash || isSrv || isVps) {
-      document.querySelectorAll('p[class*="DashboardContainer"], .sc-1topkxf-3, div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0').forEach(function (el) {
+    const isRes = curP === '/resource' || curP === '/billing/resource' || window.location.hash === '#resource';
+    const isPanelSet = curP === '/panel-settings' || curP === '/settings' || window.location.hash === '#panel-settings';
+    const isAppSet = curP === '/apparatus-settings' || window.location.hash === '#apparatus-settings';
+    const isDash = (curP === '/' || curP === '/dashboard') && !isSrv && !isVps && !isRes && !isPanelSet && !isAppSet;
+    if (isDash || isSrv || isVps || isRes || isPanelSet || isAppSet) {
+      document.querySelectorAll('p[class*="DashboardContainer"], .sc-1topkxf-3, div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
         el.style.setProperty('display', 'none', 'important');
         el.style.setProperty('visibility', 'hidden', 'important');
         el.style.setProperty('height', '0', 'important');
@@ -2421,8 +2433,7 @@
     const backBtn2 = document.getElementById('apparatus-res-back-btn-2');
     function goBackToDash(e) {
       e.preventDefault();
-      window.location.hash = '';
-      if (window.location.pathname !== '/') {
+      if (window.location.pathname !== '/' || window.location.hash) {
         history.pushState(null, '', '/');
       }
       applyViewMode();
@@ -4171,8 +4182,7 @@
     const backBtn2 = document.getElementById('apparatus-set-back-btn-2');
     function goBackFromSettings(e) {
       e.preventDefault();
-      window.location.hash = '';
-      if (window.location.pathname !== '/') {
+      if (window.location.pathname !== '/' || window.location.hash) {
         history.pushState(null, '', '/');
       }
       applyViewMode();
@@ -4824,8 +4834,7 @@
     const backBtn2 = document.getElementById('apparatus-admin-set-back-btn-2');
     function goBackFromAdminSettings(e) {
       e.preventDefault();
-      window.location.hash = '';
-      if (window.location.pathname !== '/') {
+      if (window.location.pathname !== '/' || window.location.hash) {
         history.pushState(null, '', '/');
       }
       applyViewMode();
@@ -5419,7 +5428,7 @@
             <div class="apparatus-category-title">Billing</div>
             <ul class="apparatus-nav-list">
               <li>
-                <a href="#resource" class="apparatus-nav-link apparatus-resource-link" data-tab="resource">
+                <a href="/resource" class="apparatus-nav-link apparatus-resource-link" data-tab="resource" data-path="/resource">
                   <i class="ri-cpu-line apparatus-nav-icon"></i>
                   <span>Resource</span>
                 </a>
@@ -5491,7 +5500,7 @@
             <div class="apparatus-category-title">Panel Settings</div>
             <ul class="apparatus-nav-list">
               <li>
-                <a href="#panel-settings" class="apparatus-nav-link apparatus-panel-settings-link" data-tab="panel-settings">
+                <a href="/panel-settings" class="apparatus-nav-link apparatus-panel-settings-link" data-tab="panel-settings" data-path="/panel-settings">
                   <i class="ri-settings-3-line apparatus-nav-icon"></i>
                   <span>Panel Settings</span>
                 </a>
@@ -5504,7 +5513,7 @@
                 </a>
               </li>
               <li>
-                <a href="#apparatus-settings" class="apparatus-nav-link apparatus-settings-link" data-tab="apparatus-settings">
+                <a href="/apparatus-settings" class="apparatus-nav-link apparatus-settings-link" data-tab="apparatus-settings" data-path="/apparatus-settings">
                   <i class="ri-settings-4-line apparatus-nav-icon"></i>
                   <span>Apparatus Settings</span>
                 </a>
@@ -5591,7 +5600,9 @@
       if (resourceBtn) {
         resourceBtn.addEventListener('click', function (e) {
           e.preventDefault();
-          window.location.hash = '#resource';
+          if (window.location.pathname !== '/resource' || window.location.hash) {
+            history.pushState(null, '', '/resource');
+          }
           applyViewMode();
           smoothScrollToTop();
         });
@@ -5642,15 +5653,11 @@
       if (panelSettingsBtn) {
         panelSettingsBtn.addEventListener('click', function (e) {
           e.preventDefault();
-          const rawP = window.location.pathname || '/';
-          const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard';
-          if (!onHome) {
-            window.location.href = '/#panel-settings';
-          } else {
-            window.location.hash = '#panel-settings';
-            applyViewMode();
-            smoothScrollToTop();
+          if (window.location.pathname !== '/panel-settings' || window.location.hash) {
+            history.pushState(null, '', '/panel-settings');
           }
+          applyViewMode();
+          smoothScrollToTop();
         });
       }
 
@@ -5659,22 +5666,18 @@
       if (apparatusSettingsBtn) {
         apparatusSettingsBtn.addEventListener('click', function (e) {
           e.preventDefault();
-          const rawP = window.location.pathname || '/';
-          const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard';
-          if (!onHome) {
-            window.location.href = '/#apparatus-settings';
-          } else {
-            window.location.hash = '#apparatus-settings';
-            applyViewMode();
-            smoothScrollToTop();
+          if (window.location.pathname !== '/apparatus-settings' || window.location.hash) {
+            history.pushState(null, '', '/apparatus-settings');
           }
+          applyViewMode();
+          smoothScrollToTop();
         });
       }
 
       // Admin-only placeholder settings links
       const adminPanelSettingsLinks = [
         { selector: '.apparatus-panel-editor-link', title: 'Panel Editor', msg: 'Opening Panel Editor customization module...' },
-        // apparatus-settings handled dedicatedly below
+        // apparatus-settings handled dedicatedly above
         { selector: '.apparatus-addon-settings-link', title: 'Addon Settings', msg: 'Opening Addon Settings configuration...' }
       ];
 
@@ -5716,10 +5719,9 @@
           if (!tab || (tab !== 'dashboard' && tab !== 'servers' && tab !== 'vps')) return;
 
           e.preventDefault();
-          window.location.hash = '';
 
           const rawP = window.location.pathname || '/';
-          const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard';
+          const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard' || rawP === '/resource' || rawP === '/panel-settings' || rawP === '/apparatus-settings';
 
           if (!onHome) {
             // If navigating from an account subpage, navigate cleanly so React Router unmounts the account page!
@@ -5733,24 +5735,18 @@
             return;
           }
 
-          // If already on home (between /, /servers, /vps), switch smoothly and clear hash
+          // If already on home (between /, /servers, /vps, /resource, /panel-settings, /apparatus-settings), switch smoothly and clear hash
           if (tab === 'servers') {
-            if (window.location.pathname !== '/servers') {
+            if (window.location.pathname !== '/servers' || window.location.hash) {
               history.pushState(null, '', '/servers');
-            } else {
-              history.replaceState(null, '', '/servers');
             }
           } else if (tab === 'vps') {
-            if (window.location.pathname !== '/vps') {
+            if (window.location.pathname !== '/vps' || window.location.hash) {
               history.pushState(null, '', '/vps');
-            } else {
-              history.replaceState(null, '', '/vps');
             }
           } else if (tab === 'dashboard') {
-            if (window.location.pathname !== '/') {
+            if (window.location.pathname !== '/' || window.location.hash) {
               history.pushState(null, '', '/');
-            } else {
-              history.replaceState(null, '', '/');
             }
           }
           applyViewMode();
@@ -5764,11 +5760,8 @@
         brand.style.cursor = 'pointer';
         brand.addEventListener('click', function (e) {
           e.preventDefault();
-          window.location.hash = '';
-          if (window.location.pathname !== '/') {
+          if (window.location.pathname !== '/' || window.location.hash) {
             history.pushState(null, '', '/');
-          } else {
-            history.replaceState(null, '', '/');
           }
           applyViewMode();
           smoothScrollToTop();

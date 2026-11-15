@@ -3867,18 +3867,6 @@ body.apparatus-page-resource #apparatus-settings-view {
   display: none !important;
 }
 
-body.apparatus-page-settings div[class*="AccountOverviewContainer"],
-body.apparatus-page-settings div[class*="AccountApiContainer"],
-body.apparatus-page-settings div[class*="AccountSSHContainer"],
-body.apparatus-page-settings div[class*="ActivityLogContainer"],
-body.apparatus-page-settings .sc-12to0iy-1,
-body.apparatus-page-settings .sc-1c4s3nm-0,
-body.apparatus-page-settings .sc-yksipt-0,
-body.apparatus-page-settings p[class*="DashboardContainer"],
-body.apparatus-page-settings .sc-1topkxf-3 {
-  display: none !important;
-}
-
 /* Dedicated Apparatus Settings View (Root Admin Suite) */
 body.apparatus-page-apparatus-settings #apparatus-admin-settings-view {
   display: block !important;
@@ -3895,6 +3883,32 @@ body.apparatus-page-resource #apparatus-admin-settings-view {
   display: none !important;
 }
 
+body.apparatus-page-settings div[class*="AccountOverviewContainer"],
+body.apparatus-page-settings div[class*="AccountApiContainer"],
+body.apparatus-page-settings div[class*="AccountSSHContainer"],
+body.apparatus-page-settings div[class*="ActivityLogContainer"],
+body.apparatus-page-settings .sc-12to0iy-1,
+body.apparatus-page-settings .sc-1c4s3nm-0,
+body.apparatus-page-settings .sc-yksipt-0,
+body.apparatus-page-settings p[class*="DashboardContainer"],
+body.apparatus-page-settings .sc-1topkxf-3,
+body.apparatus-page-settings div.bg-gray-700,
+body.apparatus-page-settings [class*="PageContentBlock"],
+body.apparatus-page-settings [class*="NotFound"],
+body.apparatus-page-settings div[class*="NotFoundContainer"],
+body.apparatus-page-resource div[class*="AccountOverviewContainer"],
+body.apparatus-page-resource div[class*="AccountApiContainer"],
+body.apparatus-page-resource div[class*="AccountSSHContainer"],
+body.apparatus-page-resource div[class*="ActivityLogContainer"],
+body.apparatus-page-resource .sc-12to0iy-1,
+body.apparatus-page-resource .sc-1c4s3nm-0,
+body.apparatus-page-resource .sc-yksipt-0,
+body.apparatus-page-resource p[class*="DashboardContainer"],
+body.apparatus-page-resource .sc-1topkxf-3,
+body.apparatus-page-resource div.bg-gray-700,
+body.apparatus-page-resource [class*="PageContentBlock"],
+body.apparatus-page-resource [class*="NotFound"],
+body.apparatus-page-resource div[class*="NotFoundContainer"],
 body.apparatus-page-apparatus-settings div[class*="AccountOverviewContainer"],
 body.apparatus-page-apparatus-settings div[class*="AccountApiContainer"],
 body.apparatus-page-apparatus-settings div[class*="AccountSSHContainer"],
@@ -3905,7 +3919,9 @@ body.apparatus-page-apparatus-settings .sc-yksipt-0,
 body.apparatus-page-apparatus-settings p[class*="DashboardContainer"],
 body.apparatus-page-apparatus-settings .sc-1topkxf-3,
 body.apparatus-page-apparatus-settings div.bg-gray-700,
-body.apparatus-page-apparatus-settings [class*="PageContentBlock"] {
+body.apparatus-page-apparatus-settings [class*="PageContentBlock"],
+body.apparatus-page-apparatus-settings [class*="NotFound"],
+body.apparatus-page-apparatus-settings div[class*="NotFoundContainer"] {
   display: none !important;
 }
 
