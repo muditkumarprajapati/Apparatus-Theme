@@ -1267,8 +1267,8 @@
       `;
 
       document.body.prepend(wrapper);
-      setupParallax();
     }
+    setupParallax();
 
     const bgTitle = document.getElementById('apparatus-bg-title');
     const bgSubtitle = document.getElementById('apparatus-bg-subtitle');
@@ -1334,6 +1334,12 @@
     card.style.opacity = '1';
     card.style.visibility = 'visible';
 
+    const user = window.PterodactylUser;
+    const isLoggedIn = !!(user && (user.uuid || user.username || user.email));
+    const btnHref = isLoggedIn ? '/' : '/auth/login';
+    const btnText = isLoggedIn ? 'Return to Dashboard' : 'Go to Login Page';
+    const btnIcon = isLoggedIn ? 'ri-arrow-left-line' : 'ri-login-box-line';
+
     card.innerHTML = `
       <div class="hacking-warning-icon">
         <i class="ri-alert-fill"></i>
@@ -1342,21 +1348,23 @@
       <p class="login-subtitle" style="margin-bottom: 1.5rem; color: rgba(255, 255, 255, 0.78); font-size: 0.92rem; line-height: 1.5;">
         You do not have permission to access this page.
       </p>
-      <a href="/" class="login-button apparatus-hacking-back-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; box-sizing: border-box;">
-        <i class="ri-arrow-left-line"></i> Return to Dashboard
+      <a href="${btnHref}" class="login-button apparatus-hacking-back-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; box-sizing: border-box;">
+        <i class="${btnIcon}"></i> ${btnText}
       </a>
     `;
 
     const backBtn = card.querySelector('.apparatus-hacking-back-btn');
     if (backBtn) {
       backBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        window.history.pushState({}, '', '/');
-        document.body.classList.remove('apparatus-auth', 'apparatus-hacking-mode');
-        if (bgTitle) bgTitle.textContent = 'ARIXBYTE';
-        if (bgSubtitle) bgSubtitle.textContent = 'CLOUD & INFRASTRUCTURES';
-        initApparatus();
-        applyViewMode();
+        if (isLoggedIn) {
+          e.preventDefault();
+          window.history.pushState({}, '', '/');
+          document.body.classList.remove('apparatus-auth', 'apparatus-hacking-mode');
+          if (bgTitle) bgTitle.textContent = 'ARIXBYTE';
+          if (bgSubtitle) bgSubtitle.textContent = 'CLOUD & INFRASTRUCTURES';
+          initApparatus();
+          applyViewMode();
+        }
       });
     }
 
@@ -1364,6 +1372,7 @@
       gsap.set(".desert-wrapper", { backgroundColor: "#F7ABAE", display: "block" });
       gsap.set(".parallax-container", { scale: 1, opacity: 1, visibility: "visible" });
     }
+    setupParallax();
   }
 
   // Icons
@@ -1858,15 +1867,15 @@
   // ----------------------------------------------------------------------------
   // GSAP PARALLAX & CINEMATIC INTRO ANIMATION
   // ----------------------------------------------------------------------------
+  let parallaxInitialized = false;
   function setupParallax() {
     if (typeof gsap === 'undefined') {
-      setTimeout(setupParallax, 100);
+      setTimeout(setupParallax, 50);
       return;
     }
 
     gsap.set(".desert-wrapper", { backgroundColor: "#F7ABAE" });
     gsap.set(".parallax-container", { scale: 1, opacity: 1, visibility: "visible" });
-    gsap.set(".login-card", { autoAlpha: 1, opacity: 1, y: 0, visibility: "visible" });
 
     const slot = document.getElementById('apparatus-card-slot');
     if (slot) {
@@ -1877,6 +1886,14 @@
         slot.style.visibility = 'visible';
       }
     }
+
+    if (parallaxInitialized) return;
+    parallaxInitialized = true;
+
+    gsap.fromTo(".login-card", 
+      { autoAlpha: 0, y: 35, scale: 0.96 }, 
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.75, ease: "power3.out", delay: 0.05 }
+    );
 
     // Continuous floating wave motion on layers
     const layers = [1, 2, 3, 4, 5, 6, 7];
