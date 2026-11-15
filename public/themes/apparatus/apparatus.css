@@ -65,25 +65,18 @@ body:not(.apparatus-auth) #app {
   min-height: 100vh !important;
 }
 
-/* Offset #app on desktop for left sidebar & Universal 80% Default Panel Scale */
+/* Offset #app on desktop for left sidebar */
 @media (min-width: 992px) {
-  body:not(.apparatus-auth) {
-    zoom: 0.8 !important;
-  }
-
   body:not(.apparatus-auth) #app {
     margin-left: 250px !important;
     width: calc(100% - 250px) !important;
     box-sizing: border-box !important;
     padding-top: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
   }
 }
 
 /* ==============================================================================
-   UNIVERSAL 90% DEFAULT PANEL WIDTH
+   UNIVERSAL DEFAULT PANEL CONTAINER WIDTH & ALIGNMENT
    ============================================================================== */
 body:not(.apparatus-auth) .apparatus-dashboard-container,
 body:not(.apparatus-auth) .apparatus-settings-grid,
@@ -100,9 +93,17 @@ body:not(.apparatus-auth) div[class*="ServerConsoleContainer"],
 body:not(.apparatus-auth) div[class*="ServerDetailsBlock"],
 body:not(.apparatus-auth) div[class*="DashboardContainer"] > div {
   width: 90% !important;
-  max-width: 90% !important;
+  max-width: 1380px !important;
   margin-left: auto !important;
   margin-right: auto !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure Activity Log card spans full container width */
+div[class*="ActivityLogContainer"] > div,
+.bg-gray-700 {
+  width: 100% !important;
+  max-width: 100% !important;
   box-sizing: border-box !important;
 }
 
