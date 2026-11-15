@@ -1767,6 +1767,24 @@ body:not(.apparatus-auth) div[class*="ModalMask"] > div {
 /* ==============================================================================
    ACTIVITY LOG PAGE GLASSMORPHISM & IMPROVEMENTS
    ============================================================================== */
+/* Recent Activity Page Header */
+body:not(.apparatus-auth) #apparatus-activity-header,
+body:not(.apparatus-auth) .apparatus-section-title {
+  font-family: var(--apparatus-font) !important;
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35) !important;
+  margin-top: 1.75rem !important;
+  margin-bottom: 1.25rem !important;
+  padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+}
+
 body:not(.apparatus-auth) div.bg-gray-700,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.bg-gray-700,
 body:not(.apparatus-auth) .bg-gray-700 {
@@ -1775,7 +1793,7 @@ body:not(.apparatus-auth) .bg-gray-700 {
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  border-radius: 16px !important;
+  border-radius: 18px !important;
   overflow: hidden !important;
   box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.2) !important;
   margin-bottom: 2rem !important;
@@ -1788,8 +1806,8 @@ body:not(.apparatus-auth) div[class*="ActivityLogEntry"] {
   display: grid !important;
   grid-template-columns: auto 1fr auto !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  padding: 1.1rem 1.25rem !important;
-  transition: background 0.2s ease !important;
+  padding: 1.15rem 1.4rem !important;
+  transition: all 0.2s ease !important;
   background: transparent !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -1798,7 +1816,7 @@ body:not(.apparatus-auth) div[class*="ActivityLogEntry"] {
 body:not(.apparatus-auth) div.bg-gray-700 > div.grid:hover,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid:hover,
 body:not(.apparatus-auth) div[class*="ActivityLogEntry"]:hover {
-  background: rgba(255, 255, 255, 0.04) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
 }
 
 body:not(.apparatus-auth) div.bg-gray-700 > div.grid:last-child,
@@ -1807,22 +1825,34 @@ body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid:last-child
 }
 
 /* Activity Log Avatar icon container */
+body:not(.apparatus-auth) div.bg-gray-700 .bg-gray-600,
 body:not(.apparatus-auth) .bg-gray-600 {
   background: rgba(236, 72, 153, 0.2) !important;
-  border: 1px solid rgba(236, 72, 153, 0.4) !important;
+  border: 1px solid rgba(236, 72, 153, 0.45) !important;
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.25) !important;
 }
 
-/* Activity Log event links */
+/* Activity Log event links & badges */
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] a,
 body:not(.apparatus-auth) div.bg-gray-700 a {
-  color: #f472b6 !important;
+  background: rgba(236, 72, 153, 0.22) !important;
+  color: #fce7f3 !important;
+  border: 1px solid rgba(236, 72, 153, 0.4) !important;
+  padding: 2px 9px !important;
+  border-radius: 6px !important;
+  font-size: 0.82rem !important;
   font-weight: 600 !important;
   text-decoration: none !important;
+  margin-left: 0.35rem !important;
+  display: inline-block !important;
   transition: all 0.2s ease !important;
 }
 
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] a:hover,
 body:not(.apparatus-auth) div.bg-gray-700 a:hover {
-  color: #ec4899 !important;
+  background: rgba(236, 72, 153, 0.38) !important;
+  border-color: rgba(236, 72, 153, 0.6) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.4) !important;
   text-shadow: 0 0 8px rgba(236, 72, 153, 0.4) !important;
 }

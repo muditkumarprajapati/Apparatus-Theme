@@ -365,6 +365,24 @@
       btn.style.setProperty('border-radius', '10px', 'important');
       btn.style.setProperty('box-shadow', '0 4px 15px rgba(236, 72, 153, 0.35)', 'important');
     });
+
+    // 7. Ensure "Recent Activity" header text is present above the activity card on /account/activity
+    const rawPathname = window.location.pathname || '';
+    if (rawPathname.startsWith('/account/activity')) {
+      const actCard = document.querySelector('.bg-gray-700');
+      if (actCard && !document.getElementById('apparatus-activity-header')) {
+        const header = document.createElement('h2');
+        header.id = 'apparatus-activity-header';
+        header.className = 'apparatus-section-title';
+        header.innerHTML = '<i class="ri-history-line" style="color: #ec4899;"></i> Recent Activity';
+        if (actCard.parentElement) {
+          actCard.parentElement.insertBefore(header, actCard);
+        }
+      }
+    } else {
+      const existingHeader = document.getElementById('apparatus-activity-header');
+      if (existingHeader) existingHeader.remove();
+    }
   }
 
   // Event formatters for Recent Activity
