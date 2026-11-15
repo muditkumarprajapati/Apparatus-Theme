@@ -89,9 +89,10 @@ install_theme() {
   echo -e "  -> Downloading apparatus.js..."
   curl -s -L "$RAW_BASE/public/themes/apparatus/apparatus.js?v=$TS" -o "$ASSET_DIR/apparatus.js"
 
-  echo -e "  -> Downloading ab-logo.png..."
+  echo -e "  -> Downloading logos..."
   curl -s -L "$RAW_BASE/public/themes/apparatus/ab-logo.png?v=$TS" -o "$ASSET_DIR/ab-logo.png"
   curl -s -L "$RAW_BASE/public/themes/apparatus/ab-logo-white.png?v=$TS" -o "$ASSET_DIR/ab-logo-white.png"
+  curl -s -L "$RAW_BASE/public/themes/apparatus/arixbyte-logo.png?v=$TS" -o "$ASSET_DIR/arixbyte-logo.png"
 
   chown -R www-data:www-data "$ASSET_DIR"
   chmod -R 755 "$ASSET_DIR"

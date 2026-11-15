@@ -1342,7 +1342,7 @@
             </div>
           </div>
           <div class="apparatus-welcome-decor apparatus-welcome-decor-ab" aria-hidden="true">
-            <img src="/themes/apparatus/ab-logo-white.png" class="apparatus-ab-watermark" alt="ArixByte" onerror="this.src='/themes/apparatus/ab-logo.png';">
+            <img src="/themes/apparatus/arixbyte-logo.png" class="apparatus-ab-watermark" alt="ArixByte" onerror="this.src='/themes/apparatus/ab-logo-white.png';">
           </div>
         </div>
 
@@ -1487,7 +1487,7 @@
                 <div class="apparatus-balance-box apparatus-balance-coins">
                   <span class="apparatus-balance-label">Referral Points</span>
                   <div class="apparatus-balance-value">
-                    <span id="apparatus-coin-count">100</span>
+                    <span id="apparatus-coin-count">100</span> <span class="apparatus-balance-unit">Points</span>
                   </div>
                   <span class="apparatus-balance-note">Redeem points for discounts &amp; upgrades</span>
                 </div>

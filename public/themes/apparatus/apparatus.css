@@ -1391,28 +1391,29 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 }
 
 .apparatus-ab-watermark {
-  height: 95px;
+  height: 56px;
   width: auto;
-  max-width: 170px;
-  opacity: 0.2;
+  max-width: 250px;
+  opacity: 0.22;
   filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.25));
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: block;
 }
 
 .apparatus-card-welcome:hover .apparatus-welcome-decor {
-  transform: translateY(-50%) scale(1.04);
+  transform: translateY(-50%) scale(1.03);
 }
 
 .apparatus-card-welcome:hover .apparatus-ab-watermark {
-  opacity: 0.42;
-  filter: drop-shadow(0 0 24px rgba(124, 58, 237, 0.45));
+  opacity: 0.48;
+  filter: drop-shadow(0 0 24px rgba(133, 50, 255, 0.5));
 }
 
 @media (max-width: 900px) {
   .apparatus-ab-watermark {
-    height: 75px;
-    opacity: 0.15;
+    height: 42px;
+    max-width: 180px;
+    opacity: 0.18;
   }
 }
 
@@ -2110,8 +2111,15 @@ body:not(.apparatus-auth) span.apparatus-user-name {
   line-height: 1.15;
   margin-bottom: 0.3rem;
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 0.35rem;
+}
+
+.apparatus-balance-unit {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: normal;
 }
 
 .apparatus-balance-note {
