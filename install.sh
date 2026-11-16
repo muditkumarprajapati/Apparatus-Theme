@@ -164,18 +164,21 @@ except Exception:
     fi
     sed -i '/RegisterController/d' "$AUTH_ROUTES"
     sed -i '/Apparatus Self-Registration Routes/d' "$AUTH_ROUTES"
-    python3 -c "
-with open('$AUTH_ROUTES', 'r') as f:
+    python3 - "$AUTH_ROUTES" << 'PYEOF' 2>/dev/null || {
+import sys
+
+target = sys.argv[1]
+with open(target, 'r') as f:
     c = f.read()
 
-snippet = '''
+snippet = r'''
 // Apparatus Self-Registration Routes
-Route::get('/register', 'RegisterController@index')->name('auth.register');
-Route::post('/register', 'RegisterController@register')->name('auth.register.post');
-Route::get('/auth/register', 'RegisterController@index');
-Route::post('/auth/register', 'RegisterController@register');
-Route::post('/auth/mail/test', 'RegisterController@sendTestMail');
-Route::post('/auth/mail/verify-code', 'RegisterController@sendVerificationCode');
+Route::get('/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'index'])->name('auth.register');
+Route::post('/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'register'])->name('auth.register.post');
+Route::get('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'index']);
+Route::post('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'register']);
+Route::post('/auth/mail/test', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendTestMail']);
+Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendVerificationCode']);
 '''
 
 if 'RegisterController' not in c:
@@ -183,10 +186,10 @@ if 'RegisterController' not in c:
         c = c.replace('Route::fallback', snippet + '\nRoute::fallback', 1)
     else:
         c = snippet + '\n' + c
-    with open('$AUTH_ROUTES', 'w') as f:
+    with open(target, 'w') as f:
         f.write(c)
-" 2>/dev/null || {
-      sed -i "1i Route::get('/register', 'RegisterController@index')->name('auth.register');\nRoute::post('/register', 'RegisterController@register')->name('auth.register.post');\nRoute::get('/auth/register', 'RegisterController@index');\nRoute::post('/auth/register', 'RegisterController@register');" "$AUTH_ROUTES"
+PYEOF
+      sed -i "1i Route::get('/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'index'])->name('auth.register');\nRoute::post('/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'register'])->name('auth.register.post');\nRoute::get('/auth/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'index']);\nRoute::post('/auth/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'register']);" "$AUTH_ROUTES"
     }
   fi
 
@@ -197,31 +200,34 @@ if 'RegisterController' not in c:
     fi
     sed -i '/RegisterController/d' "$BASE_ROUTES"
     sed -i '/Apparatus Self-Registration Routes/d' "$BASE_ROUTES"
-    python3 -c "
-with open('$BASE_ROUTES', 'r') as f:
+    python3 - "$BASE_ROUTES" << 'PYEOF' 2>/dev/null || {
+import sys
+
+target = sys.argv[1]
+with open(target, 'r') as f:
     c = f.read()
 
-snippet = '''
+snippet = r'''
 // Apparatus Self-Registration Routes (Base Web)
-Route::get('/register', 'Auth\\\RegisterController@index');
-Route::post('/register', 'Auth\\\RegisterController@register');
-Route::get('/auth/register', 'Auth\\\RegisterController@index');
-Route::post('/auth/register', 'Auth\\\RegisterController@register');
-Route::post('/auth/mail/test', 'Auth\\\RegisterController@sendTestMail');
-Route::post('/auth/mail/verify-code', 'Auth\\\RegisterController@sendVerificationCode');
+Route::get('/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'index']);
+Route::post('/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'register']);
+Route::get('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'index']);
+Route::post('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'register']);
+Route::post('/auth/mail/test', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendTestMail']);
+Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendVerificationCode']);
 '''
 
 if 'RegisterController' not in c:
-    if \"Route::get('/{path?}'\" in c:
-        c = c.replace(\"Route::get('/{path?}'\", snippet + \"\nRoute::get('/{path?}'\", 1)
+    if "Route::get('/{path?'" in c:
+        c = c.replace("Route::get('/{path?'", snippet + "\nRoute::get('/{path?'", 1)
     elif 'Route::fallback' in c:
         c = c.replace('Route::fallback', snippet + '\nRoute::fallback', 1)
     else:
         c = snippet + '\n' + c
-    with open('$BASE_ROUTES', 'w') as f:
+    with open(target, 'w') as f:
         f.write(c)
-" 2>/dev/null || {
-      sed -i "1i Route::get('/register', 'Auth\\\RegisterController@index');\nRoute::post('/register', 'Auth\\\RegisterController@register');\nRoute::get('/auth/register', 'Auth\\\RegisterController@index');\nRoute::post('/auth/register', 'Auth\\\RegisterController@register');" "$BASE_ROUTES"
+PYEOF
+      sed -i "1i Route::get('/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'index']);\nRoute::post('/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'register']);\nRoute::get('/auth/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'index']);\nRoute::post('/auth/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'register']);" "$BASE_ROUTES"
     }
   fi
 
@@ -312,6 +318,7 @@ if '</head>' in content:
   echo -e "${BLUE}[4/4] Optimizing login and clearing Pterodactyl cache...${NC}"
   cd "$PTERO_DIR"
   php artisan tinker --execute="use Pterodactyl\Models\Setting; Setting::updateOrCreate(['key' => 'settings::recaptcha:enabled'], ['value' => 'false']);" 2>/dev/null || true
+  composer dump-autoload -o 2>/dev/null || true
   php artisan route:clear
   php artisan view:clear
   php artisan cache:clear
