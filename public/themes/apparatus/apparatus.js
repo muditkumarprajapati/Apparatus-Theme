@@ -6041,91 +6041,71 @@
     const rawPath = window.location.pathname || '';
     if (rawPath !== '/account' && rawPath !== '/account/') return null;
 
+    let card1 = null;
+    let gridContainer = null;
+
     // Check 1: Find via password input on /account
     const pwInputs = document.querySelectorAll('input[type="password"]');
     for (let i = 0; i < pwInputs.length; i++) {
       const form = pwInputs[i].closest('form');
       if (!form) continue;
 
-      let curr = form.parentElement;
-      while (curr && curr !== document.body && curr.id !== 'app') {
+      let curr = form;
+      while (curr && curr.parentElement && curr.parentElement !== document.body && curr.parentElement.id !== 'app') {
         const p = curr.parentElement;
-        if (!p || p === document.body || p.id === 'app') break;
-        if (p.querySelector('input[type="email"]') || (p.textContent || '').includes('Update Email Address')) {
-          return {
-            gridContainer: p,
-            pageContainer: p.parentElement
-          };
+        const pText = (p.textContent || '').toLowerCase();
+        if (pText.includes('email') && (p.children.length >= 2 || pText.includes('two-step') || pText.includes('2fa'))) {
+          card1 = curr;
+          gridContainer = p;
+          break;
         }
         curr = p;
       }
+      if (gridContainer) break;
     }
 
-    // Check 2: Find via heading "Update Password"
-    const headings = document.querySelectorAll('h1, h2, h3, h4');
-    for (let i = 0; i < headings.length; i++) {
-      const text = (headings[i].textContent || '').trim().toLowerCase();
-      if (text === 'update password') {
-        let curr = headings[i].parentElement;
-        while (curr && curr !== document.body && curr.id !== 'app') {
-          const p = curr.parentElement;
-          if (!p || p === document.body || p.id === 'app') break;
-          if ((p.textContent || '').includes('Update Email Address')) {
-            return {
-              gridContainer: p,
-              pageContainer: p.parentElement
-            };
+    // Check 2: Find via heading containing "password"
+    if (!gridContainer) {
+      const headings = document.querySelectorAll('h1, h2, h3, h4');
+      for (let i = 0; i < headings.length; i++) {
+        const text = (headings[i].textContent || '').trim().toLowerCase();
+        if (text.includes('password')) {
+          let curr = headings[i];
+          while (curr && curr.parentElement && curr.parentElement !== document.body && curr.parentElement.id !== 'app') {
+            const p = curr.parentElement;
+            const pText = (p.textContent || '').toLowerCase();
+            if (pText.includes('email') && (p.children.length >= 2 || pText.includes('two-step'))) {
+              card1 = curr;
+              gridContainer = p;
+              break;
+            }
+            curr = p;
           }
-          curr = p;
+          if (gridContainer) break;
         }
       }
     }
 
-    // Check 3: Deepest container containing both "Update Password" and "Update Email Address"
-    const allDivs = document.querySelectorAll('div');
-    for (let i = 0; i < allDivs.length; i++) {
-      const d = allDivs[i];
-      if (d.id === 'app' || d.classList.contains('apparatus-dashboard-container')) continue;
-      const text = d.textContent || '';
-      if (text.includes('Update Password') && text.includes('Update Email Address')) {
-        let childHasBoth = false;
-        for (let j = 0; j < d.children.length; j++) {
-          const cText = d.children[j].textContent || '';
-          if (cText.includes('Update Password') && cText.includes('Update Email Address')) {
-            childHasBoth = true;
-            break;
-          }
-        }
-        if (!childHasBoth) {
-          return {
-            gridContainer: d,
-            pageContainer: d.parentElement
-          };
-        }
+    // Check 3: QuerySelector fallback
+    if (!gridContainer) {
+      gridContainer = document.querySelector('div.md\\:grid') ||
+        document.querySelector('div[class*="md:grid"]') ||
+        document.querySelector('div[class*="grid-cols-2"]') ||
+        document.querySelector('.sc-12to0iy-1') ||
+        document.querySelector('div[class*="AccountOverviewContainer"] div[class*="grid"]') ||
+        document.querySelector('div[class*="AccountOverviewContainer"] > div');
+      if (gridContainer && gridContainer.children.length > 0) {
+        card1 = gridContainer.children[0];
       }
     }
 
-    // Check 4: Find via email input
-    const emailInput = document.querySelector('input[type="email"]');
-    if (emailInput) {
-      const form = emailInput.closest('form');
-      if (form) {
-        let curr = form.parentElement;
-        while (curr && curr !== document.body && curr.id !== 'app') {
-          const p = curr.parentElement;
-          if (!p || p === document.body || p.id === 'app') break;
-          if ((p.textContent || '').includes('Update Password')) {
-            return {
-              gridContainer: p,
-              pageContainer: p.parentElement
-            };
-          }
-          curr = p;
-        }
-      }
-    }
+    if (!gridContainer) return null;
 
-    return null;
+    return {
+      card1: card1 || (gridContainer.children.length > 0 ? gridContainer.children[0] : null),
+      gridContainer: gridContainer,
+      pageContainer: gridContainer.parentElement
+    };
   }
 
   let profileMountRetries = 0;
@@ -6492,10 +6472,11 @@
     }
   }
 
-  // Mount section right above gridContainer in its real DOM parent (guaranteed on every route sync)
-  if (els.gridContainer && els.gridContainer.parentNode) {
-    if (section.parentElement !== els.gridContainer.parentNode || section.nextSibling !== els.gridContainer) {
-      els.gridContainer.parentNode.insertBefore(section, els.gridContainer);
+  // Mount section right above card1 or gridContainer in its real DOM parent (guaranteed on every route sync)
+  const targetRef = els.card1 || els.gridContainer;
+  if (targetRef && targetRef.parentNode) {
+    if (section.parentElement !== targetRef.parentNode || section.nextSibling !== targetRef) {
+      targetRef.parentNode.insertBefore(section, targetRef);
     }
   } else if (els.pageContainer) {
     if (section.parentElement !== els.pageContainer) {
@@ -6538,7 +6519,18 @@
     grid.style.setProperty('box-sizing', 'border-box', 'important');
 
     Array.from(grid.children).forEach(function (child) {
-      if (child.id === 'apparatus-user-profile-section' || child.id === 'apparatus-verification-banner') return;
+      if (child.id === 'apparatus-user-profile-section' || child.id === 'apparatus-verification-banner') {
+        child.style.setProperty('display', 'block', 'important');
+        child.style.setProperty('visibility', 'visible', 'important');
+        child.style.setProperty('opacity', '1', 'important');
+        child.style.setProperty('width', '100%', 'important');
+        child.style.setProperty('max-width', '100%', 'important');
+        child.style.setProperty('margin-left', '0', 'important');
+        child.style.setProperty('margin-right', '0', 'important');
+        child.style.setProperty('margin-bottom', '1.5rem', 'important');
+        child.style.setProperty('box-sizing', 'border-box', 'important');
+        return;
+      }
       child.style.setProperty('display', 'flex', 'important');
       child.style.setProperty('flex-direction', 'column', 'important');
       child.style.setProperty('width', '100%', 'important');
