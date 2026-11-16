@@ -503,25 +503,24 @@ body.apparatus-auth #apparatus-desert-wrapper {
   margin-top: 1.5rem !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 0.75rem !important;
+  gap: 0.5rem !important;
   font-size: 0.94rem !important;
   text-align: center !important;
 }
 
 .apparatus-footer-links p {
   margin: 0 !important;
-  color: rgba(255, 255, 255, 0.75) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 0.65rem !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+  display: block !important;
+  text-align: center !important;
 }
 
 .apparatus-footer-links a {
-  color: #ec4899 !important;
-  font-weight: 700 !important;
-  text-decoration: none !important;
-  display: inline-block !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  display: inline !important;
   padding: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
@@ -541,6 +540,7 @@ body.apparatus-auth #apparatus-desert-wrapper {
   text-underline-offset: 3px !important;
   transform: none !important;
   box-shadow: none !important;
+  opacity: 0.85 !important;
 }
 
 .apparatus-footer-links a:active {

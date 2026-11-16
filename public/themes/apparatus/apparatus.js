@@ -6714,7 +6714,7 @@
       </form>
 
       <div class="apparatus-footer-links">
-        <p>Don’t have an account? <a href="/auth/register" id="apparatus-to-register">Register</a></p>
+        <p>Don’t have an account? <a href="/auth/register" id="apparatus-to-register">Register Now</a></p>
         <p>Forgot Password? <a href="/auth/password" id="apparatus-to-forgot">Click Here</a></p>
       </div>
     `;
