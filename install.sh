@@ -44,6 +44,7 @@ fi
 
 WRAPPER_FILE="$PTERO_DIR/resources/views/templates/wrapper.blade.php"
 ERROR_FILE="$PTERO_DIR/resources/views/layouts/error.blade.php"
+ADMIN_FILE="$PTERO_DIR/resources/views/layouts/admin.blade.php"
 ASSET_DIR="$PTERO_DIR/public/themes/apparatus"
 
 # Resolve latest commit SHA to completely bypass GitHub CDN edge caching
@@ -69,6 +70,10 @@ install_theme() {
   if [ -f "$ERROR_FILE" ] && [ ! -f "$ERROR_FILE.apparatus.bak" ]; then
     cp "$ERROR_FILE" "$ERROR_FILE.apparatus.bak"
   fi
+  if [ -f "$ADMIN_FILE" ] && [ ! -f "$ADMIN_FILE.apparatus.bak" ]; then
+    cp "$ADMIN_FILE" "$ADMIN_FILE.apparatus.bak"
+    echo -e "${GREEN}✓ Backup created: $ADMIN_FILE.apparatus.bak${NC}"
+  fi
 
   # Step 2: Download Assets
   echo -e "${BLUE}[2/4] Deploying theme assets (7-Layer Parallax SVGs, CSS, JS)...${NC}"
@@ -88,6 +93,12 @@ install_theme() {
 
   echo -e "  -> Downloading apparatus.js..."
   curl -s -L "$RAW_BASE/public/themes/apparatus/apparatus.js?v=$TS" -o "$ASSET_DIR/apparatus.js"
+
+  echo -e "  -> Downloading admin.css..."
+  curl -s -L "$RAW_BASE/public/themes/apparatus/admin.css?v=$TS" -o "$ASSET_DIR/admin.css"
+
+  echo -e "  -> Downloading admin.js..."
+  curl -s -L "$RAW_BASE/public/themes/apparatus/admin.js?v=$TS" -o "$ASSET_DIR/admin.js"
 
   echo -e "  -> Downloading lenis.min.js..."
   curl -s -L "$RAW_BASE/public/themes/apparatus/lenis.min.js?v=$TS" -o "$ASSET_DIR/lenis.min.js"
@@ -153,10 +164,41 @@ if '</head>' in content:
     }
   }
 
+  inject_admin_loader() {
+    local target="$1"
+    local ts="$2"
+    if [ ! -f "$target" ]; then return; fi
+    if grep -q "apparatus-admin-loader" "$target"; then
+      sed -i '/<!-- BEGIN apparatus-admin-loader -->/,/<!-- END apparatus-admin-loader -->/d' "$target"
+    fi
+    python3 -c "
+with open('$target', 'r') as f:
+    content = f.read()
+
+snippet = '''<!-- BEGIN apparatus-admin-loader -->
+<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css\">
+<link rel=\"stylesheet\" href=\"/themes/apparatus/admin.css?v=$ts\">
+<script src=\"/themes/apparatus/admin.js?v=$ts\" defer></script>
+<!-- END apparatus-admin-loader -->
+</head>'''
+
+if '</head>' in content:
+    content = content.replace('</head>', snippet, 1)
+    with open('$target', 'w') as f:
+        f.write(content)
+" 2>/dev/null || {
+      awk -v ts="$ts" '/<\/head>/{print "<!-- BEGIN apparatus-admin-loader -->\n<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css\">\n<link rel=\"stylesheet\" href=\"/themes/apparatus/admin.css?v=" ts "\">\n<script src=\"/themes/apparatus/admin.js?v=" ts "\" defer></script>\n<!-- END apparatus-admin-loader -->"}1' "$target" > "$target.tmp" && mv "$target.tmp" "$target"
+    }
+  }
+
   TS=$(date +%s)
   inject_loader "$WRAPPER_FILE" "$TS"
   if [ -f "$ERROR_FILE" ]; then
     inject_loader "$ERROR_FILE" "$TS"
+  fi
+  if [ -f "$ADMIN_FILE" ]; then
+    inject_admin_loader "$ADMIN_FILE" "$TS"
+    echo -e "${GREEN}✓ Injected Apparatus Admin CP loader successfully.${NC}"
   fi
 
   echo -e "${GREEN}✓ Injected theme loader successfully.${NC}"
@@ -206,6 +248,18 @@ remove_theme() {
   else
     if [ -f "$ERROR_FILE" ]; then
       sed -i '/<!-- BEGIN apparatus-theme-loader -->/,/<!-- END apparatus-theme-loader -->/d' "$ERROR_FILE"
+    fi
+  fi
+
+  # Restore admin layout if backed up
+  if [ -f "$ADMIN_FILE.apparatus.bak" ]; then
+    cp "$ADMIN_FILE.apparatus.bak" "$ADMIN_FILE"
+    rm -f "$ADMIN_FILE.apparatus.bak"
+    echo -e "${GREEN}✓ Restored original admin.blade.php.${NC}"
+  else
+    if [ -f "$ADMIN_FILE" ]; then
+      sed -i '/<!-- BEGIN apparatus-admin-loader -->/,/<!-- END apparatus-admin-loader -->/d' "$ADMIN_FILE"
+      echo -e "${GREEN}✓ Removed Apparatus injections from admin.blade.php.${NC}"
     fi
   fi
 
