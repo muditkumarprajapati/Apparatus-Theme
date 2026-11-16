@@ -518,29 +518,29 @@ body.apparatus-auth #apparatus-desert-wrapper {
 }
 
 .apparatus-footer-links a {
-  color: #ffffff !important;
+  color: #ec4899 !important;
   font-weight: 700 !important;
   text-decoration: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0.28rem 0.85rem !important;
-  border-radius: 9px !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: inline-block !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: all 0.2s ease !important;
   cursor: pointer !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
 }
 
 .apparatus-footer-links a:hover {
-  background: rgba(255, 255, 255, 0.22) !important;
-  border-color: rgba(255, 255, 255, 0.48) !important;
-  color: #ffffff !important;
-  transform: translateY(-1px) scale(1.04) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+  background: transparent !important;
+  border: none !important;
+  color: #f472b6 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .apparatus-footer-links a:active {
@@ -565,6 +565,7 @@ body.apparatus-auth #apparatus-desert-wrapper {
     transform: scale(0.93) translateY(14px) rotateY(8deg);
     filter: blur(8px);
   }
+
   100% {
     opacity: 1;
     transform: scale(1) translateY(0) rotateY(0deg);
@@ -5219,21 +5220,34 @@ div[class*="PageContentBlock"]>div:not([class*="ActivityLogContainer"]) {
 .sc-12to0iy-1,
 body:not(.apparatus-auth) .sc-12to0iy-1,
 div[class*="AccountOverviewContainer"]>div:not(.apparatus-user-profile-section),
+div[class*="AccountOverviewContainer"] div.md\:grid,
+div[class*="AccountOverviewContainer"] div[class*="md:grid"],
+div[class*="AccountOverviewContainer"] div[class*="grid"],
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="grid"],
+body.apparatus-page-account div.md\:grid,
+body.apparatus-page-account .sc-12to0iy-1,
 div[class*="PageContentBlock"] div.md\:grid {
   display: flex !important;
   flex-direction: column !important;
+  grid-template-columns: 1fr !important;
   gap: 1.5rem !important;
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
+  padding: 0 !important;
   align-items: stretch !important;
 }
 
 /* Ensure every security card (Update Password, Update Email Address, Two-Step) has 100% matching width & zero horizontal offsets */
-.sc-12to0iy-1 > div,
-body:not(.apparatus-auth) .sc-12to0iy-1 > div,
+.sc-12to0iy-1>div,
+body:not(.apparatus-auth) .sc-12to0iy-1>div,
 div[class*="AccountOverviewContainer"]>div>div,
-div[class*="PageContentBlock"] div.md\:grid > div {
+div[class*="AccountOverviewContainer"] div.md\:grid>div,
+div[class*="AccountOverviewContainer"] div[class*="md:grid"]>div,
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="grid"]>div,
+body.apparatus-page-account div.md\:grid>div,
+body.apparatus-page-account .sc-12to0iy-1>div,
+div[class*="PageContentBlock"] div.md\:grid>div {
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
@@ -5246,12 +5260,29 @@ div[class*="PageContentBlock"] div.md\:grid > div {
   box-sizing: border-box !important;
 }
 
+/* Strip outer ContentBox wrapper borders & backgrounds to eliminate ghost outlines or double-borders */
+body.apparatus-page-account div[class*="ContentBox"]:not(div[class*="ContentBox___StyledDiv"]),
+div[class*="AccountOverviewContainer"] div[class*="ContentBox"]:not(div[class*="ContentBox___StyledDiv"]),
+.sc-12to0iy-1>div:not(.sc-mjlt6f-2) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
 /* Ensure ContentBox card containers inside Account Overview are 100% flush with decreased top gap */
 .sc-12to0iy-1 .sc-mjlt6f-2,
 body:not(.apparatus-auth) .sc-12to0iy-1 .sc-mjlt6f-2,
 .sc-12to0iy-1 div[class*="ContentBox___StyledDiv"],
 div[class*="AccountOverviewContainer"] .sc-mjlt6f-2,
-body.apparatus-page-account .sc-mjlt6f-2 {
+div[class*="AccountOverviewContainer"] div[class*="ContentBox___StyledDiv"],
+body.apparatus-page-account .sc-mjlt6f-2,
+body.apparatus-page-account div[class*="ContentBox___StyledDiv"] {
   width: 100% !important;
   max-width: 100% !important;
   margin-left: 0 !important;
@@ -5278,9 +5309,9 @@ body.apparatus-page-account h2 {
 }
 
 /* Collapse any phantom empty containers or unmounted spinner/fade divs inside account cards */
-body.apparatus-page-account .sc-mjlt6f-2 > div:empty,
-body.apparatus-page-account .sc-mjlt6f-2 > div:not(:has(input, button, select, textarea, svg, img, p, h1, h2, h3, h4, h5, h6, span:not(:empty))),
-body.apparatus-page-account .sc-mjlt6f-2 form > div:empty {
+body.apparatus-page-account .sc-mjlt6f-2>div:empty,
+body.apparatus-page-account .sc-mjlt6f-2>div:not(:has(input, button, select, textarea, svg, img, p, h1, h2, h3, h4, h5, h6, span:not(:empty))),
+body.apparatus-page-account .sc-mjlt6f-2 form>div:empty {
   display: none !important;
   height: 0 !important;
   min-height: 0 !important;
@@ -5295,16 +5326,16 @@ div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 form {
   padding-top: 0 !important;
 }
 
-body.apparatus-page-account .sc-mjlt6f-2 form > div:first-child,
-body.apparatus-page-account .sc-mjlt6f-2 form > div:first-of-type,
-div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 form > div:first-child,
-div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 form > div:first-of-type {
+body.apparatus-page-account .sc-mjlt6f-2 form>div:first-child,
+body.apparatus-page-account .sc-mjlt6f-2 form>div:first-of-type,
+div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 form>div:first-child,
+div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 form>div:first-of-type {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
 
-body.apparatus-page-account .sc-mjlt6f-2 form > div:first-child label,
-div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 form > div:first-child label {
+body.apparatus-page-account .sc-mjlt6f-2 form>div:first-child label,
+div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 form>div:first-child label {
   margin-top: 0 !important;
 }
 
@@ -5913,8 +5944,15 @@ div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon {
 }
 
 @keyframes apparatusModalFadeIn {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Premium Dispatched Email Modal Card */

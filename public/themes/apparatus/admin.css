@@ -29,7 +29,7 @@ body.skin-blue,
 body.hold-transition,
 body.fixed {
   font-family: var(--admin-font) !important;
-  background: linear-gradient(180deg, rgba(8, 6, 12, 0.42) 0%, rgba(10, 8, 16, 0.52) 100%), url('/themes/apparatus/admin-bg.jpg') center center / cover no-repeat fixed !important;
+  background: linear-gradient(180deg, rgba(8, 6, 12, 0.76) 0%, rgba(10, 8, 16, 0.82) 100%), url('/themes/apparatus/admin-bg.jpg') center center / cover no-repeat fixed !important;
   background-attachment: fixed !important;
   background-size: cover !important;
   background-position: center center !important;
@@ -46,16 +46,21 @@ body.fixed {
 }
 
 /* ==============================================================================
-   1. TOP NAVBAR (HEADER) - 50% FROSTED GLASS
+   1. TOP NAVBAR (HEADER) - 50% FROSTED GLASS & FIXED POSITIONING
    ============================================================================== */
 .main-header {
   background: transparent !important;
-  position: relative !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  height: 60px !important;
   z-index: 1030 !important;
 }
 
 .main-header .navbar {
-  background: rgba(10, 8, 16, 0.55) !important;
+  background: rgba(10, 8, 16, 0.82) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border-bottom: 1px solid var(--admin-border) !important;
@@ -74,7 +79,7 @@ body.fixed {
 
 /* Brand Logo (Top Left) */
 .main-header .logo {
-  background: rgba(10, 8, 16, 0.55) !important;
+  background: rgba(10, 8, 16, 0.85) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border-bottom: 1px solid var(--admin-border) !important;
@@ -207,12 +212,18 @@ body.fixed {
    2. MAIN SIDEBAR NAVIGATION (LEFT) - 50% FROSTED GLASS & ENHANCED SIZING
    ============================================================================== */
 .main-sidebar {
-  background: rgba(10, 8, 16, 0.55) !important;
+  background: rgba(10, 8, 16, 0.82) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border-right: 1px solid var(--admin-border) !important;
   width: 265px !important;
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
   padding-top: 60px !important;
+  z-index: 810 !important;
+  overflow-y: auto !important;
 }
 
 .sidebar {
@@ -461,38 +472,66 @@ body.fixed .content-wrapper,
   padding: 1.25rem 1.75rem !important;
 }
 
-/* Nav Tabs on /admin/settings (General, Mail, Advanced) */
+/* Nav Tabs on /admin/settings (General, Mail, Advanced) - Zero Cyan Line & Luxury Glass */
+.nav-tabs-custom,
+.nav-tabs-custom > .nav-tabs,
+.nav-tabs-custom > .nav-tabs > li,
+.nav-tabs-custom > .nav-tabs > li.active,
+.nav-tabs-custom > .nav-tabs > li > a,
+.nav-tabs-custom > .nav-tabs > li.active > a,
+.nav-tabs-custom > .nav-tabs > li:before,
+.nav-tabs-custom > .nav-tabs > li:after,
+.nav-tabs-custom > .nav-tabs > li.active:before,
+.nav-tabs-custom > .nav-tabs > li.active:after {
+  border-top: none !important;
+  border-top-color: transparent !important;
+  border-top-width: 0 !important;
+  border-top-style: none !important;
+}
+
 .nav-tabs-custom {
   box-shadow: none !important;
+  background: rgba(18, 12, 26, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
 }
 
 .nav-tabs-custom > .nav-tabs {
-  background: rgba(12, 8, 18, 0.5) !important;
+  background: rgba(12, 8, 18, 0.6) !important;
   backdrop-filter: blur(20px) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-top-right-radius: 18px !important;
-  border-top-left-radius: 18px !important;
-  padding: 0.5rem 1rem 0 1rem !important;
+  border-top: none !important;
+  padding: 0.65rem 1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  margin: 0 !important;
 }
 
-.nav-tabs-custom > .nav-tabs > li {
+.nav-tabs-custom > .nav-tabs > li,
+.nav-tabs-custom > .nav-tabs > li.active {
+  border-top: none !important;
+  border-top-color: transparent !important;
+  margin-top: 0 !important;
   margin-bottom: 0 !important;
   margin-right: 0.5rem !important;
+  float: none !important;
+  display: inline-block !important;
 }
 
 .nav-tabs-custom > .nav-tabs > li > a {
-  border-radius: 10px 10px 0 0 !important;
+  border-radius: 10px !important;
   font-family: var(--admin-font) !important;
   font-size: 0.95rem !important;
   font-weight: 600 !important;
   color: #94a3b8 !important;
-  padding: 0.85rem 1.5rem !important;
+  padding: 0.55rem 1.25rem !important;
   border: 1px solid transparent !important;
-  border-bottom: none !important;
+  background: transparent !important;
   transition: all 0.2s ease !important;
+  margin: 0 !important;
 }
 
-.nav-tabs-custom > .nav-tabs > li.active > a,
 .nav-tabs-custom > .nav-tabs > li > a:hover {
   background: rgba(255, 255, 255, 0.08) !important;
   color: #ffffff !important;
@@ -500,14 +539,18 @@ body.fixed .content-wrapper,
 }
 
 .nav-tabs-custom > .nav-tabs > li.active > a {
-  background: rgba(236, 72, 153, 0.18) !important;
-  border-color: rgba(236, 72, 153, 0.45) !important;
+  background: rgba(236, 72, 153, 0.22) !important;
+  border: 1px solid rgba(236, 72, 153, 0.5) !important;
   color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.25) !important;
 }
 
 .nav-tabs-custom > .tab-content {
   background: transparent !important;
   padding: 1.85rem !important;
+  border-bottom-right-radius: 18px !important;
+  border-bottom-left-radius: 18px !important;
 }
 
 /* ==============================================================================

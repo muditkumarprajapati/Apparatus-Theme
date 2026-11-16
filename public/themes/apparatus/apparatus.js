@@ -5521,17 +5521,19 @@
     const rawPath = window.location.pathname || '';
     if (rawPath !== '/account' && rawPath !== '/account/') return;
 
-    const contentBoxes = document.querySelectorAll('.sc-mjlt6f-2, [class*="ContentBox"]');
-    const cardsContainer = document.querySelector('.sc-12to0iy-1') ||
-      (contentBoxes.length > 0 && contentBoxes[0].parentElement ? contentBoxes[0].parentElement.parentElement : null);
+    // Search all possible grid wrappers on the account page
+    const accountRoot = document.querySelector('div[class*="AccountOverviewContainer"]') || document.querySelector('div[class*="PageContentBlock"]') || document;
+    const gridContainers = accountRoot.querySelectorAll('.sc-12to0iy-1, div[class*="grid"], div.md\\:grid, div[class*="cols-2"]');
 
-    if (cardsContainer) {
+    gridContainers.forEach(function (cardsContainer) {
       cardsContainer.style.setProperty('display', 'flex', 'important');
       cardsContainer.style.setProperty('flex-direction', 'column', 'important');
+      cardsContainer.style.setProperty('grid-template-columns', '1fr', 'important');
       cardsContainer.style.setProperty('width', '100%', 'important');
       cardsContainer.style.setProperty('max-width', '100%', 'important');
       cardsContainer.style.setProperty('gap', '1.5rem', 'important');
       cardsContainer.style.setProperty('margin', '0', 'important');
+      cardsContainer.style.setProperty('padding', '0', 'important');
       cardsContainer.style.setProperty('align-items', 'stretch', 'important');
 
       Array.from(cardsContainer.children).forEach(function (child) {
@@ -5545,9 +5547,12 @@
         child.style.setProperty('margin-top', '0', 'important');
         child.style.setProperty('grid-column', '1 / -1', 'important');
         child.style.setProperty('grid-row', 'auto', 'important');
+        child.style.setProperty('background', 'transparent', 'important');
+        child.style.setProperty('border', 'none', 'important');
+        child.style.setProperty('box-shadow', 'none', 'important');
         child.style.setProperty('box-sizing', 'border-box', 'important');
 
-        const innerBox = child.querySelector('.sc-mjlt6f-2') || child.querySelector('[class*="ContentBox"]');
+        const innerBox = child.querySelector('.sc-mjlt6f-2') || child.querySelector('div[class*="ContentBox___StyledDiv"]') || child.querySelector('[class*="ContentBox"]');
         if (innerBox) {
           innerBox.style.setProperty('width', '100%', 'important');
           innerBox.style.setProperty('max-width', '100%', 'important');
@@ -5592,7 +5597,7 @@
           titleEl.style.setProperty('box-sizing', 'border-box', 'important');
         }
       });
-    }
+    });
 
     const pageBlock = document.querySelector('div[class*="PageContentBlock"]');
     if (pageBlock) {
@@ -5875,7 +5880,7 @@
         adminDb[0].verified = true;
         localStorage.setItem('apparatus_admin_users_db_v2', JSON.stringify(adminDb));
       }
-    } catch (e) {}
+    } catch (e) { }
 
     showToast('success', '🎉 Account Verified!', 'Your account is now fully verified and your referral code is active!');
 
@@ -5932,7 +5937,7 @@
         const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
         window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
       }
-    } catch (e) {}
+    } catch (e) { }
 
     const isVerified = localStorage.getItem('apparatus_user_verified') === 'true';
 

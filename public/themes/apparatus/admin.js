@@ -209,7 +209,7 @@
       <li class="header">EXTENSIONS & INTEGRATIONS</li>
       <li class="${isInbuiltAddons ? 'active' : ''}">
         <a href="#inbuilt-addons" class="apparatus-admin-tab" data-tab="inbuilt-addons">
-          <i class="ri-puzzle-line"></i>
+          <i class="ri-puzzle-2-line"></i>
           <span>Inbuilt Addons</span>
         </a>
       </li>
@@ -413,10 +413,104 @@
   }
 
   // ==============================================================================
-  // 4. MAIL EDITOR STUDIO VIEW
+  // 4. MAIL EDITOR STUDIO VIEW (WITH LIVE SWITCHER, VERIFICATION CODE & SOCIAL LINKS)
   // ==============================================================================
   function renderMailEditorView(container) {
     container.className = 'apparatus-admin-view';
+
+    const mailTemplates = {
+      verification: {
+        name: 'Account Verification & Referral Activation',
+        subject: 'Verify Your ArixByte Account & Activate Referral Code',
+        sender: 'ArixByte Security <verify@arixbyte.com>',
+        btnText: 'Click Here to Get Your Account Verified',
+        showCode: true,
+        code: 'E4GWJ3',
+        body: `Hello **{username}**,
+
+Thank you for registering on ArixByte Cloud! To complete your account activation and unlock your personal referral reward code, please verify your email address using the one-time security code below:
+
+Enter this code on your dashboard or click the direct verification button below to activate your account instantly.`
+      },
+      welcome: {
+        name: 'Welcome to ArixByte Cloud',
+        subject: 'Welcome to ArixByte Cloud!',
+        sender: 'ArixByte Cloud <noreply@arixbyte.com>',
+        btnText: 'Access Client Dashboard',
+        showCode: false,
+        code: '',
+        body: `Hello **{username}**,
+
+Welcome to ArixByte Cloud! Your high-performance computing environment is ready to deploy.
+
+• Dedicated High-Clock CPU Performance
+• Ultra-Low Latency NVMe Storage
+• Instant Automated Backups & DDoS Mitigation
+
+Click the button below to launch your panel console.`
+      },
+      password_reset: {
+        name: 'Password Reset Instruction',
+        subject: 'Reset Your ArixByte Password',
+        sender: 'ArixByte Security <auth@arixbyte.com>',
+        btnText: 'Reset Account Password',
+        showCode: false,
+        code: '',
+        body: `Hello **{username}**,
+
+We received a request to reset the password for your ArixByte Cloud account.
+
+Click the button below to choose a new secure password. If you did not initiate this request, you can safely ignore this email.`
+      },
+      server_created: {
+        name: 'Server Successfully Provisioned',
+        subject: 'Server Successfully Provisioned - ArixByte',
+        sender: 'ArixByte Automations <daemon@arixbyte.com>',
+        btnText: 'Open Server Console',
+        showCode: false,
+        code: '',
+        body: `Hello **{username}**,
+
+Great news! Your new game server instance has been successfully deployed and bound to high-speed node allocation.
+
+• Status: Online & Guarded
+• Hypervisor: Wings v1.11.x Enterprise
+• Network: 1 Gbps Symmetric Uplink
+
+Access your server console using the link below.`
+      },
+      two_factor: {
+        name: 'Two-Factor Authentication Alert',
+        subject: 'Security Alert: Two-Factor Authentication Updated',
+        sender: 'ArixByte Security <security@arixbyte.com>',
+        btnText: 'Review Security Settings',
+        showCode: false,
+        code: '',
+        body: `Hello **{username}**,
+
+Two-factor authentication (TOTP) settings on your ArixByte account were recently updated.
+
+If you made this change, no further action is required. If you did not authorize this, contact ArixByte Support immediately.`
+      },
+      maintenance: {
+        name: 'Node Maintenance Advisory',
+        subject: 'Scheduled Infrastructure Maintenance Advisory',
+        sender: 'ArixByte Operations <ops@arixbyte.com>',
+        btnText: 'Check Network Status',
+        showCode: false,
+        code: '',
+        body: `Hello **{username}**,
+
+This is an advance notice that scheduled hardware maintenance is planned for cluster nodes to apply kernel security updates.
+
+• Window: Sunday 02:00 UTC - 02:30 UTC
+• Expected Impact: Under 60 seconds reboot latency`
+      }
+    };
+
+    let activeKey = 'verification';
+    let currentTpl = mailTemplates[activeKey];
+
     container.innerHTML = `
       <div class="apparatus-admin-grid-2">
         <div class="box box-primary">
@@ -427,6 +521,7 @@
             <div class="form-group">
               <label>Select Email Template</label>
               <select class="form-control" id="apparatus-mail-template-select">
+                <option value="verification" selected>Account Verification & Referral Activation</option>
                 <option value="welcome">Welcome to ArixByte Cloud</option>
                 <option value="password_reset">Password Reset Instruction</option>
                 <option value="server_created">Server Successfully Provisioned</option>
@@ -436,27 +531,19 @@
             </div>
             <div class="form-group">
               <label>Email Subject</label>
-              <input type="text" class="form-control" id="apparatus-mail-subject" value="Welcome to ArixByte Cloud!">
+              <input type="text" class="form-control" id="apparatus-mail-subject" value="${currentTpl.subject}">
             </div>
             <div class="form-group">
               <label>Sender Display Name</label>
-              <input type="text" class="form-control" id="apparatus-mail-sender" value="ArixByte Support <noreply@arixbyte.com>">
+              <input type="text" class="form-control" id="apparatus-mail-sender" value="${currentTpl.sender}">
             </div>
             <div class="form-group">
               <label>Call to Action Button Text</label>
-              <input type="text" class="form-control" id="apparatus-mail-btn-text" value="Access Game Server">
+              <input type="text" class="form-control" id="apparatus-mail-btn-text" value="${currentTpl.btnText}">
             </div>
             <div class="form-group">
               <label>Email Message Body (Markdown / HTML)</label>
-              <textarea class="form-control" rows="8" id="apparatus-mail-body">Hello **{username}**,
-
-Welcome to ArixByte Cloud! Your high-performance computing environment is ready to deploy.
-
-- Dedicated CPU Performance
-- Ultra-Low Latency NVMe Storage
-- Instant Automated Backups
-
-Click the button below to launch your panel console.</textarea>
+              <textarea class="form-control" rows="7" id="apparatus-mail-body">${currentTpl.body}</textarea>
             </div>
             <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
               <button class="btn btn-primary" id="apparatus-mail-save-btn">
@@ -473,32 +560,69 @@ Click the button below to launch your panel console.</textarea>
           <div class="box-header with-border">
             <h3 class="box-title"><i class="ri-eye-line"></i> Live HTML Email Preview</h3>
           </div>
-          <div class="box-body" style="background: rgba(0, 0, 0, 0.4); padding: 1.5rem; border-radius: 12px;">
-            <div style="background: #000000; border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 2rem; color: #fff; font-family: var(--admin-font); box-shadow: 0 16px 40px rgba(0,0,0,0.5);">
+          <div class="box-body" style="background: rgba(0, 0, 0, 0.45); padding: 1.5rem; border-radius: 12px;">
+            <div style="background: #08060c; border: 1px solid rgba(255,255,255,0.14); border-radius: 16px; padding: 2rem; color: #fff; font-family: var(--admin-font); box-shadow: 0 16px 40px rgba(0,0,0,0.6);">
+              
+              <!-- Brand Header -->
               <div style="text-align: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
-                <img src="/themes/apparatus/arixbyte-logo.png" alt="ArixByte" style="height: 28px; width: auto;" onerror="this.style.display='none';">
+                <img src="/themes/apparatus/arixbyte-logo.png" alt="ArixByte" style="height: 30px; width: auto;" onerror="this.src='https://arixbyte.com/images/logo.png';">
               </div>
+
+              <!-- Email Subject -->
               <h2 id="apparatus-preview-subject" style="font-size: 1.25rem; font-weight: 700; color: #ec4899; margin-top: 0; margin-bottom: 1rem;">
-                Welcome to ArixByte Cloud!
+                ${currentTpl.subject}
               </h2>
-              <div id="apparatus-preview-body" style="font-size: 0.92rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 2rem; white-space: pre-wrap;">
-Hello <b>{username}</b>,
 
-Welcome to ArixByte Cloud! Your high-performance computing environment is ready to deploy.
-
-• Dedicated CPU Performance
-• Ultra-Low Latency NVMe Storage
-• Instant Automated Backups
-
-Click the button below to launch your panel console.
+              <!-- Body Text -->
+              <div id="apparatus-preview-body" style="font-size: 0.92rem; line-height: 1.65; color: #cbd5e1; margin-bottom: 1.5rem; white-space: pre-wrap;">
+${formatMailBody(currentTpl.body)}
               </div>
+
+              <!-- Verification Code Card (Dynamic) -->
+              <div id="apparatus-preview-code-box" style="display: ${currentTpl.showCode ? 'block' : 'none'}; text-align: center; margin-bottom: 1.75rem; background: rgba(236,72,153,0.08); border: 1px solid rgba(236,72,153,0.3); border-radius: 12px; padding: 1.25rem;">
+                <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #f472b6; font-weight: 700; margin-bottom: 0.35rem;">
+                  Your 6-Character Verification Code
+                </div>
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 900; letter-spacing: 0.35em; color: #ffffff; text-shadow: 0 0 16px rgba(236,72,153,0.6);">
+                  ${currentTpl.code || 'E4GWJ3'}
+                </div>
+                <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.35rem;">
+                  Valid for 15 minutes • Do not share this security code with anyone
+                </div>
+              </div>
+
+              <!-- Call to Action Button -->
               <div style="text-align: center; margin-bottom: 2rem;">
-                <span id="apparatus-preview-btn" style="display: inline-block; background: #ec4899; color: #fff; font-weight: 700; padding: 0.75rem 2rem; border-radius: 10px; text-decoration: none;">
-                  Access Game Server
-                </span>
+                <a href="https://control.arixbyte.com" target="_blank" id="apparatus-preview-btn" style="display: inline-block; background: linear-gradient(135deg, #ec4899, #db2777); color: #fff; font-weight: 700; font-size: 0.95rem; padding: 0.85rem 2.2rem; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 18px rgba(236,72,153,0.4);">
+                  ${currentTpl.btnText}
+                </a>
               </div>
-              <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem; font-size: 0.75rem; color: #64748b; text-align: center;">
-                Sent securely by ArixByte Infrastructure Systems • © 2026 ArixByte Cloud
+
+              <!-- Official Social Channels -->
+              <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.25rem; margin-top: 1.5rem; text-align: center;">
+                <div style="font-size: 0.76rem; color: #94a3b8; margin-bottom: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;">
+                  Connect with ArixByte Official
+                </div>
+                <div style="display: flex; justify-content: center; gap: 1.25rem; font-size: 0.84rem; flex-wrap: wrap;">
+                  <a href="https://arixbyte.com" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                    <i class="ri-global-line"></i> arixbyte.com
+                  </a>
+                  <a href="https://discord.arixbyte.com" target="_blank" style="color: #818cf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                    <i class="ri-discord-fill"></i> Discord
+                  </a>
+                  <a href="https://instagram.arixbyte.com" target="_blank" style="color: #f472b6; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                    <i class="ri-instagram-line"></i> Instagram
+                  </a>
+                  <a href="https://wa.me/918218444633" target="_blank" style="color: #34d399; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                    <i class="ri-whatsapp-line"></i> WhatsApp
+                  </a>
+                </div>
+              </div>
+
+              <!-- Security Footer -->
+              <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem; margin-top: 1rem; font-size: 0.72rem; color: #64748b; text-align: center; line-height: 1.5;">
+                Sent securely by ArixByte Infrastructure Systems • © 2026 ArixByte Cloud • All Rights Reserved.<br>
+                If you did not request this communication, please secure your account immediately.
               </div>
             </div>
           </div>
@@ -506,12 +630,41 @@ Click the button below to launch your panel console.
       </div>
     `;
 
+    function formatMailBody(str) {
+      if (!str) return '';
+      return str.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+    }
+
+    const tplSelect = container.querySelector('#apparatus-mail-template-select');
     const subjInput = container.querySelector('#apparatus-mail-subject');
     const previewSubj = container.querySelector('#apparatus-preview-subject');
+    const senderInput = container.querySelector('#apparatus-mail-sender');
     const bodyInput = container.querySelector('#apparatus-mail-body');
     const previewBody = container.querySelector('#apparatus-preview-body');
     const btnInput = container.querySelector('#apparatus-mail-btn-text');
     const previewBtn = container.querySelector('#apparatus-preview-btn');
+    const codeBox = container.querySelector('#apparatus-preview-code-box');
+
+    // Switch templates live on dropdown change
+    if (tplSelect) {
+      tplSelect.addEventListener('change', function () {
+        const val = this.value;
+        const selected = mailTemplates[val];
+        if (!selected) return;
+
+        subjInput.value = selected.subject;
+        senderInput.value = selected.sender;
+        btnInput.value = selected.btnText;
+        bodyInput.value = selected.body;
+
+        previewSubj.textContent = selected.subject;
+        previewBody.innerHTML = formatMailBody(selected.body);
+        previewBtn.textContent = selected.btnText;
+        if (codeBox) {
+          codeBox.style.display = selected.showCode ? 'block' : 'none';
+        }
+      });
+    }
 
     if (subjInput && previewSubj) {
       subjInput.addEventListener('input', function () {
@@ -520,7 +673,7 @@ Click the button below to launch your panel console.
     }
     if (bodyInput && previewBody) {
       bodyInput.addEventListener('input', function () {
-        previewBody.textContent = this.value || 'Email body text...';
+        previewBody.innerHTML = formatMailBody(this.value || 'Email body text...');
       });
     }
     if (btnInput && previewBtn) {
@@ -635,7 +788,7 @@ Click the button below to launch your panel console.
 
           <div style="display: flex; gap: 0.85rem; margin-top: 2rem; margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
             <button class="btn btn-primary" id="apparatus-announcement-save-btn" style="padding: 0.75rem 1.6rem; font-size: 0.95rem; border-radius: 12px; font-weight: 700;">
-              <i class="ri-broadcast-line"></i> Save & Broadcast Announcement
+              <i class="ri-megaphone-line"></i> Save & Broadcast Announcement
             </button>
             <button class="btn btn-default" id="apparatus-announcement-clear-btn" style="padding: 0.75rem 1.4rem; font-size: 0.95rem; border-radius: 12px; font-weight: 600;">
               <i class="ri-delete-bin-line"></i> Deactivate Broadcast
@@ -1364,6 +1517,19 @@ php artisan view:clear</pre>
   // ==============================================================================
   // 12. USER MANAGEMENT STUDIO (15-COLUMN ENTERPRISE LUXURY GRID & ZERO CAPSULES)
   // ==============================================================================
+  function computeReferralCode(username) {
+    const cleanU = (username || 'ARIX').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (cleanU === 'MUDIT' || cleanU.startsWith('MUDI')) {
+      const local = localStorage.getItem('apparatus_referral_code');
+      if (local) return local;
+    }
+    const prefix = (cleanU.length >= 3 ? cleanU.slice(0, 4) : cleanU).padEnd(4, 'X');
+    let hash = 5381;
+    for (let i = 0; i < cleanU.length; i++) hash = ((hash << 5) + hash) + cleanU.charCodeAt(i);
+    const suffix = Math.abs(hash).toString(36).toUpperCase().padStart(4, '0').slice(-4);
+    return 'AB-' + prefix + '-' + suffix;
+  }
+
   function extractNativeUsers() {
     const rows = document.querySelectorAll('.content-wrapper .content table.table-hover tbody tr');
     if (!rows || rows.length === 0) return null;
@@ -1399,7 +1565,7 @@ php artisan view:clear</pre>
             balance: '₹0.00',
             lastLogin: 'Recently',
             created: '2026-01-15',
-            referralCode: 'ARIX-' + username.toUpperCase().slice(0, 4) + '-' + id,
+            referralCode: computeReferralCode(username),
             totalReferrals: 0
           });
         }
@@ -1407,6 +1573,57 @@ php artisan view:clear</pre>
     });
 
     return list.length > 0 ? list : null;
+  }
+
+  function fetchRealAdminUsers(onFetched) {
+    fetch('/admin/users', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(function (res) { return res.text(); })
+      .then(function (html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const rows = doc.querySelectorAll('table.table-hover tbody tr');
+        if (rows && rows.length > 0) {
+          const list = [];
+          rows.forEach(function (tr) {
+            const tds = tr.querySelectorAll('td');
+            if (tds.length < 3) return;
+            const idLink = tds[0].querySelector('a');
+            const id = idLink ? parseInt(idLink.textContent.trim(), 10) : (parseInt(tds[0].textContent.trim(), 10) || (list.length + 1));
+            const emailLink = tds[1].querySelector('a') || tds[1];
+            const email = emailLink ? emailLink.textContent.trim() : '';
+            const name = tds[2] ? tds[2].textContent.trim() : '';
+            const username = tds[3] ? tds[3].textContent.trim() : (email.split('@')[0] || ('user_' + id));
+            const has2fa = tr.innerHTML.includes('label-success') || tr.innerHTML.toLowerCase().includes('enabled') || tr.innerHTML.toLowerCase().includes('active');
+            const serversText = tds[4] ? tds[4].textContent.trim() : '0';
+            const serversOwned = parseInt(serversText, 10) || 0;
+
+            if (email || username) {
+              list.push({
+                id: id,
+                avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(username),
+                name: name || username,
+                username: username,
+                email: email,
+                twoFactor: has2fa,
+                serversOwned: serversOwned,
+                vpsOwned: 0,
+                canAccess: 'Client Area',
+                verified: true,
+                balance: '₹0.00',
+                lastLogin: 'Recently',
+                created: '2026-01-15',
+                referralCode: computeReferralCode(username),
+                totalReferrals: 0
+              });
+            }
+          });
+          if (list.length > 0) {
+            localStorage.setItem('apparatus_admin_users_db_v2', JSON.stringify(list));
+            if (typeof onFetched === 'function') onFetched(list);
+          }
+        }
+      })
+      .catch(function () {});
   }
 
   function getAdminUsers() {
@@ -1436,7 +1653,7 @@ php artisan view:clear</pre>
           balance: (found && found.balance) || '₹0.00',
           lastLogin: (found && found.lastLogin) || 'Just now',
           created: (found && found.created) || u.created || '2026-01-15',
-          referralCode: (found && found.referralCode) || ('ARIX-' + (u.username || 'USER').toUpperCase().slice(0, 4) + '-' + u.id),
+          referralCode: computeReferralCode(u.username),
           totalReferrals: (found && found.totalReferrals !== undefined) ? found.totalReferrals : 0
         };
       });
@@ -1445,7 +1662,12 @@ php artisan view:clear</pre>
     }
 
     if (stored && Array.isArray(stored) && stored.length > 0) {
-      return stored;
+      return stored.map(function(u) {
+        if (!u.referralCode || u.referralCode.startsWith('ARIX-')) {
+          u.referralCode = computeReferralCode(u.username);
+        }
+        return u;
+      });
     }
 
     const defaultUsers = [
@@ -1463,25 +1685,25 @@ php artisan view:clear</pre>
         balance: '₹4,500.00',
         lastLogin: 'Today at 10:24 AM',
         created: '2026-01-10',
-        referralCode: 'ARIX-MUDIT-01',
+        referralCode: computeReferralCode('Mudit'),
         totalReferrals: 42
       },
       {
         id: 2,
-        avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=ServerRoot',
-        name: 'Server Admin',
-        username: 'ServerRoot',
-        email: 'admin@arixbyte.com',
+        avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=Yaduveer',
+        name: 'Yaduveer Singh',
+        username: 'Yadu',
+        email: 'yadu@arixbyte.com',
         twoFactor: true,
-        serversOwned: 8,
-        vpsOwned: 4,
-        canAccess: 'System Infrastructure',
+        serversOwned: 2,
+        vpsOwned: 1,
+        canAccess: 'Client Area + Operations',
         verified: true,
-        balance: '₹12,850.00',
-        lastLogin: 'Yesterday at 18:45',
+        balance: '₹1,200.00',
+        lastLogin: 'Today at 09:15 AM',
         created: '2026-01-12',
-        referralCode: 'ARIX-ROOT-02',
-        totalReferrals: 19
+        referralCode: computeReferralCode('Yadu'),
+        totalReferrals: 11
       },
       {
         id: 3,
@@ -1497,7 +1719,7 @@ php artisan view:clear</pre>
         balance: '₹350.00',
         lastLogin: 'Nov 14, 2026',
         created: '2026-02-01',
-        referralCode: 'ARIX-ALEX-03',
+        referralCode: computeReferralCode('alex_gamer'),
         totalReferrals: 5
       },
       {
@@ -1514,8 +1736,8 @@ php artisan view:clear</pre>
         balance: '₹0.00',
         lastLogin: 'Nov 12, 2026',
         created: '2026-02-18',
-        referralCode: 'ARIX-ROHN-04',
-        totalReferrals: 2
+        referralCode: computeReferralCode('rohan_dev'),
+        totalReferrals: 0
       },
       {
         id: 5,
@@ -1531,7 +1753,7 @@ php artisan view:clear</pre>
         balance: '₹1,200.00',
         lastLogin: 'Nov 15, 2026',
         created: '2026-03-04',
-        referralCode: 'ARIX-SARH-05',
+        referralCode: computeReferralCode('hyper_sarah'),
         totalReferrals: 11
       }
     ];
@@ -1883,6 +2105,11 @@ php artisan view:clear</pre>
 
     // Initial render
     renderTableRows('', 'all');
+
+    // Fetch and populate real Pterodactyl admin users asynchronously
+    fetchRealAdminUsers(function () {
+      renderTableRows(searchInput ? searchInput.value : '', filterSelect ? filterSelect.value : 'all');
+    });
   }
 
   // ==============================================================================
