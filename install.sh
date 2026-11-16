@@ -100,6 +100,9 @@ install_theme() {
   echo -e "  -> Downloading admin.js..."
   curl -s -L "$RAW_BASE/public/themes/apparatus/admin.js?v=$TS" -o "$ASSET_DIR/admin.js"
 
+  echo -e "  -> Downloading admin-bg.jpg..."
+  curl -s -L "$RAW_BASE/public/themes/apparatus/admin-bg.jpg?v=$TS" -o "$ASSET_DIR/admin-bg.jpg"
+
   echo -e "  -> Downloading lenis.min.js..."
   curl -s -L "$RAW_BASE/public/themes/apparatus/lenis.min.js?v=$TS" -o "$ASSET_DIR/lenis.min.js"
 

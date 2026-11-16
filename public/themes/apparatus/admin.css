@@ -1,7 +1,7 @@
 /* ==============================================================================
    APPARATUS THEME - EXECUTIVE CYBER-COMMAND CENTER (ADMIN PANEL)
-   Dedicated Pure Black Luxury Frosted Glass Architecture for Pterodactyl Admin CP
-   Matching 1:1 Homepage Glassmorphism & Minimalist Typography (Zero Capsules)
+   Dedicated Minecraft Golden Atmospheric Sunset Wallpaper + 50% Frosted Glass
+   Enhanced Sizing & Spacious Layout with Zero Capsule Text
    ============================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -11,10 +11,9 @@
   --admin-font: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --admin-mono: 'JetBrains Mono', monospace;
   --admin-bg: #000000;
-  --admin-bg-surface: #06050a;
-  --admin-card-bg: rgba(24, 16, 36, 0.5);
-  --admin-border: rgba(255, 255, 255, 0.13);
-  --admin-border-hover: rgba(236, 72, 153, 0.45);
+  --admin-card-bg: rgba(18, 12, 26, 0.5);
+  --admin-border: rgba(255, 255, 255, 0.16);
+  --admin-border-hover: rgba(236, 72, 153, 0.5);
   --admin-accent-pink: #ec4899;
   --admin-accent-purple: #c084fc;
   --admin-accent-cyan: #38bdf8;
@@ -23,28 +22,31 @@
   --admin-accent-amber: #f59e0b;
 }
 
-/* Global Reset - Pure Deep Black Background */
+/* Global Reset - Minecraft Cozy Sunset Background with 50% Opacity Glass */
 html,
 body,
 body.skin-blue,
 body.hold-transition,
 body.fixed {
   font-family: var(--admin-font) !important;
-  background: #000000 !important;
-  background-color: #000000 !important;
+  background: linear-gradient(180deg, rgba(8, 6, 12, 0.42) 0%, rgba(10, 8, 16, 0.52) 100%), url('/themes/apparatus/admin-bg.jpg') center center / cover no-repeat fixed !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  background-position: center center !important;
   color: #f1f5f9 !important;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh !important;
   margin: 0 !important;
   padding: 0 !important;
 }
 
 .wrapper {
-  background: #000000 !important;
+  background: transparent !important;
   min-height: 100vh !important;
 }
 
 /* ==============================================================================
-   1. TOP NAVBAR (HEADER)
+   1. TOP NAVBAR (HEADER) - 50% FROSTED GLASS
    ============================================================================== */
 .main-header {
   background: transparent !important;
@@ -53,12 +55,12 @@ body.fixed {
 }
 
 .main-header .navbar {
-  background: rgba(10, 8, 16, 0.8) !important;
+  background: rgba(10, 8, 16, 0.55) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border-bottom: 1px solid var(--admin-border) !important;
   margin-left: 250px !important;
-  min-height: 58px !important;
+  min-height: 60px !important;
   display: flex !important;
   align-items: center !important;
 }
@@ -71,7 +73,7 @@ body.fixed {
 
 /* Brand Logo (Top Left) */
 .main-header .logo {
-  background: rgba(10, 8, 16, 0.8) !important;
+  background: rgba(10, 8, 16, 0.55) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border-bottom: 1px solid var(--admin-border) !important;
@@ -81,8 +83,8 @@ body.fixed {
   font-weight: 700 !important;
   letter-spacing: -0.01em !important;
   font-size: 1.15rem !important;
-  height: 58px !important;
-  line-height: 58px !important;
+  height: 60px !important;
+  line-height: 60px !important;
   padding: 0 1.5rem !important;
   width: 250px !important;
   display: flex !important;
@@ -92,21 +94,21 @@ body.fixed {
 }
 
 .apparatus-admin-logo-img {
-  height: 24px;
+  height: 26px;
   width: auto;
   object-fit: contain;
 }
 
 /* Sidebar Hamburger Toggle */
 .main-header .sidebar-toggle {
-  color: #94a3b8 !important;
-  line-height: 58px !important;
+  color: #cbd5e1 !important;
+  line-height: 60px !important;
   padding: 0 1.25rem !important;
   transition: all 0.2s ease !important;
 }
 
 .main-header .sidebar-toggle:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   color: #ffffff !important;
 }
 
@@ -120,17 +122,17 @@ body.fixed {
 
 .main-header .navbar-nav > li > a {
   color: #cbd5e1 !important;
-  padding: 1rem 1rem !important;
+  padding: 1.1rem 1.1rem !important;
   display: flex !important;
   align-items: center !important;
   gap: 0.5rem !important;
-  font-size: 0.9rem !important;
+  font-size: 0.94rem !important;
   font-weight: 600 !important;
   transition: all 0.2s ease !important;
 }
 
 .main-header .navbar-nav > li > a:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   color: #ffffff !important;
 }
 
@@ -139,13 +141,13 @@ body.fixed {
   display: inline-flex !important;
   align-items: center !important;
   gap: 0.5rem !important;
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 10px !important;
-  padding: 0.45rem 0.95rem !important;
-  color: #cbd5e1 !important;
-  font-size: 0.84rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 12px !important;
+  padding: 0.55rem 1.1rem !important;
+  color: #ffffff !important;
+  font-size: 0.88rem !important;
   font-weight: 600 !important;
   margin-right: 1.25rem !important;
   text-decoration: none !important;
@@ -153,77 +155,77 @@ body.fixed {
 }
 
 .apparatus-admin-client-btn:hover {
-  background: rgba(236, 72, 153, 0.15) !important;
-  border-color: rgba(236, 72, 153, 0.45) !important;
+  background: rgba(236, 72, 153, 0.2) !important;
+  border-color: rgba(236, 72, 153, 0.5) !important;
   color: #ffffff !important;
   text-decoration: none !important;
 }
 
 /* ==============================================================================
-   2. MAIN SIDEBAR NAVIGATION (LEFT)
+   2. MAIN SIDEBAR NAVIGATION (LEFT) - 50% FROSTED GLASS & ENHANCED SIZING
    ============================================================================== */
 .main-sidebar {
-  background: rgba(8, 6, 12, 0.85) !important;
+  background: rgba(10, 8, 16, 0.55) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border-right: 1px solid var(--admin-border) !important;
   width: 250px !important;
-  padding-top: 58px !important;
+  padding-top: 60px !important;
 }
 
 .sidebar {
-  padding-bottom: 2rem !important;
+  padding-bottom: 2.5rem !important;
 }
 
 /* Category Headers */
 .sidebar-menu > li.header {
   background: transparent !important;
-  color: rgba(255, 255, 255, 0.4) !important;
-  font-size: 0.68rem !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  font-size: 0.72rem !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.12em !important;
-  padding: 1.25rem 1.25rem 0.45rem 1.25rem !important;
+  padding: 1.4rem 1.4rem 0.5rem 1.4rem !important;
   margin-top: 0.35rem !important;
 }
 
-/* Navigation Items */
+/* Navigation Items (Enhanced Size & Padding) */
 .sidebar-menu > li > a {
-  font-size: 0.88rem !important;
+  font-size: 0.94rem !important;
   font-weight: 500 !important;
-  color: #94a3b8 !important;
-  padding: 0.65rem 1rem !important;
-  margin: 0.18rem 0.75rem !important;
+  color: #cbd5e1 !important;
+  padding: 0.75rem 1.15rem !important;
+  margin: 0.22rem 0.85rem !important;
   border-radius: 12px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.75rem !important;
+  gap: 0.85rem !important;
   border: 1px solid transparent !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .sidebar-menu > li > a i {
-  font-size: 1.15rem !important;
-  color: #64748b !important;
+  font-size: 1.25rem !important;
+  color: #94a3b8 !important;
   transition: all 0.2s ease !important;
 }
 
 .sidebar-menu > li > a:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
 .sidebar-menu > li > a:hover i {
   color: #ffffff !important;
 }
 
-/* Active Navigation Item (Luminous Pink/Purple Accent like Homepage) */
+/* Active Navigation Item (Luminous Pink Accent) */
 .sidebar-menu > li.active > a {
-  background: rgba(236, 72, 153, 0.14) !important;
+  background: rgba(236, 72, 153, 0.18) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(236, 72, 153, 0.38) !important;
-  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.15) !important;
+  border: 1px solid rgba(236, 72, 153, 0.45) !important;
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.2) !important;
   font-weight: 700 !important;
 }
 
@@ -249,7 +251,6 @@ body.fixed {
   pointer-events: none !important;
 }
 
-/* Convert table .label badges to clean unboxed status text */
 .label {
   background: transparent !important;
   border: none !important;
@@ -257,7 +258,7 @@ body.fixed {
   box-shadow: none !important;
   padding: 0 !important;
   margin: 0 !important;
-  font-size: 0.85rem !important;
+  font-size: 0.88rem !important;
   font-weight: 600 !important;
   letter-spacing: normal !important;
   text-transform: none !important;
@@ -284,23 +285,23 @@ body.fixed {
 }
 
 /* ==============================================================================
-   4. CONTENT WRAPPER & PAGE HEADERS
+   4. CONTENT WRAPPER & PAGE HEADERS (ENHANCED SIZING)
    ============================================================================== */
 .content-wrapper {
-  background: #000000 !important;
-  background-color: #000000 !important;
-  min-height: calc(100vh - 58px) !important;
-  padding-bottom: 3.5rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  min-height: calc(100vh - 60px) !important;
+  padding-bottom: 4rem !important;
   box-sizing: border-box !important;
 }
 
 .content-header {
-  padding: 2rem 2rem 1.25rem 2rem !important;
+  padding: 2.25rem 2.25rem 1.5rem 2.25rem !important;
 }
 
 .content-header > h1 {
   font-family: var(--admin-font) !important;
-  font-size: 1.65rem !important;
+  font-size: 1.85rem !important;
   font-weight: 800 !important;
   letter-spacing: -0.02em !important;
   color: #ffffff !important;
@@ -309,22 +310,22 @@ body.fixed {
 
 .content-header > h1 > small {
   font-family: var(--admin-font) !important;
-  font-size: 0.92rem !important;
+  font-size: 1rem !important;
   font-weight: 400 !important;
-  color: #94a3b8 !important;
-  margin-left: 0.75rem !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  margin-left: 0.85rem !important;
 }
 
 .content-header > .breadcrumb {
   background: transparent !important;
   padding: 0 !important;
-  top: 2.25rem !important;
-  right: 2rem !important;
-  font-size: 0.82rem !important;
+  top: 2.5rem !important;
+  right: 2.25rem !important;
+  font-size: 0.88rem !important;
 }
 
 .content-header > .breadcrumb > li > a {
-  color: #94a3b8 !important;
+  color: #cbd5e1 !important;
 }
 
 .content-header > .breadcrumb > li > a:hover {
@@ -333,15 +334,15 @@ body.fixed {
 
 .content-header > .breadcrumb > .active {
   color: var(--admin-accent-pink) !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
 }
 
 .content {
-  padding: 0 2rem 2.5rem 2rem !important;
+  padding: 0 2.25rem 3rem 2.25rem !important;
 }
 
 /* ==============================================================================
-   5. FROSTED GLASS CARDS & BOXES (EXACT HOMEPAGE GLASS TYPE)
+   5. FROSTED GLASS CARDS & BOXES (50% OPACITY LUXURY GLASS & GENEROUS SIZE)
    ============================================================================== */
 .box,
 .box.box-primary,
@@ -350,54 +351,105 @@ body.fixed {
 .box.box-warning,
 .box.box-danger,
 .box.box-solid,
-.apparatus-admin-telemetry-tile {
-  background: rgba(24, 16, 36, 0.5) !important;
+.apparatus-admin-telemetry-tile,
+.nav-tabs-custom {
+  background: rgba(18, 12, 26, 0.5) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.15) !important;
-  margin-bottom: 1.75rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.2) !important;
+  margin-bottom: 2rem !important;
   overflow: hidden !important;
   transition: all 0.25s ease !important;
 }
 
 .box:hover,
-.apparatus-admin-telemetry-tile:hover {
-  border-color: rgba(236, 72, 153, 0.45) !important;
-  box-shadow: 0 20px 48px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.25) !important;
+.apparatus-admin-telemetry-tile:hover,
+.nav-tabs-custom:hover {
+  border-color: rgba(236, 72, 153, 0.5) !important;
+  box-shadow: 0 20px 48px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.3) !important;
 }
 
 .box-header {
   background: transparent !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  padding: 1.25rem 1.5rem !important;
+  padding: 1.5rem 1.75rem !important;
 }
 
 .box-header .box-title {
   font-family: var(--admin-font) !important;
-  font-size: 1.15rem !important;
+  font-size: 1.25rem !important;
   font-weight: 700 !important;
   letter-spacing: -0.01em !important;
   color: #ffffff !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.5rem !important;
+  gap: 0.6rem !important;
 }
 
 .box-body {
-  padding: 1.5rem !important;
+  padding: 1.85rem !important;
   color: #cbd5e1 !important;
 }
 
 .box-footer {
   background: rgba(255, 255, 255, 0.02) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-  padding: 1rem 1.5rem !important;
+  padding: 1.25rem 1.75rem !important;
+}
+
+/* Nav Tabs on /admin/settings (General, Mail, Advanced) */
+.nav-tabs-custom {
+  box-shadow: none !important;
+}
+
+.nav-tabs-custom > .nav-tabs {
+  background: rgba(12, 8, 18, 0.5) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-top-right-radius: 18px !important;
+  border-top-left-radius: 18px !important;
+  padding: 0.5rem 1rem 0 1rem !important;
+}
+
+.nav-tabs-custom > .nav-tabs > li {
+  margin-bottom: 0 !important;
+  margin-right: 0.5rem !important;
+}
+
+.nav-tabs-custom > .nav-tabs > li > a {
+  border-radius: 10px 10px 0 0 !important;
+  font-family: var(--admin-font) !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #94a3b8 !important;
+  padding: 0.85rem 1.5rem !important;
+  border: 1px solid transparent !important;
+  border-bottom: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active > a,
+.nav-tabs-custom > .nav-tabs > li > a:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active > a {
+  background: rgba(236, 72, 153, 0.18) !important;
+  border-color: rgba(236, 72, 153, 0.45) !important;
+  color: #ffffff !important;
+}
+
+.nav-tabs-custom > .tab-content {
+  background: transparent !important;
+  padding: 1.85rem !important;
 }
 
 /* ==============================================================================
-   6. FROSTED GLASS INPUTS & FORM CONTROLS (NO BLACK BOXES)
+   6. FROSTED GLASS INPUTS & FORM CONTROLS (SPACIOUS & LEGIBLE)
    ============================================================================== */
 .form-control,
 input[type="text"],
@@ -406,14 +458,14 @@ input[type="password"],
 input[type="number"],
 select.form-control,
 textarea.form-control {
-  background: rgba(255, 255, 255, 0.06) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 12px !important;
   color: #ffffff !important;
   font-family: var(--admin-font) !important;
-  font-size: 0.9rem !important;
-  height: 44px !important;
-  padding: 0.5rem 1rem !important;
+  font-size: 0.96rem !important;
+  height: 48px !important;
+  padding: 0.65rem 1.15rem !important;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2) !important;
   transition: all 0.2s ease !important;
 }
@@ -426,72 +478,118 @@ textarea.form-control {
 input:focus,
 select:focus,
 textarea:focus {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(236, 72, 153, 0.7) !important;
-  box-shadow: 0 0 16px rgba(236, 72, 153, 0.3) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(236, 72, 153, 0.75) !important;
+  box-shadow: 0 0 18px rgba(236, 72, 153, 0.35) !important;
   color: #ffffff !important;
   outline: none !important;
 }
 
 label {
-  font-size: 0.78rem !important;
+  font-size: 0.82rem !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.06em !important;
-  color: #94a3b8 !important;
-  margin-bottom: 0.45rem !important;
+  color: #cbd5e1 !important;
+  margin-bottom: 0.55rem !important;
+  display: block !important;
+}
+
+p.text-muted,
+.help-block {
+  font-size: 0.85rem !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  margin-top: 0.55rem !important;
+  line-height: 1.5 !important;
 }
 
 .input-group-addon {
-  background: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 10px !important;
-  color: #94a3b8 !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 12px !important;
+  color: #cbd5e1 !important;
   font-family: var(--admin-font) !important;
 }
 
 /* ==============================================================================
-   7. BUTTONS (CLEAN ROUNDED RECTANGLES, ZERO CAPSULES!)
+   7. BUTTON GROUPS & BUTTONS (ZERO CAPSULES, ENHANCED SIZE)
    ============================================================================== */
+.btn-group {
+  display: inline-flex !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px !important;
+  padding: 4px !important;
+  gap: 4px !important;
+}
+
+.btn-group > .btn {
+  border-radius: 8px !important;
+  font-family: var(--admin-font) !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
+  padding: 0.65rem 1.35rem !important;
+  border: none !important;
+  background: transparent !important;
+  color: #94a3b8 !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-group > .btn.active,
+.btn-group > .btn:hover {
+  background: linear-gradient(135deg, #ec4899, #db2777) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35) !important;
+}
+
 .btn {
   font-family: var(--admin-font) !important;
-  border-radius: 10px !important;
+  border-radius: 12px !important;
   font-weight: 600 !important;
   letter-spacing: 0.01em !important;
-  padding: 0.6rem 1.25rem !important;
+  padding: 0.65rem 1.4rem !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   border: 1px solid transparent !important;
 }
 
 .btn-xs {
-  padding: 0.3rem 0.65rem !important;
-  font-size: 0.76rem !important;
+  padding: 0.35rem 0.75rem !important;
+  font-size: 0.8rem !important;
   border-radius: 8px !important;
 }
 
-.btn-primary {
+.btn-primary,
+.box-footer .btn-primary,
+.box-footer button[type="submit"] {
   background: linear-gradient(135deg, #ec4899, #db2777) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.35) !important;
+  box-shadow: 0 4px 18px rgba(236, 72, 153, 0.4) !important;
+  border-radius: 12px !important;
+  height: 46px !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+.box-footer .btn-primary:hover,
+.box-footer button[type="submit"]:hover {
   background: linear-gradient(135deg, #f472b6, #ec4899) !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.45) !important;
+  box-shadow: 0 6px 24px rgba(236, 72, 153, 0.5) !important;
 }
 
 .btn-default {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  color: #cbd5e1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
 }
 
 .btn-default:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
   color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
 }
 
 .btn-success {
@@ -504,21 +602,21 @@ label {
   color: #ffffff !important;
 }
 
-/* 4 Default Admin Overview Action Buttons (Clean Rounded Rectangles) */
+/* 4 Default Admin Overview Action Buttons */
 .col-xs-6.col-sm-3 > a > .btn,
 .content .row .btn-warning,
 .content .row .btn-primary,
 .content .row .btn-info,
 .content .row .btn-success {
-  border-radius: 12px !important;
-  height: 46px !important;
+  border-radius: 14px !important;
+  height: 48px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 0.92rem !important;
+  font-size: 0.95rem !important;
   font-weight: 600 !important;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
 }
 
 /* ==============================================================================
@@ -536,31 +634,31 @@ table.table {
 }
 
 table.table > thead > tr > th {
-  background: rgba(255, 255, 255, 0.03) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-top: none !important;
   color: #94a3b8 !important;
-  font-size: 0.76rem !important;
+  font-size: 0.8rem !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.06em !important;
-  padding: 1rem !important;
+  padding: 1.1rem !important;
 }
 
 table.table > tbody > tr > td {
   border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
-  padding: 1rem !important;
+  padding: 1.1rem !important;
   color: #cbd5e1 !important;
   vertical-align: middle !important;
-  font-size: 0.88rem !important;
+  font-size: 0.92rem !important;
 }
 
 table.table-hover > tbody > tr:hover > td {
-  background: rgba(255, 255, 255, 0.04) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
 }
 
 /* ==============================================================================
-   9. TELEMETRY & STUDIO VIEWS
+   9. TELEMETRY & STUDIO VIEWS (GENEROUS PADDING & 50% GLASS)
    ============================================================================== */
 .apparatus-admin-view {
   animation: adminViewEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -574,19 +672,19 @@ table.table-hover > tbody > tr:hover > td {
 .apparatus-admin-grid-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
 .apparatus-admin-grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
 .apparatus-admin-grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 @media (max-width: 1024px) {
@@ -597,9 +695,8 @@ table.table-hover > tbody > tr:hover > td {
   }
 }
 
-/* Telemetry Metric Tile */
 .apparatus-admin-telemetry-tile {
-  padding: 1.4rem 1.5rem !important;
+  padding: 1.6rem 1.75rem !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
@@ -607,34 +704,34 @@ table.table-hover > tbody > tr:hover > td {
 }
 
 .apparatus-telemetry-meta h4 {
-  font-size: 0.75rem !important;
+  font-size: 0.78rem !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.08em !important;
-  color: #94a3b8 !important;
-  margin: 0 0 0.35rem 0 !important;
+  color: #cbd5e1 !important;
+  margin: 0 0 0.4rem 0 !important;
 }
 
 .apparatus-telemetry-val {
-  font-size: 1.65rem !important;
+  font-size: 1.75rem !important;
   font-weight: 800 !important;
   color: #ffffff !important;
   letter-spacing: -0.02em !important;
 }
 
 .apparatus-telemetry-icon-clean {
-  font-size: 2rem !important;
-  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 2.2rem !important;
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
 /* Progress Bars */
 .apparatus-progress {
   width: 100%;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.08);
+  height: 9px;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 999px;
   overflow: hidden;
-  margin: 0.5rem 0;
+  margin: 0.6rem 0;
 }
 
 .apparatus-progress-bar {
@@ -673,7 +770,7 @@ table.table-hover > tbody > tr:hover > td {
   position: absolute;
   cursor: pointer;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.2);
   transition: 0.25s;
   border-radius: 24px;
 }
@@ -700,11 +797,12 @@ table.table-hover > tbody > tr:hover > td {
 
 /* Footer */
 .main-footer {
-  background: #000000 !important;
+  background: rgba(10, 8, 16, 0.55) !important;
+  backdrop-filter: blur(24px) !important;
   border-top: 1px solid var(--admin-border) !important;
-  color: #64748b !important;
-  padding: 1rem 2rem !important;
-  font-size: 0.8rem !important;
+  color: #cbd5e1 !important;
+  padding: 1.25rem 2.25rem !important;
+  font-size: 0.85rem !important;
   margin-left: 250px !important;
   display: flex !important;
   align-items: center !important;
