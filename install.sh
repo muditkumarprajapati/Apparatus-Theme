@@ -145,13 +145,12 @@ target_file = sys.argv[1]
 try:
     with open(target_file, "r") as fp:
         c = fp.read()
-    for route in ["'\''register'\''", "'\''auth/register'\''", "'\''auth/mail/*'\''", "'\''auth/referral/*'\''", "'\''auth/user-points'\''"]:
-        clean = route.replace("'\''", "")
-        if clean not in c:
-            pattern = r"(protected\s+\$except\s*=\s*\[)"
-            c = re.sub(pattern, r"\1\n        " + route + ",", c, count=1)
-    with open(target_file, "w") as fp:
-        fp.write(c)
+    if "auth/register" not in c:
+        pattern = r"protected\s+\$except\s*=\s*\["
+        replacement = "protected $except = [\n        '\''register\'',\n        '\''auth/register\'',\n        '\''auth/mail/*\'',\n        '\''auth/referral/*\'',\n        '\''auth/user-points\'',"
+        c = re.sub(pattern, replacement, c, count=1)
+        with open(target_file, "w") as fp:
+            fp.write(c)
 except Exception:
     pass
 ' "$CSRF_FILE" 2>/dev/null || true
@@ -340,6 +339,8 @@ if '</head>' in content:
   php artisan view:clear --no-interaction 2>/dev/null || true
   php artisan cache:clear --no-interaction 2>/dev/null || true
   php artisan config:clear --no-interaction 2>/dev/null || true
+  systemctl restart pteroq 2>/dev/null || true
+  systemctl reload nginx 2>/dev/null || nginx -s reload 2>/dev/null || true
 
   echo -e "\n${GREEN}========================================================================${NC}"
   echo -e "${GREEN}✓ APPARATUS THEME SUCCESSFULLY INSTALLED!${NC}"

@@ -2681,10 +2681,10 @@
     storeView.style.display = 'none';
 
     storeView.innerHTML = `
-      <div class="apparatus-dashboard-container">
+      <div class="apparatus-dashboard-container" style="padding-top: 1.75rem;">
         
-        <!-- Top Store Header -->
-        <div class="apparatus-card apparatus-resource-header-card" style="margin-bottom: 1.5rem;">
+        <!-- Top Store Header (with generous spacing & removed capsule) -->
+        <div class="apparatus-card apparatus-resource-header-card" style="margin-bottom: 2rem;">
           <div class="apparatus-resource-header-left">
             <div class="apparatus-resource-breadcrumbs">
               <a href="/" class="apparatus-breadcrumb-link" id="apparatus-store-back-btn">
@@ -2702,115 +2702,29 @@
           </div>
 
           <div class="apparatus-resource-header-right">
-            <span style="font-size: 0.8rem; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); padding: 0.4rem 0.85rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.45rem;">
-              <i class="ri-shield-flash-line"></i> Instant Provisioning Active
-            </span>
+            <a href="/" class="apparatus-btn apparatus-btn-glass" id="apparatus-store-back-btn-2">
+              <i class="ri-dashboard-line"></i> Back to Dashboard
+            </a>
           </div>
         </div>
 
-        <!-- Store Catalog Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
-          
-          <!-- Card 1: RAM Expansion -->
-          <div class="apparatus-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px; background: rgba(22, 14, 34, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);">
-            <div>
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem;">
-                <div style="width: 44px; height: 44px; border-radius: 8px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; color: #38bdf8;">
-                  <i class="ri-cpu-line"></i>
-                </div>
-                <span style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.18); padding: 0.2rem 0.55rem; border-radius: 6px;">RAM BOOST</span>
-              </div>
-              <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 0.45rem 0;">+2 GB DDR5 RAM</h3>
-              <p style="font-size: 0.86rem; color: rgba(255, 255, 255, 0.65); line-height: 1.5; margin: 0 0 1.2rem 0;">
-                High-frequency server memory boost for large modpacks, Paper/Purpur plugins, and proxy instances.
-              </p>
-            </div>
-            <div>
-              <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 0.85rem;">
-                <span style="font-size: 1.3rem; font-weight: 800; color: #fbbf24;">500 Pts</span>
-                <span style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.45);">or ₹149/mo</span>
-              </div>
-              <a href="https://discord.gg/arixbyte" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%; text-align: center; padding: 0.65rem 1rem; border-radius: 8px; background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.35); color: #f472b6; font-weight: 700; font-size: 0.88rem; text-decoration: none; box-sizing: border-box; transition: background 0.2s;">
-                <i class="ri-shopping-cart-line"></i> Order via Points / Support
-              </a>
-            </div>
+        <!-- Store Catalog: Adding Soon State -->
+        <div class="apparatus-card" style="padding: 3.5rem 2rem; text-align: center; border-radius: 16px; background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.08), transparent 70%), rgba(22, 14, 34, 0.55); border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 2rem;">
+          <div style="width: 64px; height: 64px; margin: 0 auto 1.25rem auto; border-radius: 14px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #38bdf8;">
+            <i class="ri-store-2-line"></i>
           </div>
-
-          <!-- Card 2: vCPU Expansion -->
-          <div class="apparatus-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px; background: rgba(22, 14, 34, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);">
-            <div>
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem;">
-                <div style="width: 44px; height: 44px; border-radius: 8px; background: rgba(244, 114, 182, 0.08); border: 1px solid rgba(244, 114, 182, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; color: #f472b6;">
-                  <i class="ri-speed-line"></i>
-                </div>
-                <span style="font-size: 0.75rem; font-weight: 700; color: #f472b6; background: rgba(244, 114, 182, 0.08); border: 1px solid rgba(244, 114, 182, 0.18); padding: 0.2rem 0.55rem; border-radius: 6px;">COMPUTE</span>
-              </div>
-              <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 0.45rem 0;">+100% vCPU Core</h3>
-              <p style="font-size: 0.86rem; color: rgba(255, 255, 255, 0.65); line-height: 1.5; margin: 0 0 1.2rem 0;">
-                Dedicated AMD Ryzen 9 7950X compute thread for zero tick-drop and high entity simulations.
-              </p>
-            </div>
-            <div>
-              <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 0.85rem;">
-                <span style="font-size: 1.3rem; font-weight: 800; color: #fbbf24;">800 Pts</span>
-                <span style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.45);">or ₹249/mo</span>
-              </div>
-              <a href="https://discord.gg/arixbyte" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%; text-align: center; padding: 0.65rem 1rem; border-radius: 8px; background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.35); color: #f472b6; font-weight: 700; font-size: 0.88rem; text-decoration: none; box-sizing: border-box; transition: background 0.2s;">
-                <i class="ri-shopping-cart-line"></i> Order via Points / Support
-              </a>
-            </div>
+          <h2 style="font-size: 1.6rem; font-weight: 800; color: #ffffff; margin: 0 0 0.5rem 0;">Adding Soon</h2>
+          <p style="font-size: 0.95rem; color: rgba(255, 255, 255, 0.65); max-width: 520px; margin: 0 auto 1.5rem auto; line-height: 1.6;">
+            We are configuring direct automated add-ons, RAM &amp; CPU upgrades, instant UPI payments, and storage expansions. Stay tuned!
+          </p>
+          <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <a href="/" class="apparatus-btn apparatus-btn-glass" id="apparatus-store-empty-dash-btn" style="padding: 0.7rem 1.4rem; border-radius: 10px; font-weight: 600; text-decoration: none; color: #ffffff;">
+              <i class="ri-dashboard-line"></i> Back to Dashboard
+            </a>
+            <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary" style="padding: 0.7rem 1.4rem; border-radius: 10px; font-weight: 600; text-decoration: none;">
+              <i class="ri-discord-fill"></i> Contact Support / Discord
+            </a>
           </div>
-
-          <!-- Card 3: NVMe Storage -->
-          <div class="apparatus-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px; background: rgba(22, 14, 34, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);">
-            <div>
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem;">
-                <div style="width: 44px; height: 44px; border-radius: 8px; background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; color: #34d399;">
-                  <i class="ri-hard-drive-2-line"></i>
-                </div>
-                <span style="font-size: 0.75rem; font-weight: 700; color: #34d399; background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.18); padding: 0.2rem 0.55rem; border-radius: 6px;">STORAGE</span>
-              </div>
-              <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 0.45rem 0;">+25 GB Gen4 NVMe</h3>
-              <p style="font-size: 0.86rem; color: rgba(255, 255, 255, 0.65); line-height: 1.5; margin: 0 0 1.2rem 0;">
-                Enterprise Gen4 NVMe SSD disk expansion with over 7,000 MB/s transfer speeds for world files.
-              </p>
-            </div>
-            <div>
-              <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 0.85rem;">
-                <span style="font-size: 1.3rem; font-weight: 800; color: #fbbf24;">300 Pts</span>
-                <span style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.45);">or ₹99/mo</span>
-              </div>
-              <a href="https://discord.gg/arixbyte" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%; text-align: center; padding: 0.65rem 1rem; border-radius: 8px; background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.35); color: #f472b6; font-weight: 700; font-size: 0.88rem; text-decoration: none; box-sizing: border-box; transition: background 0.2s;">
-                <i class="ri-shopping-cart-line"></i> Order via Points / Support
-              </a>
-            </div>
-          </div>
-
-          <!-- Card 4: Backup Slots -->
-          <div class="apparatus-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px; background: rgba(22, 14, 34, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);">
-            <div>
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem;">
-                <div style="width: 44px; height: 44px; border-radius: 8px; background: rgba(167, 139, 250, 0.08); border: 1px solid rgba(167, 139, 250, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; color: #a78bfa;">
-                  <i class="ri-shield-check-line"></i>
-                </div>
-                <span style="font-size: 0.75rem; font-weight: 700; color: #a78bfa; background: rgba(167, 139, 250, 0.08); border: 1px solid rgba(167, 139, 250, 0.18); padding: 0.2rem 0.55rem; border-radius: 6px;">SAFETY</span>
-              </div>
-              <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 0.45rem 0;">+3 Backup Slots</h3>
-              <p style="font-size: 0.86rem; color: rgba(255, 255, 255, 0.65); line-height: 1.5; margin: 0 0 1.2rem 0;">
-                Off-site encrypted daily snapshot retention slots with one-click rollback and disaster recovery.
-              </p>
-            </div>
-            <div>
-              <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 0.85rem;">
-                <span style="font-size: 1.3rem; font-weight: 800; color: #fbbf24;">200 Pts</span>
-                <span style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.45);">or ₹69/mo</span>
-              </div>
-              <a href="https://discord.gg/arixbyte" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%; text-align: center; padding: 0.65rem 1rem; border-radius: 8px; background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.35); color: #f472b6; font-weight: 700; font-size: 0.88rem; text-decoration: none; box-sizing: border-box; transition: background 0.2s;">
-                <i class="ri-shopping-cart-line"></i> Order via Points / Support
-              </a>
-            </div>
-          </div>
-
         </div>
 
         <!-- Bottom Actions & Support Bar -->
@@ -2828,7 +2742,7 @@
             <a href="/" class="apparatus-btn" id="apparatus-store-home-btn" style="padding: 0.6rem 1.25rem; border-radius: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); color: #ffffff; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.45rem;">
               <i class="ri-arrow-left-line"></i> Back to Dashboard
             </a>
-            <a href="https://discord.gg/arixbyte" target="_blank" rel="noopener noreferrer" class="apparatus-btn" style="padding: 0.6rem 1.25rem; border-radius: 8px; background: rgba(88, 101, 242, 0.18); border: 1px solid rgba(88, 101, 242, 0.35); color: #c7d2fe; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.45rem;">
+            <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn" style="padding: 0.6rem 1.25rem; border-radius: 8px; background: rgba(88, 101, 242, 0.18); border: 1px solid rgba(88, 101, 242, 0.35); color: #c7d2fe; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.45rem;">
               <i class="ri-discord-line"></i> Contact Support / Discord
             </a>
           </div>
@@ -6123,40 +6037,29 @@
     const rawPath = window.location.pathname || '';
     if (rawPath !== '/account' && rawPath !== '/account/') return null;
 
-    let pwInput = document.querySelector('input[type="password"]');
-    let gridContainer = null;
-    let pageContainer = null;
+    let gridContainer = document.querySelector('div.md\\:grid') ||
+      document.querySelector('div[class*="md:grid"]') ||
+      document.querySelector('.sc-12to0iy-1') ||
+      document.querySelector('div[class*="AccountOverviewContainer"] div[class*="grid"]') ||
+      document.querySelector('div[class*="AccountOverviewContainer"] > div');
 
-    if (pwInput) {
-      const form = pwInput.closest('form');
-      if (form && form.parentElement) {
-        gridContainer = form.parentElement.parentElement;
-        if (gridContainer) pageContainer = gridContainer.parentElement;
+    if (!gridContainer) {
+      const pwInput = document.querySelector('input[type="password"]');
+      if (pwInput) {
+        const form = pwInput.closest('form');
+        if (form && form.parentElement) {
+          gridContainer = form.parentElement;
+        }
       }
     }
 
-    if (!gridContainer) {
-      gridContainer = document.querySelector('.sc-12to0iy-1') ||
-        document.querySelector('div.md\\:grid') ||
-        document.querySelector('div[class*="AccountOverviewContainer"] > div');
-      if (gridContainer) pageContainer = gridContainer.parentElement;
-    }
+    if (!gridContainer) return null;
 
-    if (!pageContainer) {
-      pageContainer = document.querySelector('div[class*="PageContentBlock"] > div') ||
-        document.querySelector('div[class*="PageContentBlock"]') ||
-        document.querySelector('div[class*="AccountOverviewContainer"]');
-    }
-
-    if (!gridContainer && pageContainer) {
-      gridContainer = pageContainer.querySelector('div.md\\:grid, .sc-12to0iy-1, div[class*="grid"]');
-    }
-
-    if (!gridContainer && !pageContainer) return null;
+    const pageContainer = gridContainer.parentElement;
 
     return {
       gridContainer: gridContainer,
-      pageContainer: pageContainer || (gridContainer ? gridContainer.parentElement : null)
+      pageContainer: pageContainer
     };
   }
 
@@ -6369,19 +6272,6 @@
       </div>
     `;
 
-    // Mount section right above gridContainer in pageContainer
-    if (els.gridContainer && els.gridContainer.parentElement) {
-      if (section.parentElement !== els.gridContainer.parentElement || section.nextSibling !== els.gridContainer) {
-        els.gridContainer.parentElement.insertBefore(section, els.gridContainer);
-      }
-    } else if (els.pageContainer) {
-      if (section.parentElement !== els.pageContainer) {
-        els.pageContainer.prepend(section);
-      }
-    }
-
-    normalizeAccountCards();
-
     // Wire up Avatar Preview, Presets, and Local File Upload
     const avatarImg = section.querySelector('#apparatus-prof-avatar-img');
     const avatarUrlInput = section.querySelector('#apparatus-prof-avatar-url');
@@ -6536,8 +6426,23 @@
         openEnterCodeModal();
       });
     }
+  }
+
+  // Mount section right above gridContainer in pageContainer (guaranteed on every route sync)
+  const targetParent = els.pageContainer || (els.gridContainer ? els.gridContainer.parentElement : null);
+  if (targetParent && els.gridContainer) {
+    if (section.parentElement !== targetParent || section.nextSibling !== els.gridContainer) {
+      targetParent.insertBefore(section, els.gridContainer);
+    }
+  } else if (els.pageContainer) {
+    if (section.parentElement !== els.pageContainer) {
+      els.pageContainer.prepend(section);
     }
   }
+  section.style.setProperty('display', 'block', 'important');
+
+  normalizeAccountCards();
+}
 
   // ==============================================================================
   // Account Overview Cards Alignment & Flush 100% Width Normalization
@@ -6568,6 +6473,7 @@
       child.style.setProperty('flex-direction', 'column', 'important');
       child.style.setProperty('width', '100%', 'important');
       child.style.setProperty('max-width', '100%', 'important');
+      child.style.setProperty('grid-column', '1 / -1', 'important');
       child.style.setProperty('margin-left', '0', 'important');
       child.style.setProperty('margin-right', '0', 'important');
       child.style.setProperty('margin-top', '0', 'important');

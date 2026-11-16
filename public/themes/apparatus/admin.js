@@ -861,7 +861,7 @@ ${formatMailBody(currentTpl.body)}
   // 5. GLOBAL ANNOUNCEMENTS VIEW (ZERO CAPSULES)
   // ==============================================================================
   function renderAnnouncementsView(container) {
-    const saved = JSON.parse(localStorage.getItem('apparatus_admin_announcement') || '{"enabled":true,"type":"info","title":"Scheduled Maintenance Notice","msg":"Frankfurt node maintenance will take place Sunday at 02:00 UTC. Instances will experience under 60 seconds of reboot latency.","url":"https://discord.gg/arixbyte","btnText":"Check Status"}');
+    const saved = JSON.parse(localStorage.getItem('apparatus_admin_announcement') || '{"enabled":true,"type":"info","title":"Scheduled Maintenance Notice","msg":"Frankfurt node maintenance will take place Sunday at 02:00 UTC. Instances will experience under 60 seconds of reboot latency.","url":"https://discord.arixbyte.com","btnText":"Check Status"}');
 
     container.className = 'apparatus-admin-view';
     container.innerHTML = `
