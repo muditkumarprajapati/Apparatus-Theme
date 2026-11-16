@@ -7805,7 +7805,14 @@
             });
           }
 
-          const data = await resp.json().catch(function () { return {}; });
+          let respText = '';
+          let data = {};
+          try {
+            respText = await resp.text();
+            data = JSON.parse(respText);
+          } catch (jsonErr) {
+            data = {};
+          }
 
           const isSuccessful = resp.ok || (data && data.success);
           if (isSuccessful) {
@@ -7846,6 +7853,10 @@
             errorDetail = data.errors[0].detail;
           } else if (data && data.message) {
             errorDetail = data.message;
+          } else if (respText && !respText.startsWith('<')) {
+            errorDetail = respText.slice(0, 150);
+          } else {
+            errorDetail = 'Server returned HTTP ' + resp.status + (resp.statusText ? ' (' + resp.statusText + ')' : '');
           }
 
           regBtn.disabled = false;
