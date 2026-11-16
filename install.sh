@@ -210,16 +210,6 @@ Route::post('/auth/mail/verify-code', 'Auth\RegisterController@sendVerificationC
 EOF
   fi
 
-// Apparatus Self-Registration Routes (Base Web)
-Route::get('/register', 'Auth\RegisterController@index');
-Route::post('/register', 'Auth\RegisterController@register');
-Route::get('/auth/register', 'Auth\RegisterController@index');
-Route::post('/auth/register', 'Auth\RegisterController@register');
-Route::post('/auth/mail/test', 'Auth\RegisterController@sendTestMail');
-Route::post('/auth/mail/verify-code', 'Auth\RegisterController@sendVerificationCode');
-EOF
-  fi
-
   # Deploy custom 403 Hacking Attempt error page for /admin access denial
   ERR_403_DIR="$PTERO_DIR/resources/views/errors"
   ERR_403_FILE="$ERR_403_DIR/403.blade.php"
