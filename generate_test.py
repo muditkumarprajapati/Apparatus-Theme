@@ -1,0 +1,60 @@
+html_content = '''<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="public/themes/apparatus/apparatus.css">
+  <style>
+    body { margin: 0; background: #120c1c; color: #fff; font-family: sans-serif; }
+    .max-w-screen-xl { max-width: 1280px; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+    @media (min-width: 768px) {
+      .md\\:px-8 { padding-left: 2rem; padding-right: 2rem; }
+      .md\\:grid { display: grid; }
+      .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .gap-x-8 { column-gap: 2rem; }
+    }
+    .my-10 { margin-top: 2.5rem; margin-bottom: 2.5rem; }
+    .mt-6 { margin-top: 1.5rem; }
+  </style>
+</head>
+<body class="apparatus-page-account">
+  <div id="app">
+    <div class="PageContentBlock">
+      <div class="sc-12to0iy-1 max-w-screen-xl mx-auto px-4 md:px-8">
+        <div class="my-10">
+          <form class="mt-6">
+            <h2>Update Password</h2>
+            <div class="sc-mjlt6f-2" style="height: 150px; background: rgba(255,255,255,0.1); border-radius: 12px;">
+              <input type="password" placeholder="Current Password">
+              <input type="password" placeholder="New Password">
+            </div>
+          </form>
+        </div>
+        <div class="my-10 md:grid grid-cols-2 gap-x-8">
+          <form class="mt-6">
+            <h2>Update Email Address</h2>
+            <div class="sc-mjlt6f-2" style="height: 150px; background: rgba(255,255,255,0.1); border-radius: 12px;">
+              <input type="email" placeholder="Email">
+              <input type="password" placeholder="Confirm Password">
+            </div>
+          </form>
+          <div class="mt-10 md:mt-0">
+            <h2>Two-Step Verification</h2>
+            <div class="sc-mjlt6f-2" style="height: 150px; background: rgba(255,255,255,0.1); border-radius: 12px;">
+              <button>Enable Two-Step</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="public/themes/apparatus/apparatus.js"></script>
+</body>
+</html>'''
+
+with open('test_account.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print('Generated test_account.html')

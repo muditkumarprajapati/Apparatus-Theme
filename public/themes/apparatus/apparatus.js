@@ -6486,116 +6486,100 @@
   // Account Overview Cards Alignment & Flush 100% Width Normalization
   // ==============================================================================
   function normalizeAccountCards() {
-    const rawPath = window.location.pathname || '';
-    if (rawPath !== '/account' && rawPath !== '/account/') return;
+    try {
+      const rawPath = window.location.pathname || '';
+      if (rawPath !== '/account' && rawPath !== '/account/') return;
 
-    // 1. Locate Card 1 (Password), Card 2 (Email), and Card 3 (Two-Step Verification)
-    let card1 = null;
-    let card2 = null;
-    let card3 = null;
-
-    document.querySelectorAll('h1, h2, h3, h4').forEach(function (h) {
-      const txt = (h.textContent || '').trim().toLowerCase();
-      const parentFormOrBox = h.closest('form') || h.closest('.sc-mjlt6f-2') || h.parentElement;
-      if (txt.includes('password') && !txt.includes('email')) {
-        card1 = parentFormOrBox;
-      } else if (txt.includes('email')) {
-        card2 = parentFormOrBox;
-      } else if (txt.includes('two-step') || txt.includes('2fa') || txt.includes('two-factor') || txt.includes('configure two-factor')) {
-        card3 = parentFormOrBox;
-      }
-    });
-
-    // Fallbacks if not located via headings
-    if (!card1) {
-      const pwInp = document.querySelector('input[name="current_password"]') || document.querySelector('input[type="password"]');
-      if (pwInp) card1 = pwInp.closest('form') || pwInp.closest('.sc-mjlt6f-2') || pwInp.parentElement;
-    }
-    if (!card2) {
-      const emailInp = document.querySelector('input[type="email"]') || document.querySelector('input[name="email"]');
-      if (emailInp) card2 = emailInp.closest('form') || emailInp.closest('.sc-mjlt6f-2') || emailInp.parentElement;
-    }
-    if (!card3) {
-      const stepBtn = Array.from(document.querySelectorAll('button')).find(function (b) {
-        const bt = (b.textContent || '').toLowerCase();
-        return bt.includes('two-step') || bt.includes('enable two') || bt.includes('disable two');
+      // 1. Remove horizontal padding and force 100% width on all account page ancestors
+      document.querySelectorAll('.apparatus-page-account .sc-12to0iy-1, .apparatus-page-account [class*="ContentContainer"], .apparatus-page-account .md\\:px-8, .apparatus-page-account .px-4, .apparatus-page-account div[class*="PageContentBlock"]').forEach(function (el) {
+        el.style.setProperty('padding-left', '0', 'important');
+        el.style.setProperty('padding-right', '0', 'important');
+        el.style.setProperty('width', '100%', 'important');
+        el.style.setProperty('max-width', '100%', 'important');
+        el.style.setProperty('margin-left', '0', 'important');
+        el.style.setProperty('margin-right', '0', 'important');
+        el.style.setProperty('box-sizing', 'border-box', 'important');
       });
-      if (stepBtn) card3 = stepBtn.closest('.sc-mjlt6f-2') || stepBtn.parentElement;
-    }
 
-    // Determine the unified target parent container
-    const targetParent = (card2 && card2.parentElement) ? card2.parentElement :
-      ((card3 && card3.parentElement) ? card3.parentElement :
-      ((card1 && card1.parentElement) ? card1.parentElement :
-      document.querySelector('div.grid-cols-2, div[class*="grid-cols-2"], div.md\\:grid, div[class*="md:grid"], .sc-12to0iy-1')));
+      // 2. Convert Pterodactyl's subgrid container (Card 2 & Card 3) into a single-column flex column
+      const gridContainers = document.querySelectorAll('div.grid-cols-2, div[class*="grid-cols-2"], div.md\\:grid, div[class*="md:grid"]');
+      gridContainers.forEach(function (grid) {
+        grid.style.setProperty('display', 'flex', 'important');
+        grid.style.setProperty('flex-direction', 'column', 'important');
+        grid.style.setProperty('grid-template-columns', '100%', 'important');
+        grid.style.setProperty('width', '100%', 'important');
+        grid.style.setProperty('max-width', '100%', 'important');
+        grid.style.setProperty('min-width', '100%', 'important');
+        grid.style.setProperty('margin-left', '0', 'important');
+        grid.style.setProperty('margin-right', '0', 'important');
+        grid.style.setProperty('margin-top', '0', 'important');
+        grid.style.setProperty('margin-bottom', '0', 'important');
+        grid.style.setProperty('padding', '0', 'important');
+        grid.style.setProperty('gap', '1.5rem', 'important');
+        grid.style.setProperty('column-gap', '0', 'important');
+        grid.style.setProperty('row-gap', '1.5rem', 'important');
+        grid.style.setProperty('box-sizing', 'border-box', 'important');
+        grid.style.setProperty('align-items', 'stretch', 'important');
 
-    if (!targetParent) return;
+        // Style all children inside the subgrid
+        Array.from(grid.children).forEach(function (child) {
+          child.style.setProperty('display', 'flex', 'important');
+          child.style.setProperty('flex-direction', 'column', 'important');
+          child.style.setProperty('width', '100%', 'important');
+          child.style.setProperty('max-width', '100%', 'important');
+          child.style.setProperty('min-width', '100%', 'important');
+          child.style.setProperty('margin-left', '0', 'important');
+          child.style.setProperty('margin-right', '0', 'important');
+          child.style.setProperty('margin-top', '0', 'important');
+          child.style.setProperty('margin-bottom', '0', 'important');
+          child.style.setProperty('padding', '0', 'important');
+          child.style.setProperty('box-sizing', 'border-box', 'important');
+          child.style.setProperty('align-self', 'stretch', 'important');
+          child.style.setProperty('flex', '1 1 100%', 'important');
+        });
+      });
 
-    // Reparent all cards into the exact same container so they are guaranteed direct siblings
-    if (card1 && card1.parentElement !== targetParent) {
-      const oldCard1Parent = card1.parentElement;
-      if (card2 && card2.parentElement === targetParent) {
-        targetParent.insertBefore(card1, card2);
-      } else {
-        targetParent.insertBefore(card1, targetParent.firstElementChild);
+      // 3. Find Card 1's wrapper (div.my-10 containing password form) and align it identically
+      const pwForm = document.querySelector('form:has(input[type="password"])');
+      if (pwForm) {
+        pwForm.style.setProperty('width', '100%', 'important');
+        pwForm.style.setProperty('max-width', '100%', 'important');
+        pwForm.style.setProperty('min-width', '100%', 'important');
+        pwForm.style.setProperty('margin-left', '0', 'important');
+        pwForm.style.setProperty('margin-right', '0', 'important');
+        pwForm.style.setProperty('margin-top', '0', 'important');
+        pwForm.style.setProperty('padding', '0', 'important');
+        pwForm.style.setProperty('box-sizing', 'border-box', 'important');
+
+        if (pwForm.parentElement && !pwForm.parentElement.classList.contains('sc-12to0iy-1') && pwForm.parentElement.id !== 'app') {
+          pwForm.parentElement.style.setProperty('width', '100%', 'important');
+          pwForm.parentElement.style.setProperty('max-width', '100%', 'important');
+          pwForm.parentElement.style.setProperty('min-width', '100%', 'important');
+          pwForm.parentElement.style.setProperty('margin-left', '0', 'important');
+          pwForm.parentElement.style.setProperty('margin-right', '0', 'important');
+          pwForm.parentElement.style.setProperty('margin-top', '0', 'important');
+          pwForm.parentElement.style.setProperty('margin-bottom', '0', 'important');
+          pwForm.parentElement.style.setProperty('padding', '0', 'important');
+          pwForm.parentElement.style.setProperty('box-sizing', 'border-box', 'important');
+        }
       }
-      if (oldCard1Parent && oldCard1Parent !== targetParent && !oldCard1Parent.textContent.trim()) {
-        oldCard1Parent.style.setProperty('display', 'none', 'important');
-      }
-    }
 
-    if (card3 && card3.parentElement !== targetParent) {
-      targetParent.appendChild(card3);
-    }
+      // 4. Force all ContentBox card boxes (.sc-mjlt6f-2) on the account page to 100% width with zero horizontal offsets
+      document.querySelectorAll('.apparatus-page-account .sc-mjlt6f-2, .apparatus-page-account [class*="ContentBox___StyledDiv"], .apparatus-page-account div.bg-neutral-700').forEach(function (box) {
+        box.style.setProperty('width', '100%', 'important');
+        box.style.setProperty('max-width', '100%', 'important');
+        box.style.setProperty('min-width', '100%', 'important');
+        box.style.setProperty('margin-left', '0', 'important');
+        box.style.setProperty('margin-right', '0', 'important');
+        box.style.setProperty('margin-top', '0', 'important');
+        box.style.setProperty('padding-top', '1.25rem', 'important');
+        box.style.setProperty('padding-bottom', '1.25rem', 'important');
+        box.style.setProperty('box-sizing', 'border-box', 'important');
+        box.style.setProperty('align-self', 'stretch', 'important');
+      });
 
-    // Configure the unified container as 100% width, single-column flex flow
-    targetParent.style.setProperty('display', 'flex', 'important');
-    targetParent.style.setProperty('flex-direction', 'column', 'important');
-    targetParent.style.setProperty('grid-template-columns', '100%', 'important');
-    targetParent.style.setProperty('width', '100%', 'important');
-    targetParent.style.setProperty('max-width', '100%', 'important');
-    targetParent.style.setProperty('min-width', '100%', 'important');
-    targetParent.style.setProperty('margin-left', '0', 'important');
-    targetParent.style.setProperty('margin-right', '0', 'important');
-    targetParent.style.setProperty('margin-top', '1.5rem', 'important');
-    targetParent.style.setProperty('padding', '0', 'important');
-    targetParent.style.setProperty('gap', '1.5rem', 'important');
-    targetParent.style.setProperty('column-gap', '0', 'important');
-    targetParent.style.setProperty('row-gap', '1.5rem', 'important');
-    targetParent.style.setProperty('box-sizing', 'border-box', 'important');
-    targetParent.style.setProperty('align-items', 'stretch', 'important');
-
-    // Also eliminate any horizontal padding from ancestor containers (PageContentBlock / ContentContainer)
-    let ancestor = targetParent.parentElement;
-    while (ancestor && ancestor !== document.body && ancestor.id !== 'app') {
-      if (ancestor.classList && (ancestor.classList.contains('sc-12to0iy-1') || (ancestor.className && (ancestor.className.includes('ContentContainer') || ancestor.className.includes('PageContentBlock'))))) {
-        ancestor.style.setProperty('padding-left', '0', 'important');
-        ancestor.style.setProperty('padding-right', '0', 'important');
-      }
-      ancestor = ancestor.parentElement;
-    }
-
-    // Standardize all 3 security cards to identical 100% flush dimensions
-    const cards = [card1, card2, card3].filter(Boolean);
-    cards.forEach(function (c) {
-      c.style.setProperty('display', 'flex', 'important');
-      c.style.setProperty('flex-direction', 'column', 'important');
-      c.style.setProperty('width', '100%', 'important');
-      c.style.setProperty('max-width', '100%', 'important');
-      c.style.setProperty('min-width', '100%', 'important');
-      c.style.setProperty('margin-left', '0', 'important');
-      c.style.setProperty('margin-right', '0', 'important');
-      c.style.setProperty('margin-top', '0', 'important');
-      c.style.setProperty('margin-bottom', '0', 'important');
-      c.style.setProperty('padding', '0', 'important');
-      c.style.setProperty('box-sizing', 'border-box', 'important');
-      c.style.setProperty('align-self', 'stretch', 'important');
-      c.style.setProperty('flex', '1 1 100%', 'important');
-      c.style.setProperty('grid-column', '1 / -1', 'important');
-
-      // Card Title
-      const h2 = c.querySelector('h2');
-      if (h2) {
+      // 5. Force all card headings (h2) on the account page to 100% width with matching left offset
+      document.querySelectorAll('.apparatus-page-account h2').forEach(function (h2) {
         h2.style.setProperty('width', '100%', 'important');
         h2.style.setProperty('max-width', '100%', 'important');
         h2.style.setProperty('margin-left', '0', 'important');
@@ -6604,66 +6588,23 @@
         h2.style.setProperty('padding-left', '0.25rem', 'important');
         h2.style.setProperty('text-align', 'left', 'important');
         h2.style.setProperty('box-sizing', 'border-box', 'important');
+      });
+
+      // 6. Ensure PageContentBlock is clean and centered
+      const pageBlock = document.querySelector('div[class*="PageContentBlock"]') || document.querySelector('.sc-12to0iy-1');
+      if (pageBlock) {
+        pageBlock.style.setProperty('width', '90%', 'important');
+        pageBlock.style.setProperty('max-width', '1380px', 'important');
+        pageBlock.style.setProperty('margin-left', 'auto', 'important');
+        pageBlock.style.setProperty('margin-right', 'auto', 'important');
+        pageBlock.style.setProperty('margin-top', '1.5rem', 'important');
+        pageBlock.style.setProperty('display', 'flex', 'important');
+        pageBlock.style.setProperty('flex-direction', 'column', 'important');
+        pageBlock.style.setProperty('align-items', 'stretch', 'important');
+        pageBlock.style.setProperty('gap', '1.5rem', 'important');
       }
-
-      // Inner Form
-      const forms = c.matches('form') ? [c] : Array.from(c.querySelectorAll('form'));
-      forms.forEach(function (f) {
-        f.style.setProperty('width', '100%', 'important');
-        f.style.setProperty('max-width', '100%', 'important');
-        f.style.setProperty('margin-left', '0', 'important');
-        f.style.setProperty('margin-right', '0', 'important');
-        f.style.setProperty('margin-top', '0', 'important');
-        f.style.setProperty('padding', '0', 'important');
-        f.style.setProperty('box-sizing', 'border-box', 'important');
-        f.style.setProperty('align-self', 'stretch', 'important');
-      });
-
-      // Inner Glass ContentBox (.sc-mjlt6f-2)
-      const innerBoxes = c.querySelectorAll('.sc-mjlt6f-2, [class*="sc-mjlt6f-2"], [class*="ContentBox"], div[class*="ContentBox___StyledDiv"], div.bg-neutral-700, div[class*="bg-neutral-700"]');
-      const allBoxes = innerBoxes.length > 0 ? Array.from(innerBoxes) : (c.classList && c.classList.contains('sc-mjlt6f-2') ? [c] : []);
-      allBoxes.forEach(function (innerBox) {
-        innerBox.style.setProperty('width', '100%', 'important');
-        innerBox.style.setProperty('max-width', '100%', 'important');
-        innerBox.style.setProperty('min-width', '100%', 'important');
-        innerBox.style.setProperty('margin-left', '0', 'important');
-        innerBox.style.setProperty('margin-right', '0', 'important');
-        innerBox.style.setProperty('margin-top', '0', 'important');
-        innerBox.style.setProperty('padding-top', '1.25rem', 'important');
-        innerBox.style.setProperty('padding-bottom', '1.25rem', 'important');
-        innerBox.style.setProperty('box-sizing', 'border-box', 'important');
-        innerBox.style.setProperty('align-self', 'stretch', 'important');
-
-        // Clean any phantom empty overlay divs
-        innerBox.querySelectorAll('div').forEach(function (el) {
-          if (!el.textContent.trim() && !el.querySelector('input, button, select, textarea, svg, img, [role="button"]')) {
-            el.style.setProperty('display', 'none', 'important');
-            el.style.setProperty('height', '0', 'important');
-            el.style.setProperty('min-height', '0', 'important');
-            el.style.setProperty('margin', '0', 'important');
-            el.style.setProperty('padding', '0', 'important');
-          }
-        });
-
-        // Reset form top margins so inputs sit cleanly near top of card
-        const form = innerBox.querySelector('form');
-        if (form) {
-          form.style.setProperty('margin-top', '0', 'important');
-          form.style.setProperty('padding-top', '0', 'important');
-        }
-      });
-    });
-
-    const pageBlock = document.querySelector('div[class*="PageContentBlock"]');
-    if (pageBlock) {
-      pageBlock.style.setProperty('width', '90%', 'important');
-      pageBlock.style.setProperty('max-width', '1380px', 'important');
-      pageBlock.style.setProperty('margin-left', 'auto', 'important');
-      pageBlock.style.setProperty('margin-right', 'auto', 'important');
-      pageBlock.style.setProperty('margin-top', '1.5rem', 'important');
-      pageBlock.style.setProperty('display', 'flex', 'important');
-      pageBlock.style.setProperty('flex-direction', 'column', 'important');
-      pageBlock.style.setProperty('align-items', 'stretch', 'important');
+    } catch (e) {
+      console.warn('[Apparatus] normalizeAccountCards error:', e);
     }
   }
 
