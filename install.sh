@@ -156,7 +156,7 @@ except Exception:
 ' "$CSRF_FILE" 2>/dev/null || true
   fi
 
-  # Inject Registration Routes into routes/auth.php and routes/base.php
+  # Inject Registration Routes into routes/auth.php BEFORE Route::fallback
   AUTH_ROUTES="$PTERO_DIR/routes/auth.php"
   if [ -f "$AUTH_ROUTES" ]; then
     if [ ! -f "$AUTH_ROUTES.apparatus.bak" ]; then
@@ -164,8 +164,11 @@ except Exception:
     fi
     sed -i '/RegisterController/d' "$AUTH_ROUTES"
     sed -i '/Apparatus Self-Registration Routes/d' "$AUTH_ROUTES"
-    cat << 'EOF' >> "$AUTH_ROUTES"
+    python3 -c "
+with open('$AUTH_ROUTES', 'r') as f:
+    c = f.read()
 
+snippet = '''
 // Apparatus Self-Registration Routes
 Route::get('/register', 'RegisterController@index')->name('auth.register');
 Route::post('/register', 'RegisterController@register')->name('auth.register.post');
@@ -173,7 +176,18 @@ Route::get('/auth/register', 'RegisterController@index');
 Route::post('/auth/register', 'RegisterController@register');
 Route::post('/auth/mail/test', 'RegisterController@sendTestMail');
 Route::post('/auth/mail/verify-code', 'RegisterController@sendVerificationCode');
-EOF
+'''
+
+if 'RegisterController' not in c:
+    if 'Route::fallback' in c:
+        c = c.replace('Route::fallback', snippet + '\nRoute::fallback', 1)
+    else:
+        c = snippet + '\n' + c
+    with open('$AUTH_ROUTES', 'w') as f:
+        f.write(c)
+" 2>/dev/null || {
+      sed -i "1i Route::get('/register', 'RegisterController@index')->name('auth.register');\nRoute::post('/register', 'RegisterController@register')->name('auth.register.post');\nRoute::get('/auth/register', 'RegisterController@index');\nRoute::post('/auth/register', 'RegisterController@register');" "$AUTH_ROUTES"
+    }
   fi
 
   BASE_ROUTES="$PTERO_DIR/routes/base.php"
@@ -199,21 +213,16 @@ Route::post('/auth/mail/verify-code', 'Auth\\\RegisterController@sendVerificatio
 
 if 'RegisterController' not in c:
     if \"Route::get('/{path?}'\" in c:
-        c = c.replace(\"Route::get('/{path?}'\", snippet + \"\nRoute::get('/{path?}'\")
+        c = c.replace(\"Route::get('/{path?}'\", snippet + \"\nRoute::get('/{path?}'\", 1)
+    elif 'Route::fallback' in c:
+        c = c.replace('Route::fallback', snippet + '\nRoute::fallback', 1)
     else:
-        c += '\n' + snippet
+        c = snippet + '\n' + c
     with open('$BASE_ROUTES', 'w') as f:
         f.write(c)
-" 2>/dev/null || cat << 'EOF' >> "$BASE_ROUTES"
-
-// Apparatus Self-Registration Routes (Base Web)
-Route::get('/register', 'Auth\RegisterController@index');
-Route::post('/register', 'Auth\RegisterController@register');
-Route::get('/auth/register', 'Auth\RegisterController@index');
-Route::post('/auth/register', 'Auth\RegisterController@register');
-Route::post('/auth/mail/test', 'Auth\RegisterController@sendTestMail');
-Route::post('/auth/mail/verify-code', 'Auth\RegisterController@sendVerificationCode');
-EOF
+" 2>/dev/null || {
+      sed -i "1i Route::get('/register', 'Auth\\\RegisterController@index');\nRoute::post('/register', 'Auth\\\RegisterController@register');\nRoute::get('/auth/register', 'Auth\\\RegisterController@index');\nRoute::post('/auth/register', 'Auth\\\RegisterController@register');" "$BASE_ROUTES"
+    }
   fi
 
   # Deploy custom 403 Hacking Attempt error page for /admin access denial
@@ -242,6 +251,7 @@ with open('$target', 'r') as f:
     content = f.read()
 
 snippet = '''<!-- BEGIN apparatus-theme-loader -->
+<meta name=\"csrf-token\" content=\"{{ csrf_token() }}\">
 <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css\">
 <link rel=\"stylesheet\" href=\"/themes/apparatus/apparatus.css?v=$ts\">
 <script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>
