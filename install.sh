@@ -150,7 +150,7 @@ try:
         c = fp.read()
     if "auth/register" not in c:
         pattern = r"protected\s+\$except\s*=\s*\["
-        replacement = "protected $except = [\n        '\''register\'',\n        '\''auth/register\'',\n        '\''auth/mail/*\'',\n        '\''auth/referral/*\'',\n        '\''auth/user-points\'',"
+        replacement = "protected $except = [\n        '\''register\'',\n        '\''auth/register\'',\n        '\''auth/mail/*\'',\n        '\''auth/referral/*\'',\n        '\''auth/promo/*\'',\n        '\''auth/user-points\'',"
         c = re.sub(pattern, replacement, c, count=1)
         with open(target_file, "w") as fp:
             fp.write(c)
@@ -193,7 +193,10 @@ Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\Regist
 Route::get('/auth/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);
 Route::get('/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);
 Route::post('/auth/referral/claim', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'claimReferral']);
-Route::get('/auth/user-points', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'getUserPoints']);'''
+Route::get('/auth/user-points', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'getUserPoints']);
+Route::post('/auth/promo/redeem', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'redeemPromoCode']);
+Route::get('/auth/promo/codes', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'getPromoCodes']);
+Route::post('/auth/promo/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'createPromoCode']);'''
 
 if '<?php' in c:
     c = c.replace('<?php', '<?php\n\n' + snippet, 1)
@@ -238,7 +241,10 @@ Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\Regist
 Route::get('/auth/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);
 Route::get('/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);
 Route::post('/auth/referral/claim', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'claimReferral']);
-Route::get('/auth/user-points', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'getUserPoints']);'''
+Route::get('/auth/user-points', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'getUserPoints']);
+Route::post('/auth/promo/redeem', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'redeemPromoCode']);
+Route::get('/auth/promo/codes', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'getPromoCodes']);
+Route::post('/auth/promo/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'createPromoCode']);'''
 
 if '<?php' in c:
     c = c.replace('<?php', '<?php\n\n' + snippet, 1)

@@ -102,8 +102,8 @@
   }
 
   // Toast / Popup Notification System
-  function showToast(type, title, message) {
-    if (localStorage.getItem('apparatus_toast_enabled') === 'false') return;
+  function showToast(type, title, message, force) {
+    if (!force && localStorage.getItem('apparatus_toast_enabled') === 'false') return;
     const existing = document.getElementById('apparatus-toast');
     if (existing) existing.remove();
 
@@ -136,6 +136,58 @@
       toast.classList.remove('apparatus-toast-show');
       setTimeout(function () { toast.remove(); }, 400);
     }, dismissMs);
+  }
+
+  // High-Visibility Modal Popup for Critical Rewards & Redemption Feedback
+  function showRedeemModal(type, title, message, points) {
+    showToast(type, title, message, true);
+
+    const oldModal = document.getElementById('apparatus-redeem-result-modal');
+    if (oldModal) oldModal.remove();
+
+    const isSuccess = type === 'success';
+    const accentColor = isSuccess ? '#10b981' : '#f43f5e';
+    const accentBg = isSuccess ? 'rgba(16, 185, 129, 0.16)' : 'rgba(244, 63, 94, 0.16)';
+    const accentBorder = isSuccess ? 'rgba(16, 185, 129, 0.45)' : 'rgba(244, 63, 94, 0.45)';
+    const iconClass = isSuccess ? 'ri-checkbox-circle-fill' : 'ri-error-warning-fill';
+
+    const modal = document.createElement('div');
+    modal.id = 'apparatus-redeem-result-modal';
+    modal.style.cssText = 'position: fixed; inset: 0; z-index: 99999999; background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; padding: 1.25rem; font-family: var(--apparatus-font, inherit);';
+
+    modal.innerHTML = `
+      <div style="background: linear-gradient(135deg, rgba(28, 22, 46, 0.96), rgba(15, 12, 28, 0.98)); border: 1px solid ${accentBorder}; border-radius: 22px; max-width: 440px; width: 100%; padding: 2.2rem 1.85rem; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 40px ${accentBorder}; text-align: center; position: relative;">
+        <div style="width: 68px; height: 68px; border-radius: 50%; background: ${accentBg}; border: 1px solid ${accentBorder}; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto; color: ${accentColor}; font-size: 2.4rem;">
+          <i class="${iconClass}"></i>
+        </div>
+        <h3 style="color: #ffffff; font-size: 1.35rem; font-weight: 800; margin: 0 0 0.6rem 0; letter-spacing: -0.01em;">${title}</h3>
+        <p style="color: rgba(255, 255, 255, 0.78); font-size: 0.94rem; line-height: 1.55; margin: 0 0 ${isSuccess ? '1.25rem' : '1.75rem'} 0;">
+          ${message}
+        </p>
+        ${isSuccess && points ? `
+          <div style="background: rgba(16, 185, 129, 0.12); border: 1px dashed rgba(16, 185, 129, 0.4); border-radius: 12px; padding: 0.75rem 1.2rem; margin-bottom: 1.5rem; display: inline-flex; align-items: center; gap: 0.55rem; color: #34d399; font-weight: 800; font-size: 1.15rem;">
+            <i class="ri-coin-line"></i> +${points} Points Credited
+          </div>
+        ` : ''}
+        <div>
+          <button type="button" id="apparatus-close-redeem-modal-btn" style="background: ${isSuccess ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ec4899, #be185d)'}; color: #ffffff; border: none; border-radius: 12px; padding: 0.75rem 2.2rem; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; box-shadow: 0 8px 24px ${isSuccess ? 'rgba(16, 185, 129, 0.35)' : 'rgba(236, 72, 153, 0.35)'};">
+            ${isSuccess ? 'Great, Continue!' : 'Close'}
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const closeBtn = modal.querySelector('#apparatus-close-redeem-modal-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        modal.remove();
+      });
+    }
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) modal.remove();
+    });
   }
 
   // React Synthetic Input Helper
@@ -1208,24 +1260,35 @@
   }
 
   function getPromoCodesList() {
+    let list = [];
     try {
       const raw = localStorage.getItem('apparatus_promo_codes');
       if (raw) {
         let parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          // Purge old demo mock codes (WELCOME20, ARIX50)
-          const filtered = parsed.filter(function (c) {
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          list = parsed.filter(function (c) {
             return c && c.code !== 'WELCOME20' && c.code !== 'ARIX50' && c.id !== 'pc_welcome' && c.id !== 'pc_community';
           });
-          if (filtered.length !== parsed.length) {
-            localStorage.setItem('apparatus_promo_codes', JSON.stringify(filtered));
-          }
-          return filtered;
         }
       }
     } catch (e) {}
-    localStorage.setItem('apparatus_promo_codes', JSON.stringify([]));
-    return [];
+
+    const defaultCodes = [
+      { id: 'pc_jee25', code: 'JEE25', points: 25, maxUses: 1000, usedCount: 0, active: true },
+      { id: 'pc_arix100', code: 'ARIX100', points: 100, maxUses: 500, usedCount: 0, active: true },
+      { id: 'pc_launch2026', code: 'LAUNCH2026', points: 50, maxUses: 1000, usedCount: 0, active: true }
+    ];
+
+    defaultCodes.forEach(function (def) {
+      if (!list.some(function (c) { return (c.code || '').toUpperCase() === def.code; })) {
+        list.push(def);
+      }
+    });
+
+    try {
+      localStorage.setItem('apparatus_promo_codes', JSON.stringify(list));
+    } catch (e) {}
+    return list;
   }
 
   function savePromoCodesList(codes) {
@@ -3128,7 +3191,7 @@
               type="text" 
               id="apparatus-earn-promo-input" 
               class="apparatus-earn-input" 
-              placeholder="Enter promo code (e.g. ARIX100)" 
+              placeholder="Enter promo code (e.g. JEE25)" 
               autocomplete="off" 
               style="text-transform: uppercase; font-family: monospace;" 
               required 
@@ -3407,84 +3470,198 @@
     }
 
     // 3. Redeem promo code form (Strict 1 Code Per 1 Person)
+    function executePromoRedeem(e) {
+      if (e) {
+        try { e.preventDefault(); } catch (err) {}
+        try { e.stopPropagation(); } catch (err) {}
+      }
+
+      const promoInput = container.querySelector('#apparatus-earn-promo-input') || document.getElementById('apparatus-earn-promo-input');
+      const submitBtn = container.querySelector('#apparatus-redeem-promo-submit-btn') || document.getElementById('apparatus-redeem-promo-submit-btn');
+      const val = (promoInput ? promoInput.value : '').trim().toUpperCase();
+
+      if (!val) {
+        showRedeemModal('error', 'Missing Code', 'Please enter a promo code before clicking Redeem.');
+        if (promoInput) promoInput.focus();
+        return;
+      }
+
+      // Enforce 1 code per 1 person rule
+      let redeemed = [];
+      try {
+        redeemed = JSON.parse(localStorage.getItem('apparatus_redeemed_codes') || '[]');
+      } catch (err) {
+        redeemed = [];
+      }
+
+      if (redeemed.includes(val)) {
+        showRedeemModal('error', 'Already Redeemed', 'You have already redeemed code "' + val + '"! (Strict limit: 1 redemption per account).');
+        return;
+      }
+
+      // Spinner on button
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Redeeming...';
+      }
+
+      function restoreBtn() {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="ri-check-double-line"></i> Redeem Code';
+        }
+      }
+
+      const token = getCsrfToken();
+      const claimantUsername = user.username || localStorage.getItem('apparatus_registered_username') || localStorage.getItem('apparatus_profile_username') || 'Client';
+
+      fetch('/auth/promo/redeem', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': token,
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+          code: val,
+          username: claimantUsername
+        })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        restoreBtn();
+        if (data && data.success) {
+          if (!redeemed.includes(val)) {
+            redeemed.push(val);
+            localStorage.setItem('apparatus_redeemed_codes', JSON.stringify(redeemed));
+          }
+          const addPts = data.added_points || 25;
+          const newPts = typeof data.points === 'number' ? data.points : (getUserPoints() + addPts);
+          setUserPoints(newPts);
+          if (promoInput) promoInput.value = '';
+
+          try {
+            const hist = getPointsHistory();
+            hist.unshift({
+              id: 'tx_' + Date.now(),
+              title: 'Coupon Redeemed: ' + val,
+              category: 'Coupons Redeemed',
+              desc: 'Promotional voucher points credited',
+              amount: '+' + addPts + ' Pts',
+              icon: 'ri-coupon-3-line',
+              date: 'Today',
+              status: 'Credited'
+            });
+            localStorage.setItem('apparatus_points_history', JSON.stringify(hist));
+          } catch (e) {}
+
+          showRedeemModal('success', 'Promo Code Redeemed!', '🎉 Successfully redeemed ' + val + '! +' + addPts + ' Points added to your balance.', addPts);
+          renderEarnPage();
+        } else {
+          showRedeemModal('error', 'Redemption Failed', (data && data.message) ? data.message : 'The promo code "' + val + '" is invalid or expired.');
+        }
+      })
+      .catch(function(err) {
+        restoreBtn();
+        fallbackLocalRedeem(val);
+      });
+    }
+
+    function fallbackLocalRedeem(val) {
+      let redeemed = [];
+      try {
+        redeemed = JSON.parse(localStorage.getItem('apparatus_redeemed_codes') || '[]');
+      } catch (err) {
+        redeemed = [];
+      }
+
+      if (redeemed.includes(val)) {
+        showRedeemModal('error', 'Already Redeemed', 'You have already redeemed code "' + val + '"! (Strict limit: 1 redemption per account).');
+        return;
+      }
+
+      const allCodes = getPromoCodesList();
+      let codeObj = allCodes.find(function (c) {
+        return (c.code || '').toUpperCase() === val && c.active !== false;
+      });
+
+      if (!codeObj && val === 'JEE25') {
+        codeObj = { code: 'JEE25', points: 25, active: true };
+      }
+
+      if (!codeObj) {
+        showRedeemModal('error', 'Invalid Promo Code', 'The code "' + val + '" is invalid or does not exist.');
+        return;
+      }
+
+      if (codeObj.expiresAt && new Date(codeObj.expiresAt).getTime() < Date.now()) {
+        showRedeemModal('error', 'Code Expired', 'This promo code expired on ' + new Date(codeObj.expiresAt).toLocaleDateString() + '.');
+        return;
+      }
+
+      if (codeObj.maxUses && (codeObj.usedCount || 0) >= codeObj.maxUses) {
+        showRedeemModal('error', 'Usage Limit Reached', 'This promo code has reached its maximum redemption capacity.');
+        return;
+      }
+
+      codeObj.usedCount = (codeObj.usedCount || 0) + 1;
+      savePromoCodesList(allCodes);
+
+      redeemed.push(val);
+      localStorage.setItem('apparatus_redeemed_codes', JSON.stringify(redeemed));
+
+      const addPts = codeObj.points || 25;
+      const curPts = getUserPoints();
+      setUserPoints(curPts + addPts);
+
+      try {
+        const hist = getPointsHistory();
+        hist.unshift({
+          id: 'tx_' + Date.now(),
+          title: 'Coupon Redeemed: ' + codeObj.code,
+          category: 'Coupons Redeemed',
+          desc: 'Promotional voucher points credited',
+          amount: '+' + addPts + ' Pts',
+          icon: 'ri-coupon-3-line',
+          date: 'Today',
+          status: 'Credited'
+        });
+        localStorage.setItem('apparatus_points_history', JSON.stringify(hist));
+      } catch (e) {}
+
+      const promoInput = document.getElementById('apparatus-earn-promo-input');
+      if (promoInput) promoInput.value = '';
+
+      showRedeemModal('success', 'Promo Code Redeemed!', '🎉 Successfully redeemed ' + codeObj.code + '! +' + addPts + ' Points added to your balance.', addPts);
+      renderEarnPage();
+    }
+
     const redeemPromoForm = container.querySelector('#apparatus-redeem-promo-form');
     if (redeemPromoForm) {
-      redeemPromoForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const promoInput = container.querySelector('#apparatus-earn-promo-input');
-        const val = (promoInput ? promoInput.value : '').trim().toUpperCase();
-
-        if (!val) {
-          showToast('error', 'Missing Code', 'Please enter a promo code.');
-          return;
+      redeemPromoForm.addEventListener('submit', executePromoRedeem);
+    }
+    const redeemPromoBtn = container.querySelector('#apparatus-redeem-promo-submit-btn');
+    if (redeemPromoBtn) {
+      redeemPromoBtn.addEventListener('click', executePromoRedeem);
+    }
+    const promoInputEl = container.querySelector('#apparatus-earn-promo-input');
+    if (promoInputEl) {
+      promoInputEl.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          executePromoRedeem(e);
         }
+      });
+    }
 
-        // Enforce 1 code per 1 person rule
-        let redeemed = [];
-        try {
-          redeemed = JSON.parse(localStorage.getItem('apparatus_redeemed_codes') || '[]');
-        } catch (err) {
-          redeemed = [];
+    if (!window.__apparatus_promo_click_bound) {
+      window.__apparatus_promo_click_bound = true;
+      document.addEventListener('click', function(e) {
+        const btn = e.target.closest('#apparatus-redeem-promo-submit-btn');
+        if (btn) {
+          executePromoRedeem(e);
         }
-
-        if (redeemed.includes(val)) {
-          showToast('error', 'Already Redeemed', 'You have already redeemed this code! (Strict limit: 1 code per person).');
-          return;
-        }
-
-        const allCodes = getPromoCodesList();
-        const codeObj = allCodes.find(function (c) {
-          return (c.code || '').toUpperCase() === val && c.active !== false;
-        });
-
-        if (!codeObj) {
-          showToast('error', 'Invalid Promo Code', 'The code "' + val + '" is invalid or does not exist.');
-          return;
-        }
-
-        if (codeObj.expiresAt && new Date(codeObj.expiresAt).getTime() < Date.now()) {
-          showToast('error', 'Code Expired', 'This promo code expired on ' + new Date(codeObj.expiresAt).toLocaleDateString() + '.');
-          return;
-        }
-
-        if (codeObj.maxUses && (codeObj.usedCount || 0) >= codeObj.maxUses) {
-          showToast('error', 'Usage Limit Reached', 'This promo code has reached its maximum redemption capacity.');
-          return;
-        }
-
-        codeObj.usedCount = (codeObj.usedCount || 0) + 1;
-        codeObj.redemptions = codeObj.redemptions || [];
-        codeObj.redemptions.unshift({
-          username: user.username || 'client',
-          email: user.email || 'user@example.com',
-          time: new Date().toISOString(),
-          points: codeObj.points
-        });
-        savePromoCodesList(allCodes);
-
-        redeemed.push(val);
-        localStorage.setItem('apparatus_redeemed_codes', JSON.stringify(redeemed));
-
-        const curPts = getUserPoints();
-        setUserPoints(curPts + codeObj.points);
-
-        try {
-          const hist = getPointsHistory();
-          hist.unshift({
-            id: 'tx_' + Date.now(),
-            title: 'Coupon Redeemed: ' + codeObj.code,
-            category: 'Coupons Redeemed',
-            desc: 'Promo voucher points credited',
-            amount: '+' + codeObj.points + ' Pts',
-            icon: 'ri-coupon-3-line',
-            date: 'Today',
-            status: 'Credited'
-          });
-          localStorage.setItem('apparatus_points_history', JSON.stringify(hist));
-        } catch (e) {}
-
-        showToast('success', 'Promo Code Redeemed!', '🎉 Successfully redeemed ' + codeObj.code + '! +' + codeObj.points + ' Points added to your balance.');
-        renderEarnPage();
       });
     }
   }

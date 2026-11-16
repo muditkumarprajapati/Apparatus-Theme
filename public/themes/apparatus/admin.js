@@ -1445,24 +1445,35 @@ ${formatMailBody(currentTpl.body)}
   // 8B. EARN & PROMO CODE STUDIO (PROMO CODE GENERATION, QUOTAS & LIVE AUDIT REPORT)
   // ==============================================================================
   function getPromoCodesList() {
+    let list = [];
     try {
       const raw = localStorage.getItem('apparatus_promo_codes');
       if (raw) {
         let parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          // Purge old mock demo codes (WELCOME20, ARIX50)
-          const filtered = parsed.filter(function (c) {
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          list = parsed.filter(function (c) {
             return c && c.code !== 'WELCOME20' && c.code !== 'ARIX50' && c.id !== 'pc_welcome' && c.id !== 'pc_community';
           });
-          if (filtered.length !== parsed.length) {
-            localStorage.setItem('apparatus_promo_codes', JSON.stringify(filtered));
-          }
-          return filtered;
         }
       }
     } catch (e) {}
-    localStorage.setItem('apparatus_promo_codes', JSON.stringify([]));
-    return [];
+
+    const defaultCodes = [
+      { id: 'pc_jee25', code: 'JEE25', points: 25, maxUses: 1000, usedCount: 0, active: true },
+      { id: 'pc_arix100', code: 'ARIX100', points: 100, maxUses: 500, usedCount: 0, active: true },
+      { id: 'pc_launch2026', code: 'LAUNCH2026', points: 50, maxUses: 1000, usedCount: 0, active: true }
+    ];
+
+    defaultCodes.forEach(function (def) {
+      if (!list.some(function (c) { return (c.code || '').toUpperCase() === def.code; })) {
+        list.push(def);
+      }
+    });
+
+    try {
+      localStorage.setItem('apparatus_promo_codes', JSON.stringify(list));
+    } catch (e) {}
+    return list;
   }
 
   function savePromoCodesList(codes) {

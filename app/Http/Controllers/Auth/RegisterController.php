@@ -344,11 +344,58 @@ class RegisterController extends Controller
                 return $data;
             }
         }
-        return [
-            'users' => [],
-            'codes' => [],
-            'history' => [],
-        ];
+        if (!isset($data['promo_codes']) || !is_array($data['promo_codes'])) {
+            $data['promo_codes'] = [
+                'JEE25' => [
+                    'id' => 'pc_jee25',
+                    'code' => 'JEE25',
+                    'points' => 25,
+                    'max_uses' => 1000,
+                    'used_count' => 0,
+                    'active' => true,
+                    'expires_at' => null,
+                    'created_at' => '2026-11-16 00:00:00',
+                    'redemptions' => []
+                ],
+                'ARIX100' => [
+                    'id' => 'pc_arix100',
+                    'code' => 'ARIX100',
+                    'points' => 100,
+                    'max_uses' => 500,
+                    'used_count' => 0,
+                    'active' => true,
+                    'expires_at' => null,
+                    'created_at' => '2026-11-16 00:00:00',
+                    'redemptions' => []
+                ],
+                'LAUNCH2026' => [
+                    'id' => 'pc_launch2026',
+                    'code' => 'LAUNCH2026',
+                    'points' => 50,
+                    'max_uses' => 1000,
+                    'used_count' => 0,
+                    'active' => true,
+                    'expires_at' => null,
+                    'created_at' => '2026-11-16 00:00:00',
+                    'redemptions' => []
+                ]
+            ];
+        } else {
+            if (!isset($data['promo_codes']['JEE25'])) {
+                $data['promo_codes']['JEE25'] = [
+                    'id' => 'pc_jee25',
+                    'code' => 'JEE25',
+                    'points' => 25,
+                    'max_uses' => 1000,
+                    'used_count' => 0,
+                    'active' => true,
+                    'expires_at' => null,
+                    'created_at' => '2026-11-16 00:00:00',
+                    'redemptions' => []
+                ];
+            }
+        }
+        return $data;
     }
 
     protected function saveRewardsData(array $data): void
@@ -652,6 +699,235 @@ class RegisterController extends Controller
             ]);
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'points' => 100, 'referrals' => 0]);
+        }
+    }
+
+    /**
+     * Redeem promotional coupon code from /earn page.
+     * Strict limit: 1 redemption per person.
+     */
+    public function redeemPromoCode(Request $request): JsonResponse
+    {
+        try {
+            $user = auth()->user();
+            $username = $user ? $user->username : trim($request->input('username', ''));
+            if (empty($username)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please sign in or provide username to redeem promo codes.'
+                ], 401);
+            }
+
+            $code = strtoupper(trim($request->input('code', '')));
+            if (empty($code)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please enter a valid promo code.'
+                ], 422);
+            }
+
+            $rewards = $this->getRewardsData();
+            $userKey = strtolower($username);
+
+            if (!isset($rewards['users'][$userKey])) {
+                $rewards['users'][$userKey] = [
+                    'username' => $username,
+                    'points' => 100,
+                    'referrals' => 0,
+                    'code' => $this->generateUserReferralCode($username),
+                    'claimed_code' => null,
+                    'redeemed_promos' => []
+                ];
+            }
+
+            if (!isset($rewards['users'][$userKey]['redeemed_promos']) || !is_array($rewards['users'][$userKey]['redeemed_promos'])) {
+                $rewards['users'][$userKey]['redeemed_promos'] = [];
+            }
+
+            if (in_array($code, $rewards['users'][$userKey]['redeemed_promos'], true)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "You have already redeemed code \"{$code}\"! (Strict limit: 1 redemption per person)."
+                ], 400);
+            }
+
+            $promoObj = null;
+            $promoKey = null;
+            if (isset($rewards['promo_codes']) && is_array($rewards['promo_codes'])) {
+                foreach ($rewards['promo_codes'] as $k => $item) {
+                    if (strtoupper($k) === $code || (isset($item['code']) && strtoupper($item['code']) === $code)) {
+                        $promoObj = $item;
+                        $promoKey = $k;
+                        break;
+                    }
+                }
+            }
+
+            if (!$promoObj) {
+                if ($code === 'JEE25') {
+                    $promoObj = [
+                        'id' => 'pc_jee25',
+                        'code' => 'JEE25',
+                        'points' => 25,
+                        'max_uses' => 1000,
+                        'used_count' => 0,
+                        'active' => true,
+                        'expires_at' => null,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'redemptions' => []
+                    ];
+                    $promoKey = 'JEE25';
+                    $rewards['promo_codes']['JEE25'] = $promoObj;
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Promo code \"{$code}\" is invalid or does not exist."
+                    ], 404);
+                }
+            }
+
+            if (isset($promoObj['active']) && $promoObj['active'] === false) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Promo code \"{$code}\" has been deactivated."
+                ], 400);
+            }
+
+            if (!empty($promoObj['expires_at'])) {
+                $expTime = strtotime($promoObj['expires_at']);
+                if ($expTime && $expTime < time()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Promo code \"{$code}\" expired on " . date('d M Y', $expTime) . "."
+                    ], 400);
+                }
+            }
+
+            $maxUses = isset($promoObj['max_uses']) ? (int) $promoObj['max_uses'] : 0;
+            $usedCount = isset($promoObj['used_count']) ? (int) $promoObj['used_count'] : 0;
+            if ($maxUses > 0 && $usedCount >= $maxUses) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Promo code \"{$code}\" has reached its maximum redemption capacity."
+                ], 400);
+            }
+
+            $pointsToAdd = isset($promoObj['points']) ? (int) $promoObj['points'] : 25;
+            if ($pointsToAdd <= 0) $pointsToAdd = 25;
+
+            $curPts = (int) ($rewards['users'][$userKey]['points'] ?? 100);
+            $newPts = $curPts + $pointsToAdd;
+            $rewards['users'][$userKey]['points'] = $newPts;
+
+            $rewards['users'][$userKey]['redeemed_promos'][] = $code;
+
+            $promoObj['used_count'] = $usedCount + 1;
+            if (!isset($promoObj['redemptions']) || !is_array($promoObj['redemptions'])) {
+                $promoObj['redemptions'] = [];
+            }
+            $promoObj['redemptions'][] = [
+                'username' => $username,
+                'email' => $user ? ($user->email ?? '') : '',
+                'points' => $pointsToAdd,
+                'time' => date('Y-m-d H:i:s')
+            ];
+            $rewards['promo_codes'][$promoKey] = $promoObj;
+
+            if (!isset($rewards['history'][$userKey]) || !is_array($rewards['history'][$userKey])) {
+                $rewards['history'][$userKey] = [];
+            }
+
+            $dateStr = date('d M Y, H:i');
+            array_unshift($rewards['history'][$userKey], [
+                'id' => 'tx_' . time() . '_' . rand(100, 999),
+                'title' => 'Coupon Redeemed: ' . $code,
+                'category' => 'Coupons Redeemed',
+                'desc' => 'Promotional coupon voucher points credited',
+                'amount' => "+{$pointsToAdd} Pts",
+                'icon' => 'ri-coupon-3-line',
+                'date' => $dateStr,
+                'status' => 'Credited'
+            ]);
+
+            $this->saveRewardsData($rewards);
+
+            return response()->json([
+                'success' => true,
+                'message' => "🎉 Promo code {$code} successfully redeemed! +{$pointsToAdd} Points added to your balance.",
+                'points' => $newPts,
+                'code' => $code,
+                'added_points' => $pointsToAdd,
+                'history' => $rewards['history'][$userKey]
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Redemption server error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get list of active promo codes.
+     */
+    public function getPromoCodes(Request $request): JsonResponse
+    {
+        try {
+            $rewards = $this->getRewardsData();
+            $codes = array_values($rewards['promo_codes'] ?? []);
+            return response()->json(['success' => true, 'codes' => $codes]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'codes' => []]);
+        }
+    }
+
+    /**
+     * Admin create/update promo code.
+     */
+    public function createPromoCode(Request $request): JsonResponse
+    {
+        try {
+            $user = auth()->user();
+            if (!$user || !$user->root_admin) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized. Admin permissions required.'], 403);
+            }
+
+            $code = strtoupper(trim($request->input('code', '')));
+            if (empty($code)) {
+                return response()->json(['success' => false, 'message' => 'Please provide a valid code.'], 422);
+            }
+
+            $points = (int) $request->input('points', 50);
+            $maxUses = (int) $request->input('max_uses', 100);
+            $validityHours = (int) $request->input('validity_hours', 0);
+            $expiresAt = $validityHours > 0 ? date('Y-m-d H:i:s', time() + ($validityHours * 3600)) : null;
+
+            $rewards = $this->getRewardsData();
+            if (!isset($rewards['promo_codes'])) {
+                $rewards['promo_codes'] = [];
+            }
+
+            $rewards['promo_codes'][$code] = [
+                'id' => 'pc_' . time(),
+                'code' => $code,
+                'points' => $points,
+                'max_uses' => $maxUses,
+                'used_count' => 0,
+                'active' => true,
+                'expires_at' => $expiresAt,
+                'created_at' => date('Y-m-d H:i:s'),
+                'redemptions' => []
+            ];
+
+            $this->saveRewardsData($rewards);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Promo code {$code} created successfully.",
+                'code' => $rewards['promo_codes'][$code]
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
