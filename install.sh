@@ -186,7 +186,9 @@ Route::post('/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController:
 Route::get('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'index']);
 Route::post('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'register']);
 Route::post('/auth/mail/test', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendTestMail']);
-Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendVerificationCode']);'''
+Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendVerificationCode']);
+Route::get('/auth/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);
+Route::get('/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);'''
 
 if '<?php' in c:
     c = c.replace('<?php', '<?php\n\n' + snippet, 1)
@@ -227,7 +229,9 @@ Route::post('/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController:
 Route::get('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'index']);
 Route::post('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'register']);
 Route::post('/auth/mail/test', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendTestMail']);
-Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendVerificationCode']);'''
+Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendVerificationCode']);
+Route::get('/auth/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);
+Route::get('/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);'''
 
 if '<?php' in c:
     c = c.replace('<?php', '<?php\n\n' + snippet, 1)

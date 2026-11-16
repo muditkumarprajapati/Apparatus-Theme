@@ -325,4 +325,51 @@ class RegisterController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get real community leaderboard data from the database.
+     */
+    public function leaderboard(): JsonResponse
+    {
+        try {
+            $users = DB::table('users')
+                ->select('id', 'username', 'name_first', 'name_last', 'email', 'root_admin', 'created_at')
+                ->whereNotIn('username', ['TestUserX', 'NewUser99'])
+                ->orderBy('root_admin', 'desc')
+                ->orderBy('id', 'asc')
+                ->get();
+
+            $data = [];
+            foreach ($users as $u) {
+                $fullName = trim(($u->name_first ?? '') . ' ' . ($u->name_last ?? ''));
+                if (empty($fullName) || $fullName === 'Client' || $fullName === $u->username . ' Client') {
+                    $fullName = $u->username;
+                }
+
+                $role = ($u->root_admin == 1) ? 'Owner' : 'Client';
+                $seed = urlencode($u->username);
+                $avatar = "https://api.dicebear.com/7.x/thumbs/svg?seed={$seed}";
+
+                $data[] = [
+                    'id' => $u->id,
+                    'username' => $u->username,
+                    'name' => $fullName,
+                    'role' => $role,
+                    'avatar' => $avatar,
+                    'root_admin' => (int) $u->root_admin,
+                    'created_at' => $u->created_at,
+                ];
+            }
+
+            return response()->json([
+                'success' => true,
+                'users' => $data
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

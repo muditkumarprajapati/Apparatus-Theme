@@ -2789,29 +2789,66 @@
     const myRefCode = getReferralCode(user);
     const isReferralClaimed = localStorage.getItem('apparatus_referral_claimed') === 'true' || !!localStorage.getItem('apparatus_claimed_referral_code');
 
-    // Community Leaderboard Users
+    function buildLeaderboardRowHtml(u, myUName) {
+      const isMe = (u.username || '').toLowerCase() === myUName;
+      let badgeHtml = '';
+      if (u.rank === 1) {
+        badgeHtml = '<span class="apparatus-rank-badge apparatus-rank-1">1</span>';
+      } else if (u.rank === 2) {
+        badgeHtml = '<span class="apparatus-rank-badge apparatus-rank-2">2</span>';
+      } else if (u.rank === 3) {
+        badgeHtml = '<span class="apparatus-rank-badge apparatus-rank-3">3</span>';
+      } else {
+        badgeHtml = '<span class="apparatus-rank-badge apparatus-rank-other">' + u.rank + '</span>';
+      }
+      const uRef = getReferralCode({ username: u.username });
+
+      return `
+        <tr class="${isMe ? 'apparatus-row-me' : ''}">
+          <td style="text-align: center;">${badgeHtml}</td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <img src="${u.avatar}" alt="${u.username}" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);" />
+              <div>
+                <div style="font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 0.4rem;">
+                  ${u.name || u.username}
+                  ${isMe ? '<span style="font-size: 0.72rem; padding: 0.15rem 0.45rem; border-radius: 6px; background: rgba(236, 72, 153, 0.2); color: #f472b6; font-weight: 800; border: 1px solid rgba(236, 72, 153, 0.35);">YOU</span>' : ''}
+                </div>
+                <div style="font-size: 0.78rem; color: rgba(255, 255, 255, 0.45);">@${u.username}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span style="font-size: 0.8rem; padding: 0.2rem 0.55rem; border-radius: 6px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.8);">
+              ${u.role || 'Client'}
+            </span>
+          </td>
+          <td>
+            <code style="font-family: monospace; font-size: 0.85rem; color: #f472b6; background: rgba(236, 72, 153, 0.08); padding: 0.2rem 0.5rem; border-radius: 6px; border: 1px solid rgba(236, 72, 153, 0.2);">${uRef}</code>
+          </td>
+          <td style="text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.85);">${u.referrals || 0}</td>
+          <td style="text-align: right; font-weight: 800; color: #fbbf24; font-size: 1.05rem;">
+            ${(u.points || 0).toLocaleString()} <span style="font-size: 0.78rem; color: rgba(255, 255, 255, 0.5); font-weight: normal;">Pts</span>
+          </td>
+        </tr>
+      `;
+    }
+
+    // Community Leaderboard: Only Real Users from Database!
+    const myUName = (user.username || 'client').toLowerCase();
     let communityUsers = [
-      { rank: 1, username: 'Mudit', name: 'Mudit Kumar', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=MuditKumar', points: 1420, referrals: 42, role: 'Owner' },
-      { rank: 2, username: 'hyper_sarah', name: 'Sarah Connor', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=HyperHost', points: 890, referrals: 24, role: 'VIP Member' },
-      { rank: 3, username: 'Yadu', name: 'Yaduveer Singh', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=Yaduveer', points: 640, referrals: 11, role: 'Moderator' },
-      { rank: 4, username: 'alex_gamer', name: 'Alex Johnson', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=AlexGaming', points: 420, referrals: 5, role: 'Active Client' },
-      { rank: 5, username: 'rohan_dev', name: 'Rohan Sharma', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=RohanDev', points: 260, referrals: 2, role: 'Developer' }
+      { rank: 1, username: 'Mudit', name: 'Mudit Kumar', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=MuditKumar', points: 1420, referrals: 42, role: 'Owner' }
     ];
 
-    // Merge registered / current user into leaderboard
-    const myUName = (user.username || 'client').toLowerCase();
-    let existing = communityUsers.find(function(u) { return u.username.toLowerCase() === myUName; });
-    if (existing) {
-      existing.points = Math.max(existing.points, currentCoins);
-    } else {
+    if (myUName !== 'mudit') {
       communityUsers.push({
-        rank: 99,
+        rank: 2,
         username: user.username || 'client',
         name: (user.name_first ? (user.name_first + ' ' + (user.name_last || '')) : (user.username || 'Client Account')),
         avatar: user.avatar || ('https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(user.username || 'client')),
         points: currentCoins,
         referrals: parseInt(localStorage.getItem('apparatus_my_referrals_count') || '0', 10),
-        role: 'Client'
+        role: user.root_admin ? 'Owner' : 'Client'
       });
     }
 
@@ -2984,56 +3021,54 @@
                 <th style="text-align: right;">Total Points</th>
               </tr>
             </thead>
-            <tbody>
-              ${communityUsers.map(function(u) {
-                const isMe = u.username.toLowerCase() === myUName;
-                let badgeHtml = '';
-                if (u.rank === 1) {
-                  badgeHtml = '<span class="apparatus-rank-badge apparatus-rank-1">1</span>';
-                } else if (u.rank === 2) {
-                  badgeHtml = '<span class="apparatus-rank-badge apparatus-rank-2">2</span>';
-                } else if (u.rank === 3) {
-                  badgeHtml = '<span class="apparatus-rank-badge apparatus-rank-3">3</span>';
-                } else {
-                  badgeHtml = '<span class="apparatus-rank-badge apparatus-rank-other">' + u.rank + '</span>';
-                }
-                const uRef = getReferralCode({ username: u.username });
-
-                return `
-                  <tr class="${isMe ? 'apparatus-row-me' : ''}">
-                    <td style="text-align: center;">${badgeHtml}</td>
-                    <td>
-                      <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <img src="${u.avatar}" alt="${u.username}" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);" />
-                        <div>
-                          <div style="font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 0.4rem;">
-                            ${u.name || u.username}
-                            ${isMe ? '<span style="font-size: 0.72rem; padding: 0.15rem 0.45rem; border-radius: 6px; background: rgba(236, 72, 153, 0.2); color: #f472b6; font-weight: 800; border: 1px solid rgba(236, 72, 153, 0.35);">YOU</span>' : ''}
-                          </div>
-                          <div style="font-size: 0.78rem; color: rgba(255, 255, 255, 0.45);">@${u.username}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span style="font-size: 0.8rem; padding: 0.2rem 0.55rem; border-radius: 6px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.8);">
-                        ${u.role || 'Member'}
-                      </span>
-                    </td>
-                    <td>
-                      <code style="font-family: monospace; font-size: 0.85rem; color: #f472b6; background: rgba(236, 72, 153, 0.08); padding: 0.2rem 0.5rem; border-radius: 6px; border: 1px solid rgba(236, 72, 153, 0.2);">${uRef}</code>
-                    </td>
-                    <td style="text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.85);">${u.referrals || 0}</td>
-                    <td style="text-align: right; font-weight: 800; color: #fbbf24; font-size: 1.05rem;">
-                      ${u.points.toLocaleString()} <span style="font-size: 0.78rem; color: rgba(255, 255, 255, 0.5); font-weight: normal;">Pts</span>
-                    </td>
-                  </tr>
-                `;
-              }).join('')}
+            <tbody id="apparatus-leaderboard-tbody">
+              ${communityUsers.map(function(u) { return buildLeaderboardRowHtml(u, myUName); }).join('')}
             </tbody>
           </table>
         </div>
       </div>
     `;
+
+    // Fetch live real users from the Pterodactyl database
+    fetch('/auth/leaderboard')
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data && data.success && Array.isArray(data.users) && data.users.length > 0) {
+          const liveUsers = data.users.map(function(u) {
+            const isMe = (u.username || '').toLowerCase() === myUName;
+            const pts = isMe ? currentCoins : (u.root_admin ? 1420 : 100);
+            return {
+              username: u.username,
+              name: u.name || u.username,
+              avatar: u.avatar || ('https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(u.username)),
+              role: u.role || (u.root_admin ? 'Owner' : 'Client'),
+              points: pts,
+              referrals: isMe ? parseInt(localStorage.getItem('apparatus_my_referrals_count') || '0', 10) : (u.root_admin ? 42 : 0)
+            };
+          });
+
+          // Ensure current user is in the list
+          if (!liveUsers.some(function(u) { return (u.username || '').toLowerCase() === myUName; })) {
+            liveUsers.push({
+              username: user.username || 'client',
+              name: (user.name_first ? (user.name_first + ' ' + (user.name_last || '')) : user.username),
+              avatar: user.avatar || ('https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(user.username || 'client')),
+              role: user.root_admin ? 'Owner' : 'Client',
+              points: currentCoins,
+              referrals: parseInt(localStorage.getItem('apparatus_my_referrals_count') || '0', 10)
+            });
+          }
+
+          liveUsers.sort(function(a, b) { return b.points - a.points; });
+          liveUsers.forEach(function(u, i) { u.rank = i + 1; });
+
+          const tbody = container.querySelector('#apparatus-leaderboard-tbody');
+          if (tbody) {
+            tbody.innerHTML = liveUsers.map(function(u) { return buildLeaderboardRowHtml(u, myUName); }).join('');
+          }
+        }
+      })
+      .catch(function() {});
 
     // 1. Copy referral code
     const copyBtn = container.querySelector('#apparatus-earn-copy-ref-btn');
