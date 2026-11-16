@@ -6108,25 +6108,13 @@
     };
   }
 
-  let profileMountRetries = 0;
+  // Profile Manager deferred per user instruction ("we will later fix that profile one")
   function injectUserProfileSection() {
-    const rawPath = window.location.pathname || '';
-    if (rawPath !== '/account' && rawPath !== '/account/') {
-      profileMountRetries = 0;
-      const existing = document.getElementById('apparatus-user-profile-section');
-      if (existing) existing.remove();
-      return;
-    }
-
-    const els = getAccountPageElements();
-    if (!els || !els.gridContainer) {
-      if (profileMountRetries < 35) {
-        profileMountRetries++;
-        setTimeout(injectUserProfileSection, 120);
-      }
-      return;
-    }
-    profileMountRetries = 0;
+    const existing = document.getElementById('apparatus-user-profile-section');
+    if (existing) existing.remove();
+    return;
+  }
+  function _disabled_injectUserProfileSection() {
 
     let section = document.getElementById('apparatus-user-profile-section');
     const isNew = !section;
@@ -6502,13 +6490,28 @@
     if (rawPath !== '/account' && rawPath !== '/account/') return;
 
     const els = getAccountPageElements();
-    if (!els || !els.gridContainer) return;
+    let grid = els ? els.gridContainer : null;
+    if (!grid) {
+      const pw = document.querySelector('input[type="password"]');
+      if (pw) {
+        grid = pw.closest('div.grid-cols-2, div[class*="grid-cols-2"], div.md\\:grid, div[class*="md:grid"]');
+        if (!grid) {
+          const form = pw.closest('form');
+          if (form && form.parentElement) grid = form.parentElement;
+        }
+      }
+    }
+    if (!grid) {
+      grid = document.querySelector('div.grid-cols-2, div[class*="grid-cols-2"], div.md\\:grid, div[class*="md:grid"]');
+    }
+    if (!grid) return;
 
-    const grid = els.gridContainer;
     grid.style.setProperty('display', 'flex', 'important');
     grid.style.setProperty('flex-direction', 'column', 'important');
     grid.style.setProperty('grid-template-columns', '100%', 'important');
     grid.style.setProperty('gap', '1.5rem', 'important');
+    grid.style.setProperty('column-gap', '0', 'important');
+    grid.style.setProperty('row-gap', '1.5rem', 'important');
     grid.style.setProperty('width', '100%', 'important');
     grid.style.setProperty('max-width', '100%', 'important');
     grid.style.setProperty('margin-left', '0', 'important');
@@ -6519,10 +6522,12 @@
     grid.style.setProperty('box-sizing', 'border-box', 'important');
 
     Array.from(grid.children).forEach(function (child) {
-      if (child.id === 'apparatus-user-profile-section' || child.id === 'apparatus-verification-banner') {
+      if (child.id === 'apparatus-user-profile-section') {
+        child.remove();
+        return;
+      }
+      if (child.id === 'apparatus-verification-banner') {
         child.style.setProperty('display', 'block', 'important');
-        child.style.setProperty('visibility', 'visible', 'important');
-        child.style.setProperty('opacity', '1', 'important');
         child.style.setProperty('width', '100%', 'important');
         child.style.setProperty('max-width', '100%', 'important');
         child.style.setProperty('margin-left', '0', 'important');
@@ -6545,7 +6550,7 @@
       child.style.setProperty('align-self', 'stretch', 'important');
       child.style.setProperty('flex', '1 1 100%', 'important');
 
-      const forms = child.querySelectorAll('form');
+      const forms = child.matches('form') ? [child] : Array.from(child.querySelectorAll('form'));
       forms.forEach(function (f) {
         f.style.setProperty('width', '100%', 'important');
         f.style.setProperty('max-width', '100%', 'important');
@@ -6600,7 +6605,7 @@
       }
     });
 
-    const pageBlock = document.querySelector('div[class*="PageContentBlock"]') || els.pageContainer;
+    const pageBlock = document.querySelector('div[class*="PageContentBlock"]');
     if (pageBlock) {
       pageBlock.style.setProperty('width', '90%', 'important');
       pageBlock.style.setProperty('max-width', '1380px', 'important');

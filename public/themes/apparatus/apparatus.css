@@ -5232,7 +5232,15 @@ div[class*="PageContentBlock"]>div:not([class*="ActivityLogContainer"]) {
   gap: 1.5rem !important;
 }
 
-/* Ensure the native cards container (Update Password, Update Email Address, Two-Step Verification) stacks cleanly with 100% flush width */
+/* ==============================================================================
+   ACCOUNT OVERVIEW CARDS (100% FLUSH, SINGLE COLUMN, ZERO HORIZONTAL OFFSETS)
+   ============================================================================== */
+div.grid-cols-2,
+div[class*="grid-cols-2"],
+div.md\:grid,
+div[class*="md:grid"],
+div:has(> form input[type="password"]),
+div:has(> div input[type="password"]),
 .sc-12to0iy-1,
 body:not(.apparatus-auth) .sc-12to0iy-1,
 div[class*="AccountOverviewContainer"]>div:not(.apparatus-user-profile-section),
@@ -5252,30 +5260,37 @@ div[class*="PageContentBlock"] div[class*="grid-cols-2"] {
   flex-direction: column !important;
   grid-template-columns: 100% !important;
   gap: 1.5rem !important;
+  column-gap: 0 !important;
+  row-gap: 1.5rem !important;
   width: 100% !important;
   max-width: 100% !important;
-  margin: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
   padding: 0 !important;
   align-items: stretch !important;
   box-sizing: border-box !important;
 }
 
 /* Ensure every security card (Update Password, Update Email Address, Two-Step) has 100% matching width & zero horizontal offsets */
+div.grid-cols-2 > *,
+div.grid-cols-2 > form,
+div.grid-cols-2 > div,
+div[class*="grid-cols-2"] > *,
+div[class*="grid-cols-2"] > form,
+div[class*="grid-cols-2"] > div,
+div.md\:grid > *,
+div.md\:grid > form,
+div.md\:grid > div,
+div[class*="md:grid"] > *,
+div[class*="md:grid"] > form,
+div[class*="md:grid"] > div,
+div:has(> form input[type="password"]) > *,
 .sc-12to0iy-1>div,
 .sc-12to0iy-1>form,
 .sc-12to0iy-1>*,
 body:not(.apparatus-auth) .sc-12to0iy-1>div,
 body:not(.apparatus-auth) .sc-12to0iy-1>form,
 body:not(.apparatus-auth) .sc-12to0iy-1>*,
-div.md\:grid>div,
-div.md\:grid>form,
-div.md\:grid>*,
-div[class*="md:grid"]>div,
-div[class*="md:grid"]>form,
-div[class*="md:grid"]>*,
-div[class*="grid-cols-2"]>div,
-div[class*="grid-cols-2"]>form,
-div[class*="grid-cols-2"]>*,
 div[class*="AccountOverviewContainer"]>div>div,
 div[class*="AccountOverviewContainer"] div.md\:grid>div,
 div[class*="AccountOverviewContainer"] div.md\:grid>form,
@@ -5305,11 +5320,42 @@ div[class*="PageContentBlock"] div[class*="grid-cols-2"]>* {
   margin-left: 0 !important;
   margin-right: 0 !important;
   margin-top: 0 !important;
+  margin-bottom: 0 !important;
   grid-column: 1 / -1 !important;
   grid-row: auto !important;
   box-sizing: border-box !important;
   align-self: stretch !important;
   flex: 1 1 100% !important;
+}
+
+/* Ensure inner forms, ContentBox, and background containers span 100% with no margin/offset */
+div.grid-cols-2 form,
+div.grid-cols-2 .sc-mjlt6f-2,
+div.grid-cols-2 [class*="ContentBox"],
+div.grid-cols-2 div[class*="ContentBox___StyledDiv"],
+div.grid-cols-2 div.bg-neutral-700,
+div[class*="grid-cols-2"] form,
+div[class*="grid-cols-2"] .sc-mjlt6f-2,
+div[class*="grid-cols-2"] [class*="ContentBox"],
+div[class*="grid-cols-2"] div[class*="ContentBox___StyledDiv"],
+div[class*="grid-cols-2"] div.bg-neutral-700,
+div.md\:grid form,
+div.md\:grid .sc-mjlt6f-2,
+div.md\:grid [class*="ContentBox"],
+div.md\:grid div[class*="ContentBox___StyledDiv"],
+div.md\:grid div.bg-neutral-700,
+div:has(> form input[type="password"]) form,
+div:has(> form input[type="password"]) .sc-mjlt6f-2,
+div:has(> form input[type="password"]) [class*="ContentBox"],
+div:has(> form input[type="password"]) div[class*="ContentBox___StyledDiv"],
+div:has(> form input[type="password"]) div.bg-neutral-700 {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+  align-self: stretch !important;
 }
 
 /* Strip outer ContentBox wrapper borders & backgrounds to eliminate ghost outlines or double-borders */
