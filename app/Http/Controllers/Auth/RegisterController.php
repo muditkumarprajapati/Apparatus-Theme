@@ -182,6 +182,12 @@ class RegisterController extends Controller
                 }
             }
 
+            // Real-Time Referral Rewards Processing:
+            // Jis user ka code use hua hai usko +10 Points & referrals +1,
+            // aur new user ko +100 Welcome Bonus + 20 Referral Bonus!
+            $refCode = strtoupper(trim($request->input('referral_code', '')));
+            $this->processRegistrationRewards($username, $refCode);
+
             return response()->json([
                 'success' => true,
                 'data' => [
@@ -327,11 +333,335 @@ class RegisterController extends Controller
     }
 
     /**
-     * Get real community leaderboard data from the database.
+     * Storage helper for persistent referral rewards ledger
+     */
+    protected function getRewardsData(): array
+    {
+        $path = storage_path('app/apparatus_rewards.json');
+        if (file_exists($path)) {
+            $data = json_decode(@file_get_contents($path), true);
+            if (is_array($data)) {
+                return $data;
+            }
+        }
+        return [
+            'users' => [],
+            'codes' => [],
+            'history' => [],
+        ];
+    }
+
+    protected function saveRewardsData(array $data): void
+    {
+        $dir = storage_path('app');
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0755, true);
+        }
+        $path = storage_path('app/apparatus_rewards.json');
+        @file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT));
+    }
+
+    protected function generateUserReferralCode(string $username): string
+    {
+        $clean = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $username), 0, 4));
+        if (strlen($clean) < 4) {
+            $clean = str_pad($clean, 4, 'X');
+        }
+        $hash = strtoupper(substr(md5($username . 'arix_salt_2026'), 0, 4));
+        return "AB-{$clean}-{$hash}";
+    }
+
+    protected function findReferralOwner(string $refCode, array &$rewards): ?string
+    {
+        $cleanCode = strtoupper(trim($refCode));
+        if (empty($cleanCode)) return null;
+
+        // Check direct map
+        if (!empty($rewards['codes'][$cleanCode])) {
+            return $rewards['codes'][$cleanCode];
+        }
+
+        // Search user records in rewards
+        foreach ($rewards['users'] as $uKey => $uData) {
+            if (!empty($uData['code']) && strtoupper($uData['code']) === $cleanCode) {
+                return $uData['username'] ?? $uKey;
+            }
+        }
+
+        // Search database users: match username snippet in code e.g. AB-MUDI-... or AB-ARAD-...
+        try {
+            $dbUsers = DB::table('users')->select('username')->get();
+            foreach ($dbUsers as $dbU) {
+                $uName = $dbU->username;
+                $gen = $this->generateUserReferralCode($uName);
+                if ($gen === $cleanCode) {
+                    $rewards['codes'][$cleanCode] = $uName;
+                    return $uName;
+                }
+                $prefix = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $uName), 0, 3));
+                if (!empty($prefix) && strpos($cleanCode, $prefix) !== false) {
+                    $rewards['codes'][$cleanCode] = $uName;
+                    return $uName;
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        return null;
+    }
+
+    protected function processRegistrationRewards(string $username, string $refCode): void
+    {
+        try {
+            $rewards = $this->getRewardsData();
+            $userKey = strtolower($username);
+            $myCode = $this->generateUserReferralCode($username);
+
+            $rewards['codes'][$myCode] = $username;
+
+            $inviter = !empty($refCode) ? $this->findReferralOwner($refCode, $rewards) : null;
+            if ($inviter && strtolower($inviter) === $userKey) {
+                $inviter = null; // Cannot invite self
+            }
+
+            $dateStr = date('d M Y, H:i');
+
+            if ($inviter) {
+                $inviterKey = strtolower($inviter);
+                // Jiska code hai usko +10 Points & referrals +1
+                if (!isset($rewards['users'][$inviterKey])) {
+                    $rewards['users'][$inviterKey] = [
+                        'username' => $inviter,
+                        'points' => 100,
+                        'referrals' => 0,
+                        'code' => $this->generateUserReferralCode($inviter)
+                    ];
+                }
+                $rewards['users'][$inviterKey]['points'] = ($rewards['users'][$inviterKey]['points'] ?? 100) + 10;
+                $rewards['users'][$inviterKey]['referrals'] = ($rewards['users'][$inviterKey]['referrals'] ?? 0) + 1;
+                $rewards['history'][$inviterKey][] = [
+                    'id' => 'tx_' . time() . '_inv',
+                    'title' => "User Invited (@{$username})",
+                    'category' => 'User Invited',
+                    'desc' => "Reward for inviting @{$username} with code {$refCode}",
+                    'amount' => '+10 Pts',
+                    'icon' => 'ri-user-add-line',
+                    'date' => $dateStr,
+                    'status' => 'Credited'
+                ];
+
+                // New User ko +100 signup + 20 referral bonus = 120 points
+                $rewards['users'][$userKey] = [
+                    'username' => $username,
+                    'points' => 120,
+                    'referrals' => 0,
+                    'code' => $myCode,
+                    'claimed_code' => $refCode
+                ];
+                $rewards['history'][$userKey] = [
+                    [
+                        'id' => 'tx_' . time() . '_sign',
+                        'title' => 'Welcome Signup Bonus',
+                        'category' => 'Signup Bonus',
+                        'desc' => 'New member account creation reward',
+                        'amount' => '+100 Pts',
+                        'icon' => 'ri-gift-line',
+                        'date' => $dateStr,
+                        'status' => 'Credited'
+                    ],
+                    [
+                        'id' => 'tx_' . (time() + 1) . '_ref',
+                        'title' => "Referral Claimed (Invited by @{$inviter})",
+                        'category' => 'Referral Claimed',
+                        'desc' => "Welcome bonus for using invite code {$refCode}",
+                        'amount' => '+20 Pts',
+                        'icon' => 'ri-user-shared-line',
+                        'date' => $dateStr,
+                        'status' => 'Credited'
+                    ]
+                ];
+            } else {
+                // Normal Signup without code
+                $rewards['users'][$userKey] = [
+                    'username' => $username,
+                    'points' => 100,
+                    'referrals' => 0,
+                    'code' => $myCode,
+                    'claimed_code' => null
+                ];
+                $rewards['history'][$userKey] = [
+                    [
+                        'id' => 'tx_' . time() . '_sign',
+                        'title' => 'Welcome Signup Bonus',
+                        'category' => 'Signup Bonus',
+                        'desc' => 'New member account creation reward',
+                        'amount' => '+100 Pts',
+                        'icon' => 'ri-gift-line',
+                        'date' => $dateStr,
+                        'status' => 'Credited'
+                    ]
+                ];
+            }
+
+            $this->saveRewardsData($rewards);
+        } catch (\Throwable $e) {
+            Log::warning('Rewards processing note: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Claim referral code from /earn page.
+     * Claimant gets +20 Points, Code Owner gets +10 Points & referrals +1!
+     */
+    public function claimReferral(Request $request): JsonResponse
+    {
+        try {
+            $user = auth()->user();
+            $username = $user ? $user->username : trim($request->input('username', ''));
+            if (empty($username)) {
+                return response()->json(['success' => false, 'message' => 'Please sign in to claim referral rewards.'], 401);
+            }
+
+            $refCode = strtoupper(trim($request->input('code', '')));
+            if (empty($refCode)) {
+                return response()->json(['success' => false, 'message' => 'Please provide a valid referral code.'], 422);
+            }
+
+            $rewards = $this->getRewardsData();
+            $userKey = strtolower($username);
+
+            if (!empty($rewards['users'][$userKey]['claimed_code'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You have already claimed a referral bonus (' . $rewards['users'][$userKey]['claimed_code'] . ')!'
+                ], 400);
+            }
+
+            $owner = $this->findReferralOwner($refCode, $rewards);
+            if (!$owner) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Referral code not found. Please verify the code.'
+                ], 404);
+            }
+
+            if (strtolower($owner) === $userKey) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You cannot enter your own referral code!'
+                ], 400);
+            }
+
+            $dateStr = date('d M Y, H:i');
+            $ownerKey = strtolower($owner);
+
+            // Jiska code tha usko +10 Points & total referrals +1
+            if (!isset($rewards['users'][$ownerKey])) {
+                $rewards['users'][$ownerKey] = [
+                    'username' => $owner,
+                    'points' => 100,
+                    'referrals' => 0,
+                    'code' => $this->generateUserReferralCode($owner)
+                ];
+            }
+            $rewards['users'][$ownerKey]['points'] = ($rewards['users'][$ownerKey]['points'] ?? 100) + 10;
+            $rewards['users'][$ownerKey]['referrals'] = ($rewards['users'][$ownerKey]['referrals'] ?? 0) + 1;
+            $rewards['history'][$ownerKey][] = [
+                'id' => 'tx_' . time() . '_inv',
+                'title' => "User Invited (@{$username})",
+                'category' => 'User Invited',
+                'desc' => "Invited @{$username} with your referral code {$refCode}",
+                'amount' => '+10 Pts',
+                'icon' => 'ri-user-add-line',
+                'date' => $dateStr,
+                'status' => 'Credited'
+            ];
+
+            // Claimant gets +20 Points
+            if (!isset($rewards['users'][$userKey])) {
+                $rewards['users'][$userKey] = [
+                    'username' => $username,
+                    'points' => 100,
+                    'referrals' => 0,
+                    'code' => $this->generateUserReferralCode($username)
+                ];
+            }
+            $rewards['users'][$userKey]['points'] = ($rewards['users'][$userKey]['points'] ?? 100) + 20;
+            $rewards['users'][$userKey]['claimed_code'] = $refCode;
+            $rewards['history'][$userKey][] = [
+                'id' => 'tx_' . time() . '_claim',
+                'title' => "Referral Code Claimed: {$refCode}",
+                'category' => 'Referral Claimed',
+                'desc' => "Applied invite code from @{$owner}",
+                'amount' => '+20 Pts',
+                'icon' => 'ri-user-shared-line',
+                'date' => $dateStr,
+                'status' => 'Credited'
+            ];
+
+            $this->saveRewardsData($rewards);
+
+            return response()->json([
+                'success' => true,
+                'message' => "🎉 Referral code claimed! +20 Points added to your balance, and +10 Points to @{$owner}!",
+                'points' => $rewards['users'][$userKey]['points'],
+                'owner' => $owner,
+                'history' => $rewards['history'][$userKey]
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'Claim error: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get user points, referral stats, and ledger history.
+     */
+    public function getUserPoints(Request $request): JsonResponse
+    {
+        try {
+            $user = auth()->user();
+            $username = $user ? $user->username : trim($request->input('username', ''));
+            if (empty($username)) {
+                return response()->json(['success' => false, 'points' => 100, 'referrals' => 0]);
+            }
+
+            $rewards = $this->getRewardsData();
+            $userKey = strtolower($username);
+            $uData = $rewards['users'][$userKey] ?? null;
+
+            if (!$uData) {
+                $uData = [
+                    'username' => $username,
+                    'points' => 100,
+                    'referrals' => 0,
+                    'code' => $this->generateUserReferralCode($username),
+                    'claimed_code' => null
+                ];
+                $rewards['users'][$userKey] = $uData;
+                $rewards['codes'][$uData['code']] = $username;
+                $this->saveRewardsData($rewards);
+            }
+
+            return response()->json([
+                'success' => true,
+                'username' => $username,
+                'points' => (int) ($uData['points'] ?? 100),
+                'referrals' => (int) ($uData['referrals'] ?? 0),
+                'referral_code' => $uData['code'] ?? $this->generateUserReferralCode($username),
+                'claimed_code' => $uData['claimed_code'] ?? null,
+                'history' => $rewards['history'][$userKey] ?? []
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'points' => 100, 'referrals' => 0]);
+        }
+    }
+
+    /**
+     * Get real community leaderboard data from the database and rewards ledger.
      */
     public function leaderboard(): JsonResponse
     {
         try {
+            $rewards = $this->getRewardsData();
             $users = DB::table('users')
                 ->select('id', 'username', 'name_first', 'name_last', 'email', 'root_admin', 'created_at')
                 ->where('root_admin', 0)
@@ -350,6 +680,11 @@ class RegisterController extends Controller
                 $seed = urlencode($u->username);
                 $avatar = "https://api.dicebear.com/7.x/thumbs/svg?seed={$seed}";
 
+                $userKey = strtolower($u->username);
+                $pts = isset($rewards['users'][$userKey]['points']) ? (int) $rewards['users'][$userKey]['points'] : 100;
+                $refs = isset($rewards['users'][$userKey]['referrals']) ? (int) $rewards['users'][$userKey]['referrals'] : 0;
+                $code = $rewards['users'][$userKey]['code'] ?? $this->generateUserReferralCode($u->username);
+
                 $data[] = [
                     'id' => $u->id,
                     'username' => $u->username,
@@ -357,9 +692,17 @@ class RegisterController extends Controller
                     'role' => $role,
                     'avatar' => $avatar,
                     'root_admin' => (int) $u->root_admin,
+                    'points' => $pts,
+                    'referrals' => $refs,
+                    'referral_code' => $code,
                     'created_at' => $u->created_at,
                 ];
             }
+
+            // Sort by points descending
+            usort($data, function ($a, $b) {
+                return $b['points'] <=> $a['points'];
+            });
 
             return response()->json([
                 'success' => true,

@@ -145,12 +145,13 @@ target_file = sys.argv[1]
 try:
     with open(target_file, "r") as fp:
         c = fp.read()
-    if "auth/register" not in c:
-        pattern = r"protected\s+\$except\s*=\s*\["
-        replacement = "protected $except = [\n        '\''register\'',\n        '\''auth/register\'',\n        '\''auth/mail/*\'',"
-        c = re.sub(pattern, replacement, c, count=1)
-        with open(target_file, "w") as fp:
-            fp.write(c)
+    for route in ["'\''register'\''", "'\''auth/register'\''", "'\''auth/mail/*'\''", "'\''auth/referral/*'\''", "'\''auth/user-points'\''"]:
+        clean = route.replace("'\''", "")
+        if clean not in c:
+            pattern = r"(protected\s+\$except\s*=\s*\[)"
+            c = re.sub(pattern, r"\1\n        " + route + ",", c, count=1)
+    with open(target_file, "w") as fp:
+        fp.write(c)
 except Exception:
     pass
 ' "$CSRF_FILE" 2>/dev/null || true
@@ -188,7 +189,9 @@ Route::post('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterContro
 Route::post('/auth/mail/test', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendTestMail']);
 Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendVerificationCode']);
 Route::get('/auth/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);
-Route::get('/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);'''
+Route::get('/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);
+Route::post('/auth/referral/claim', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'claimReferral']);
+Route::get('/auth/user-points', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'getUserPoints']);'''
 
 if '<?php' in c:
     c = c.replace('<?php', '<?php\n\n' + snippet, 1)
@@ -231,7 +234,9 @@ Route::post('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterContro
 Route::post('/auth/mail/test', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendTestMail']);
 Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendVerificationCode']);
 Route::get('/auth/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);
-Route::get('/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);'''
+Route::get('/leaderboard', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'leaderboard']);
+Route::post('/auth/referral/claim', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'claimReferral']);
+Route::get('/auth/user-points', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'getUserPoints']);'''
 
 if '<?php' in c:
     c = c.replace('<?php', '<?php\n\n' + snippet, 1)

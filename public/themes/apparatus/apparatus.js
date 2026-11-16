@@ -1145,6 +1145,42 @@
     return finalAmt;
   }
 
+  function syncUserPointsFromServer() {
+    const user = window.PterodactylUser || {};
+    const username = user.username || localStorage.getItem('apparatus_registered_username') || localStorage.getItem('apparatus_profile_username');
+    if (!username) return;
+
+    fetch('/auth/user-points?username=' + encodeURIComponent(username), {
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data && data.success) {
+        if (typeof data.points === 'number') {
+          localStorage.setItem('apparatus_coins', data.points.toString());
+          refreshAllCoinDisplays();
+        }
+        if (data.referral_code) {
+          localStorage.setItem('apparatus_user_referral_code', data.referral_code);
+        }
+        if (typeof data.referrals === 'number') {
+          localStorage.setItem('apparatus_my_referrals_count', data.referrals.toString());
+        }
+        if (data.claimed_code) {
+          localStorage.setItem('apparatus_referral_claimed', 'true');
+          localStorage.setItem('apparatus_claimed_referral_code', data.claimed_code);
+        }
+        if (Array.isArray(data.history) && data.history.length > 0) {
+          localStorage.setItem('apparatus_points_history', JSON.stringify(data.history));
+        }
+      }
+    })
+    .catch(function () { });
+  }
+
   function creditReferralPointsToOwner(refCode, pts) {
     if (!refCode) return;
     try {
@@ -1759,7 +1795,7 @@
         </div>
 
         <!-- Verification Banner Slot for non-verified users -->
-        <div id="apparatus-verification-banner-slot" class="apparatus-verification-slot" style="margin-bottom: 1.5rem;"></div>
+        <div id="apparatus-verification-banner-slot" class="apparatus-verification-slot" style="display: none; width: 100%;"></div>
 
         <!-- Top Metric Ribbon (4 Modern Glass Tiles) -->
         <div class="apparatus-metrics-ribbon" id="apparatus-metrics-ribbon">
@@ -2088,6 +2124,7 @@
     }
     triggerDashboardEntrance();
     mountAccountVerificationBanner();
+    syncUserPointsFromServer();
 
     const toServersBtn = document.getElementById('apparatus-btn-to-servers');
     if (toServersBtn) {
@@ -2896,6 +2933,11 @@
     const container = document.getElementById('apparatus-earn-dynamic-content');
     if (!container) return;
 
+    if (!window.__apparatus_synced_earn_points) {
+      window.__apparatus_synced_earn_points = true;
+      syncUserPointsFromServer();
+    }
+
     const currentCoins = getUserPoints();
     const user = window.PterodactylUser || {
       username: localStorage.getItem('apparatus_registered_username') || 'Client',
@@ -3386,32 +3428,63 @@
           return;
         }
 
-        // Award 20 points to claiming user
-        const curPts = getUserPoints();
-        setUserPoints(curPts + 20);
-        localStorage.setItem('apparatus_referral_claimed', 'true');
-        localStorage.setItem('apparatus_claimed_referral_code', val);
+        // Award points on server and client
+        const token = getCsrfToken();
+        const claimantUsername = user.username || localStorage.getItem('apparatus_registered_username') || localStorage.getItem('apparatus_profile_username') || 'Client';
 
-        try {
-          const hist = getPointsHistory();
-          hist.unshift({
-            id: 'tx_' + Date.now(),
-            title: 'Referral Code Claimed: ' + val,
-            category: 'Referral Claimed',
-            desc: 'Applied community referral invite code',
-            amount: '+20 Pts',
-            icon: 'ri-user-shared-line',
-            date: 'Today',
-            status: 'Credited'
-          });
-          localStorage.setItem('apparatus_points_history', JSON.stringify(hist));
-        } catch (e) {}
+        fetch('/auth/referral/claim', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': token,
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: JSON.stringify({
+            code: val,
+            username: claimantUsername
+          })
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data && data.success) {
+            setUserPoints(data.claimant_points || (getUserPoints() + 20));
+            localStorage.setItem('apparatus_referral_claimed', 'true');
+            localStorage.setItem('apparatus_claimed_referral_code', val);
 
-        // Award 10 points to code owner
-        creditReferralPointsToOwner(val, 10);
+            try {
+              const hist = getPointsHistory();
+              hist.unshift({
+                id: 'tx_' + Date.now(),
+                title: 'Referral Code Claimed: ' + val,
+                category: 'Referral Claimed',
+                desc: 'Applied community referral invite code',
+                amount: '+20 Pts',
+                icon: 'ri-user-shared-line',
+                date: 'Today',
+                status: 'Credited'
+              });
+              localStorage.setItem('apparatus_points_history', JSON.stringify(hist));
+            } catch (e) {}
 
-        showToast('success', '20 Points Claimed!', '🎉 Referral code applied! +20 Points added to your account and +10 Points to your inviter.');
-        renderEarnPage();
+            const inviterText = data.owner_username ? '@' + data.owner_username : 'your inviter';
+            showToast('success', '20 Points Claimed!', '🎉 Referral code applied! +20 Points added to your account and +10 Points to ' + inviterText + '.');
+            renderEarnPage();
+          } else {
+            showToast('error', 'Claim Failed', (data && data.message) ? data.message : 'Could not claim referral code.');
+          }
+        })
+        .catch(function () {
+          // Offline fallback
+          const curPts = getUserPoints();
+          setUserPoints(curPts + 20);
+          localStorage.setItem('apparatus_referral_claimed', 'true');
+          localStorage.setItem('apparatus_claimed_referral_code', val);
+          creditReferralPointsToOwner(val, 10);
+          showToast('success', '20 Points Claimed!', '🎉 Referral code applied! +20 Points added to your account and +10 Points to your inviter.');
+          renderEarnPage();
+        });
       });
     }
 
@@ -6046,42 +6119,45 @@
   // User Profile Studio: Personal Identity, Avatar Studio, Badges & Preferences
   // Mounted directly above Update Password, Update Email, and Two-Step Verification
   // ==============================================================================
-  function findAccountFormsContainer() {
+  function getAccountPageElements() {
     const rawPath = window.location.pathname || '';
     if (rawPath !== '/account' && rawPath !== '/account/') return null;
 
-    // 1. Try finding input[type="password"] or input[name="password"]
-    const pwInput = document.querySelector('input[type="password"]');
+    let pwInput = document.querySelector('input[type="password"]');
+    let gridContainer = null;
+    let pageContainer = null;
+
     if (pwInput) {
       const form = pwInput.closest('form');
       if (form && form.parentElement) {
-        return form.parentElement;
-      }
-      let cur = pwInput.parentElement;
-      while (cur && cur !== document.body) {
-        if (cur.parentElement && cur.parentElement.children.length >= 2) {
-          return cur.parentElement;
-        }
-        cur = cur.parentElement;
+        gridContainer = form.parentElement.parentElement;
+        if (gridContainer) pageContainer = gridContainer.parentElement;
       }
     }
 
-    // 2. Try finding headings or elements containing "Update Password"
-    const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, p, span');
-    for (let i = 0; i < headings.length; i++) {
-      const el = headings[i];
-      if (el.children.length === 0 && (el.textContent || '').trim().toLowerCase() === 'update password') {
-        const card = el.closest('form') || el.closest('[class*="ContentBox"]') || (el.parentElement ? el.parentElement.parentElement : null);
-        if (card && card.parentElement) {
-          return card.parentElement;
-        }
-      }
+    if (!gridContainer) {
+      gridContainer = document.querySelector('.sc-12to0iy-1') ||
+        document.querySelector('div.md\\:grid') ||
+        document.querySelector('div[class*="AccountOverviewContainer"] > div');
+      if (gridContainer) pageContainer = gridContainer.parentElement;
     }
 
-    // 3. Fallback selectors for account page containers
-    return document.querySelector('.sc-12to0iy-1') ||
-      document.querySelector('div[class*="AccountOverviewContainer"] > div') ||
-      document.querySelector('div[class*="PageContentBlock"] > div');
+    if (!pageContainer) {
+      pageContainer = document.querySelector('div[class*="PageContentBlock"] > div') ||
+        document.querySelector('div[class*="PageContentBlock"]') ||
+        document.querySelector('div[class*="AccountOverviewContainer"]');
+    }
+
+    if (!gridContainer && pageContainer) {
+      gridContainer = pageContainer.querySelector('div.md\\:grid, .sc-12to0iy-1, div[class*="grid"]');
+    }
+
+    if (!gridContainer && !pageContainer) return null;
+
+    return {
+      gridContainer: gridContainer,
+      pageContainer: pageContainer || (gridContainer ? gridContainer.parentElement : null)
+    };
   }
 
   function injectUserProfileSection() {
@@ -6092,12 +6168,12 @@
       return;
     }
 
-    const cardsContainer = findAccountFormsContainer();
-    if (!cardsContainer) {
+    const els = getAccountPageElements();
+    if (!els || (!els.gridContainer && !els.pageContainer)) {
       if (!window.__apparatus_profile_retry) {
         window.__apparatus_profile_retry = 0;
       }
-      if (window.__apparatus_profile_retry < 30) {
+      if (window.__apparatus_profile_retry < 35) {
         window.__apparatus_profile_retry++;
         setTimeout(injectUserProfileSection, 100);
       }
@@ -6293,15 +6369,14 @@
       </div>
     `;
 
-    // Mount section inside cardsContainer
-    const banner = document.getElementById('apparatus-verification-banner');
-    if (banner && banner.parentElement === cardsContainer) {
-      if (section.parentElement !== cardsContainer || banner.nextSibling !== section) {
-        cardsContainer.insertBefore(section, banner.nextSibling);
+    // Mount section right above gridContainer in pageContainer
+    if (els.gridContainer && els.gridContainer.parentElement) {
+      if (section.parentElement !== els.gridContainer.parentElement || section.nextSibling !== els.gridContainer) {
+        els.gridContainer.parentElement.insertBefore(section, els.gridContainer);
       }
-    } else {
-      if (section.parentElement !== cardsContainer || cardsContainer.firstChild !== section) {
-        cardsContainer.insertBefore(section, cardsContainer.firstChild);
+    } else if (els.pageContainer) {
+      if (section.parentElement !== els.pageContainer) {
+        els.pageContainer.prepend(section);
       }
     }
 
@@ -6471,104 +6546,85 @@
     const rawPath = window.location.pathname || '';
     if (rawPath !== '/account' && rawPath !== '/account/') return;
 
-    const formsContainer = findAccountFormsContainer();
-    if (formsContainer) {
-      formsContainer.style.setProperty('display', 'flex', 'important');
-      formsContainer.style.setProperty('flex-direction', 'column', 'important');
-      formsContainer.style.setProperty('grid-template-columns', '1fr', 'important');
-      formsContainer.style.setProperty('width', '100%', 'important');
-      formsContainer.style.setProperty('max-width', '100%', 'important');
-      formsContainer.style.setProperty('gap', '1.5rem', 'important');
-      formsContainer.style.setProperty('margin', '0', 'important');
-      formsContainer.style.setProperty('padding', '0', 'important');
-      formsContainer.style.setProperty('align-items', 'stretch', 'important');
-      formsContainer.style.setProperty('box-sizing', 'border-box', 'important');
+    const els = getAccountPageElements();
+    if (!els || !els.gridContainer) return;
 
-      Array.from(formsContainer.children).forEach(function (child) {
-        child.style.setProperty('width', '100%', 'important');
-        child.style.setProperty('max-width', '100%', 'important');
-        child.style.setProperty('box-sizing', 'border-box', 'important');
-        child.style.setProperty('margin-left', '0', 'important');
-        child.style.setProperty('margin-right', '0', 'important');
+    const grid = els.gridContainer;
+    grid.style.setProperty('display', 'flex', 'important');
+    grid.style.setProperty('flex-direction', 'column', 'important');
+    grid.style.setProperty('grid-template-columns', '1fr', 'important');
+    grid.style.setProperty('gap', '1.5rem', 'important');
+    grid.style.setProperty('width', '100%', 'important');
+    grid.style.setProperty('max-width', '100%', 'important');
+    grid.style.setProperty('margin-left', '0', 'important');
+    grid.style.setProperty('margin-right', '0', 'important');
+    grid.style.setProperty('padding', '0', 'important');
+    grid.style.setProperty('align-items', 'stretch', 'important');
+    grid.style.setProperty('box-sizing', 'border-box', 'important');
+
+    Array.from(grid.children).forEach(function (child) {
+      if (child.id === 'apparatus-user-profile-section' || child.id === 'apparatus-verification-banner') return;
+      child.style.setProperty('display', 'flex', 'important');
+      child.style.setProperty('flex-direction', 'column', 'important');
+      child.style.setProperty('width', '100%', 'important');
+      child.style.setProperty('max-width', '100%', 'important');
+      child.style.setProperty('margin-left', '0', 'important');
+      child.style.setProperty('margin-right', '0', 'important');
+      child.style.setProperty('margin-top', '0', 'important');
+      child.style.setProperty('box-sizing', 'border-box', 'important');
+      child.style.setProperty('align-self', 'stretch', 'important');
+
+      const forms = child.querySelectorAll('form');
+      forms.forEach(function (f) {
+        f.style.setProperty('width', '100%', 'important');
+        f.style.setProperty('max-width', '100%', 'important');
+        f.style.setProperty('box-sizing', 'border-box', 'important');
+        f.style.setProperty('align-self', 'stretch', 'important');
+        f.style.setProperty('margin-left', '0', 'important');
+        f.style.setProperty('margin-right', '0', 'important');
       });
-    }
 
-    // Search all possible grid wrappers on the account page
-    const accountRoot = document.querySelector('div[class*="AccountOverviewContainer"]') || document.querySelector('div[class*="PageContentBlock"]') || document;
-    const gridContainers = accountRoot.querySelectorAll('.sc-12to0iy-1, div[class*="grid"], div.md\\:grid, div[class*="cols-2"]');
+      const innerBoxes = child.querySelectorAll('.sc-mjlt6f-2, [class*="sc-mjlt6f-2"], [class*="ContentBox"]');
+      innerBoxes.forEach(function (innerBox) {
+        innerBox.style.setProperty('width', '100%', 'important');
+        innerBox.style.setProperty('max-width', '100%', 'important');
+        innerBox.style.setProperty('box-sizing', 'border-box', 'important');
+        innerBox.style.setProperty('align-self', 'stretch', 'important');
+        innerBox.style.setProperty('margin-left', '0', 'important');
+        innerBox.style.setProperty('margin-right', '0', 'important');
+        innerBox.style.setProperty('margin-top', '0', 'important');
+        innerBox.style.setProperty('padding-top', '1rem', 'important');
 
-    gridContainers.forEach(function (cardsContainer) {
-      cardsContainer.style.setProperty('display', 'flex', 'important');
-      cardsContainer.style.setProperty('flex-direction', 'column', 'important');
-      cardsContainer.style.setProperty('grid-template-columns', '1fr', 'important');
-      cardsContainer.style.setProperty('width', '100%', 'important');
-      cardsContainer.style.setProperty('max-width', '100%', 'important');
-      cardsContainer.style.setProperty('gap', '1.5rem', 'important');
-      cardsContainer.style.setProperty('margin', '0', 'important');
-      cardsContainer.style.setProperty('padding', '0', 'important');
-      cardsContainer.style.setProperty('align-items', 'stretch', 'important');
-
-      Array.from(cardsContainer.children).forEach(function (child) {
-        if (child.id === 'apparatus-user-profile-section') return;
-        child.style.setProperty('display', 'flex', 'important');
-        child.style.setProperty('flex-direction', 'column', 'important');
-        child.style.setProperty('width', '100%', 'important');
-        child.style.setProperty('max-width', '100%', 'important');
-        child.style.setProperty('margin-left', '0', 'important');
-        child.style.setProperty('margin-right', '0', 'important');
-        child.style.setProperty('margin-top', '0', 'important');
-        child.style.setProperty('grid-column', '1 / -1', 'important');
-        child.style.setProperty('grid-row', 'auto', 'important');
-        child.style.setProperty('background', 'transparent', 'important');
-        child.style.setProperty('border', 'none', 'important');
-        child.style.setProperty('box-shadow', 'none', 'important');
-        child.style.setProperty('box-sizing', 'border-box', 'important');
-
-        const innerBox = child.querySelector('.sc-mjlt6f-2') || child.querySelector('div[class*="ContentBox___StyledDiv"]') || child.querySelector('[class*="ContentBox"]');
-        if (innerBox) {
-          innerBox.style.setProperty('width', '100%', 'important');
-          innerBox.style.setProperty('max-width', '100%', 'important');
-          innerBox.style.setProperty('margin-left', '0', 'important');
-          innerBox.style.setProperty('margin-right', '0', 'important');
-          innerBox.style.setProperty('margin-top', '0', 'important');
-          innerBox.style.setProperty('padding-top', '1rem', 'important');
-          innerBox.style.setProperty('box-sizing', 'border-box', 'important');
-
-          // Hide empty fade/spinner overlays or phantom empty divs
-          innerBox.querySelectorAll('div').forEach(function (el) {
-            if (!el.textContent.trim() && !el.querySelector('input, button, select, textarea, svg, img, [role="button"]')) {
-              el.style.setProperty('display', 'none', 'important');
-              el.style.setProperty('height', '0', 'important');
-              el.style.setProperty('min-height', '0', 'important');
-              el.style.setProperty('margin', '0', 'important');
-              el.style.setProperty('padding', '0', 'important');
-            }
-          });
-
-          // Reset form top margins so fields sit cleanly near top of card
-          const form = innerBox.querySelector('form');
-          if (form) {
-            form.style.setProperty('margin-top', '0', 'important');
-            form.style.setProperty('padding-top', '0', 'important');
-            const firstChild = form.firstElementChild;
-            if (firstChild) {
-              firstChild.style.setProperty('margin-top', '0', 'important');
-              firstChild.style.setProperty('padding-top', '0', 'important');
-            }
+        // Hide empty fade/spinner overlays or phantom empty divs
+        innerBox.querySelectorAll('div').forEach(function (el) {
+          if (!el.textContent.trim() && !el.querySelector('input, button, select, textarea, svg, img, [role="button"]')) {
+            el.style.setProperty('display', 'none', 'important');
+            el.style.setProperty('height', '0', 'important');
+            el.style.setProperty('min-height', '0', 'important');
+            el.style.setProperty('margin', '0', 'important');
+            el.style.setProperty('padding', '0', 'important');
           }
-        }
-        const titleEl = child.querySelector('h2');
-        if (titleEl) {
-          titleEl.style.setProperty('width', '100%', 'important');
-          titleEl.style.setProperty('max-width', '100%', 'important');
-          titleEl.style.setProperty('margin-left', '0', 'important');
-          titleEl.style.setProperty('margin-right', '0', 'important');
-          titleEl.style.setProperty('margin-bottom', '0.35rem', 'important');
-          titleEl.style.setProperty('padding-left', '0.25rem', 'important');
-          titleEl.style.setProperty('text-align', 'left', 'important');
-          titleEl.style.setProperty('box-sizing', 'border-box', 'important');
+        });
+
+        // Reset form top margins so fields sit cleanly near top of card
+        const form = innerBox.querySelector('form');
+        if (form) {
+          form.style.setProperty('margin-top', '0', 'important');
+          form.style.setProperty('padding-top', '0', 'important');
         }
       });
+
+      const titleEl = child.querySelector('h2');
+      if (titleEl) {
+        titleEl.style.setProperty('width', '100%', 'important');
+        titleEl.style.setProperty('max-width', '100%', 'important');
+        titleEl.style.setProperty('margin-left', '0', 'important');
+        titleEl.style.setProperty('margin-right', '0', 'important');
+        titleEl.style.setProperty('margin-bottom', '0.35rem', 'important');
+        titleEl.style.setProperty('padding-left', '0.25rem', 'important');
+        titleEl.style.setProperty('text-align', 'left', 'important');
+        titleEl.style.setProperty('box-sizing', 'border-box', 'important');
+      }
     });
 
     const pageBlock = document.querySelector('div[class*="PageContentBlock"]');
@@ -6811,27 +6867,34 @@
     const isVerified = localStorage.getItem('apparatus_user_verified') === 'true';
 
     let banner = document.getElementById('apparatus-verification-banner');
+    const slot = document.getElementById('apparatus-verification-banner-slot');
 
     if (isVerified) {
       if (banner) banner.remove();
+      if (slot) {
+        slot.style.setProperty('display', 'none', 'important');
+        slot.style.setProperty('margin-bottom', '0', 'important');
+      }
       return;
     }
 
     const currentPath = window.location.pathname || '';
     const isAccountPage = currentPath === '/account' || currentPath === '/account/';
-    const slot = document.getElementById('apparatus-verification-banner-slot');
 
     let targetParent = null;
     let insertBeforeEl = null;
 
     if (slot) {
+      slot.style.setProperty('display', 'block', 'important');
+      slot.style.setProperty('margin-bottom', '1.5rem', 'important');
       targetParent = slot;
       insertBeforeEl = null;
     } else if (isAccountPage) {
-      const accountContainer = findAccountFormsContainer();
-      if (accountContainer) {
-        targetParent = accountContainer;
-        insertBeforeEl = accountContainer.firstChild;
+      const els = getAccountPageElements();
+      if (els && (els.pageContainer || els.gridContainer)) {
+        targetParent = els.pageContainer || (els.gridContainer ? els.gridContainer.parentElement : null);
+        const profileSec = document.getElementById('apparatus-user-profile-section');
+        insertBeforeEl = profileSec || els.gridContainer;
       }
     } else {
       const welcomeCard = document.getElementById('apparatus-area-1') || document.querySelector('.apparatus-card-welcome');
@@ -7342,6 +7405,7 @@
     applyCustomCode();
     applySystemBanner();
     mountAccountVerificationBanner();
+    syncUserPointsFromServer();
     // Clean up any legacy opacity setting (e.g. 82, 75, 30)
     if (localStorage.getItem('apparatus_card_opacity') === '82' || localStorage.getItem('apparatus_card_opacity') === '75' || localStorage.getItem('apparatus_card_opacity') === '30') {
       localStorage.removeItem('apparatus_card_opacity');

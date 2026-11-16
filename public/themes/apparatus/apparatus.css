@@ -5234,7 +5234,9 @@ div[class*="AccountOverviewContainer"] div[class*="md:grid"],
 div[class*="AccountOverviewContainer"] div[class*="grid"],
 body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="grid"],
 body.apparatus-page-account div.md\:grid,
+body.apparatus-page-account div[class*="md:grid"],
 body.apparatus-page-account .sc-12to0iy-1,
+body.apparatus-page-account div[class*="PageContentBlock"] > div,
 div[class*="PageContentBlock"] div.md\:grid {
   display: flex !important;
   flex-direction: column !important;
@@ -5255,8 +5257,15 @@ div[class*="AccountOverviewContainer"] div.md\:grid>div,
 div[class*="AccountOverviewContainer"] div[class*="md:grid"]>div,
 body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="grid"]>div,
 body.apparatus-page-account div.md\:grid>div,
+body.apparatus-page-account div.md\:grid>form,
+body.apparatus-page-account div[class*="md:grid"]>*,
+body.apparatus-page-account div.md\:grid>*,
 body.apparatus-page-account .sc-12to0iy-1>div,
-div[class*="PageContentBlock"] div.md\:grid>div {
+body.apparatus-page-account .sc-12to0iy-1>form,
+body.apparatus-page-account .sc-12to0iy-1>*,
+div[class*="PageContentBlock"] div.md\:grid>div,
+div[class*="PageContentBlock"] div.md\:grid>form,
+div[class*="PageContentBlock"] div.md\:grid>* {
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
@@ -5267,6 +5276,7 @@ div[class*="PageContentBlock"] div.md\:grid>div {
   grid-column: 1 / -1 !important;
   grid-row: auto !important;
   box-sizing: border-box !important;
+  align-self: stretch !important;
 }
 
 /* Strip outer ContentBox wrapper borders & backgrounds to eliminate ghost outlines or double-borders */
