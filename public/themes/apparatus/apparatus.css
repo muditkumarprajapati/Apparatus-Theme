@@ -83,7 +83,6 @@ body:not(.apparatus-auth) #app {
    UNIVERSAL DEFAULT PANEL CONTAINER WIDTH & ALIGNMENT
    ============================================================================== */
 body:not(.apparatus-auth) .apparatus-dashboard-container,
-body:not(.apparatus-auth) .apparatus-settings-grid,
 body:not(.apparatus-auth) div[class*="AccountOverviewContainer"],
 body:not(.apparatus-auth) div[class*="AccountApiContainer"],
 body:not(.apparatus-auth) div[class*="AccountSSHContainer"],
@@ -1123,10 +1122,10 @@ body.apparatus-auth #apparatus-mobile-toggle {
 }
 
 .apparatus-settings-grid {
-  width: 90% !important;
-  max-width: 90% !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
 }
 
 @media (max-width: 1080px) {
@@ -1259,9 +1258,9 @@ body.apparatus-auth #apparatus-mobile-toggle {
   min-height: 0;
 }
 
-/* Truly Transparent Glass Card */
+/* Truly Transparent Glass Card (Default 50% Luxury Frosted Glass) */
 .apparatus-card {
-  background: rgba(14, 10, 22, 0.3) !important;
+  background: rgba(14, 10, 22, 0.5) !important;
   backdrop-filter: blur(24px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -2746,9 +2745,9 @@ body:not(.apparatus-auth) .sc-mjlt6f-2,
 body:not(.apparatus-auth) div[class*="sc-mjlt6f-2"],
 body:not(.apparatus-auth) div[class*="ContentBox___StyledDiv"],
 body:not(.apparatus-auth) div[class*="TitledGreyBox"] {
-  background: rgba(26, 16, 38, 0.28) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  background: rgba(26, 16, 38, 0.5) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border: 1px solid rgba(255, 255, 255, 0.18) !important;
   border-radius: 16px !important;
   box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.2) !important;
@@ -4145,12 +4144,19 @@ body:not(.apparatus-privacy-active) #apparatus-metric-balance {
 }
 
 .apparatus-settings-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.5rem !important;
+  box-sizing: border-box !important;
 }
 
 .apparatus-setting-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
   padding: 1.75rem;
   border-radius: 16px;
   background: rgba(18, 18, 24, 0.65);
@@ -4208,19 +4214,18 @@ body:not(.apparatus-privacy-active) #apparatus-metric-balance {
   margin: 0.25rem 0 0 0;
 }
 
-.apparatus-setting-badge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 0.2rem 0.65rem;
-  border-radius: 9999px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.apparatus-badge-privacy.active {
-  background: rgba(167, 139, 250, 0.18);
-  color: #c4b5fd;
-  border: 1px solid rgba(167, 139, 250, 0.4);
+.apparatus-setting-badge,
+.apparatus-wp-section-badge,
+.apparatus-wp-badge,
+.apparatus-motion-chip,
+.apparatus-range-value-pill,
+.apparatus-badge-privacy,
+.badge-motion,
+.badge-static {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .apparatus-badge-privacy.inactive {
@@ -5131,9 +5136,9 @@ div[class*="AccountOverviewContainer"]>div:not(.apparatus-user-profile-section) 
   width: 100% !important;
   box-sizing: border-box !important;
   padding: 1.75rem 2rem !important;
-  background: radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.16), transparent 55%), rgba(255, 255, 255, 0.04) !important;
-  backdrop-filter: blur(24px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+  background: radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.14), transparent 55%), rgba(18, 12, 28, 0.5) !important;
+  backdrop-filter: blur(28px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
   border-radius: 20px !important;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;

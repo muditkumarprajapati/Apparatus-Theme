@@ -499,9 +499,10 @@
 
     // 4. Proper Transparency & Styling for ContentBox cards (.sc-mjlt6f-2) across /account, /account/api, /account/ssh
     const contentCards = document.querySelectorAll('.sc-mjlt6f-2, [class*="sc-mjlt6f-2"], div[class*="ContentBox___StyledDiv"]');
+    const defaultOp = (parseInt(localStorage.getItem('apparatus_card_opacity') || '50', 10) / 100).toFixed(2);
     contentCards.forEach(function (card) {
-      card.style.setProperty('background', 'radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.15), transparent 55%), rgba(255, 255, 255, 0.04)', 'important');
-      card.style.setProperty('backdrop-filter', 'blur(20px) saturate(180%)', 'important');
+      card.style.setProperty('background', 'radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.12), transparent 55%), rgba(18, 12, 28, ' + defaultOp + ')', 'important');
+      card.style.setProperty('backdrop-filter', 'blur(24px) saturate(180%)', 'important');
       card.style.setProperty('-webkit-backdrop-filter', 'blur(20px) saturate(180%)', 'important');
       card.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.18)', 'important');
       card.style.setProperty('border-radius', '16px', 'important');
@@ -3917,7 +3918,6 @@
               <div class="apparatus-setting-title-meta">
                 <div class="apparatus-setting-title-row">
                   <h2 class="apparatus-setting-title">Privacy</h2>
-                  <span class="apparatus-setting-badge apparatus-badge-privacy active" id="apparatus-privacy-status-badge">Blurred (Active)</span>
                 </div>
                 <p class="apparatus-setting-desc">Configure privacy settings for sensitive information across the panel.</p>
               </div>
@@ -3956,7 +3956,6 @@
                 <div class="apparatus-wp-section-head">
                   <div class="apparatus-wp-section-title-wrap">
                     <span class="apparatus-setting-sublabel" style="margin-bottom: 0;">Motion Backgrounds</span>
-                    <span class="apparatus-wp-section-badge badge-motion"><i class="ri-movie-line"></i> Animated • 3D Depth</span>
                   </div>
                   <span class="apparatus-wp-section-hint">Multi-layered vector scenes with continuous floating waves and 3D mouse parallax tracking.</span>
                 </div>
@@ -3965,10 +3964,7 @@
                   
                   <!-- Motion 1: Desert Sunset (Default) -->
                   <div class="apparatus-wp-preset-card active" data-wp="desert">
-                    <div class="apparatus-wp-preview apparatus-wp-preview-desert">
-                      <span class="apparatus-wp-badge">Default</span>
-                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> 7 Layers</span>
-                    </div>
+                    <div class="apparatus-wp-preview apparatus-wp-preview-desert"></div>
                     <div class="apparatus-wp-meta">
                       <span class="apparatus-wp-name">Desert Sunset</span>
                       <span class="apparatus-wp-type">Warm Dunes &amp; Solar Rings</span>
@@ -3977,9 +3973,7 @@
 
                   <!-- Motion 2: Cyberpunk Metropolis -->
                   <div class="apparatus-wp-preset-card" data-wp="cyberpunk">
-                    <div class="apparatus-wp-preview apparatus-wp-preview-cyberpunk">
-                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> 7 Layers</span>
-                    </div>
+                    <div class="apparatus-wp-preview apparatus-wp-preview-cyberpunk"></div>
                     <div class="apparatus-wp-meta">
                       <span class="apparatus-wp-name">Cyberpunk Metropolis</span>
                       <span class="apparatus-wp-type">Neo-Tokyo Synthwave &amp; Maglev</span>
@@ -3988,9 +3982,7 @@
 
                   <!-- Motion 3: Mystic Nordic Aurora -->
                   <div class="apparatus-wp-preset-card" data-wp="aurora">
-                    <div class="apparatus-wp-preview apparatus-wp-preview-aurora">
-                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> 7 Layers</span>
-                    </div>
+                    <div class="apparatus-wp-preview apparatus-wp-preview-aurora"></div>
                     <div class="apparatus-wp-meta">
                       <span class="apparatus-wp-name">Mystic Nordic Aurora</span>
                       <span class="apparatus-wp-type">Borealis Fjord &amp; Glacial Peaks</span>
@@ -3999,9 +3991,7 @@
 
                   <!-- Motion 4: Cosmic Space Odyssey -->
                   <div class="apparatus-wp-preset-card" data-wp="nebula">
-                    <div class="apparatus-wp-preview apparatus-wp-preview-nebula">
-                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> 7 Layers</span>
-                    </div>
+                    <div class="apparatus-wp-preview apparatus-wp-preview-nebula"></div>
                     <div class="apparatus-wp-meta">
                       <span class="apparatus-wp-name">Cosmic Space Odyssey</span>
                       <span class="apparatus-wp-type">Ringed Exoplanet &amp; Galaxy</span>
@@ -4010,9 +4000,7 @@
 
                   <!-- Motion 5: Crimson Shogun -->
                   <div class="apparatus-wp-preset-card" data-wp="shogun">
-                    <div class="apparatus-wp-preview apparatus-wp-preview-shogun">
-                      <span class="apparatus-motion-chip"><i class="ri-sparkling-fill"></i> 7 Layers</span>
-                    </div>
+                    <div class="apparatus-wp-preview apparatus-wp-preview-shogun"></div>
                     <div class="apparatus-wp-meta">
                       <span class="apparatus-wp-name">Crimson Shogun</span>
                       <span class="apparatus-wp-type">Mount Fuji, Torii &amp; Sakura</span>
@@ -4027,7 +4015,6 @@
                 <div class="apparatus-wp-section-head">
                   <div class="apparatus-wp-section-title-wrap">
                     <span class="apparatus-setting-sublabel" style="margin-bottom: 0;">Static Backgrounds</span>
-                    <span class="apparatus-wp-section-badge badge-static"><i class="ri-image-2-line"></i> High Definition 4K</span>
                   </div>
                   <span class="apparatus-wp-section-hint">High-resolution photographic &amp; render backdrops optimized for frosted glass readability.</span>
                 </div>
@@ -4250,21 +4237,20 @@
               <div class="apparatus-setting-title-meta">
                 <div class="apparatus-setting-title-row">
                   <h2 class="apparatus-setting-title">Glass Transparency &amp; Opacity</h2>
-                  <span class="apparatus-range-value-pill" id="apparatus-opacity-val-badge">30% (Default Transparent)</span>
                 </div>
-                <p class="apparatus-setting-desc">Select card glass transparency. 30% is the default ultra-transparent luxury glass.</p>
+                <p class="apparatus-setting-desc">Select card glass transparency. 50% is the default luxury frosted glass.</p>
               </div>
             </div>
 
             <div class="apparatus-setting-body">
               <div class="apparatus-slider-line-container">
                 <div class="apparatus-slider-line-labels">
-                  <span><i class="ri-blur-off-line"></i> Crystal Glass (15%)</span>
-                  <span><i class="ri-contrast-drop-line"></i> Default Transparent (30%)</span>
-                  <span><i class="ri-shield-fill"></i> Darker Glass (60%)</span>
+                  <span><i class="ri-blur-off-line"></i> Crystal Glass (25%)</span>
+                  <span><i class="ri-contrast-drop-line"></i> Default Transparent (50%)</span>
+                  <span><i class="ri-shield-fill"></i> Darker Glass (75%)</span>
                 </div>
                 <div class="apparatus-slider-line-track">
-                  <input type="range" min="15" max="70" value="30" step="1" class="apparatus-line-slider" id="apparatus-card-opacity-slider">
+                  <input type="range" min="15" max="85" value="50" step="1" class="apparatus-line-slider" id="apparatus-card-opacity-slider">
                 </div>
               </div>
             </div>
@@ -4349,25 +4335,25 @@
     // Glass Card Opacity / Transparency Line Slider Event
     const opacitySlider = setView.querySelector('#apparatus-card-opacity-slider');
     const opacityBadge = setView.querySelector('#apparatus-opacity-val-badge');
-    const curOpacity = localStorage.getItem('apparatus_card_opacity') || '30';
+    const curOpacity = localStorage.getItem('apparatus_card_opacity') || '50';
     if (opacitySlider) {
       opacitySlider.value = curOpacity;
-      if (opacityBadge) opacityBadge.textContent = curOpacity + '% ' + (curOpacity === '30' ? '(Default Transparent)' : 'Opacity');
+      if (opacityBadge) opacityBadge.textContent = curOpacity + '% ' + (curOpacity === '50' ? '(Default Transparent)' : 'Opacity');
       opacitySlider.addEventListener('input', function () {
         const val = this.value;
-        if (opacityBadge) opacityBadge.textContent = val + '% ' + (val === '30' ? '(Default Transparent)' : 'Opacity');
-        document.querySelectorAll('.apparatus-card, .apparatus-user-profile-card').forEach(function (c) {
+        if (opacityBadge) opacityBadge.textContent = val + '% ' + (val === '50' ? '(Default Transparent)' : 'Opacity');
+        document.querySelectorAll('.apparatus-card, .apparatus-user-profile-card, .sc-mjlt6f-2, div[class*="ContentBox___StyledDiv"], div[class*="TitledGreyBox"]').forEach(function (c) {
           c.style.setProperty('background', 'rgba(14, 10, 22, ' + (val / 100) + ')', 'important');
         });
       });
       opacitySlider.addEventListener('change', function () {
         const val = this.value;
-        if (val === '30') {
+        if (val === '50') {
           localStorage.removeItem('apparatus_card_opacity');
-          document.querySelectorAll('.apparatus-card').forEach(function (c) {
+          document.querySelectorAll('.apparatus-card, .apparatus-user-profile-card, .sc-mjlt6f-2, div[class*="ContentBox___StyledDiv"], div[class*="TitledGreyBox"]').forEach(function (c) {
             c.style.removeProperty('background');
           });
-          showToast('success', 'Default Glass Restored', 'Restored 30% crystal transparent glass.');
+          showToast('success', 'Default Glass Restored', 'Restored 50% luxury frosted glass.');
         } else {
           localStorage.setItem('apparatus_card_opacity', val);
           showToast('success', 'Transparency Updated', 'Applied ' + val + '% glass opacity.');
@@ -4657,7 +4643,6 @@
               <div class="apparatus-setting-title-meta">
                 <div class="apparatus-setting-title-row">
                   <h2 class="apparatus-setting-title">Apparatus SEO, Meta Data &amp; Social</h2>
-                  <span class="apparatus-setting-badge apparatus-badge-privacy active">Production Suite</span>
                 </div>
                 <p class="apparatus-setting-desc">Configure search engine indexing, browser title branding, OpenGraph social cards, and favicon.</p>
               </div>
@@ -4753,7 +4738,6 @@
               <div class="apparatus-setting-title-meta">
                 <div class="apparatus-setting-title-row">
                   <h2 class="apparatus-setting-title">Site Branding &amp; Watermark Engine</h2>
-                  <span class="apparatus-setting-badge apparatus-badge-privacy active" style="background: rgba(236, 72, 153, 0.2); border-color: rgba(236, 72, 153, 0.4); color: #f472b6;">Visual Brand</span>
                 </div>
                 <p class="apparatus-setting-desc">Customize brand display name, sidebar branding, ambient background watermark, and copyright.</p>
               </div>
@@ -4825,7 +4809,6 @@
               <div class="apparatus-setting-title-meta">
                 <div class="apparatus-setting-title-row">
                   <h2 class="apparatus-setting-title">Custom Scripts &amp; CSS Injection</h2>
-                  <span class="apparatus-setting-badge apparatus-badge-privacy active" style="background: rgba(167, 139, 250, 0.2); border-color: rgba(167, 139, 250, 0.4); color: #c4b5fd;">Developer</span>
                 </div>
                 <p class="apparatus-setting-desc">Inject custom analytics, tracking tags, live chat widgets, or CSS overrides into the panel head dynamically.</p>
               </div>
@@ -4867,7 +4850,6 @@
               <div class="apparatus-setting-title-meta">
                 <div class="apparatus-setting-title-row">
                   <h2 class="apparatus-setting-title">System Notice &amp; Maintenance Banner</h2>
-                  <span class="apparatus-setting-badge apparatus-badge-privacy active" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.4); color: #fbbf24;">Announcement</span>
                 </div>
                 <p class="apparatus-setting-desc">Broadcast a high-visibility global announcement or maintenance notice to all users across the panel.</p>
               </div>
@@ -5904,16 +5886,14 @@
     applyBrandingSettings();
     applyCustomCode();
     applySystemBanner();
-    // Clean up any legacy solid opacity setting
-    if (localStorage.getItem('apparatus_card_opacity') === '82' || localStorage.getItem('apparatus_card_opacity') === '75') {
+    // Clean up any legacy opacity setting (e.g. 82, 75, 30)
+    if (localStorage.getItem('apparatus_card_opacity') === '82' || localStorage.getItem('apparatus_card_opacity') === '75' || localStorage.getItem('apparatus_card_opacity') === '30') {
       localStorage.removeItem('apparatus_card_opacity');
     }
-    const storedOp = localStorage.getItem('apparatus_card_opacity');
-    if (storedOp) {
-      document.querySelectorAll('.apparatus-card, .apparatus-user-profile-card').forEach(function (c) {
-        c.style.setProperty('background', 'rgba(14, 10, 22, ' + (parseInt(storedOp, 10) / 100).toFixed(2) + ')', 'important');
-      });
-    }
+    const storedOp = localStorage.getItem('apparatus_card_opacity') || '50';
+    document.querySelectorAll('.apparatus-card, .apparatus-user-profile-card, .sc-mjlt6f-2, div[class*="ContentBox___StyledDiv"], div[class*="TitledGreyBox"]').forEach(function (c) {
+      c.style.setProperty('background', 'rgba(18, 12, 28, ' + (parseInt(storedOp, 10) / 100).toFixed(2) + ')', 'important');
+    });
     const isAuth = isAuthPage();
     const isHacking = isUnauthorizedAdminAttempt();
 
