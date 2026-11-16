@@ -1682,6 +1682,38 @@ php artisan view:clear</pre>
       .catch(function () {});
   }
 
+  function syncRegisteredUserIntoList(list) {
+    if (!Array.isArray(list)) return list;
+    const regUser = localStorage.getItem('apparatus_registered_username');
+    const regEmail = localStorage.getItem('apparatus_registered_email');
+    if (regUser) {
+      const exists = list.some(function (u) {
+        return (u.username && u.username.toLowerCase() === regUser.toLowerCase()) ||
+               (u.email && regEmail && u.email.toLowerCase() === regEmail.toLowerCase());
+      });
+      if (!exists) {
+        list.unshift({
+          id: list.length + 1,
+          avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(regUser),
+          name: regUser,
+          username: regUser,
+          email: regEmail || (regUser.toLowerCase() + '@gmail.com'),
+          twoFactor: false,
+          serversOwned: 0,
+          vpsOwned: 0,
+          canAccess: 'Client Area',
+          verified: localStorage.getItem('apparatus_user_verified') === 'true',
+          balance: '₹0.00',
+          lastLogin: 'Just now',
+          created: '2026-11-16',
+          referralCode: computeReferralCode(regUser),
+          totalReferrals: 0
+        });
+      }
+    }
+    return list;
+  }
+
   function getAdminUsers() {
     const storageKey = 'apparatus_admin_users_db_v2';
     let stored = null;
@@ -1714,16 +1746,17 @@ php artisan view:clear</pre>
         };
       });
       localStorage.setItem(storageKey, JSON.stringify(merged));
-      return merged;
+      return syncRegisteredUserIntoList(merged);
     }
 
     if (stored && Array.isArray(stored) && stored.length > 0) {
-      return stored.map(function(u) {
+      const list = stored.map(function(u) {
         if (!u.referralCode || u.referralCode.startsWith('ARIX-')) {
           u.referralCode = computeReferralCode(u.username);
         }
         return u;
       });
+      return syncRegisteredUserIntoList(list);
     }
 
     const defaultUsers = [
@@ -1815,7 +1848,7 @@ php artisan view:clear</pre>
     ];
 
     localStorage.setItem(storageKey, JSON.stringify(defaultUsers));
-    return defaultUsers;
+    return syncRegisteredUserIntoList(defaultUsers);
   }
 
   function saveAdminUsers(users) {

@@ -133,30 +133,39 @@ install_theme() {
   chown www-data:www-data "$REG_FILE"
   chmod 644 "$REG_FILE"
 
-  # Inject Registration Routes into routes/auth.php
+  # Inject Registration Routes into routes/auth.php and routes/base.php
   AUTH_ROUTES="$PTERO_DIR/routes/auth.php"
   if [ -f "$AUTH_ROUTES" ]; then
     if [ ! -f "$AUTH_ROUTES.apparatus.bak" ]; then
       cp "$AUTH_ROUTES" "$AUTH_ROUTES.apparatus.bak"
     fi
-    if ! grep -q "RegisterController" "$AUTH_ROUTES"; then
-      python3 -c "
-with open('$AUTH_ROUTES', 'r') as f:
-    content = f.read()
+    sed -i '/RegisterController/d' "$AUTH_ROUTES"
+    sed -i '/Apparatus Self-Registration Routes/d' "$AUTH_ROUTES"
+    cat << 'EOF' >> "$AUTH_ROUTES"
 
-route_snippet = '''
 // Apparatus Self-Registration Routes
 Route::get('/register', 'RegisterController@index')->name('auth.register');
 Route::post('/register', 'RegisterController@register')->name('auth.register.post');
+Route::get('/auth/register', 'RegisterController@index');
 Route::post('/auth/register', 'RegisterController@register');
-'''
+EOF
+  fi
 
-if 'RegisterController' not in content:
-    content += '\n' + route_snippet.strip() + '\n'
-    with open('$AUTH_ROUTES', 'w') as f:
-        f.write(content)
-" 2>/dev/null || echo -e "\nRoute::get('/register', 'RegisterController@index')->name('auth.register');\nRoute::post('/register', 'RegisterController@register')->name('auth.register.post');\nRoute::post('/auth/register', 'RegisterController@register');" >> "$AUTH_ROUTES"
+  BASE_ROUTES="$PTERO_DIR/routes/base.php"
+  if [ -f "$BASE_ROUTES" ]; then
+    if [ ! -f "$BASE_ROUTES.apparatus.bak" ]; then
+      cp "$BASE_ROUTES" "$BASE_ROUTES.apparatus.bak"
     fi
+    sed -i '/RegisterController/d' "$BASE_ROUTES"
+    sed -i '/Apparatus Self-Registration Routes/d' "$BASE_ROUTES"
+    cat << 'EOF' >> "$BASE_ROUTES"
+
+// Apparatus Self-Registration Routes (Base Web)
+Route::get('/register', 'Auth\RegisterController@index');
+Route::post('/register', 'Auth\RegisterController@register');
+Route::get('/auth/register', 'Auth\RegisterController@index');
+Route::post('/auth/register', 'Auth\RegisterController@register');
+EOF
   fi
 
   # Deploy custom 403 Hacking Attempt error page for /admin access denial
