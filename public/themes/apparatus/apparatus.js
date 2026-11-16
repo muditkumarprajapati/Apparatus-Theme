@@ -138,56 +138,11 @@
     }, dismissMs);
   }
 
-  // High-Visibility Modal Popup for Critical Rewards & Redemption Feedback
+  // Toast Alert Notification Trigger (Only Top-Right Popup)
   function showRedeemModal(type, title, message, points) {
-    showToast(type, title, message, true);
-
     const oldModal = document.getElementById('apparatus-redeem-result-modal');
     if (oldModal) oldModal.remove();
-
-    const isSuccess = type === 'success';
-    const accentColor = isSuccess ? '#10b981' : '#f43f5e';
-    const accentBg = isSuccess ? 'rgba(16, 185, 129, 0.16)' : 'rgba(244, 63, 94, 0.16)';
-    const accentBorder = isSuccess ? 'rgba(16, 185, 129, 0.45)' : 'rgba(244, 63, 94, 0.45)';
-    const iconClass = isSuccess ? 'ri-checkbox-circle-fill' : 'ri-error-warning-fill';
-
-    const modal = document.createElement('div');
-    modal.id = 'apparatus-redeem-result-modal';
-    modal.style.cssText = 'position: fixed; inset: 0; z-index: 99999999; background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; padding: 1.25rem; font-family: var(--apparatus-font, inherit);';
-
-    modal.innerHTML = `
-      <div style="background: linear-gradient(135deg, rgba(28, 22, 46, 0.96), rgba(15, 12, 28, 0.98)); border: 1px solid ${accentBorder}; border-radius: 22px; max-width: 440px; width: 100%; padding: 2.2rem 1.85rem; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 40px ${accentBorder}; text-align: center; position: relative;">
-        <div style="width: 68px; height: 68px; border-radius: 50%; background: ${accentBg}; border: 1px solid ${accentBorder}; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto; color: ${accentColor}; font-size: 2.4rem;">
-          <i class="${iconClass}"></i>
-        </div>
-        <h3 style="color: #ffffff; font-size: 1.35rem; font-weight: 800; margin: 0 0 0.6rem 0; letter-spacing: -0.01em;">${title}</h3>
-        <p style="color: rgba(255, 255, 255, 0.78); font-size: 0.94rem; line-height: 1.55; margin: 0 0 ${isSuccess ? '1.25rem' : '1.75rem'} 0;">
-          ${message}
-        </p>
-        ${isSuccess && points ? `
-          <div style="background: rgba(16, 185, 129, 0.12); border: 1px dashed rgba(16, 185, 129, 0.4); border-radius: 12px; padding: 0.75rem 1.2rem; margin-bottom: 1.5rem; display: inline-flex; align-items: center; gap: 0.55rem; color: #34d399; font-weight: 800; font-size: 1.15rem;">
-            <i class="ri-coin-line"></i> +${points} Points Credited
-          </div>
-        ` : ''}
-        <div>
-          <button type="button" id="apparatus-close-redeem-modal-btn" style="background: ${isSuccess ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ec4899, #be185d)'}; color: #ffffff; border: none; border-radius: 12px; padding: 0.75rem 2.2rem; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; box-shadow: 0 8px 24px ${isSuccess ? 'rgba(16, 185, 129, 0.35)' : 'rgba(236, 72, 153, 0.35)'};">
-            ${isSuccess ? 'Great, Continue!' : 'Close'}
-          </button>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(modal);
-
-    const closeBtn = modal.querySelector('#apparatus-close-redeem-modal-btn');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function() {
-        modal.remove();
-      });
-    }
-    modal.addEventListener('click', function(e) {
-      if (e.target === modal) modal.remove();
-    });
+    showToast(type, title, message, true);
   }
 
   // React Synthetic Input Helper
