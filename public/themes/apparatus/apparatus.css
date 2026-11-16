@@ -6081,3 +6081,181 @@ div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon {
 .apparatus-prof-verified-status.unverified {
   color: #fb7185 !important;
 }
+
+/* ==============================================================================
+   DEDICATED /EARN PAGE & COMMUNITY LEADERBOARD (ZERO CAPSULES, PURE GLASS)
+   ============================================================================== */
+.apparatus-earn-view {
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+  display: block;
+}
+
+.apparatus-earn-grid-2 {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 1.5rem !important;
+  margin-bottom: 2rem !important;
+}
+
+@media (max-width: 900px) {
+  .apparatus-earn-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.apparatus-earn-card {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px !important;
+  padding: 1.75rem !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+}
+
+.apparatus-earn-input-wrap {
+  display: flex !important;
+  gap: 0.75rem !important;
+  flex-wrap: wrap !important;
+}
+
+.apparatus-earn-input {
+  flex: 1 !important;
+  min-width: 180px !important;
+  background: rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 10px !important;
+  padding: 0.75rem 1rem !important;
+  color: #ffffff !important;
+  font-size: 0.95rem !important;
+  font-family: inherit !important;
+  outline: none !important;
+  transition: border-color 0.2s, background 0.2s !important;
+}
+
+.apparatus-earn-input:focus {
+  border-color: #ec4899 !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+.apparatus-earn-btn {
+  background: linear-gradient(135deg, #ec4899, #be185d) !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  padding: 0.75rem 1.4rem !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  white-space: nowrap !important;
+  font-size: 0.92rem !important;
+  transition: transform 0.15s, opacity 0.2s !important;
+}
+
+.apparatus-earn-btn:hover {
+  transform: translateY(-1px) !important;
+  opacity: 0.95 !important;
+}
+
+.apparatus-earn-btn-cyan {
+  background: linear-gradient(135deg, #06b6d4, #0284c7) !important;
+}
+
+.apparatus-claimed-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+  background: rgba(16, 185, 129, 0.12) !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+  color: #34d399 !important;
+  padding: 0.75rem 1.25rem !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  font-size: 1.05rem !important;
+}
+
+.apparatus-leaderboard-container {
+  overflow-x: auto !important;
+  margin-top: 1rem !important;
+}
+
+.apparatus-leaderboard-table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 0.5rem !important;
+  font-size: 0.92rem !important;
+}
+
+.apparatus-leaderboard-table th {
+  color: rgba(255, 255, 255, 0.45) !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  padding: 0.75rem 1rem !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+.apparatus-leaderboard-table td {
+  padding: 0.85rem 1rem !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  color: #ffffff !important;
+  vertical-align: middle !important;
+}
+
+.apparatus-leaderboard-table tr td:first-child {
+  border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-top-left-radius: 12px !important;
+  border-bottom-left-radius: 12px !important;
+}
+
+.apparatus-leaderboard-table tr td:last-child {
+  border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-top-right-radius: 12px !important;
+  border-bottom-right-radius: 12px !important;
+}
+
+.apparatus-leaderboard-table tr.apparatus-row-me td {
+  background: rgba(236, 72, 153, 0.08) !important;
+  border-color: rgba(236, 72, 153, 0.25) !important;
+}
+
+.apparatus-rank-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  font-weight: 800 !important;
+  font-size: 0.9rem !important;
+}
+
+.apparatus-rank-1 {
+  background: linear-gradient(135deg, #fbbf24, #d97706) !important;
+  color: #000 !important;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4) !important;
+}
+
+.apparatus-rank-2 {
+  background: linear-gradient(135deg, #e2e8f0, #94a3b8) !important;
+  color: #000 !important;
+}
+
+.apparatus-rank-3 {
+  background: linear-gradient(135deg, #d97706, #b45309) !important;
+  color: #fff !important;
+}
+
+.apparatus-rank-other {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+}

@@ -183,6 +183,8 @@
         isActive = isResourceTab;
       } else if (tab === 'store' || p === '/store' || p === '/billing/store') {
         isActive = isStoreTab;
+      } else if (tab === 'earn' || p === '/earn' || p === '/billing/earn' || tab === 'billing/earn') {
+        isActive = isEarnTab;
       } else if (tab === 'panel-settings' || p === '/panel-settings' || tab === 'settings' || p === '/settings') {
         isActive = isPanelSettingsTab;
       } else if (tab === 'apparatus-settings' || p === '/apparatus-settings') {
@@ -195,10 +197,10 @@
         isActive = isVpsTab;
       } else if (p === '/account') {
         // Account Credentials should ONLY be active on exact /account, NOT on /account/api, /account/ssh, etc.
-        isActive = currentPath === '/account' && !window.location.hash && !isResourceTab && !isStoreTab && !isSettingsTab;
+        isActive = currentPath === '/account' && !window.location.hash && !isResourceTab && !isStoreTab && !isEarnTab && !isSettingsTab;
       } else if (p) {
         // Sub-routes such as /account/api, /account/ssh, /account/activity, /admin
-        isActive = (currentPath === p || currentPath.startsWith(p + '/')) && !window.location.hash && !isResourceTab && !isStoreTab && !isSettingsTab;
+        isActive = (currentPath === p || currentPath.startsWith(p + '/')) && !window.location.hash && !isResourceTab && !isStoreTab && !isEarnTab && !isSettingsTab;
       }
 
       if (isActive) {
@@ -217,6 +219,8 @@
       history.replaceState(null, '', '/resource');
     } else if (window.location.hash === '#store') {
       history.replaceState(null, '', '/store');
+    } else if (window.location.hash === '#earn') {
+      history.replaceState(null, '', '/earn');
     } else if (window.location.hash === '#panel-settings' || window.location.hash === '#settings') {
       history.replaceState(null, '', '/panel-settings');
     } else if (window.location.hash === '#apparatus-settings') {
@@ -228,23 +232,26 @@
 
     const isResourceTab = currentPath === '/resource' || currentPath === '/billing/resource' || window.location.hash === '#resource';
     const isStoreTab = currentPath === '/store' || currentPath === '/billing/store' || window.location.hash === '#store';
-    const isApparatusSettingsTab = !isResourceTab && !isStoreTab && (currentPath === '/apparatus-settings' || window.location.hash === '#apparatus-settings');
-    const isPanelSettingsTab = !isResourceTab && !isStoreTab && !isApparatusSettingsTab && (currentPath === '/panel-settings' || currentPath === '/settings' || window.location.hash === '#panel-settings' || window.location.hash === '#settings');
+    const isEarnTab = !isResourceTab && !isStoreTab && (currentPath === '/earn' || currentPath === '/billing/earn' || window.location.hash === '#earn');
+    const isApparatusSettingsTab = !isResourceTab && !isStoreTab && !isEarnTab && (currentPath === '/apparatus-settings' || window.location.hash === '#apparatus-settings');
+    const isPanelSettingsTab = !isResourceTab && !isStoreTab && !isEarnTab && !isApparatusSettingsTab && (currentPath === '/panel-settings' || currentPath === '/settings' || window.location.hash === '#panel-settings' || window.location.hash === '#settings');
     const isSettingsTab = isPanelSettingsTab || isApparatusSettingsTab;
-    const isVpsTab = !isResourceTab && !isStoreTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
-    const isServerTab = !isResourceTab && !isStoreTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
-    const isDashboardTab = !isResourceTab && !isStoreTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
+    const isVpsTab = !isResourceTab && !isStoreTab && !isEarnTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
+    const isServerTab = !isResourceTab && !isStoreTab && !isEarnTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
+    const isDashboardTab = !isResourceTab && !isStoreTab && !isEarnTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
     const isHomeRoute = isDashboardTab || isServerTab || isVpsTab;
 
     const hero = document.getElementById('apparatus-dashboard-view');
     const resView = document.getElementById('apparatus-resource-view');
     const storeView = document.getElementById('apparatus-store-view');
+    const earnView = document.getElementById('apparatus-earn-view');
     const setView = document.getElementById('apparatus-settings-view');
     const appSetView = document.getElementById('apparatus-admin-settings-view');
 
     if (isResourceTab) {
       if (hero) hero.style.display = 'none';
       if (storeView) storeView.style.display = 'none';
+      if (earnView) earnView.style.display = 'none';
       if (setView) setView.style.display = 'none';
       if (appSetView) appSetView.style.display = 'none';
       if (resView) {
@@ -256,7 +263,7 @@
         if (typeof renderResourcePage === 'function') renderResourcePage();
       }
       document.body.classList.add('apparatus-page-resource');
-      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-store', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-store', 'apparatus-page-earn', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
 
       // Hide all account containers and native server messages
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
@@ -265,6 +272,7 @@
     } else if (isStoreTab) {
       if (hero) hero.style.display = 'none';
       if (resView) resView.style.display = 'none';
+      if (earnView) earnView.style.display = 'none';
       if (setView) setView.style.display = 'none';
       if (appSetView) appSetView.style.display = 'none';
       if (storeView) {
@@ -275,7 +283,28 @@
         }
       }
       document.body.classList.add('apparatus-page-store');
-      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-earn', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
+
+      // Hide all account containers and native server messages
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
+        el.style.setProperty('display', 'none', 'important');
+      });
+    } else if (isEarnTab) {
+      if (hero) hero.style.display = 'none';
+      if (resView) resView.style.display = 'none';
+      if (storeView) storeView.style.display = 'none';
+      if (setView) setView.style.display = 'none';
+      if (appSetView) appSetView.style.display = 'none';
+      if (earnView) {
+        const wasHidden = earnView.style.display === 'none';
+        earnView.style.display = 'block';
+        if (wasHidden && typeof gsap !== 'undefined') {
+          gsap.fromTo(earnView, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+        }
+        if (typeof renderEarnPage === 'function') renderEarnPage();
+      }
+      document.body.classList.add('apparatus-page-earn');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-store', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
 
       // Hide all account containers and native server messages
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
@@ -285,6 +314,7 @@
       if (hero) hero.style.display = 'none';
       if (resView) resView.style.display = 'none';
       if (storeView) storeView.style.display = 'none';
+      if (earnView) earnView.style.display = 'none';
       if (appSetView) appSetView.style.display = 'none';
       if (setView) {
         const wasHidden = setView.style.display === 'none';
@@ -295,7 +325,7 @@
         if (typeof renderSettingsPage === 'function') renderSettingsPage();
       }
       document.body.classList.add('apparatus-page-settings');
-      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-store', 'apparatus-page-apparatus-settings');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-store', 'apparatus-page-earn', 'apparatus-page-apparatus-settings');
 
       // Hide all account containers and native server messages
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
@@ -305,6 +335,7 @@
       if (hero) hero.style.display = 'none';
       if (resView) resView.style.display = 'none';
       if (storeView) storeView.style.display = 'none';
+      if (earnView) earnView.style.display = 'none';
       if (setView) setView.style.display = 'none';
       if (appSetView) {
         const wasHidden = appSetView.style.display === 'none';
@@ -314,7 +345,7 @@
         }
       }
       document.body.classList.add('apparatus-page-apparatus-settings');
-      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-store', 'apparatus-page-settings');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-store', 'apparatus-page-earn', 'apparatus-page-settings');
 
       // Hide all account containers and native server messages
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
@@ -323,10 +354,11 @@
     } else if (isHomeRoute) {
       if (resView) resView.style.display = 'none';
       if (storeView) storeView.style.display = 'none';
+      if (earnView) earnView.style.display = 'none';
       if (setView) setView.style.display = 'none';
       if (appSetView) appSetView.style.display = 'none';
       if (hero) hero.style.display = 'block';
-      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-store', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
+      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-store', 'apparatus-page-earn', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
 
       const sPane = document.getElementById('apparatus-pane-servers');
       const vPane = document.getElementById('apparatus-pane-vps');
@@ -1067,21 +1099,109 @@
     }
   }
 
-  function initDailyReward() {
-    const dailyBtn = document.getElementById('apparatus-daily-reward-btn');
-    const coinDisplay = document.getElementById('apparatus-coin-count');
-    const metricCoins = document.getElementById('apparatus-metric-coins');
-
+  function getUserPoints() {
     let coins = parseInt(localStorage.getItem('apparatus_coins') || '100', 10);
     if (isNaN(coins) || coins < 0) coins = 100;
+    return coins;
+  }
 
-    function refreshCoinDisplays() {
-      if (coinDisplay) coinDisplay.textContent = coins.toLocaleString();
-      if (metricCoins) metricCoins.textContent = coins.toLocaleString();
-      const rCoins = document.getElementById('res-coin-count');
-      if (rCoins) rCoins.textContent = coins.toLocaleString();
+  function refreshAllCoinDisplays() {
+    const coins = getUserPoints();
+    const coinDisplay = document.getElementById('apparatus-coin-count');
+    const metricCoins = document.getElementById('apparatus-metric-coins');
+    const rCoins = document.getElementById('res-coin-count');
+    const earnCoins = document.getElementById('apparatus-earn-metric-coins');
+    if (coinDisplay) coinDisplay.textContent = coins.toLocaleString();
+    if (metricCoins) metricCoins.textContent = coins.toLocaleString();
+    if (rCoins) rCoins.textContent = coins.toLocaleString();
+    if (earnCoins) earnCoins.textContent = coins.toLocaleString();
+  }
+
+  function setUserPoints(amt) {
+    const finalAmt = Math.max(0, parseInt(amt, 10) || 0);
+    localStorage.setItem('apparatus_coins', finalAmt.toString());
+    refreshAllCoinDisplays();
+    return finalAmt;
+  }
+
+  function creditReferralPointsToOwner(refCode, pts) {
+    if (!refCode) return;
+    try {
+      const key = 'apparatus_admin_users_db_v2';
+      const raw = localStorage.getItem(key);
+      let users = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(users) || users.length === 0) return;
+      const clean = refCode.toUpperCase().trim();
+      let found = false;
+      users.forEach(function (u) {
+        const uRef = (u.referralCode || '').toUpperCase().trim();
+        const uName = (u.username || '').toUpperCase().trim();
+        if (uRef === clean || (clean.startsWith('AB-') && clean.includes(uName.slice(0, 3))) || uName === clean) {
+          u.totalReferrals = (u.totalReferrals || 0) + 1;
+          u.points = (u.points || 100) + (pts || 10);
+          found = true;
+        }
+      });
+      if (found) {
+        localStorage.setItem(key, JSON.stringify(users));
+      }
+    } catch (e) {
+      console.warn('Could not credit referral owner:', e);
     }
-    refreshCoinDisplays();
+  }
+
+  function getPromoCodesList() {
+    const defaultCodes = [
+      {
+        id: 'pc_welcome',
+        code: 'WELCOME20',
+        points: 20,
+        maxUses: 100,
+        usedCount: 2,
+        createdAt: '2026-11-10T10:00:00.000Z',
+        expiresAt: '2026-12-31T23:59:59.000Z',
+        active: true,
+        redemptions: [
+          { username: 'alex_gamer', email: 'alex.j@example.com', time: '2026-11-12T14:22:00.000Z', points: 20 },
+          { username: 'rohan_dev', email: 'rohan.sharma@example.in', time: '2026-11-14T09:10:00.000Z', points: 20 }
+        ]
+      },
+      {
+        id: 'pc_community',
+        code: 'ARIX50',
+        points: 50,
+        maxUses: 50,
+        usedCount: 1,
+        createdAt: '2026-11-12T12:00:00.000Z',
+        expiresAt: '2026-12-15T23:59:59.000Z',
+        active: true,
+        redemptions: [
+          { username: 'hyper_sarah', email: 'sarah.c@techcorp.io', time: '2026-11-13T16:45:00.000Z', points: 50 }
+        ]
+      }
+    ];
+    try {
+      const raw = localStorage.getItem('apparatus_promo_codes');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    localStorage.setItem('apparatus_promo_codes', JSON.stringify(defaultCodes));
+    return defaultCodes;
+  }
+
+  function savePromoCodesList(codes) {
+    try {
+      localStorage.setItem('apparatus_promo_codes', JSON.stringify(codes));
+    } catch (e) {
+      console.error('Error saving promo codes:', e);
+    }
+  }
+
+  function initDailyReward() {
+    const dailyBtn = document.getElementById('apparatus-daily-reward-btn');
+    refreshAllCoinDisplays();
 
     if (!dailyBtn) return;
 
@@ -1104,15 +1224,13 @@
         return;
       }
 
-      coins += 2;
-      localStorage.setItem('apparatus_coins', coins.toString());
+      const nextPoints = setUserPoints(getUserPoints() + 2);
       localStorage.setItem('apparatus_last_daily_claim', curNow.toString());
-      refreshCoinDisplays();
 
       dailyBtn.disabled = true;
       dailyBtn.innerHTML = '<i class="ri-check-line"></i> Claimed (24h left)';
       dailyBtn.classList.add('apparatus-btn-disabled');
-      showToast('success', 'Daily Reward Claimed!', '🎉 +2 Points added! Your total is now ' + coins + ' Points.');
+      showToast('success', 'Daily Reward Claimed!', '🎉 +2 Points added! Your total is now ' + nextPoints + ' Points.');
     });
   }
 
@@ -2592,6 +2710,464 @@
     if (backBtn1) backBtn1.addEventListener('click', returnHome);
     if (backBtn2) backBtn2.addEventListener('click', returnHome);
     if (homeBtn) homeBtn.addEventListener('click', returnHome);
+  }
+
+  // Initialize the Dedicated Earn & Rewards View (/earn)
+  function initEarnView() {
+    let earnView = document.getElementById('apparatus-earn-view');
+    if (earnView) return;
+
+    earnView = document.createElement('div');
+    earnView.id = 'apparatus-earn-view';
+    earnView.className = 'apparatus-earn-view';
+    earnView.style.display = 'none';
+
+    earnView.innerHTML = `
+      <div class="apparatus-dashboard-container">
+        
+        <!-- Top Earn Header -->
+        <div class="apparatus-card apparatus-resource-header-card">
+          <div class="apparatus-resource-header-left">
+            <div class="apparatus-resource-breadcrumbs">
+              <a href="/" class="apparatus-breadcrumb-link" id="apparatus-earn-back-btn">
+                <i class="ri-arrow-left-s-line"></i> Dashboard
+              </a>
+              <span class="apparatus-breadcrumb-sep">/</span>
+              <span class="apparatus-breadcrumb-current">Earn &amp; Rewards</span>
+            </div>
+            <h1 class="apparatus-resource-main-title">
+              <i class="ri-copper-coin-line" style="color: #fbbf24;"></i> Earn Points &amp; Rewards
+            </h1>
+            <p class="apparatus-resource-subtitle">
+              Earn bonus points by inviting friends, redeem community promo codes, and rank up on the leaderboard!
+            </p>
+          </div>
+
+          <div class="apparatus-resource-header-right">
+            <a href="/" class="apparatus-btn apparatus-btn-glass" id="apparatus-earn-back-btn-2">
+              <i class="ri-dashboard-line"></i> Back to Dashboard
+            </a>
+          </div>
+        </div>
+
+        <!-- Dynamic Earn Content Slot -->
+        <div id="apparatus-earn-dynamic-content"></div>
+
+      </div>
+    `;
+
+    const hero = document.getElementById('apparatus-dashboard-view');
+    if (hero && hero.parentNode) {
+      hero.parentNode.insertBefore(earnView, hero.nextSibling);
+    } else {
+      document.body.appendChild(earnView);
+    }
+
+    function returnHome(e) {
+      if (e) e.preventDefault();
+      if (window.location.pathname !== '/' || window.location.hash) {
+        history.pushState(null, '', '/');
+      }
+      applyViewMode();
+      smoothScrollToTop();
+    }
+
+    const backBtn1 = earnView.querySelector('#apparatus-earn-back-btn');
+    const backBtn2 = earnView.querySelector('#apparatus-earn-back-btn-2');
+    if (backBtn1) backBtn1.addEventListener('click', returnHome);
+    if (backBtn2) backBtn2.addEventListener('click', returnHome);
+
+    renderEarnPage();
+  }
+
+  function renderEarnPage() {
+    const container = document.getElementById('apparatus-earn-dynamic-content');
+    if (!container) return;
+
+    const currentCoins = getUserPoints();
+    const user = window.PterodactylUser || {
+      username: localStorage.getItem('apparatus_registered_username') || 'Client',
+      email: localStorage.getItem('apparatus_registered_email') || 'client@arixbyte.com'
+    };
+    const myRefCode = getReferralCode(user);
+    const isReferralClaimed = localStorage.getItem('apparatus_referral_claimed') === 'true' || !!localStorage.getItem('apparatus_claimed_referral_code');
+
+    // Community Leaderboard Users
+    let communityUsers = [
+      { rank: 1, username: 'Mudit', name: 'Mudit Kumar', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=MuditKumar', points: 1420, referrals: 42, role: 'Owner' },
+      { rank: 2, username: 'hyper_sarah', name: 'Sarah Connor', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=HyperHost', points: 890, referrals: 24, role: 'VIP Member' },
+      { rank: 3, username: 'Yadu', name: 'Yaduveer Singh', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=Yaduveer', points: 640, referrals: 11, role: 'Moderator' },
+      { rank: 4, username: 'alex_gamer', name: 'Alex Johnson', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=AlexGaming', points: 420, referrals: 5, role: 'Active Client' },
+      { rank: 5, username: 'rohan_dev', name: 'Rohan Sharma', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=RohanDev', points: 260, referrals: 2, role: 'Developer' }
+    ];
+
+    // Merge registered / current user into leaderboard
+    const myUName = (user.username || 'client').toLowerCase();
+    let existing = communityUsers.find(function(u) { return u.username.toLowerCase() === myUName; });
+    if (existing) {
+      existing.points = Math.max(existing.points, currentCoins);
+    } else {
+      communityUsers.push({
+        rank: 99,
+        username: user.username || 'client',
+        name: (user.name_first ? (user.name_first + ' ' + (user.name_last || '')) : (user.username || 'Client Account')),
+        avatar: user.avatar || ('https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(user.username || 'client')),
+        points: currentCoins,
+        referrals: parseInt(localStorage.getItem('apparatus_my_referrals_count') || '0', 10),
+        role: 'Client'
+      });
+    }
+
+    communityUsers.sort(function(a, b) { return b.points - a.points; });
+    communityUsers.forEach(function(u, i) { u.rank = i + 1; });
+
+    container.innerHTML = `
+      <!-- Top Telemetry & Balance Highlights -->
+      <div class="apparatus-billing-overview" style="margin-bottom: 1.75rem;">
+        <div class="apparatus-billing-balances" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+          
+          <!-- Points Balance Card -->
+          <div class="apparatus-balance-box apparatus-balance-coins">
+            <span class="apparatus-balance-label">Your Reward Points</span>
+            <div class="apparatus-balance-value">
+              <span id="apparatus-earn-metric-coins">${currentCoins.toLocaleString()}</span> <span class="apparatus-balance-unit">Points</span>
+            </div>
+            <span class="apparatus-balance-note">Redeem points for discounts, RAM upgrades &amp; renewals</span>
+          </div>
+
+          <!-- Referral Link & Code Box -->
+          <div class="apparatus-referral-card" style="margin: 0; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div class="apparatus-referral-header" style="margin-bottom: 0.75rem;">
+                <div class="apparatus-referral-header-left">
+                  <div class="apparatus-referral-icon"><i class="ri-gift-line"></i></div>
+                  <div class="apparatus-referral-titles">
+                    <span class="apparatus-referral-title">Your Referral Code</span>
+                    <span class="apparatus-referral-subtitle">Share with friends &bull; Earn 10 points per invite</span>
+                  </div>
+                </div>
+              </div>
+              <div class="apparatus-referral-box">
+                <div class="apparatus-referral-code-wrap">
+                  <span class="apparatus-referral-code-tag">SHARE CODE</span>
+                  <code class="apparatus-referral-code" id="apparatus-earn-my-ref-code">${myRefCode}</code>
+                </div>
+                <button type="button" class="apparatus-copy-ref-btn" id="apparatus-earn-copy-ref-btn" title="Copy Referral Code">
+                  <i class="ri-file-copy-line"></i>
+                  <span>Copy</span>
+                </button>
+              </div>
+            </div>
+            <div class="apparatus-referral-note" style="margin-top: 0.6rem;">
+              <i class="ri-sparkling-fill" style="color: #fbbf24; font-size: 0.72rem; margin-right: 4px;"></i>
+              Bonus rule: You get <strong style="color: #fbbf24; margin: 0 3px;">10 Points</strong>, your friend gets <strong style="color: #38bdf8; margin: 0 3px;">20 Points</strong> on registration or claiming!
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 2-Column Action Grid: Referral Bonus & Redeem Code -->
+      <div class="apparatus-earn-grid-2">
+        
+        <!-- Box 1: Referral Bonus Claim Box -->
+        <div class="apparatus-earn-card">
+          ${isReferralClaimed ? `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%; min-height: 180px; gap: 0.85rem;">
+              <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); display: flex; align-items: center; justify-content: center; font-size: 1.7rem; color: #10b981;">
+                <i class="ri-checkbox-circle-fill"></i>
+              </div>
+              <div>
+                <div class="apparatus-claimed-badge">
+                  <i class="ri-checkbox-circle-fill"></i> Referral Points already claimed
+                </div>
+                <p style="color: rgba(255, 255, 255, 0.55); font-size: 0.88rem; margin: 0.65rem 0 0 0;">
+                  Your welcome referral bonus of 20 points has already been claimed on this account.
+                </p>
+              </div>
+            </div>
+          ` : `
+            <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%; min-height: 180px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem;">
+                  <span style="display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 12px; background: rgba(236, 72, 153, 0.15); color: #ec4899; font-size: 1.25rem;">
+                    <i class="ri-user-shared-line"></i>
+                  </span>
+                  <div>
+                    <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #fff;">Have a Referral Code?</h3>
+                    <span style="color: rgba(255, 255, 255, 0.5); font-size: 0.82rem;">Claim 20 bonus points if you missed it during sign-up</span>
+                  </div>
+                </div>
+                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1.25rem;">
+                  Enter the referral code of the friend who invited you. You will receive <strong style="color: #38bdf8;">+20 Points</strong> and they will receive <strong style="color: #fbbf24;">+10 Points</strong>.
+                </p>
+              </div>
+
+              <form id="apparatus-claim-referral-form" class="apparatus-earn-input-wrap">
+                <input 
+                  type="text" 
+                  id="apparatus-earn-ref-input" 
+                  class="apparatus-earn-input" 
+                  placeholder="Enter referral code (e.g. AB-MUDI-3ODK)" 
+                  autocomplete="off" 
+                  style="text-transform: uppercase; font-family: monospace;" 
+                  required 
+                />
+                <button type="submit" class="apparatus-earn-btn" id="apparatus-claim-ref-submit-btn">
+                  <i class="ri-gift-line"></i> Claim 20 Points
+                </button>
+              </form>
+            </div>
+          `}
+        </div>
+
+        <!-- Box 2: Redeem Promo Code Box (Strict 1 Code Per 1 Person) -->
+        <div class="apparatus-earn-card" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%; min-height: 180px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem;">
+              <span style="display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 12px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 1.25rem;">
+                <i class="ri-coupon-3-line"></i>
+              </span>
+              <div>
+                <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #fff;">Redeem Promo Code</h3>
+                <span style="color: rgba(255, 255, 255, 0.5); font-size: 0.82rem;">Strict limit: 1 redemption per person</span>
+              </div>
+            </div>
+            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1.25rem;">
+              Received an event or promotional code? Redeem it below for free points credited directly to your balance.
+            </p>
+          </div>
+
+          <form id="apparatus-redeem-promo-form" class="apparatus-earn-input-wrap">
+            <input 
+              type="text" 
+              id="apparatus-earn-promo-input" 
+              class="apparatus-earn-input" 
+              placeholder="Enter promo code (e.g. WELCOME20)" 
+              autocomplete="off" 
+              style="text-transform: uppercase; font-family: monospace;" 
+              required 
+            />
+            <button type="submit" class="apparatus-earn-btn apparatus-earn-btn-cyan" id="apparatus-redeem-promo-submit-btn">
+              <i class="ri-check-double-line"></i> Redeem Code
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- Community Leaderboard Section -->
+      <div class="apparatus-card apparatus-earn-card" style="padding: 1.75rem; margin-top: 1rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 1rem;">
+          <div>
+            <h2 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin: 0; display: flex; align-items: center; gap: 0.6rem;">
+              <i class="ri-trophy-line" style="color: #fbbf24;"></i> Community Leaderboard
+            </h2>
+            <span style="color: rgba(255, 255, 255, 0.55); font-size: 0.85rem;">
+              Top community users ranked by points and referral earnings. Rank up by inviting new members!
+            </span>
+          </div>
+          <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6); display: flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.04); padding: 0.4rem 0.85rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <i class="ri-refresh-line"></i> Real-time Rankings
+          </div>
+        </div>
+
+        <div class="apparatus-leaderboard-container">
+          <table class="apparatus-leaderboard-table">
+            <thead>
+              <tr>
+                <th style="width: 70px; text-align: center;">Rank</th>
+                <th>Member</th>
+                <th>Status</th>
+                <th>Referral Code</th>
+                <th style="text-align: center;">Referrals</th>
+                <th style="text-align: right;">Total Points</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${communityUsers.map(function(u) {
+                const isMe = u.username.toLowerCase() === myUName;
+                let badgeHtml = '';
+                if (u.rank === 1) {
+                  badgeHtml = '<span class="apparatus-rank-badge apparatus-rank-1">1</span>';
+                } else if (u.rank === 2) {
+                  badgeHtml = '<span class="apparatus-rank-badge apparatus-rank-2">2</span>';
+                } else if (u.rank === 3) {
+                  badgeHtml = '<span class="apparatus-rank-badge apparatus-rank-3">3</span>';
+                } else {
+                  badgeHtml = '<span class="apparatus-rank-badge apparatus-rank-other">' + u.rank + '</span>';
+                }
+                const uRef = getReferralCode({ username: u.username });
+
+                return `
+                  <tr class="${isMe ? 'apparatus-row-me' : ''}">
+                    <td style="text-align: center;">${badgeHtml}</td>
+                    <td>
+                      <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <img src="${u.avatar}" alt="${u.username}" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);" />
+                        <div>
+                          <div style="font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 0.4rem;">
+                            ${u.name || u.username}
+                            ${isMe ? '<span style="font-size: 0.72rem; padding: 0.15rem 0.45rem; border-radius: 6px; background: rgba(236, 72, 153, 0.2); color: #f472b6; font-weight: 800; border: 1px solid rgba(236, 72, 153, 0.35);">YOU</span>' : ''}
+                          </div>
+                          <div style="font-size: 0.78rem; color: rgba(255, 255, 255, 0.45);">@${u.username}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span style="font-size: 0.8rem; padding: 0.2rem 0.55rem; border-radius: 6px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.8);">
+                        ${u.role || 'Member'}
+                      </span>
+                    </td>
+                    <td>
+                      <code style="font-family: monospace; font-size: 0.85rem; color: #f472b6; background: rgba(236, 72, 153, 0.08); padding: 0.2rem 0.5rem; border-radius: 6px; border: 1px solid rgba(236, 72, 153, 0.2);">${uRef}</code>
+                    </td>
+                    <td style="text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.85);">${u.referrals || 0}</td>
+                    <td style="text-align: right; font-weight: 800; color: #fbbf24; font-size: 1.05rem;">
+                      ${u.points.toLocaleString()} <span style="font-size: 0.78rem; color: rgba(255, 255, 255, 0.5); font-weight: normal;">Pts</span>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    // 1. Copy referral code
+    const copyBtn = container.querySelector('#apparatus-earn-copy-ref-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        const textToCopy = myRefCode;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToCopy);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = textToCopy;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        }
+        const icon = copyBtn.querySelector('i');
+        const span = copyBtn.querySelector('span');
+        if (icon) icon.className = 'ri-check-line';
+        if (span) span.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        showToast('success', 'Referral Code Copied!', 'Your code ' + textToCopy + ' was copied! Share it to earn 10 Points per referral.');
+        setTimeout(function () {
+          if (icon) icon.className = 'ri-file-copy-line';
+          if (span) span.textContent = 'Copy';
+          copyBtn.classList.remove('copied');
+        }, 2500);
+      });
+    }
+
+    // 2. Claim referral bonus form
+    const claimRefForm = container.querySelector('#apparatus-claim-referral-form');
+    if (claimRefForm) {
+      claimRefForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const inputEl = container.querySelector('#apparatus-earn-ref-input');
+        const val = (inputEl ? inputEl.value : '').trim().toUpperCase();
+
+        if (!val) {
+          showToast('error', 'Missing Code', 'Please enter a valid referral code.');
+          return;
+        }
+
+        if (val === myRefCode.toUpperCase()) {
+          showToast('error', 'Invalid Referral Code', 'You cannot enter your own referral code!');
+          return;
+        }
+
+        if (localStorage.getItem('apparatus_referral_claimed') === 'true') {
+          showToast('info', 'Already Claimed', 'Referral Points already claimed');
+          renderEarnPage();
+          return;
+        }
+
+        // Award 20 points to claiming user
+        const curPts = getUserPoints();
+        setUserPoints(curPts + 20);
+        localStorage.setItem('apparatus_referral_claimed', 'true');
+        localStorage.setItem('apparatus_claimed_referral_code', val);
+
+        // Award 10 points to code owner
+        creditReferralPointsToOwner(val, 10);
+
+        showToast('success', '20 Points Claimed!', '🎉 Referral code applied! +20 Points added to your account and +10 Points to your inviter.');
+        renderEarnPage();
+      });
+    }
+
+    // 3. Redeem promo code form (Strict 1 Code Per 1 Person)
+    const redeemPromoForm = container.querySelector('#apparatus-redeem-promo-form');
+    if (redeemPromoForm) {
+      redeemPromoForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const promoInput = container.querySelector('#apparatus-earn-promo-input');
+        const val = (promoInput ? promoInput.value : '').trim().toUpperCase();
+
+        if (!val) {
+          showToast('error', 'Missing Code', 'Please enter a promo code.');
+          return;
+        }
+
+        // Enforce 1 code per 1 person rule
+        let redeemed = [];
+        try {
+          redeemed = JSON.parse(localStorage.getItem('apparatus_redeemed_codes') || '[]');
+        } catch (err) {
+          redeemed = [];
+        }
+
+        if (redeemed.includes(val)) {
+          showToast('error', 'Already Redeemed', 'You have already redeemed this code! (Strict limit: 1 code per person).');
+          return;
+        }
+
+        const allCodes = getPromoCodesList();
+        const codeObj = allCodes.find(function (c) {
+          return (c.code || '').toUpperCase() === val && c.active !== false;
+        });
+
+        if (!codeObj) {
+          showToast('error', 'Invalid Promo Code', 'The code "' + val + '" is invalid or does not exist.');
+          return;
+        }
+
+        if (codeObj.expiresAt && new Date(codeObj.expiresAt).getTime() < Date.now()) {
+          showToast('error', 'Code Expired', 'This promo code expired on ' + new Date(codeObj.expiresAt).toLocaleDateString() + '.');
+          return;
+        }
+
+        if (codeObj.maxUses && (codeObj.usedCount || 0) >= codeObj.maxUses) {
+          showToast('error', 'Usage Limit Reached', 'This promo code has reached its maximum redemption capacity.');
+          return;
+        }
+
+        codeObj.usedCount = (codeObj.usedCount || 0) + 1;
+        codeObj.redemptions = codeObj.redemptions || [];
+        codeObj.redemptions.unshift({
+          username: user.username || 'client',
+          email: user.email || 'user@example.com',
+          time: new Date().toISOString(),
+          points: codeObj.points
+        });
+        savePromoCodesList(allCodes);
+
+        redeemed.push(val);
+        localStorage.setItem('apparatus_redeemed_codes', JSON.stringify(redeemed));
+
+        const curPts = getUserPoints();
+        setUserPoints(curPts + codeObj.points);
+
+        showToast('success', 'Promo Code Redeemed!', '🎉 Successfully redeemed ' + codeObj.code + '! +' + codeObj.points + ' Points added to your balance.');
+        renderEarnPage();
+      });
+    }
   }
 
   // Motion and Static Wallpaper Definitions
@@ -6030,6 +6606,7 @@
     initDashboardView();
     initResourceView();
     initStoreView();
+    initEarnView();
     initSettingsView();
     initApparatusSettingsView();
 
@@ -6268,13 +6845,11 @@
       if (earnBtn) {
         earnBtn.addEventListener('click', function (e) {
           e.preventDefault();
-          const dailyBtn = document.getElementById('apparatus-daily-reward-btn');
-          if (dailyBtn) {
-            dailyBtn.scrollIntoView({ behavior: 'smooth' });
-            dailyBtn.click();
-          } else {
-            showToast('info', 'Referral & Earn', 'Claim daily referral points and redeem for server discounts!');
+          if (window.location.pathname !== '/earn' || window.location.hash) {
+            history.pushState(null, '', '/earn');
           }
+          applyViewMode();
+          smoothScrollToTop();
         });
       }
 
@@ -7214,7 +7789,20 @@
             localStorage.setItem('apparatus_registered_email', emailVal);
             localStorage.setItem('apparatus_user_verified', 'false');
             localStorage.setItem('apparatus_needs_verification', 'true');
-            if (refVal) localStorage.setItem('apparatus_user_referral_input', refVal);
+            if (refVal) {
+              localStorage.setItem('apparatus_user_referral_input', refVal);
+              localStorage.setItem('apparatus_referral_claimed', 'true');
+              localStorage.setItem('apparatus_claimed_referral_code', refVal);
+              // Jisne dala usko 20 points
+              const curPts = parseInt(localStorage.getItem('apparatus_coins') || '100', 10);
+              localStorage.setItem('apparatus_coins', (curPts + 20).toString());
+              // Jiska code hoga usko 10 points
+              creditReferralPointsToOwner(refVal, 10);
+            } else {
+              localStorage.removeItem('apparatus_user_referral_input');
+              localStorage.removeItem('apparatus_referral_claimed');
+              localStorage.removeItem('apparatus_claimed_referral_code');
+            }
 
             showToast('success', 'Registration Successful!', 'Welcome! Redirecting to panel dashboard...');
             if (msgBox) {
@@ -7250,7 +7838,18 @@
             localStorage.setItem('apparatus_registered_email', emailVal);
             localStorage.setItem('apparatus_user_verified', 'false');
             localStorage.setItem('apparatus_needs_verification', 'true');
-            if (refVal) localStorage.setItem('apparatus_user_referral_input', refVal);
+            if (refVal) {
+              localStorage.setItem('apparatus_user_referral_input', refVal);
+              localStorage.setItem('apparatus_referral_claimed', 'true');
+              localStorage.setItem('apparatus_claimed_referral_code', refVal);
+              const curPts = parseInt(localStorage.getItem('apparatus_coins') || '100', 10);
+              localStorage.setItem('apparatus_coins', (curPts + 20).toString());
+              creditReferralPointsToOwner(refVal, 10);
+            } else {
+              localStorage.removeItem('apparatus_user_referral_input');
+              localStorage.removeItem('apparatus_referral_claimed');
+              localStorage.removeItem('apparatus_claimed_referral_code');
+            }
 
             showToast('success', 'Registration Successful!', 'Welcome to ArixByte Cloud! Account created.');
             if (msgBox) {

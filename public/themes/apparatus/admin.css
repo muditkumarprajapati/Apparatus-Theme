@@ -1206,3 +1206,59 @@ table.table-hover > tbody > tr:hover > td {
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   color: #fff !important;
 }
+
+/* ==============================================================================
+   ADMIN EARN & PROMO CODE STUDIO & REPORT MODAL
+   ============================================================================== */
+.apparatus-code-report-modal {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(0, 0, 0, 0.75) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  z-index: 99999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1.5rem !important;
+  box-sizing: border-box !important;
+}
+
+.apparatus-code-report-dialog {
+  background: #0f0b18 !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 20px !important;
+  width: 100% !important;
+  max-width: 720px !important;
+  max-height: 85vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75) !important;
+}
+
+.apparatus-code-report-header {
+  padding: 1.5rem 1.75rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.apparatus-code-report-body {
+  padding: 1.75rem !important;
+  overflow-y: auto !important;
+}
+
+.apparatus-code-report-footer {
+  padding: 1.25rem 1.75rem !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.75rem !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+}

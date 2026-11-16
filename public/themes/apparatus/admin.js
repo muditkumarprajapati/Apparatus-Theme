@@ -100,6 +100,7 @@
     const isMounts = path.startsWith('/admin/mounts');
     const isNests = path.startsWith('/admin/nests');
     const isStorePricing = path === '/admin/store-pricing' || hash === '#store-pricing';
+    const isEarn = path === '/admin/earn' || hash === '#earn';
 
     const isWebhooks = path === '/admin/webhooks' || hash === '#webhooks';
     const isInbuiltAddons = path === '/admin/inbuilt-addons' || hash === '#inbuilt-addons';
@@ -202,6 +203,12 @@
         <a href="#store-pricing" class="apparatus-admin-tab" data-tab="store-pricing">
           <i class="ri-price-tag-3-line"></i>
           <span>Store & Pricing</span>
+        </a>
+      </li>
+      <li class="${isEarn ? 'active' : ''}">
+        <a href="#earn" class="apparatus-admin-tab" data-tab="earn">
+          <i class="ri-copper-coin-line"></i>
+          <span>Earn & Promo Codes</span>
         </a>
       </li>
 
@@ -340,6 +347,18 @@
         `;
       }
       isolateStudioView(content, studioView, renderStorePricingView);
+
+    } else if (hash === '#earn') {
+      if (header) {
+        header.innerHTML = `
+          <h1>Earn & Promo Code Studio <small>Create promo codes, manage reward quotas & view live user redemption reports</small></h1>
+          <ol class="breadcrumb">
+            <li><a href="/admin"><i class="ri-home-4-line"></i> Admin</a></li>
+            <li class="active">Earn & Promo Codes</li>
+          </ol>
+        `;
+      }
+      isolateStudioView(content, studioView, renderAdminEarnView);
 
     } else if (hash === '#webhooks') {
       if (header) {
@@ -1338,6 +1357,564 @@ ${formatMailBody(currentTpl.body)}
   }
 
   // ==============================================================================
+  // 8B. EARN & PROMO CODE STUDIO (PROMO CODE GENERATION, QUOTAS & LIVE AUDIT REPORT)
+  // ==============================================================================
+  function getPromoCodesList() {
+    const defaultCodes = [
+      {
+        id: 'pc_welcome',
+        code: 'WELCOME20',
+        points: 20,
+        maxUses: 100,
+        usedCount: 2,
+        createdAt: '2026-11-10T10:00:00.000Z',
+        expiresAt: '2026-12-31T23:59:59.000Z',
+        active: true,
+        redemptions: [
+          { username: 'alex_gamer', email: 'alex.j@example.com', time: '2026-11-12T14:22:00.000Z', points: 20 },
+          { username: 'rohan_dev', email: 'rohan.sharma@example.in', time: '2026-11-14T09:10:00.000Z', points: 20 }
+        ]
+      },
+      {
+        id: 'pc_community',
+        code: 'ARIX50',
+        points: 50,
+        maxUses: 50,
+        usedCount: 1,
+        createdAt: '2026-11-12T12:00:00.000Z',
+        expiresAt: '2026-12-15T23:59:59.000Z',
+        active: true,
+        redemptions: [
+          { username: 'hyper_sarah', email: 'sarah.c@techcorp.io', time: '2026-11-13T16:45:00.000Z', points: 50 }
+        ]
+      }
+    ];
+    try {
+      const raw = localStorage.getItem('apparatus_promo_codes');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    localStorage.setItem('apparatus_promo_codes', JSON.stringify(defaultCodes));
+    return defaultCodes;
+  }
+
+  function savePromoCodesList(codes) {
+    try {
+      localStorage.setItem('apparatus_promo_codes', JSON.stringify(codes));
+    } catch (e) {
+      console.error('Error saving promo codes:', e);
+    }
+  }
+
+  function renderAdminEarnView(container) {
+    container.className = 'apparatus-admin-view';
+    const codes = getPromoCodesList();
+
+    const now = Date.now();
+    const activeCodesCount = codes.filter(function (c) {
+      return c.active !== false && (!c.expiresAt || new Date(c.expiresAt).getTime() > now);
+    }).length;
+    const totalRedemptions = codes.reduce(function (sum, c) { return sum + (c.usedCount || 0); }, 0);
+    const totalPointsGiven = codes.reduce(function (sum, c) { return sum + ((c.usedCount || 0) * (c.points || 0)); }, 0);
+
+    container.innerHTML = `
+      <!-- Telemetry KPIs -->
+      <div class="apparatus-admin-grid-4" style="margin-bottom: 1.75rem;">
+        <div class="apparatus-admin-telemetry-tile">
+          <div class="apparatus-admin-telemetry-icon" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">
+            <i class="ri-coupon-3-line"></i>
+          </div>
+          <div>
+            <div class="apparatus-admin-telemetry-val">${activeCodesCount}</div>
+            <div class="apparatus-admin-telemetry-lbl">Active Promo Codes</div>
+          </div>
+        </div>
+
+        <div class="apparatus-admin-telemetry-tile">
+          <div class="apparatus-admin-telemetry-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+            <i class="ri-user-follow-line"></i>
+          </div>
+          <div>
+            <div class="apparatus-admin-telemetry-val">${totalRedemptions}</div>
+            <div class="apparatus-admin-telemetry-lbl">Total Redemptions</div>
+          </div>
+        </div>
+
+        <div class="apparatus-admin-telemetry-tile">
+          <div class="apparatus-admin-telemetry-icon" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24;">
+            <i class="ri-copper-coin-line"></i>
+          </div>
+          <div>
+            <div class="apparatus-admin-telemetry-val">${totalPointsGiven.toLocaleString()}</div>
+            <div class="apparatus-admin-telemetry-lbl">Points Distributed</div>
+          </div>
+        </div>
+
+        <div class="apparatus-admin-telemetry-tile">
+          <div class="apparatus-admin-telemetry-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+            <i class="ri-shield-user-line"></i>
+          </div>
+          <div>
+            <div class="apparatus-admin-telemetry-val" style="font-size: 1.35rem;">1 / Person</div>
+            <div class="apparatus-admin-telemetry-lbl">Redemption Policy</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Promo Code Creator Box -->
+      <div class="box box-primary" style="margin-bottom: 2rem;">
+        <div class="box-header with-border">
+          <h3 class="box-title"><i class="ri-add-circle-line"></i> Create New Promo Code</h3>
+        </div>
+        <div class="box-body">
+          <p style="color: #94a3b8; margin-bottom: 1.5rem;">
+            Generate reward promo codes with custom expiration times, point rewards, and max usage limits.
+            Users are strictly limited to <strong>1 redemption per account</strong>.
+          </p>
+
+          <form id="apparatus-create-promo-form">
+            <div class="apparatus-admin-grid-4">
+              <div class="form-group">
+                <label>Promo Code</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="apparatus-new-code" placeholder="e.g. SUMMER50" style="text-transform: uppercase; font-family: monospace; font-weight: 700;" required>
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" id="apparatus-gen-rand-code" title="Generate Random Code">
+                      <i class="ri-dice-line"></i>
+                    </button>
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Coins / Points Reward</label>
+                <div class="input-group">
+                  <input type="number" class="form-control" id="apparatus-new-points" min="1" max="10000" value="50" required>
+                  <span class="input-group-addon">Points</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Max Allowed Users</label>
+                <div class="input-group">
+                  <input type="number" class="form-control" id="apparatus-new-maxuses" min="1" max="10000" value="25" required>
+                  <span class="input-group-addon">Users</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Validity Duration</label>
+                <select class="form-control" id="apparatus-new-validity">
+                  <option value="86400000">1 Day (24 Hours)</option>
+                  <option value="259200000">3 Days</option>
+                  <option value="604800000" selected>7 Days (1 Week)</option>
+                  <option value="1209600000">14 Days (2 Weeks)</option>
+                  <option value="2592000000">30 Days (1 Month)</option>
+                  <option value="7776000000">90 Days (3 Months)</option>
+                  <option value="0">Never / Unlimited Time</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+              <button type="submit" class="btn btn-primary" id="apparatus-submit-promo-btn">
+                <i class="ri-check-line"></i> Create Promo Code
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Promo Codes Table -->
+      <div class="box box-default">
+        <div class="box-header with-border" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+          <h3 class="box-title"><i class="ri-coupon-3-line"></i> Managed Promo Codes</h3>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <input type="text" id="apparatus-promo-search" class="form-control input-sm" placeholder="Search codes..." style="width: 180px;">
+          </div>
+        </div>
+        <div class="box-body no-padding" style="overflow-x: auto;">
+          <table class="table table-hover" id="apparatus-promo-table" style="vertical-align: middle;">
+            <thead>
+              <tr>
+                <th style="padding-left: 1.5rem;">Code</th>
+                <th>Reward</th>
+                <th>Usage &amp; Remaining</th>
+                <th>Validity / Expiration</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th style="text-align: right; padding-right: 1.5rem;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${renderPromoTableRows(codes)}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    function renderPromoTableRows(list) {
+      if (!list || list.length === 0) {
+        return `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2.5rem; color: #94a3b8;">
+              <i class="ri-coupon-line" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+              No promo codes created yet. Use the form above to create your first code!
+            </td>
+          </tr>
+        `;
+      }
+
+      const curTime = Date.now();
+      return list.map(function (c) {
+        const isExpired = c.expiresAt && new Date(c.expiresAt).getTime() < curTime;
+        const isFull = c.maxUses && (c.usedCount || 0) >= c.maxUses;
+        const remaining = Math.max(0, (c.maxUses || 0) - (c.usedCount || 0));
+
+        let statusBadge = '<span class="label label-success">Active</span>';
+        if (isExpired) {
+          statusBadge = '<span class="label label-danger">Expired</span>';
+        } else if (isFull) {
+          statusBadge = '<span class="label label-warning">Maxed Out</span>';
+        }
+
+        const expiryStr = c.expiresAt ? new Date(c.expiresAt).toLocaleDateString() : 'Never';
+        const createdStr = c.createdAt ? new Date(c.createdAt).toLocaleDateString() : 'Recently';
+
+        return `
+          <tr data-code="${c.code}">
+            <td style="padding-left: 1.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <code style="font-family: monospace; font-size: 0.95rem; font-weight: 700; color: #ec4899; background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.25); padding: 0.25rem 0.55rem; border-radius: 6px;">${c.code}</code>
+                <button type="button" class="btn btn-xs btn-default apparatus-copy-code-btn" data-code="${c.code}" title="Copy Code">
+                  <i class="ri-file-copy-line"></i>
+                </button>
+              </div>
+            </td>
+            <td>
+              <strong style="color: #fbbf24;">+${c.points} Pts</strong>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <div style="width: 80px; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden;">
+                  <div style="width: ${Math.min(100, Math.round(((c.usedCount || 0) / (c.maxUses || 1)) * 100))}%; height: 100%; background: #38bdf8;"></div>
+                </div>
+                <span style="font-size: 0.85rem; color: #fff;">${c.usedCount || 0} / ${c.maxUses}</span>
+                <span style="font-size: 0.78rem; color: #94a3b8;">(${remaining} left)</span>
+              </div>
+            </td>
+            <td style="color: #e2e8f0; font-size: 0.88rem;">
+              ${expiryStr}
+            </td>
+            <td>
+              ${statusBadge}
+            </td>
+            <td style="color: #94a3b8; font-size: 0.85rem;">
+              ${createdStr}
+            </td>
+            <td style="text-align: right; padding-right: 1.5rem;">
+              <div style="display: inline-flex; gap: 0.4rem;">
+                <button type="button" class="btn btn-sm btn-primary apparatus-btn-check-status" data-code="${c.code}" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                  <i class="ri-pie-chart-line"></i> Check Status
+                </button>
+                <button type="button" class="btn btn-sm btn-danger apparatus-btn-delete-code" data-code="${c.code}" title="Delete Promo Code">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Attach event listeners
+    // 1. Generate random code
+    const randBtn = container.querySelector('#apparatus-gen-rand-code');
+    const codeInput = container.querySelector('#apparatus-new-code');
+    if (randBtn && codeInput) {
+      randBtn.addEventListener('click', function () {
+        const prefixes = ['ARIX', 'VIP', 'DROP', 'BONUS', 'BOOST', 'REWARD'];
+        const p = prefixes[Math.floor(Math.random() * prefixes.length)];
+        const s = Math.random().toString(36).substring(2, 6).toUpperCase();
+        codeInput.value = p + '-' + s;
+      });
+    }
+
+    // 2. Submit new code form
+    const createForm = container.querySelector('#apparatus-create-promo-form');
+    if (createForm) {
+      createForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const codeVal = (container.querySelector('#apparatus-new-code').value || '').trim().toUpperCase();
+        const pointsVal = parseInt(container.querySelector('#apparatus-new-points').value, 10) || 50;
+        const maxUsesVal = parseInt(container.querySelector('#apparatus-new-maxuses').value, 10) || 25;
+        const validityMs = parseInt(container.querySelector('#apparatus-new-validity').value, 10) || 0;
+
+        if (!codeVal) {
+          showAdminToast('error', 'Missing Code', 'Please enter a valid promo code string.');
+          return;
+        }
+
+        const currentList = getPromoCodesList();
+        if (currentList.some(function (c) { return c.code.toUpperCase() === codeVal; })) {
+          showAdminToast('error', 'Duplicate Code', 'A promo code with this name already exists.');
+          return;
+        }
+
+        const expiresAt = validityMs > 0 ? new Date(Date.now() + validityMs).toISOString() : null;
+
+        const newPromo = {
+          id: 'pc_' + Date.now(),
+          code: codeVal,
+          points: pointsVal,
+          maxUses: maxUsesVal,
+          usedCount: 0,
+          createdAt: new Date().toISOString(),
+          expiresAt: expiresAt,
+          active: true,
+          redemptions: []
+        };
+
+        currentList.unshift(newPromo);
+        savePromoCodesList(currentList);
+
+        showAdminToast('success', 'Promo Code Created', 'Code ' + codeVal + ' created with ' + pointsVal + ' Points and ' + maxUsesVal + ' user slots.');
+        renderAdminEarnView(container);
+      });
+    }
+
+    // 3. Search filter
+    const searchInput = container.querySelector('#apparatus-promo-search');
+    const tableBody = container.querySelector('#apparatus-promo-table tbody');
+    if (searchInput && tableBody) {
+      searchInput.addEventListener('input', function () {
+        const q = this.value.trim().toUpperCase();
+        const all = getPromoCodesList();
+        const filtered = all.filter(function (c) {
+          return c.code.toUpperCase().includes(q);
+        });
+        tableBody.innerHTML = renderPromoTableRows(filtered);
+        wireRowButtons();
+      });
+    }
+
+    function wireRowButtons() {
+      // Copy code buttons
+      container.querySelectorAll('.apparatus-copy-code-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const cd = this.getAttribute('data-code');
+          if (navigator.clipboard) navigator.clipboard.writeText(cd);
+          showAdminToast('info', 'Code Copied', 'Promo code ' + cd + ' copied to clipboard.');
+        });
+      });
+
+      // Check Status buttons
+      container.querySelectorAll('.apparatus-btn-check-status').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const cd = this.getAttribute('data-code');
+          const all = getPromoCodesList();
+          const target = all.find(function (c) { return c.code === cd; });
+          if (target) {
+            renderAdminCodeStatusModal(target, container);
+          }
+        });
+      });
+
+      // Delete code buttons
+      container.querySelectorAll('.apparatus-btn-delete-code').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const cd = this.getAttribute('data-code');
+          if (confirm('Are you sure you want to permanently delete promo code ' + cd + '?')) {
+            let all = getPromoCodesList();
+            all = all.filter(function (c) { return c.code !== cd; });
+            savePromoCodesList(all);
+            showAdminToast('success', 'Code Deleted', 'Promo code ' + cd + ' removed.');
+            renderAdminEarnView(container);
+          }
+        });
+      });
+    }
+
+    wireRowButtons();
+  }
+
+  function renderAdminCodeStatusModal(codeObj, parentContainer) {
+    const existingModal = document.getElementById('apparatus-code-report-modal');
+    if (existingModal) existingModal.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'apparatus-code-report-modal';
+    modal.className = 'apparatus-code-report-modal';
+
+    const redemptions = codeObj.redemptions || [];
+    const remaining = Math.max(0, (codeObj.maxUses || 0) - (codeObj.usedCount || 0));
+    const curTime = Date.now();
+    const isExpired = codeObj.expiresAt && new Date(codeObj.expiresAt).getTime() < curTime;
+    const isFull = codeObj.maxUses && (codeObj.usedCount || 0) >= codeObj.maxUses;
+
+    let statusLabel = '<span class="label label-success" style="font-size: 0.85rem; padding: 0.3rem 0.6rem;">Active</span>';
+    if (isExpired) statusLabel = '<span class="label label-danger" style="font-size: 0.85rem; padding: 0.3rem 0.6rem;">Expired</span>';
+    else if (isFull) statusLabel = '<span class="label label-warning" style="font-size: 0.85rem; padding: 0.3rem 0.6rem;">Limit Reached</span>';
+
+    modal.innerHTML = `
+      <div class="apparatus-code-report-dialog">
+        
+        <!-- Header -->
+        <div class="apparatus-code-report-header">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(236, 72, 153, 0.2); color: #ec4899; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+              <i class="ri-pie-chart-line"></i>
+            </div>
+            <div>
+              <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 0.6rem;">
+                Status Report: <code style="font-family: monospace; color: #ec4899; background: rgba(236, 72, 153, 0.15); padding: 0.2rem 0.5rem; border-radius: 6px;">${codeObj.code}</code>
+              </h3>
+              <span style="font-size: 0.82rem; color: #94a3b8;">Audit trail &amp; real-time user redemption logs</span>
+            </div>
+          </div>
+          <button type="button" class="close apparatus-modal-close" style="color: #fff; opacity: 0.7; font-size: 1.6rem; cursor: pointer;">&times;</button>
+        </div>
+
+        <!-- Body -->
+        <div class="apparatus-code-report-body">
+          
+          <!-- Summary Metric Tiles -->
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.75rem;">
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 1rem; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 0.35rem;">Reward</span>
+              <strong style="font-size: 1.25rem; color: #fbbf24;">+${codeObj.points} Pts</strong>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 1rem; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 0.35rem;">Uses Claimed</span>
+              <strong style="font-size: 1.25rem; color: #38bdf8;">${codeObj.usedCount || 0} / ${codeObj.maxUses}</strong>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 1rem; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 0.35rem;">Remaining</span>
+              <strong style="font-size: 1.25rem; color: #34d399;">${remaining} Left</strong>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 1rem; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 0.35rem;">Status</span>
+              <div>${statusLabel}</div>
+            </div>
+          </div>
+
+          <!-- Redemptions List -->
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+              <h4 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ri-user-follow-line" style="color: #38bdf8;"></i> Users Who Redeemed (${redemptions.length})
+              </h4>
+              <span style="font-size: 0.8rem; color: #94a3b8;">Enforced Policy: 1 redemption per account</span>
+            </div>
+
+            <div style="border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; overflow: hidden; max-height: 280px; overflow-y: auto;">
+              <table class="table" style="margin: 0; font-size: 0.88rem;">
+                <thead>
+                  <tr style="background: rgba(255, 255, 255, 0.02);">
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Redeemed At</th>
+                    <th>Points Credited</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${redemptions.length === 0 ? `
+                    <tr>
+                      <td colspan="5" style="text-align: center; padding: 2.5rem; color: #94a3b8;">
+                        <i class="ri-inbox-line" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem; opacity: 0.6;"></i>
+                        No users have redeemed this code yet.<br>Share this code in Discord or global announcements!
+                      </td>
+                    </tr>
+                  ` : redemptions.map(function (r) {
+                    const avatar = 'https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(r.username || 'client');
+                    const timeStr = r.time ? new Date(r.time).toLocaleString() : 'Just now';
+                    return `
+                      <tr>
+                        <td>
+                          <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <img src="${avatar}" alt="" style="width: 24px; height: 24px; border-radius: 50%;" />
+                            <strong style="color: #fff;">@${r.username}</strong>
+                          </div>
+                        </td>
+                        <td style="color: #cbd5e1;">${r.email || '—'}</td>
+                        <td style="color: #94a3b8; font-size: 0.82rem;">${timeStr}</td>
+                        <td><strong style="color: #fbbf24;">+${r.points || codeObj.points} Pts</strong></td>
+                        <td><span class="label label-success" style="font-size: 0.75rem;">Redeemed</span></td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="apparatus-code-report-footer">
+          <button type="button" class="btn btn-default apparatus-modal-add-ten" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+            <i class="ri-add-line"></i> +10 Uses
+          </button>
+          <button type="button" class="btn btn-default apparatus-modal-copy-code" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+            <i class="ri-file-copy-line"></i> Copy Code
+          </button>
+          <button type="button" class="btn btn-primary apparatus-modal-close" style="padding: 0.5rem 1.25rem;">
+            Done
+          </button>
+        </div>
+
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    function closeModal() {
+      modal.remove();
+    }
+
+    modal.querySelectorAll('.apparatus-modal-close').forEach(function (btn) {
+      btn.addEventListener('click', closeModal);
+    });
+
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) closeModal();
+    });
+
+    // +10 uses action
+    const addTenBtn = modal.querySelector('.apparatus-modal-add-ten');
+    if (addTenBtn) {
+      addTenBtn.addEventListener('click', function () {
+        codeObj.maxUses = (codeObj.maxUses || 0) + 10;
+        const all = getPromoCodesList();
+        const target = all.find(function (c) { return c.code === codeObj.code; });
+        if (target) {
+          target.maxUses = codeObj.maxUses;
+          savePromoCodesList(all);
+        }
+        showAdminToast('success', 'Capacity Expanded', 'Added +10 uses to code ' + codeObj.code + '. New limit: ' + codeObj.maxUses);
+        renderAdminCodeStatusModal(codeObj, parentContainer);
+        if (parentContainer) renderAdminEarnView(parentContainer);
+      });
+    }
+
+    // Copy code action
+    const copyCodeBtn = modal.querySelector('.apparatus-modal-copy-code');
+    if (copyCodeBtn) {
+      copyCodeBtn.addEventListener('click', function () {
+        if (navigator.clipboard) navigator.clipboard.writeText(codeObj.code);
+        showAdminToast('info', 'Code Copied', 'Promo code ' + codeObj.code + ' copied to clipboard.');
+      });
+    }
+  }
+
+  // ==============================================================================
   // 9. DISCORD WEBHOOKS VIEW (ZERO CAPSULES)
   // ==============================================================================
   function renderWebhooksView(container) {
@@ -2291,6 +2868,10 @@ php artisan view:clear</pre>
                 <a href="#mail-editor" class="apparatus-admin-tab" data-tab="mail-editor" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.9rem 1.1rem; border-radius: 12px; color: #ec4899; text-decoration: none; font-weight: 600;">
                   <i class="ri-mail-settings-line" style="font-size: 1.3rem;"></i>
                   <span>Mail Editor</span>
+                </a>
+                <a href="#earn" class="apparatus-admin-tab" data-tab="earn" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.9rem 1.1rem; border-radius: 12px; color: #fbbf24; text-decoration: none; font-weight: 600;">
+                  <i class="ri-copper-coin-line" style="font-size: 1.3rem;"></i>
+                  <span>Earn &amp; Codes</span>
                 </a>
                 <a href="#webhooks" class="apparatus-admin-tab" data-tab="webhooks" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.9rem 1.1rem; border-radius: 12px; color: #f472b6; text-decoration: none; font-weight: 600;">
                   <i class="ri-discord-line" style="font-size: 1.3rem;"></i>
