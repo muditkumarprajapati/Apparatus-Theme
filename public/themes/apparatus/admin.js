@@ -262,6 +262,25 @@
       `;
     }
 
+    // Modern Header Center Status (Eliminates awkward blank header space)
+    if (!document.getElementById('apparatus-admin-header-center')) {
+      const centerBox = document.createElement('div');
+      centerBox.id = 'apparatus-admin-header-center';
+      centerBox.style.cssText = 'display: flex; align-items: center; gap: 0.65rem; margin-left: 1rem; color: #cbd5e1; font-size: 0.92rem; font-weight: 500;';
+      centerBox.innerHTML = `
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);"></span>
+        <span style="color: rgba(255,255,255,0.9); font-weight: 600;">ArixByte Infrastructure</span>
+        <span style="color: rgba(255,255,255,0.3);">&bull;</span>
+        <span style="color: #94a3b8; font-size: 0.85rem;">Administration Console</span>
+      `;
+      const toggle = navbar.querySelector('.sidebar-toggle');
+      if (toggle && toggle.nextSibling) {
+        navbar.insertBefore(centerBox, toggle.nextSibling);
+      } else {
+        navbar.prepend(centerBox);
+      }
+    }
+
     // Add Return to Client Area Link in Top Right Navbar
     let customMenu = navbar.querySelector('.navbar-custom-menu');
     if (customMenu && !document.getElementById('apparatus-admin-client-btn')) {
@@ -274,6 +293,15 @@
         <span>Client Area</span>
       `;
       customMenu.prepend(clientBtn);
+    }
+
+    // Polish Top Right User Identity (Capitalized Name & Frosted Glass)
+    const userMenuA = navbar.querySelector('.navbar-nav > li.user-menu > a');
+    if (userMenuA) {
+      const span = userMenuA.querySelector('span');
+      if (span && span.textContent && span.textContent.toLowerCase().includes('mudit')) {
+        span.textContent = 'Mudit Kumar';
+      }
     }
   }
 
@@ -766,8 +794,65 @@ ${formatMailBody(currentTpl.body)}
 
     const testBtn = container.querySelector('#apparatus-mail-test-btn');
     if (testBtn) {
-      testBtn.addEventListener('click', function () {
-        showAdminToast('success', 'Test Dispatched', 'A preview email was sent to your administrator address.');
+      testBtn.addEventListener('click', async function () {
+        const origHtml = testBtn.innerHTML;
+        testBtn.disabled = true;
+        testBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Dispatching via SMTP...';
+
+        try {
+          const csrf = (document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')) || 
+                       (typeof getCsrfToken === 'function' ? getCsrfToken() : '') ||
+                       (document.querySelector('input[name="_token"]')?.value) || '';
+
+          const subject = (document.getElementById('apparatus-mail-subject')?.value) || 'ArixByte Cloud SMTP Test';
+          const previewElement = container.querySelector('.box-info .box-body > div');
+          const bodyHtml = previewElement ? previewElement.outerHTML : (document.getElementById('apparatus-mail-body')?.value || '');
+
+          // Call backend SMTP test route
+          let resp = await fetch('/auth/mail/test', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': csrf,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              subject: subject,
+              body: bodyHtml
+            })
+          });
+
+          // Fallback to native Pterodactyl mail test if custom route not found
+          if (!resp.ok && (resp.status === 404 || resp.status === 405)) {
+            resp = await fetch('/admin/settings/mail/test', {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrf,
+                'X-Requested-With': 'XMLHttpRequest'
+              }
+            });
+          }
+
+          const data = await resp.json().catch(function () { return {}; });
+
+          if (resp.ok && data.success !== false) {
+            const dest = data.recipient ? (' to ' + data.recipient) : '';
+            showAdminToast('success', 'Email Sent via SMTP!', '🎉 Test email successfully dispatched' + dest + '! Please check your inbox.');
+          } else {
+            const err = data.message || (data.errors && data.errors[0]?.detail) || 'SMTP failed to send. Please check your SMTP host, port, username, password and encryption in Settings > Mail.';
+            showAdminToast('error', 'SMTP Dispatch Error', err);
+          }
+        } catch (e) {
+          showAdminToast('error', 'Connection Error', 'Failed to connect to SMTP mailer: ' + e.message);
+        } finally {
+          testBtn.disabled = false;
+          testBtn.innerHTML = origHtml;
+        }
       });
     }
   }
@@ -830,10 +915,10 @@ ${formatMailBody(currentTpl.body)}
               <div class="form-group">
                 <label>Banner Severity Style</label>
                 <select class="form-control" id="apparatus-announcement-type">
-                  <option value="info" ${saved.type === 'info' ? 'selected' : ''}>Information (Cyan Glow)</option>
-                  <option value="warning" ${saved.type === 'warning' ? 'selected' : ''}>Important Alert (Amber Glow)</option>
-                  <option value="emergency" ${saved.type === 'emergency' ? 'selected' : ''}>Critical Emergency (Rose Glow)</option>
-                  <option value="success" ${saved.type === 'success' ? 'selected' : ''}>Promotion / Event (Emerald Glow)</option>
+                  <option value="info" ${saved.type === 'info' ? 'selected' : ''}>Information (Cyan)</option>
+                  <option value="warning" ${saved.type === 'warning' ? 'selected' : ''}>Important Alert (Amber)</option>
+                  <option value="emergency" ${saved.type === 'emergency' ? 'selected' : ''}>Critical Emergency (Rose)</option>
+                  <option value="success" ${saved.type === 'success' ? 'selected' : ''}>Promotion / Event (Emerald)</option>
                 </select>
               </div>
 
@@ -1360,44 +1445,24 @@ ${formatMailBody(currentTpl.body)}
   // 8B. EARN & PROMO CODE STUDIO (PROMO CODE GENERATION, QUOTAS & LIVE AUDIT REPORT)
   // ==============================================================================
   function getPromoCodesList() {
-    const defaultCodes = [
-      {
-        id: 'pc_welcome',
-        code: 'WELCOME20',
-        points: 20,
-        maxUses: 100,
-        usedCount: 2,
-        createdAt: '2026-11-10T10:00:00.000Z',
-        expiresAt: '2026-12-31T23:59:59.000Z',
-        active: true,
-        redemptions: [
-          { username: 'alex_gamer', email: 'alex.j@example.com', time: '2026-11-12T14:22:00.000Z', points: 20 },
-          { username: 'rohan_dev', email: 'rohan.sharma@example.in', time: '2026-11-14T09:10:00.000Z', points: 20 }
-        ]
-      },
-      {
-        id: 'pc_community',
-        code: 'ARIX50',
-        points: 50,
-        maxUses: 50,
-        usedCount: 1,
-        createdAt: '2026-11-12T12:00:00.000Z',
-        expiresAt: '2026-12-15T23:59:59.000Z',
-        active: true,
-        redemptions: [
-          { username: 'hyper_sarah', email: 'sarah.c@techcorp.io', time: '2026-11-13T16:45:00.000Z', points: 50 }
-        ]
-      }
-    ];
     try {
       const raw = localStorage.getItem('apparatus_promo_codes');
       if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        let parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          // Purge old mock demo codes (WELCOME20, ARIX50)
+          const filtered = parsed.filter(function (c) {
+            return c && c.code !== 'WELCOME20' && c.code !== 'ARIX50' && c.id !== 'pc_welcome' && c.id !== 'pc_community';
+          });
+          if (filtered.length !== parsed.length) {
+            localStorage.setItem('apparatus_promo_codes', JSON.stringify(filtered));
+          }
+          return filtered;
+        }
       }
     } catch (e) {}
-    localStorage.setItem('apparatus_promo_codes', JSON.stringify(defaultCodes));
-    return defaultCodes;
+    localStorage.setItem('apparatus_promo_codes', JSON.stringify([]));
+    return [];
   }
 
   function savePromoCodesList(codes) {
@@ -1470,8 +1535,8 @@ ${formatMailBody(currentTpl.body)}
         </div>
         <div class="box-body">
           <p style="color: #94a3b8; margin-bottom: 1.5rem;">
-            Generate reward promo codes with custom expiration times, point rewards, and max usage limits.
-            Users are strictly limited to <strong>1 redemption per account</strong>.
+            Generate promotional coupon codes with custom coupon expiration dates, point rewards, and usage limits.
+            <strong style="color: #38bdf8;">Coupon validity duration applies only to the coupon redemption window — points claimed by users never expire.</strong> Users are strictly limited to <strong>1 redemption per account</strong>.
           </p>
 
           <form id="apparatus-create-promo-form">
@@ -1505,7 +1570,7 @@ ${formatMailBody(currentTpl.body)}
               </div>
 
               <div class="form-group">
-                <label>Validity Duration</label>
+                <label>Coupon Validity (Redeem Window)</label>
                 <select class="form-control" id="apparatus-new-validity">
                   <option value="86400000">1 Day (24 Hours)</option>
                   <option value="259200000">3 Days</option>
@@ -1513,8 +1578,11 @@ ${formatMailBody(currentTpl.body)}
                   <option value="1209600000">14 Days (2 Weeks)</option>
                   <option value="2592000000">30 Days (1 Month)</option>
                   <option value="7776000000">90 Days (3 Months)</option>
-                  <option value="0">Never / Unlimited Time</option>
+                  <option value="0">Never / Permanent Coupon</option>
                 </select>
+                <small style="color: #94a3b8; font-size: 0.75rem; display: block; margin-top: 0.25rem;">
+                  Time limit for redeeming coupon. (Points claimed never expire).
+                </small>
               </div>
             </div>
 
@@ -1542,7 +1610,7 @@ ${formatMailBody(currentTpl.body)}
                 <th style="padding-left: 1.5rem;">Code</th>
                 <th>Reward</th>
                 <th>Usage &amp; Remaining</th>
-                <th>Validity / Expiration</th>
+                <th>Coupon Expiration</th>
                 <th>Status</th>
                 <th>Created</th>
                 <th style="text-align: right; padding-right: 1.5rem;">Actions</th>
@@ -1574,11 +1642,11 @@ ${formatMailBody(currentTpl.body)}
         const isFull = c.maxUses && (c.usedCount || 0) >= c.maxUses;
         const remaining = Math.max(0, (c.maxUses || 0) - (c.usedCount || 0));
 
-        let statusBadge = '<span class="label label-success">Active</span>';
+        let statusBadge = '<span class="label label-success">Coupon Active</span>';
         if (isExpired) {
-          statusBadge = '<span class="label label-danger">Expired</span>';
+          statusBadge = '<span class="label label-danger">Coupon Expired</span>';
         } else if (isFull) {
-          statusBadge = '<span class="label label-warning">Maxed Out</span>';
+          statusBadge = '<span class="label label-warning">Quota Full</span>';
         }
 
         const expiryStr = c.expiresAt ? new Date(c.expiresAt).toLocaleDateString() : 'Never';
@@ -1799,8 +1867,9 @@ ${formatMailBody(currentTpl.body)}
             </div>
 
             <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 1rem; text-align: center;">
-              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 0.35rem;">Status</span>
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 0.35rem;">Coupon Status</span>
               <div>${statusLabel}</div>
+              <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.25rem;">(Claimed points never expire)</div>
             </div>
           </div>
 
@@ -2261,7 +2330,7 @@ php artisan view:clear</pre>
 
   function syncRegisteredUserIntoList(list) {
     if (!Array.isArray(list)) return list;
-    const regUser = localStorage.getItem('apparatus_registered_username');
+    const regUser = localStorage.getItem('apparatus_registered_username') || localStorage.getItem('apparatus_registered_user');
     const regEmail = localStorage.getItem('apparatus_registered_email');
     if (regUser) {
       const exists = list.some(function (u) {

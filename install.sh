@@ -145,9 +145,11 @@ install_theme() {
 
 // Apparatus Self-Registration Routes
 Route::get('/register', 'RegisterController@index')->name('auth.register');
-Route::post('/register', 'RegisterController@register')->name('auth.register.post');
+Route::post('/register', 'RegisterController@register')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])->name('auth.register.post');
 Route::get('/auth/register', 'RegisterController@index');
-Route::post('/auth/register', 'RegisterController@register');
+Route::post('/auth/register', 'RegisterController@register')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+Route::post('/auth/mail/test', 'RegisterController@sendTestMail')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+Route::post('/auth/mail/verify-code', 'RegisterController@sendVerificationCode')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 EOF
   fi
 
@@ -158,13 +160,36 @@ EOF
     fi
     sed -i '/RegisterController/d' "$BASE_ROUTES"
     sed -i '/Apparatus Self-Registration Routes/d' "$BASE_ROUTES"
-    cat << 'EOF' >> "$BASE_ROUTES"
+    python3 -c "
+with open('$BASE_ROUTES', 'r') as f:
+    c = f.read()
+
+snippet = '''
+// Apparatus Self-Registration Routes (Base Web)
+Route::get('/register', 'Auth\\\RegisterController@index');
+Route::post('/register', 'Auth\\\RegisterController@register')->withoutMiddleware([\\\App\\\Http\\\Middleware\\\VerifyCsrfToken::class]);
+Route::get('/auth/register', 'Auth\\\RegisterController@index');
+Route::post('/auth/register', 'Auth\\\RegisterController@register')->withoutMiddleware([\\\App\\\Http\\\Middleware\\\VerifyCsrfToken::class]);
+Route::post('/auth/mail/test', 'Auth\\\RegisterController@sendTestMail')->withoutMiddleware([\\\App\\\Http\\\Middleware\\\VerifyCsrfToken::class]);
+Route::post('/auth/mail/verify-code', 'Auth\\\RegisterController@sendVerificationCode')->withoutMiddleware([\\\App\\\Http\\\Middleware\\\VerifyCsrfToken::class]);
+'''
+
+if 'RegisterController' not in c:
+    if \"Route::get('/{path?}'\" in c:
+        c = c.replace(\"Route::get('/{path?}'\", snippet + \"\nRoute::get('/{path?}'\")
+    else:
+        c += '\n' + snippet
+    with open('$BASE_ROUTES', 'w') as f:
+        f.write(c)
+" 2>/dev/null || cat << 'EOF' >> "$BASE_ROUTES"
 
 // Apparatus Self-Registration Routes (Base Web)
 Route::get('/register', 'Auth\RegisterController@index');
 Route::post('/register', 'Auth\RegisterController@register');
 Route::get('/auth/register', 'Auth\RegisterController@index');
 Route::post('/auth/register', 'Auth\RegisterController@register');
+Route::post('/auth/mail/test', 'Auth\RegisterController@sendTestMail');
+Route::post('/auth/mail/verify-code', 'Auth\RegisterController@sendVerificationCode');
 EOF
   fi
 
@@ -336,6 +361,12 @@ remove_theme() {
     cp "$AUTH_ROUTES.apparatus.bak" "$AUTH_ROUTES"
     rm -f "$AUTH_ROUTES.apparatus.bak"
     echo -e "${GREEN}✓ Restored original routes/auth.php.${NC}"
+  fi
+  BASE_ROUTES="$PTERO_DIR/routes/base.php"
+  if [ -f "$BASE_ROUTES.apparatus.bak" ]; then
+    cp "$BASE_ROUTES.apparatus.bak" "$BASE_ROUTES"
+    rm -f "$BASE_ROUTES.apparatus.bak"
+    echo -e "${GREEN}✓ Restored original routes/base.php.${NC}"
   fi
 
   # Restore 403 error page

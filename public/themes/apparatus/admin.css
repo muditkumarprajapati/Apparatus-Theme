@@ -240,12 +240,12 @@ body {
 .sidebar-menu > li.header {
   background: transparent !important;
   color: rgba(255, 255, 255, 0.5) !important;
-  font-size: 0.8rem !important;
+  font-size: 0.85rem !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.08em !important;
-  padding: 1.25rem 1.15rem 0.45rem 1.15rem !important;
-  margin-top: 0.35rem !important;
+  padding: 1.35rem 1.25rem 0.5rem 1.25rem !important;
+  margin-top: 0.4rem !important;
 }
 
 /* Navigation Items - 1:1 Matching Client Dashboard (.apparatus-nav-link) */
@@ -253,15 +253,15 @@ body.skin-blue .sidebar-menu > li > a,
 body.skin-blue .sidebar-menu li a,
 .sidebar-menu > li > a,
 .sidebar-menu li a {
-  font-size: 1rem !important;
+  font-size: 1.08rem !important;
   font-weight: 500 !important;
   color: rgba(255, 255, 255, 0.8) !important;
-  padding: 0.75rem 1rem !important;
-  margin: 0.25rem 0.75rem !important;
+  padding: 0.82rem 1.15rem !important;
+  margin: 0.3rem 0.85rem !important;
   border-radius: 12px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.85rem !important;
+  gap: 0.95rem !important;
   border: none !important;
   border-left: 3.5px solid transparent !important;
   background: transparent !important;
@@ -274,7 +274,7 @@ body.skin-blue .sidebar-menu li a,
 body.skin-blue .sidebar-menu > li > a span,
 .sidebar-menu > li > a span,
 .sidebar-menu li a span {
-  font-size: 1rem !important;
+  font-size: 1.08rem !important;
   font-weight: 500 !important;
   letter-spacing: normal !important;
   color: inherit !important;
@@ -284,7 +284,7 @@ body.skin-blue .sidebar-menu > li > a span,
 body.skin-blue .sidebar-menu > li > a i,
 .sidebar-menu > li > a i,
 .sidebar-menu li a i {
-  font-size: 1.25rem !important;
+  font-size: 1.35rem !important;
   color: rgba(255, 255, 255, 0.8) !important;
   display: flex !important;
   align-items: center !important;
@@ -328,7 +328,7 @@ body.skin-blue .sidebar-menu > li > a.active,
   color: #ffffff !important;
   font-weight: 600 !important;
   border: none !important;
-  border-left: 3.5px solid #f472b6 !important;
+  border-left: 3.5px solid #ec4899 !important;
   border-radius: 12px !important;
   box-shadow: none !important;
   transform: none !important;
@@ -684,8 +684,8 @@ input:focus,
 select:focus,
 textarea:focus {
   background: rgba(255, 255, 255, 0.12) !important;
-  border-color: rgba(236, 72, 153, 0.75) !important;
-  box-shadow: 0 0 18px rgba(236, 72, 153, 0.35) !important;
+  border-color: rgba(236, 72, 153, 0.6) !important;
+  box-shadow: none !important;
   color: #ffffff !important;
   outline: none !important;
 }
@@ -743,9 +743,9 @@ p.text-muted,
 
 .btn-group > .btn.active,
 .btn-group > .btn:hover {
-  background: linear-gradient(135deg, #ec4899, #db2777) !important;
+  background: rgba(255, 255, 255, 0.16) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35) !important;
+  box-shadow: none !important;
 }
 
 .btn {
@@ -778,22 +778,22 @@ p.text-muted,
 .btn-primary,
 .box-footer .btn-primary,
 .box-footer button[type="submit"] {
-  background: linear-gradient(135deg, #ec4899, #db2777) !important;
+  background: #ec4899 !important;
   color: #ffffff !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
-  border: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
   border-radius: 12px !important;
-  height: 46px !important;
+  height: 44px !important;
   font-size: 0.95rem !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
 }
 
 .btn-primary:hover,
 .box-footer .btn-primary:hover,
 .box-footer button[type="submit"]:hover {
-  background: linear-gradient(135deg, #f472b6, #ec4899) !important;
+  background: #f472b6 !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
 }
 
 .btn-default {

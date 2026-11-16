@@ -149,10 +149,27 @@
     input.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
-  // Fetch CSRF Token
+  // Fetch CSRF Token (Multi-layer Fallback for Auth & React Pages)
   function getCsrfToken() {
     const metaCsrf = document.querySelector('meta[name="csrf-token"]');
-    return metaCsrf ? metaCsrf.getAttribute('content') : '';
+    if (metaCsrf && metaCsrf.getAttribute('content')) {
+      return metaCsrf.getAttribute('content');
+    }
+    const inputCsrf = document.querySelector('input[name="_token"]');
+    if (inputCsrf && inputCsrf.value) {
+      return inputCsrf.value;
+    }
+    if (window.Pterodactyl && window.Pterodactyl.csrfToken) {
+      return window.Pterodactyl.csrfToken;
+    }
+    if (window.SiteConfiguration && window.SiteConfiguration.csrfToken) {
+      return window.SiteConfiguration.csrfToken;
+    }
+    const match = document.cookie.match(/(^|;)\s*XSRF-TOKEN\s*=\s*([^;]+)/);
+    if (match) {
+      return decodeURIComponent(match[2]);
+    }
+    return '';
   }
 
 
@@ -1151,44 +1168,24 @@
   }
 
   function getPromoCodesList() {
-    const defaultCodes = [
-      {
-        id: 'pc_welcome',
-        code: 'WELCOME20',
-        points: 20,
-        maxUses: 100,
-        usedCount: 2,
-        createdAt: '2026-11-10T10:00:00.000Z',
-        expiresAt: '2026-12-31T23:59:59.000Z',
-        active: true,
-        redemptions: [
-          { username: 'alex_gamer', email: 'alex.j@example.com', time: '2026-11-12T14:22:00.000Z', points: 20 },
-          { username: 'rohan_dev', email: 'rohan.sharma@example.in', time: '2026-11-14T09:10:00.000Z', points: 20 }
-        ]
-      },
-      {
-        id: 'pc_community',
-        code: 'ARIX50',
-        points: 50,
-        maxUses: 50,
-        usedCount: 1,
-        createdAt: '2026-11-12T12:00:00.000Z',
-        expiresAt: '2026-12-15T23:59:59.000Z',
-        active: true,
-        redemptions: [
-          { username: 'hyper_sarah', email: 'sarah.c@techcorp.io', time: '2026-11-13T16:45:00.000Z', points: 50 }
-        ]
-      }
-    ];
     try {
       const raw = localStorage.getItem('apparatus_promo_codes');
       if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        let parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          // Purge old demo mock codes (WELCOME20, ARIX50)
+          const filtered = parsed.filter(function (c) {
+            return c && c.code !== 'WELCOME20' && c.code !== 'ARIX50' && c.id !== 'pc_welcome' && c.id !== 'pc_community';
+          });
+          if (filtered.length !== parsed.length) {
+            localStorage.setItem('apparatus_promo_codes', JSON.stringify(filtered));
+          }
+          return filtered;
+        }
       }
     } catch (e) {}
-    localStorage.setItem('apparatus_promo_codes', JSON.stringify(defaultCodes));
-    return defaultCodes;
+    localStorage.setItem('apparatus_promo_codes', JSON.stringify([]));
+    return [];
   }
 
   function savePromoCodesList(codes) {
@@ -2943,7 +2940,7 @@
               type="text" 
               id="apparatus-earn-promo-input" 
               class="apparatus-earn-input" 
-              placeholder="Enter promo code (e.g. WELCOME20)" 
+              placeholder="Enter promo code (e.g. ARIX100)" 
               autocomplete="off" 
               style="text-transform: uppercase; font-family: monospace;" 
               required 
@@ -2952,6 +2949,9 @@
               <i class="ri-check-double-line"></i> Redeem Code
             </button>
           </form>
+          <div style="font-size: 0.78rem; color: rgba(255, 255, 255, 0.45); margin-top: 0.4rem;">
+            <i class="ri-information-line"></i> Coupon validity applies only to the redemption deadline. Points claimed never expire!
+          </div>
         </div>
 
       </div>
@@ -6204,7 +6204,31 @@
 
     const user = window.PterodactylUser || {};
     const email = localStorage.getItem('apparatus_registered_email') || user.email || 'muditkumar.me@gmail.com';
-    const username = localStorage.getItem('apparatus_registered_user') || localStorage.getItem('apparatus_profile_username') || user.username || 'Client';
+    const username = localStorage.getItem('apparatus_registered_username') || localStorage.getItem('apparatus_registered_user') || localStorage.getItem('apparatus_profile_username') || user.username || 'Client';
+
+    // Dispatch real backend SMTP verification email
+    const csrfToken = getCsrfToken();
+    fetch('/auth/mail/verify-code', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': csrfToken,
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify({ email: email, username: username, code: code })
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; });
+    }).then(function (data) {
+      if (data && data.success) {
+        showToast('success', 'Email Sent via SMTP', 'Security verification code dispatched to ' + email + '!');
+      } else if (data && data.message) {
+        console.warn('SMTP notice:', data.message);
+      }
+    }).catch(function (err) {
+      console.warn('SMTP verification dispatch note:', err);
+    });
 
     showToast('success', 'Verification Dispatched', 'Verification code ' + code + ' sent to ' + email + '!');
     openEmailDispatchModal(code, email, username);
