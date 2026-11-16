@@ -5223,13 +5223,19 @@ body:not(.apparatus-auth) div[class*="PageContentBlock"] {
 }
 
 div[class*="AccountOverviewContainer"],
+body.apparatus-page-account div[class*="PageContentBlock"],
+body.apparatus-page-account div[class*="PageContentBlock"] > div,
+body.apparatus-page-account .sc-12to0iy-1,
 div[class*="PageContentBlock"]>div:not([class*="ActivityLogContainer"]) {
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
   gap: 1.5rem !important;
+  box-sizing: border-box !important;
 }
 
 /* ==============================================================================
