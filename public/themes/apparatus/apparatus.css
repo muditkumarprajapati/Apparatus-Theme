@@ -5157,30 +5157,66 @@ div[class*="PageContentBlock"] div.md\:grid > div {
   box-sizing: border-box !important;
 }
 
-/* Ensure ContentBox card containers inside Account Overview are 100% flush */
+/* Ensure ContentBox card containers inside Account Overview are 100% flush with decreased top gap */
 .sc-12to0iy-1 .sc-mjlt6f-2,
 body:not(.apparatus-auth) .sc-12to0iy-1 .sc-mjlt6f-2,
 .sc-12to0iy-1 div[class*="ContentBox___StyledDiv"],
-div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 {
+div[class*="AccountOverviewContainer"] .sc-mjlt6f-2,
+body.apparatus-page-account .sc-mjlt6f-2 {
   width: 100% !important;
   max-width: 100% !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
+  margin-top: 0 !important;
+  padding-top: 1rem !important;
   box-sizing: border-box !important;
 }
 
-/* Ensure Title Labels (Update Password, Update Email Address, Two-Step Verification) align flush with the left boundary */
+/* Decrease external gap between card title and card body */
 .sc-12to0iy-1 h2,
 body:not(.apparatus-auth) .sc-12to0iy-1 h2,
-div[class*="AccountOverviewContainer"] h2 {
+div[class*="AccountOverviewContainer"] h2,
+body.apparatus-page-account h2 {
   width: 100% !important;
   max-width: 100% !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
+  margin-bottom: 0.35rem !important;
   padding-left: 0.25rem !important;
   padding-right: 0.25rem !important;
   text-align: left !important;
   box-sizing: border-box !important;
+}
+
+/* Collapse any phantom empty containers or unmounted spinner/fade divs inside account cards */
+body.apparatus-page-account .sc-mjlt6f-2 > div:empty,
+body.apparatus-page-account .sc-mjlt6f-2 > div:not(:has(input, button, select, textarea, svg, img, p, h1, h2, h3, h4, h5, h6, span:not(:empty))),
+body.apparatus-page-account .sc-mjlt6f-2 form > div:empty {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Remove any excessive top margin from forms and first inputs inside account cards */
+body.apparatus-page-account .sc-mjlt6f-2 form,
+div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 form {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+body.apparatus-page-account .sc-mjlt6f-2 form > div:first-child,
+body.apparatus-page-account .sc-mjlt6f-2 form > div:first-of-type,
+div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 form > div:first-child,
+div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 form > div:first-of-type {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+body.apparatus-page-account .sc-mjlt6f-2 form > div:first-child label,
+div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 form > div:first-child label {
+  margin-top: 0 !important;
 }
 
 .apparatus-user-profile-section {

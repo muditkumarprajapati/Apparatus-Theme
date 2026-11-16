@@ -5532,7 +5532,32 @@
           innerBox.style.setProperty('max-width', '100%', 'important');
           innerBox.style.setProperty('margin-left', '0', 'important');
           innerBox.style.setProperty('margin-right', '0', 'important');
+          innerBox.style.setProperty('margin-top', '0', 'important');
+          innerBox.style.setProperty('padding-top', '1rem', 'important');
           innerBox.style.setProperty('box-sizing', 'border-box', 'important');
+
+          // Hide empty fade/spinner overlays or phantom empty divs
+          innerBox.querySelectorAll('div').forEach(function (el) {
+            if (!el.textContent.trim() && !el.querySelector('input, button, select, textarea, svg, img, [role="button"]')) {
+              el.style.setProperty('display', 'none', 'important');
+              el.style.setProperty('height', '0', 'important');
+              el.style.setProperty('min-height', '0', 'important');
+              el.style.setProperty('margin', '0', 'important');
+              el.style.setProperty('padding', '0', 'important');
+            }
+          });
+
+          // Reset form top margins so fields sit cleanly near top of card
+          const form = innerBox.querySelector('form');
+          if (form) {
+            form.style.setProperty('margin-top', '0', 'important');
+            form.style.setProperty('padding-top', '0', 'important');
+            const firstChild = form.firstElementChild;
+            if (firstChild) {
+              firstChild.style.setProperty('margin-top', '0', 'important');
+              firstChild.style.setProperty('padding-top', '0', 'important');
+            }
+          }
         }
         const titleEl = child.querySelector('h2');
         if (titleEl) {
@@ -5540,6 +5565,7 @@
           titleEl.style.setProperty('max-width', '100%', 'important');
           titleEl.style.setProperty('margin-left', '0', 'important');
           titleEl.style.setProperty('margin-right', '0', 'important');
+          titleEl.style.setProperty('margin-bottom', '0.35rem', 'important');
           titleEl.style.setProperty('padding-left', '0.25rem', 'important');
           titleEl.style.setProperty('text-align', 'left', 'important');
           titleEl.style.setProperty('box-sizing', 'border-box', 'important');
