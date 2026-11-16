@@ -655,17 +655,19 @@ body.apparatus-auth .apparatus-sidebar {
   width: auto !important;
   object-fit: contain !important;
   display: block !important;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.45)) !important;
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), filter 0.22s ease !important;
+  filter: none !important;
+  box-shadow: none !important;
+  transition: opacity 0.2s ease !important;
 }
 
 .apparatus-sidebar-brand:hover .apparatus-sidebar-brand-img {
-  transform: translateY(-1px) scale(1.03) !important;
-  filter: drop-shadow(0 4px 14px rgba(124, 58, 237, 0.55)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.3)) !important;
+  opacity: 0.85 !important;
+  filter: none !important;
 }
 
 .apparatus-sidebar-brand:active .apparatus-sidebar-brand-img {
-  transform: translateY(0) scale(0.98) !important;
+  opacity: 0.7 !important;
+  filter: none !important;
 }
 
 .apparatus-sidebar-brand .brand-text {
