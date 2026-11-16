@@ -2576,6 +2576,13 @@ body:not(.apparatus-auth) span.apparatus-user-name {
   transform: translateY(-2px);
 }
 
+.apparatus-quick-purchase-card:hover {
+  background: radial-gradient(ellipse at 80% 50%, rgba(236, 72, 153, 0.15), transparent 70%), rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(236, 72, 153, 0.45) !important;
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.18) !important;
+  transform: translateY(-2px) !important;
+}
+
 .upgrade-name {
   font-size: 0.76rem;
   font-weight: 600;

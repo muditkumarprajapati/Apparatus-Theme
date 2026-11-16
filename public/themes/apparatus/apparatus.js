@@ -1999,23 +1999,31 @@
                 </div>
               </div>
 
-              <!-- Quick Resource Upgrades -->
+              <!-- Quick Server Purchase -->
               <div class="apparatus-upgrades-section">
                 <span class="apparatus-upgrades-title">
-                  <i class="ri-flashlight-line"></i> Quick Server Upgrades
+                  <i class="ri-flashlight-line"></i> Quick Server Purchase
                 </span>
-                <div class="apparatus-upgrades-grid">
-                  <button type="button" class="apparatus-upgrade-pill" data-upgrade="+2 GB DDR4 RAM" data-price="₹99">
-                    <span class="upgrade-name">+2 GB RAM</span>
-                    <span class="upgrade-price">₹99/mo</span>
-                  </button>
-                  <button type="button" class="apparatus-upgrade-pill" data-upgrade="+100% Dedicated CPU" data-price="₹79">
-                    <span class="upgrade-name">+100% CPU</span>
-                    <span class="upgrade-price">₹79/mo</span>
-                  </button>
-                  <button type="button" class="apparatus-upgrade-pill" data-upgrade="+20 GB NVMe Storage" data-price="₹49">
-                    <span class="upgrade-name">+20 GB NVMe</span>
-                    <span class="upgrade-price">₹49/mo</span>
+                <div class="apparatus-upgrades-grid" style="grid-template-columns: 1fr;">
+                  <button type="button" class="apparatus-upgrade-pill apparatus-quick-purchase-card" data-upgrade="4GB RAM • 150% CPU • 15GB Disk" data-price="1000 Pts or ₹100/m" style="padding: 0.85rem 1.1rem; width: 100%; box-sizing: border-box; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0.75rem; text-align: left; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; cursor: pointer; transition: all 0.25s ease;">
+                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                      <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                        <span style="font-size: 0.9rem; font-weight: 800; color: #ffffff; letter-spacing: 0.02em;">4GB RAM</span>
+                        <span style="color: rgba(255, 255, 255, 0.35); font-size: 0.75rem;">•</span>
+                        <span style="font-size: 0.9rem; font-weight: 800; color: #38bdf8; letter-spacing: 0.02em;">150% CPU</span>
+                        <span style="color: rgba(255, 255, 255, 0.35); font-size: 0.75rem;">•</span>
+                        <span style="font-size: 0.9rem; font-weight: 800; color: #a78bfa; letter-spacing: 0.02em;">15GB Disk</span>
+                      </div>
+                      <span style="font-size: 0.76rem; color: rgba(255, 255, 255, 0.55); font-weight: 500;">High-Performance Cloud Gaming &amp; Bot Node</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.15rem; text-align: right; min-width: 135px;">
+                      <div style="font-size: 0.95rem; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 0.25rem;">
+                        <i class="ri-copper-coin-line"></i> 1,000 Pts <span style="font-size: 0.72rem; color: rgba(255, 255, 255, 0.45); font-weight: 500;">/ m</span>
+                      </div>
+                      <div style="font-size: 0.8rem; font-weight: 700; color: #f472b6;">
+                        or <span style="font-weight: 800; color: #34d399;">₹100</span> <span style="font-size: 0.72rem; color: rgba(255, 255, 255, 0.45); font-weight: 500;">/ m</span>
+                      </div>
+                    </div>
                   </button>
                 </div>
               </div>
