@@ -230,67 +230,121 @@ body.fixed {
   padding-bottom: 2.5rem !important;
 }
 
-/* Category Headers - Increased Font Size */
+/* Category Headers - 1:1 Matching Client Dashboard */
 .sidebar-menu > li.header {
   background: transparent !important;
-  color: rgba(255, 255, 255, 0.55) !important;
-  font-size: 0.82rem !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  font-size: 0.74rem !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.12em !important;
-  padding: 1.35rem 1.4rem 0.5rem 1.4rem !important;
+  letter-spacing: 0.08em !important;
+  padding: 1.15rem 1rem 0.35rem 1rem !important;
   margin-top: 0.35rem !important;
 }
 
-/* Navigation Items (Significantly Increased Font Size & Spacious Padding) */
-.sidebar-menu > li > a {
-  font-size: 1.05rem !important;
-  font-weight: 600 !important;
-  color: #cbd5e1 !important;
-  padding: 0.85rem 1.25rem !important;
-  margin: 0.25rem 0.85rem !important;
+/* Navigation Items - 1:1 Matching Client Dashboard (.apparatus-nav-link) */
+body.skin-blue .sidebar-menu > li > a,
+body.skin-blue .sidebar-menu li a,
+.sidebar-menu > li > a,
+.sidebar-menu li a {
+  font-size: 0.94rem !important;
+  font-weight: 500 !important;
+  color: rgba(255, 255, 255, 0.78) !important;
+  padding: 0.65rem 0.95rem !important;
+  margin: 0.2rem 0.75rem !important;
   border-radius: 12px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.95rem !important;
-  border: 1px solid transparent !important;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  gap: 0.75rem !important;
+  border: none !important;
+  border-left: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
 }
 
-.sidebar-menu > li > a span {
-  font-size: 1.05rem !important;
-  font-weight: 600 !important;
-  letter-spacing: -0.01em !important;
+body.skin-blue .sidebar-menu > li > a span,
+.sidebar-menu > li > a span,
+.sidebar-menu li a span {
+  font-size: 0.94rem !important;
+  font-weight: 500 !important;
+  letter-spacing: normal !important;
+  color: inherit !important;
+  text-shadow: none !important;
 }
 
-.sidebar-menu > li > a i {
-  font-size: 1.35rem !important;
-  color: #94a3b8 !important;
+body.skin-blue .sidebar-menu > li > a i,
+.sidebar-menu > li > a i,
+.sidebar-menu li a i {
+  font-size: 1.18rem !important;
+  color: rgba(255, 255, 255, 0.78) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  text-shadow: none !important;
   transition: all 0.2s ease !important;
 }
 
-.sidebar-menu > li > a:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
+body.skin-blue .sidebar-menu > li:hover > a,
+body.skin-blue .sidebar-menu > li > a:hover,
+.sidebar-menu > li > a:hover,
+.sidebar-menu li a:hover {
+  background: rgba(255, 255, 255, 0.09) !important;
   color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
+  border: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+  transform: translateX(3px) !important;
 }
 
-.sidebar-menu > li > a:hover i {
+body.skin-blue .sidebar-menu > li:hover > a i,
+body.skin-blue .sidebar-menu > li > a:hover i,
+.sidebar-menu > li > a:hover i,
+.sidebar-menu > li > a:hover span,
+.sidebar-menu li a:hover i,
+.sidebar-menu li a:hover span {
   color: #ffffff !important;
+  text-shadow: none !important;
 }
 
-/* Active Navigation Item (Luminous Pink Accent) */
-.sidebar-menu > li.active > a {
-  background: rgba(236, 72, 153, 0.18) !important;
+/* Active Navigation Item - Exactly like Client Dashboard (Zero Neon Glow, Pure White Text, Inset Pink Line) */
+body.skin-blue .sidebar-menu > li.active > a,
+body.skin-blue .sidebar-menu > li.menu-open > a,
+body.skin-blue .sidebar-menu > li > a.active,
+.sidebar-menu > li.active > a,
+.sidebar-menu > li.menu-open > a,
+.sidebar-menu > li > a.active,
+.sidebar-menu li.active > a {
+  background: rgba(255, 255, 255, 0.14) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(236, 72, 153, 0.45) !important;
-  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.2) !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
+  border: none !important;
+  border-left: none !important;
+  border-radius: 12px !important;
+  box-shadow: inset 3.5px 0 0 #f472b6 !important;
+  transform: none !important;
 }
 
-.sidebar-menu > li.active > a i {
-  color: #f472b6 !important;
-  text-shadow: 0 0 10px rgba(236, 72, 153, 0.5) !important;
+body.skin-blue .sidebar-menu > li.active > a span,
+.sidebar-menu > li.active > a span,
+.sidebar-menu > li.menu-open > a span,
+.sidebar-menu > li > a.active span,
+.sidebar-menu li.active > a span {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+}
+
+body.skin-blue .sidebar-menu > li.active > a i,
+.sidebar-menu > li.active > a i,
+.sidebar-menu > li.menu-open > a i,
+.sidebar-menu > li > a.active i,
+.sidebar-menu li.active > a i {
+  color: #ffffff !important;
+  text-shadow: none !important;
 }
 
 /* ==============================================================================
