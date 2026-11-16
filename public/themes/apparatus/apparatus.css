@@ -2711,7 +2711,15 @@ body:not(.apparatus-auth) h2[class*="text-neutral-300"] {
 }
 
 /* Flex alignments for equal card heights */
-body:not(.apparatus-auth) .sc-12to0iy-1,
+body:not(.apparatus-auth) .sc-12to0iy-1 {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  gap: 1.5rem !important;
+}
+
 body:not(.apparatus-auth) .sc-1c4s3nm-0,
 body:not(.apparatus-auth) .sc-yksipt-0,
 body:not(.apparatus-auth) div[class*="AccountOverviewContainer"]>div,
@@ -3028,7 +3036,10 @@ body:not(.apparatus-auth) div[class*="ModalMask"]>div {
    ACTIVITY LOG PAGE GLASSMORPHISM & IMPROVEMENTS
    ============================================================================== */
 /* Ensure parent container is left-aligned and has exact 90% dashboard margin */
-div[class*="ActivityLogContainer"] {
+div[class*="ActivityLogContainer"],
+body.apparatus-page-activity div[class*="PageContentBlock"],
+body:not(.apparatus-auth) div[class*="PageContentBlock"]:has(.bg-gray-700),
+body:not(.apparatus-auth) div[class*="PageContentBlock"]:has(#apparatus-activity-header) {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
@@ -3051,7 +3062,7 @@ h2.apparatus-activity-title {
   color: #ffffff !important;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35) !important;
   margin-top: 0 !important;
-  margin-bottom: 1.1rem !important;
+  margin-bottom: 1.25rem !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
   padding-left: 0.25rem !important;
@@ -5081,19 +5092,27 @@ html.lenis body {
    ============================================================================== */
 
 /* Account View Page Spacing */
-div[class*="AccountOverviewContainer"] {
+div[class*="AccountOverviewContainer"],
+body:not(.apparatus-auth) div[class*="AccountOverviewContainer"] {
   padding-top: 1.5rem !important;
   padding-bottom: 3rem !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
+  width: 90% !important;
+  max-width: 1380px !important;
+  margin: 1.5rem auto 3.5rem auto !important;
   box-sizing: border-box !important;
 }
 
-div[class*="PageContentBlock"] {
+div[class*="PageContentBlock"],
+body:not(.apparatus-auth) div[class*="PageContentBlock"] {
   padding-top: 0 !important;
   padding-bottom: 3rem !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
+  width: 90% !important;
+  max-width: 1380px !important;
+  margin: 1.5rem auto 3.5rem auto !important;
   box-sizing: border-box !important;
 }
 
@@ -5104,22 +5123,64 @@ div[class*="PageContentBlock"]>div:not([class*="ActivityLogContainer"]) {
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 auto !important;
-  gap: 1.25rem !important;
+  gap: 1.5rem !important;
 }
 
-/* Ensure the native cards row sits in a clean 3-column grid under User Profile */
-div[class*="AccountOverviewContainer"]>div:not(.apparatus-user-profile-section) {
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 1.25rem !important;
+/* Ensure the native cards container (Update Password, Update Email Address, Two-Step Verification) stacks cleanly with 100% flush width */
+.sc-12to0iy-1,
+body:not(.apparatus-auth) .sc-12to0iy-1,
+div[class*="AccountOverviewContainer"]>div:not(.apparatus-user-profile-section),
+div[class*="PageContentBlock"] div.md\:grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.5rem !important;
   width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
   align-items: stretch !important;
 }
 
-@media (max-width: 1024px) {
-  div[class*="AccountOverviewContainer"]>div:not(.apparatus-user-profile-section) {
-    grid-template-columns: 1fr !important;
-  }
+/* Ensure every security card (Update Password, Update Email Address, Two-Step) has 100% matching width & zero horizontal offsets */
+.sc-12to0iy-1 > div,
+body:not(.apparatus-auth) .sc-12to0iy-1 > div,
+div[class*="AccountOverviewContainer"]>div>div,
+div[class*="PageContentBlock"] div.md\:grid > div {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-top: 0 !important;
+  grid-column: 1 / -1 !important;
+  grid-row: auto !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure ContentBox card containers inside Account Overview are 100% flush */
+.sc-12to0iy-1 .sc-mjlt6f-2,
+body:not(.apparatus-auth) .sc-12to0iy-1 .sc-mjlt6f-2,
+.sc-12to0iy-1 div[class*="ContentBox___StyledDiv"],
+div[class*="AccountOverviewContainer"] .sc-mjlt6f-2 {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure Title Labels (Update Password, Update Email Address, Two-Step Verification) align flush with the left boundary */
+.sc-12to0iy-1 h2,
+body:not(.apparatus-auth) .sc-12to0iy-1 h2,
+div[class*="AccountOverviewContainer"] h2 {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
+  text-align: left !important;
+  box-sizing: border-box !important;
 }
 
 .apparatus-user-profile-section {

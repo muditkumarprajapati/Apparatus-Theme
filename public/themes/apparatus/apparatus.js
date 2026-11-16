@@ -574,29 +574,55 @@
 
     // 7b. Mount User Profile Section on /account above Update Password / Email / 2FA cards
     if (window.location.pathname === '/account' || window.location.pathname === '/account/') {
+      document.body.classList.add('apparatus-page-account');
       injectUserProfileSection();
+      normalizeAccountCards();
     } else {
+      document.body.classList.remove('apparatus-page-account');
       const existingProf = document.getElementById('apparatus-user-profile-section');
       if (existingProf) existingProf.remove();
     }
 
-    // 7. Ensure "Recent Activity" title is present above the activity card on /account/activity (clean, matching Add SSH Key)
+    // 7. Ensure "Recent Activity" title and card on /account/activity have proper spacing and alignment
     const rawPathname = window.location.pathname || '';
     if (rawPathname.startsWith('/account/activity')) {
+      document.body.classList.add('apparatus-page-activity');
       const actContainer = document.querySelector('div[class*="ActivityLogContainer"]');
       const actCard = document.querySelector('.bg-gray-700') || (actContainer ? actContainer.firstElementChild : null);
+      const pageBlock = document.querySelector('div[class*="PageContentBlock"]') || (actCard ? actCard.closest('div[class*="PageContentBlock"]') : null);
+
+      if (pageBlock) {
+        pageBlock.style.setProperty('width', '90%', 'important');
+        pageBlock.style.setProperty('max-width', '1380px', 'important');
+        pageBlock.style.setProperty('margin-left', 'auto', 'important');
+        pageBlock.style.setProperty('margin-right', 'auto', 'important');
+        pageBlock.style.setProperty('margin-top', '2rem', 'important');
+        pageBlock.style.setProperty('padding', '0', 'important');
+        pageBlock.style.setProperty('box-sizing', 'border-box', 'important');
+      }
+
       let header = document.getElementById('apparatus-activity-header');
-      if (!header && (actCard || actContainer)) {
+      if (!header && (actCard || actContainer || pageBlock)) {
         header = document.createElement('h2');
         header.id = 'apparatus-activity-header';
         header.className = 'sc-mjlt6f-0 apparatus-activity-title';
         header.textContent = 'Recent Activity';
-        const targetParent = (actCard && actCard.parentElement) || actContainer;
+        header.style.setProperty('margin-top', '0', 'important');
+        header.style.setProperty('margin-bottom', '1.25rem', 'important');
+        header.style.setProperty('margin-left', '0', 'important');
+        header.style.setProperty('padding-left', '0.25rem', 'important');
+        header.style.setProperty('width', '100%', 'important');
+        header.style.setProperty('text-align', 'left', 'important');
+
+        const targetParent = (actCard && actCard.parentElement) || actContainer || (pageBlock ? (pageBlock.firstElementChild || pageBlock) : null);
         if (targetParent) {
           targetParent.style.setProperty('display', 'flex', 'important');
           targetParent.style.setProperty('flex-direction', 'column', 'important');
           targetParent.style.setProperty('align-items', 'flex-start', 'important');
           targetParent.style.setProperty('text-align', 'left', 'important');
+          targetParent.style.setProperty('width', '100%', 'important');
+          targetParent.style.setProperty('max-width', '100%', 'important');
+          targetParent.style.setProperty('margin', '0 auto', 'important');
           if (actCard && actCard.parentElement === targetParent) {
             targetParent.insertBefore(header, actCard);
           } else {
@@ -604,11 +630,14 @@
           }
         }
       } else if (header) {
-        // If an old header or breadcrumb/subtitle markup exists, clean it up to just the pure title
-        if (header.tagName !== 'H2' || header.innerHTML.includes('apparatus-resource-breadcrumbs') || header.innerHTML.includes('apparatus-activity-subtitle')) {
-          header.className = 'sc-mjlt6f-0 apparatus-activity-title';
-          header.textContent = 'Recent Activity';
-        }
+        header.className = 'sc-mjlt6f-0 apparatus-activity-title';
+        header.textContent = 'Recent Activity';
+        header.style.setProperty('margin-top', '0', 'important');
+        header.style.setProperty('margin-bottom', '1.25rem', 'important');
+        header.style.setProperty('margin-left', '0', 'important');
+        header.style.setProperty('padding-left', '0.25rem', 'important');
+        header.style.setProperty('width', '100%', 'important');
+        header.style.setProperty('text-align', 'left', 'important');
       }
 
       if (actCard) {
@@ -616,6 +645,7 @@
         actCard.style.setProperty('max-width', '100%', 'important');
         actCard.style.setProperty('margin-left', '0', 'important');
         actCard.style.setProperty('margin-right', '0', 'important');
+        actCard.style.setProperty('box-sizing', 'border-box', 'important');
       }
       if (actContainer) {
         actContainer.style.setProperty('width', '90%', 'important');
@@ -633,6 +663,7 @@
       enhanceActivityLogIps();
       enhanceActivityLogBadges();
     } else {
+      document.body.classList.remove('apparatus-page-activity');
       const existingHeader = document.getElementById('apparatus-activity-header');
       if (existingHeader) existingHeader.remove();
     }
@@ -5115,12 +5146,14 @@
 
     // Locate the native account cards row or container
     const contentBox = document.querySelector('.sc-mjlt6f-2') || document.querySelector('[class*="ContentBox"]');
-    const cardsRow = contentBox ? contentBox.parentElement : null;
+    const cardWrapper = contentBox ? contentBox.parentElement : null;
+    const cardsContainer = document.querySelector('.sc-12to0iy-1') ||
+      (cardWrapper ? cardWrapper.parentElement : null);
     const mainContainer = document.querySelector('div[class*="AccountOverviewContainer"]') ||
-      (cardsRow ? cardsRow.parentElement : null) ||
+      (cardsContainer ? cardsContainer.parentElement : null) ||
       document.querySelector('div[class*="PageContentBlock"] > div');
 
-    if (!mainContainer && !cardsRow) return;
+    if (!mainContainer && !cardsContainer && !cardWrapper) return;
 
     const user = window.PterodactylUser || {};
     const username = localStorage.getItem('apparatus_profile_username') || user.username || 'mudit';
@@ -5300,12 +5333,16 @@
       </div>
     `;
 
-    // Insert section BEFORE the cards row so the cards row sits cleanly underneath it
-    if (cardsRow && cardsRow.parentElement) {
-      cardsRow.parentElement.insertBefore(section, cardsRow);
+    // Insert section BEFORE the cards container so all security cards sit cleanly underneath it
+    if (cardsContainer && cardsContainer.parentElement) {
+      cardsContainer.parentElement.insertBefore(section, cardsContainer);
+    } else if (cardWrapper && cardWrapper.parentElement) {
+      cardWrapper.parentElement.insertBefore(section, cardWrapper);
     } else if (mainContainer) {
       mainContainer.prepend(section);
     }
+
+    normalizeAccountCards();
 
     // Wire up Avatar Preview, Presets, and Local File Upload
     const avatarImg = section.querySelector('#apparatus-prof-avatar-img');
@@ -5453,6 +5490,70 @@
           window.location.reload();
         }, 600);
       });
+    }
+  }
+
+  // ==============================================================================
+  // Account Overview Cards Alignment & Flush 100% Width Normalization
+  // ==============================================================================
+  function normalizeAccountCards() {
+    const rawPath = window.location.pathname || '';
+    if (rawPath !== '/account' && rawPath !== '/account/') return;
+
+    const contentBoxes = document.querySelectorAll('.sc-mjlt6f-2, [class*="ContentBox"]');
+    const cardsContainer = document.querySelector('.sc-12to0iy-1') ||
+      (contentBoxes.length > 0 && contentBoxes[0].parentElement ? contentBoxes[0].parentElement.parentElement : null);
+
+    if (cardsContainer) {
+      cardsContainer.style.setProperty('display', 'flex', 'important');
+      cardsContainer.style.setProperty('flex-direction', 'column', 'important');
+      cardsContainer.style.setProperty('width', '100%', 'important');
+      cardsContainer.style.setProperty('max-width', '100%', 'important');
+      cardsContainer.style.setProperty('gap', '1.5rem', 'important');
+      cardsContainer.style.setProperty('margin', '0', 'important');
+      cardsContainer.style.setProperty('align-items', 'stretch', 'important');
+
+      Array.from(cardsContainer.children).forEach(function (child) {
+        if (child.id === 'apparatus-user-profile-section') return;
+        child.style.setProperty('display', 'flex', 'important');
+        child.style.setProperty('flex-direction', 'column', 'important');
+        child.style.setProperty('width', '100%', 'important');
+        child.style.setProperty('max-width', '100%', 'important');
+        child.style.setProperty('margin-left', '0', 'important');
+        child.style.setProperty('margin-right', '0', 'important');
+        child.style.setProperty('margin-top', '0', 'important');
+        child.style.setProperty('grid-column', '1 / -1', 'important');
+        child.style.setProperty('grid-row', 'auto', 'important');
+        child.style.setProperty('box-sizing', 'border-box', 'important');
+
+        const innerBox = child.querySelector('.sc-mjlt6f-2') || child.querySelector('[class*="ContentBox"]');
+        if (innerBox) {
+          innerBox.style.setProperty('width', '100%', 'important');
+          innerBox.style.setProperty('max-width', '100%', 'important');
+          innerBox.style.setProperty('margin-left', '0', 'important');
+          innerBox.style.setProperty('margin-right', '0', 'important');
+          innerBox.style.setProperty('box-sizing', 'border-box', 'important');
+        }
+        const titleEl = child.querySelector('h2');
+        if (titleEl) {
+          titleEl.style.setProperty('width', '100%', 'important');
+          titleEl.style.setProperty('max-width', '100%', 'important');
+          titleEl.style.setProperty('margin-left', '0', 'important');
+          titleEl.style.setProperty('margin-right', '0', 'important');
+          titleEl.style.setProperty('padding-left', '0.25rem', 'important');
+          titleEl.style.setProperty('text-align', 'left', 'important');
+          titleEl.style.setProperty('box-sizing', 'border-box', 'important');
+        }
+      });
+    }
+
+    const pageBlock = document.querySelector('div[class*="PageContentBlock"]');
+    if (pageBlock) {
+      pageBlock.style.setProperty('width', '90%', 'important');
+      pageBlock.style.setProperty('max-width', '1380px', 'important');
+      pageBlock.style.setProperty('margin-left', 'auto', 'important');
+      pageBlock.style.setProperty('margin-right', 'auto', 'important');
+      pageBlock.style.setProperty('margin-top', '1.5rem', 'important');
     }
   }
 
