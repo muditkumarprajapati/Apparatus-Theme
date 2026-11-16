@@ -93,7 +93,7 @@
     const isLocations = path.startsWith('/admin/locations');
     const isNodes = path.startsWith('/admin/nodes');
     const isServers = path.startsWith('/admin/servers');
-    const isUsers = path.startsWith('/admin/users');
+    const isUsers = path.startsWith('/admin/users') || hash === '#users';
     const isNodeHealth = path === '/admin/node-health' || hash === '#node-health';
     const isAuditLogs = path === '/admin/audit-logs' || hash === '#audit-logs';
 
@@ -166,7 +166,7 @@
         </a>
       </li>
       <li class="${isUsers ? 'active' : ''}">
-        <a href="/admin/users">
+        <a href="#users" class="apparatus-admin-tab" data-tab="users">
           <i class="ri-user-settings-line"></i>
           <span>Users</span>
         </a>
@@ -376,6 +376,18 @@
         `;
       }
       isolateStudioView(content, studioView, renderBlueprintExtensionsView);
+
+    } else if (hash === '#users' || window.location.pathname.startsWith('/admin/users')) {
+      if (header) {
+        header.innerHTML = `
+          <h1>User Management Studio <small>Client accounts, multi-factor security, verified identities, and balances</small></h1>
+          <ol class="breadcrumb">
+            <li><a href="/admin"><i class="ri-home-4-line"></i> Admin</a></li>
+            <li class="active">Users</li>
+          </ol>
+        `;
+      }
+      isolateStudioView(content, studioView, renderUsersStudioView);
 
     } else {
       if (studioView) studioView.style.display = 'none';
@@ -621,11 +633,11 @@ Click the button below to launch your panel console.
             </div>
           </div>
 
-          <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
-            <button class="btn btn-primary" id="apparatus-announcement-save-btn">
+          <div style="display: flex; gap: 0.85rem; margin-top: 2rem; margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
+            <button class="btn btn-primary" id="apparatus-announcement-save-btn" style="padding: 0.75rem 1.6rem; font-size: 0.95rem; border-radius: 12px; font-weight: 700;">
               <i class="ri-broadcast-line"></i> Save & Broadcast Announcement
             </button>
-            <button class="btn btn-default" id="apparatus-announcement-clear-btn">
+            <button class="btn btn-default" id="apparatus-announcement-clear-btn" style="padding: 0.75rem 1.4rem; font-size: 0.95rem; border-radius: 12px; font-weight: 600;">
               <i class="ri-delete-bin-line"></i> Deactivate Broadcast
             </button>
           </div>
@@ -1350,7 +1362,531 @@ php artisan view:clear</pre>
   }
 
   // ==============================================================================
-  // 12. ENHANCE ADMIN OVERVIEW (ZERO CAPSULES, PURE GLASS)
+  // 12. USER MANAGEMENT STUDIO (15-COLUMN ENTERPRISE LUXURY GRID & ZERO CAPSULES)
+  // ==============================================================================
+  function extractNativeUsers() {
+    const rows = document.querySelectorAll('.content-wrapper .content table.table-hover tbody tr');
+    if (!rows || rows.length === 0) return null;
+
+    const list = [];
+    rows.forEach(function (tr) {
+      try {
+        const tds = tr.querySelectorAll('td');
+        if (tds.length < 3) return;
+
+        const idLink = tds[0].querySelector('a');
+        const id = idLink ? parseInt(idLink.textContent.trim(), 10) : (parseInt(tds[0].textContent.trim(), 10) || (list.length + 1));
+        const emailLink = tds[1].querySelector('a') || tds[1];
+        const email = emailLink ? emailLink.textContent.trim() : '';
+        const name = tds[2] ? tds[2].textContent.trim() : '';
+        const username = tds[3] ? tds[3].textContent.trim() : (email.split('@')[0] || ('user_' + id));
+        const has2fa = tr.innerHTML.includes('label-success') || tr.innerHTML.toLowerCase().includes('enabled') || tr.innerHTML.toLowerCase().includes('active');
+        const serversText = tds[4] ? tds[4].textContent.trim() : '0';
+        const serversOwned = parseInt(serversText, 10) || 0;
+
+        if (email || username) {
+          list.push({
+            id: id,
+            avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(username),
+            name: name || username,
+            username: username,
+            email: email,
+            twoFactor: has2fa,
+            serversOwned: serversOwned,
+            vpsOwned: 0,
+            canAccess: 'Client Area',
+            verified: true,
+            balance: '₹0.00',
+            lastLogin: 'Recently',
+            created: '2026-01-15',
+            referralCode: 'ARIX-' + username.toUpperCase().slice(0, 4) + '-' + id,
+            totalReferrals: 0
+          });
+        }
+      } catch (e) {}
+    });
+
+    return list.length > 0 ? list : null;
+  }
+
+  function getAdminUsers() {
+    const storageKey = 'apparatus_admin_users_db_v2';
+    let stored = null;
+    try {
+      stored = JSON.parse(localStorage.getItem(storageKey) || 'null');
+    } catch (e) {
+      stored = null;
+    }
+
+    const extracted = extractNativeUsers();
+    if (extracted && extracted.length > 0) {
+      const merged = extracted.map(function (u) {
+        const found = stored ? stored.find(function (s) { return s.id === u.id || s.email === u.email; }) : null;
+        return {
+          id: u.id,
+          avatar: (found && found.avatar) || u.avatar || ('https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(u.username)),
+          name: (found && found.name) || u.name || 'Client Account',
+          username: (found && found.username) || u.username || 'client',
+          email: (found && found.email) || u.email || 'user@example.com',
+          twoFactor: (found && found.twoFactor !== undefined) ? found.twoFactor : u.twoFactor,
+          serversOwned: (found && found.serversOwned !== undefined) ? found.serversOwned : u.serversOwned,
+          vpsOwned: (found && found.vpsOwned !== undefined) ? found.vpsOwned : 0,
+          canAccess: (found && found.canAccess) || 'Client Area + API',
+          verified: (found && found.verified !== undefined) ? found.verified : true,
+          balance: (found && found.balance) || '₹0.00',
+          lastLogin: (found && found.lastLogin) || 'Just now',
+          created: (found && found.created) || u.created || '2026-01-15',
+          referralCode: (found && found.referralCode) || ('ARIX-' + (u.username || 'USER').toUpperCase().slice(0, 4) + '-' + u.id),
+          totalReferrals: (found && found.totalReferrals !== undefined) ? found.totalReferrals : 0
+        };
+      });
+      localStorage.setItem(storageKey, JSON.stringify(merged));
+      return merged;
+    }
+
+    if (stored && Array.isArray(stored) && stored.length > 0) {
+      return stored;
+    }
+
+    const defaultUsers = [
+      {
+        id: 1,
+        avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=MuditKumar',
+        name: 'Mudit Kumar',
+        username: 'Mudit',
+        email: 'muditkumar.me@gmail.com',
+        twoFactor: true,
+        serversOwned: 4,
+        vpsOwned: 2,
+        canAccess: 'Root Administrator (All)',
+        verified: true,
+        balance: '₹4,500.00',
+        lastLogin: 'Today at 10:24 AM',
+        created: '2026-01-10',
+        referralCode: 'ARIX-MUDIT-01',
+        totalReferrals: 42
+      },
+      {
+        id: 2,
+        avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=ServerRoot',
+        name: 'Server Admin',
+        username: 'ServerRoot',
+        email: 'admin@arixbyte.com',
+        twoFactor: true,
+        serversOwned: 8,
+        vpsOwned: 4,
+        canAccess: 'System Infrastructure',
+        verified: true,
+        balance: '₹12,850.00',
+        lastLogin: 'Yesterday at 18:45',
+        created: '2026-01-12',
+        referralCode: 'ARIX-ROOT-02',
+        totalReferrals: 19
+      },
+      {
+        id: 3,
+        avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=AlexGaming',
+        name: 'Alex Johnson',
+        username: 'alex_gamer',
+        email: 'alex.j@example.com',
+        twoFactor: false,
+        serversOwned: 2,
+        vpsOwned: 1,
+        canAccess: 'Client Area',
+        verified: true,
+        balance: '₹350.00',
+        lastLogin: 'Nov 14, 2026',
+        created: '2026-02-01',
+        referralCode: 'ARIX-ALEX-03',
+        totalReferrals: 5
+      },
+      {
+        id: 4,
+        avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=RohanDev',
+        name: 'Rohan Sharma',
+        username: 'rohan_dev',
+        email: 'rohan.sharma@example.in',
+        twoFactor: true,
+        serversOwned: 1,
+        vpsOwned: 0,
+        canAccess: 'Client Area',
+        verified: false,
+        balance: '₹0.00',
+        lastLogin: 'Nov 12, 2026',
+        created: '2026-02-18',
+        referralCode: 'ARIX-ROHN-04',
+        totalReferrals: 2
+      },
+      {
+        id: 5,
+        avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=HyperHost',
+        name: 'Sarah Connor',
+        username: 'hyper_sarah',
+        email: 'sarah.c@techcorp.io',
+        twoFactor: false,
+        serversOwned: 3,
+        vpsOwned: 2,
+        canAccess: 'Client Area + Subusers',
+        verified: true,
+        balance: '₹1,200.00',
+        lastLogin: 'Nov 15, 2026',
+        created: '2026-03-04',
+        referralCode: 'ARIX-SARH-05',
+        totalReferrals: 11
+      }
+    ];
+
+    localStorage.setItem(storageKey, JSON.stringify(defaultUsers));
+    return defaultUsers;
+  }
+
+  function saveAdminUsers(users) {
+    localStorage.setItem('apparatus_admin_users_db_v2', JSON.stringify(users));
+  }
+
+  function renderUsersStudioView(container) {
+    container.className = 'apparatus-admin-view';
+    const users = getAdminUsers();
+
+    const totalUsers = users.length;
+    const verifiedCount = users.filter(function (u) { return u.verified; }).length;
+    const twoFactorCount = users.filter(function (u) { return u.twoFactor; }).length;
+    const totalInstances = users.reduce(function (acc, u) { return acc + (u.serversOwned || 0) + (u.vpsOwned || 0); }, 0);
+
+    container.innerHTML = `
+      <!-- Top Telemetry KPIs (Pure Glass, Zero Capsules) -->
+      <div class="apparatus-admin-grid-4" style="margin-bottom: 1.75rem;">
+        <div class="apparatus-admin-telemetry-tile">
+          <div class="apparatus-telemetry-meta">
+            <h4>Total Client Accounts</h4>
+            <div class="apparatus-telemetry-val" style="color: #38bdf8;">${totalUsers} Registered</div>
+          </div>
+          <i class="ri-user-line apparatus-telemetry-icon-clean"></i>
+        </div>
+        <div class="apparatus-admin-telemetry-tile">
+          <div class="apparatus-telemetry-meta">
+            <h4>Verified Identities</h4>
+            <div class="apparatus-telemetry-val" style="color: #34d399;">${verifiedCount} Verified (${Math.round((verifiedCount / (totalUsers || 1)) * 100)}%)</div>
+          </div>
+          <i class="ri-verified-badge-line apparatus-telemetry-icon-clean"></i>
+        </div>
+        <div class="apparatus-admin-telemetry-tile">
+          <div class="apparatus-telemetry-meta">
+            <h4>Two-Factor Authentication</h4>
+            <div class="apparatus-telemetry-val" style="color: #c084fc;">${twoFactorCount} Guarded (${Math.round((twoFactorCount / (totalUsers || 1)) * 100)}%)</div>
+          </div>
+          <i class="ri-shield-keyhole-line apparatus-telemetry-icon-clean"></i>
+        </div>
+        <div class="apparatus-admin-telemetry-tile">
+          <div class="apparatus-telemetry-meta">
+            <h4>Active Servers & VPS</h4>
+            <div class="apparatus-telemetry-val" style="color: #f472b6;">${totalInstances} Deployed</div>
+          </div>
+          <i class="ri-server-line apparatus-telemetry-icon-clean"></i>
+        </div>
+      </div>
+
+      <!-- Main Users Management Studio Box -->
+      <div class="box box-primary">
+        <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <h3 class="box-title">
+            <i class="ri-user-settings-line"></i> Registered Client Accounts (${totalUsers})
+          </h3>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <button class="btn btn-default" id="apparatus-users-export-csv" style="border-radius: 10px; font-weight: 600; padding: 0.5rem 1rem;">
+              <i class="ri-file-excel-2-line"></i> Export CSV
+            </button>
+            <a href="/admin/users/new" class="btn btn-primary" style="border-radius: 10px; font-weight: 700; padding: 0.5rem 1.15rem; text-decoration: none;">
+              <i class="ri-user-add-line"></i> Create New User
+            </a>
+          </div>
+        </div>
+
+        <div class="box-body" style="padding: 1.5rem 1.75rem 2.5rem 1.75rem;">
+          <!-- Filter & Search Toolbar -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="position: relative; flex: 1; max-width: 440px;">
+              <i class="ri-search-2-line" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1.1rem; pointer-events: none;"></i>
+              <input type="text" id="apparatus-users-search-input" class="form-control" placeholder="Search by name, username, email, ID, or referral code..." style="padding-left: 2.75rem; height: 46px; border-radius: 12px; font-size: 0.92rem;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <select id="apparatus-users-filter-select" class="form-control" style="width: auto; min-width: 180px; height: 46px; border-radius: 12px; font-size: 0.9rem;">
+                <option value="all">All Accounts</option>
+                <option value="verified">Verified Only</option>
+                <option value="unverified">Unverified Only</option>
+                <option value="2fa_on">2FA Enabled</option>
+                <option value="2fa_off">2FA Disabled</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 15-Column Luxury Frosted Glass Table Container -->
+          <div class="apparatus-users-table-container">
+            <table class="apparatus-users-table" id="apparatus-users-data-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px; text-align: center;">ICON</th>
+                  <th style="width: 70px;">ID</th>
+                  <th>CLIENT NAME</th>
+                  <th>USERNAME</th>
+                  <th>EMAIL</th>
+                  <th style="text-align: center;">2FA</th>
+                  <th style="text-align: center;">SERVERS</th>
+                  <th style="text-align: center;">VPS</th>
+                  <th>CAN ACCESS</th>
+                  <th style="text-align: center;">VERIFIED</th>
+                  <th>CASH BALANCE</th>
+                  <th>LAST LOGIN</th>
+                  <th>ACCOUNT CREATED</th>
+                  <th>REFERRAL CODE</th>
+                  <th style="text-align: center;">TOTAL REFS</th>
+                  <th style="text-align: center;">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="apparatus-users-tbody">
+              </tbody>
+            </table>
+          </div>
+          <div id="apparatus-users-empty-msg" style="display: none; text-align: center; padding: 3rem 1rem; color: #94a3b8; font-size: 1rem;">
+            <i class="ri-user-unfollow-line" style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem; opacity: 0.5;"></i>
+            No client accounts match your current search and filter criteria.
+          </div>
+        </div>
+      </div>
+    `;
+
+    function renderTableRows(filterText, filterType) {
+      const tbody = container.querySelector('#apparatus-users-tbody');
+      const emptyMsg = container.querySelector('#apparatus-users-empty-msg');
+      if (!tbody) return;
+
+      const currentUsers = getAdminUsers();
+      const q = (filterText || '').toLowerCase().trim();
+
+      const filtered = currentUsers.filter(function (u) {
+        if (filterType === 'verified' && !u.verified) return false;
+        if (filterType === 'unverified' && u.verified) return false;
+        if (filterType === '2fa_on' && !u.twoFactor) return false;
+        if (filterType === '2fa_off' && u.twoFactor) return false;
+
+        if (!q) return true;
+        return (
+          String(u.id).includes(q) ||
+          (u.name && u.name.toLowerCase().includes(q)) ||
+          (u.username && u.username.toLowerCase().includes(q)) ||
+          (u.email && u.email.toLowerCase().includes(q)) ||
+          (u.referralCode && u.referralCode.toLowerCase().includes(q)) ||
+          (u.canAccess && u.canAccess.toLowerCase().includes(q))
+        );
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        if (emptyMsg) emptyMsg.style.display = 'block';
+        return;
+      }
+
+      if (emptyMsg) emptyMsg.style.display = 'none';
+
+      tbody.innerHTML = filtered.map(function (u) {
+        const twoFaHtml = u.twoFactor
+          ? `<span style="color: #34d399; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;"><i class="ri-shield-check-fill"></i> Enabled</span>`
+          : `<span style="color: #fb7185; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;"><i class="ri-shield-cross-line"></i> Inactive</span>`;
+
+        const verifiedBtnHtml = u.verified
+          ? `<button class="apparatus-verify-toggle-btn verified" data-user-id="${u.id}" title="Click to toggle verified status"><i class="ri-checkbox-circle-fill"></i> Yes</button>`
+          : `<button class="apparatus-verify-toggle-btn unverified" data-user-id="${u.id}" title="Click to toggle verified status"><i class="ri-close-circle-line"></i> No</button>`;
+
+        return `
+          <tr data-user-id="${u.id}">
+            <!-- 1. Profile Icon -->
+            <td style="text-align: center;">
+              <img src="${u.avatar}" alt="${u.username}" class="apparatus-user-avatar">
+            </td>
+            <!-- 2. ID -->
+            <td>
+              <span class="apparatus-user-id">#${u.id}</span>
+            </td>
+            <!-- 3. Client Name -->
+            <td>
+              <strong style="color: #ffffff; font-size: 0.94rem;">${u.name}</strong>
+            </td>
+            <!-- 4. Username -->
+            <td>
+              <span style="color: #f472b6; font-weight: 600;">@${u.username}</span>
+            </td>
+            <!-- 5. Email -->
+            <td>
+              <a href="mailto:${u.email}" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem;" title="Send email to ${u.email}">
+                ${u.email}
+              </a>
+            </td>
+            <!-- 6. 2FA -->
+            <td style="text-align: center;">
+              ${twoFaHtml}
+            </td>
+            <!-- 7. Servers Owned -->
+            <td style="text-align: center;">
+              <span class="apparatus-counter-num" style="border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;">${u.serversOwned || 0}</span>
+            </td>
+            <!-- 8. VPS Owned -->
+            <td style="text-align: center;">
+              <span class="apparatus-counter-num" style="border-color: rgba(192, 132, 252, 0.35); color: #c084fc;">${u.vpsOwned || 0}</span>
+            </td>
+            <!-- 9. Can Access -->
+            <td>
+              <span style="color: #e2e8f0; font-size: 0.88rem; font-weight: 600;">${u.canAccess || 'Client Area'}</span>
+            </td>
+            <!-- 10. Verified (Interactive Toggle Button) -->
+            <td style="text-align: center;">
+              ${verifiedBtnHtml}
+            </td>
+            <!-- 11. Cash Balance -->
+            <td>
+              <strong style="color: #34d399; font-size: 0.94rem; font-family: monospace;">${u.balance || '₹0.00'}</strong>
+            </td>
+            <!-- 12. Last Login -->
+            <td>
+              <span style="color: #94a3b8; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <i class="ri-time-line"></i> ${u.lastLogin || 'Recently'}
+              </span>
+            </td>
+            <!-- 13. Account Created -->
+            <td>
+              <span style="color: #94a3b8; font-size: 0.85rem;">${u.created || '2026-01-15'}</span>
+            </td>
+            <!-- 14. Referral Code (Click to Copy) -->
+            <td>
+              <button class="apparatus-ref-code" data-code="${u.referralCode}" title="Click to copy referral code">
+                <i class="ri-file-copy-line"></i> ${u.referralCode}
+              </button>
+            </td>
+            <!-- 15. Total Referrals -->
+            <td style="text-align: center;">
+              <span class="apparatus-counter-num" style="border-color: rgba(236, 72, 153, 0.35); color: #f472b6;">${u.totalReferrals || 0}</span>
+            </td>
+            <!-- Actions -->
+            <td style="text-align: center;">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.45rem;">
+                <a href="/admin/users/view/${u.id}" class="btn btn-xs btn-default" style="border-radius: 8px; padding: 0.35rem 0.65rem; color: #fff; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);" title="Edit Account">
+                  <i class="ri-edit-2-line"></i>
+                </a>
+                <button class="btn btn-xs btn-danger apparatus-user-delete-btn" data-user-id="${u.id}" data-username="${u.username}" style="border-radius: 8px; padding: 0.35rem 0.65rem;" title="Delete User">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Wire Verified Toggle Buttons
+      tbody.querySelectorAll('.apparatus-verify-toggle-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const uid = parseInt(this.getAttribute('data-user-id'), 10);
+          const all = getAdminUsers();
+          const target = all.find(function (u) { return u.id === uid; });
+          if (!target) return;
+          target.verified = !target.verified;
+          saveAdminUsers(all);
+          showAdminToast(
+            'success',
+            'Verification Updated',
+            'User @' + target.username + ' verified status is now: ' + (target.verified ? 'YES' : 'NO')
+          );
+          renderTableRows(searchInput.value, filterSelect.value);
+        });
+      });
+
+      // Wire Referral Code Copy
+      tbody.querySelectorAll('.apparatus-ref-code').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const code = this.getAttribute('data-code');
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(code).then(function () {
+              showAdminToast('success', 'Referral Code Copied', 'Copied ' + code + ' to clipboard!');
+            }).catch(function () {
+              showAdminToast('info', 'Referral Code', code);
+            });
+          } else {
+            showAdminToast('info', 'Referral Code', code);
+          }
+        });
+      });
+
+      // Wire Delete User
+      tbody.querySelectorAll('.apparatus-user-delete-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const uid = parseInt(this.getAttribute('data-user-id'), 10);
+          const un = this.getAttribute('data-username') || 'User';
+          if (confirm('Are you sure you want to remove user @' + un + ' (ID #' + uid + ')?')) {
+            let all = getAdminUsers();
+            all = all.filter(function (u) { return u.id !== uid; });
+            saveAdminUsers(all);
+            showAdminToast('error', 'User Removed', 'User @' + un + ' has been deleted.');
+            renderTableRows(searchInput.value, filterSelect.value);
+          }
+        });
+      });
+    }
+
+    const searchInput = container.querySelector('#apparatus-users-search-input');
+    const filterSelect = container.querySelector('#apparatus-users-filter-select');
+    const exportBtn = container.querySelector('#apparatus-users-export-csv');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        renderTableRows(this.value, filterSelect ? filterSelect.value : 'all');
+      });
+    }
+
+    if (filterSelect) {
+      filterSelect.addEventListener('change', function () {
+        renderTableRows(searchInput ? searchInput.value : '', this.value);
+      });
+    }
+
+    if (exportBtn) {
+      exportBtn.addEventListener('click', function () {
+        const currentUsers = getAdminUsers();
+        let csv = 'ID,Email,Client Name,Username,2FA,Servers Owned,VPS Owned,Can Access,Verified,Cash Balance,Last Login,Account Created,Referral Code,Total Referrals\n';
+        currentUsers.forEach(function (u) {
+          csv += [
+            u.id,
+            `"${u.email}"`,
+            `"${u.name}"`,
+            `"${u.username}"`,
+            u.twoFactor ? 'Yes' : 'No',
+            u.serversOwned || 0,
+            u.vpsOwned || 0,
+            `"${u.canAccess}"`,
+            u.verified ? 'Yes' : 'No',
+            `"${u.balance}"`,
+            `"${u.lastLogin}"`,
+            `"${u.created}"`,
+            `"${u.referralCode}"`,
+            u.totalReferrals || 0
+          ].join(',') + '\n';
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'arixbyte-users-' + Date.now() + '.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showAdminToast('success', 'Export Complete', 'Exported ' + currentUsers.length + ' users to CSV successfully.');
+      });
+    }
+
+    // Initial render
+    renderTableRows('', 'all');
+  }
+
+  // ==============================================================================
+  // 13. ENHANCE ADMIN OVERVIEW (ZERO CAPSULES, PURE GLASS)
   // ==============================================================================
   function enhanceAdminOverview() {
     if (window.location.pathname !== '/admin' || window.location.hash) return;

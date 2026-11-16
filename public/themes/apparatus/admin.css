@@ -59,8 +59,9 @@ body.fixed {
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border-bottom: 1px solid var(--admin-border) !important;
-  margin-left: 250px !important;
+  margin-left: 265px !important;
   min-height: 60px !important;
+  height: 60px !important;
   display: flex !important;
   align-items: center !important;
 }
@@ -86,7 +87,7 @@ body.fixed {
   height: 60px !important;
   line-height: 60px !important;
   padding: 0 1.5rem !important;
-  width: 250px !important;
+  width: 265px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
@@ -117,23 +118,63 @@ body.fixed {
   margin-left: auto !important;
   display: flex !important;
   align-items: center !important;
-  height: 100% !important;
+  height: 60px !important;
+  padding-right: 1.5rem !important;
+  gap: 0.75rem !important;
+}
+
+.main-header .navbar-custom-menu .navbar-nav {
+  display: flex !important;
+  align-items: center !important;
+  height: 60px !important;
+  margin: 0 !important;
+  gap: 0.5rem !important;
+}
+
+.main-header .navbar-custom-menu .navbar-nav > li {
+  display: flex !important;
+  align-items: center !important;
+  height: 60px !important;
 }
 
 .main-header .navbar-nav > li > a {
   color: #cbd5e1 !important;
-  padding: 1.1rem 1.1rem !important;
+  padding: 0.45rem 0.85rem !important;
+  border-radius: 10px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.5rem !important;
-  font-size: 0.94rem !important;
+  gap: 0.45rem !important;
+  font-size: 0.92rem !important;
   font-weight: 600 !important;
   transition: all 0.2s ease !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 
 .main-header .navbar-nav > li > a:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.16) !important;
   color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* User Profile Image & Name in Navbar */
+.main-header .navbar-nav > li.user-menu > a {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 12px !important;
+  padding: 0.4rem 0.95rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.65rem !important;
+}
+
+.main-header .navbar-nav > li.user-menu > a img,
+.main-header .navbar-nav > li.user-menu > a .user-image {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  margin: 0 !important;
 }
 
 /* Return to Client Area Link (Clean Frosted Glass, No Capsule!) */
@@ -145,11 +186,11 @@ body.fixed {
   backdrop-filter: blur(12px) !important;
   border: 1px solid rgba(255, 255, 255, 0.18) !important;
   border-radius: 12px !important;
-  padding: 0.55rem 1.1rem !important;
+  padding: 0.5rem 1.1rem !important;
   color: #ffffff !important;
-  font-size: 0.88rem !important;
+  font-size: 0.9rem !important;
   font-weight: 600 !important;
-  margin-right: 1.25rem !important;
+  margin: 0 !important;
   text-decoration: none !important;
   transition: all 0.25s ease !important;
 }
@@ -159,6 +200,7 @@ body.fixed {
   border-color: rgba(236, 72, 153, 0.5) !important;
   color: #ffffff !important;
   text-decoration: none !important;
+  transform: translateY(-1px) !important;
 }
 
 /* ==============================================================================
@@ -169,7 +211,7 @@ body.fixed {
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border-right: 1px solid var(--admin-border) !important;
-  width: 250px !important;
+  width: 265px !important;
   padding-top: 60px !important;
 }
 
@@ -177,35 +219,41 @@ body.fixed {
   padding-bottom: 2.5rem !important;
 }
 
-/* Category Headers */
+/* Category Headers - Increased Font Size */
 .sidebar-menu > li.header {
   background: transparent !important;
-  color: rgba(255, 255, 255, 0.45) !important;
-  font-size: 0.72rem !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  font-size: 0.82rem !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.12em !important;
-  padding: 1.4rem 1.4rem 0.5rem 1.4rem !important;
+  padding: 1.35rem 1.4rem 0.5rem 1.4rem !important;
   margin-top: 0.35rem !important;
 }
 
-/* Navigation Items (Enhanced Size & Padding) */
+/* Navigation Items (Significantly Increased Font Size & Spacious Padding) */
 .sidebar-menu > li > a {
-  font-size: 0.94rem !important;
-  font-weight: 500 !important;
+  font-size: 1.05rem !important;
+  font-weight: 600 !important;
   color: #cbd5e1 !important;
-  padding: 0.75rem 1.15rem !important;
-  margin: 0.22rem 0.85rem !important;
+  padding: 0.85rem 1.25rem !important;
+  margin: 0.25rem 0.85rem !important;
   border-radius: 12px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.85rem !important;
+  gap: 0.95rem !important;
   border: 1px solid transparent !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+.sidebar-menu > li > a span {
+  font-size: 1.05rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+}
+
 .sidebar-menu > li > a i {
-  font-size: 1.25rem !important;
+  font-size: 1.35rem !important;
   color: #94a3b8 !important;
   transition: all 0.2s ease !important;
 }
@@ -285,18 +333,32 @@ body.fixed {
 }
 
 /* ==============================================================================
-   4. CONTENT WRAPPER & PAGE HEADERS (ENHANCED SIZING)
+   4. CONTENT WRAPPER & PAGE HEADERS (ENHANCED SIZING & TIGHT ALIGNMENT)
    ============================================================================== */
+body.fixed .content-wrapper,
 .content-wrapper {
   background: transparent !important;
   background-color: transparent !important;
   min-height: calc(100vh - 60px) !important;
-  padding-bottom: 4rem !important;
+  padding-top: 60px !important;
+  margin-top: 0 !important;
+  padding-bottom: 3.5rem !important;
   box-sizing: border-box !important;
 }
 
+@media (min-width: 768px) {
+  body.fixed .content-wrapper,
+  .content-wrapper,
+  .right-side,
+  .main-footer {
+    margin-left: 265px !important;
+  }
+}
+
 .content-header {
-  padding: 2.25rem 2.25rem 1.5rem 2.25rem !important;
+  position: relative !important;
+  padding: 0.75rem 2.25rem 0.35rem 2.25rem !important;
+  margin-top: 0 !important;
 }
 
 .content-header > h1 {
@@ -319,7 +381,7 @@ body.fixed {
 .content-header > .breadcrumb {
   background: transparent !important;
   padding: 0 !important;
-  top: 2.5rem !important;
+  top: 1.35rem !important;
   right: 2.25rem !important;
   font-size: 0.88rem !important;
 }
@@ -338,7 +400,7 @@ body.fixed {
 }
 
 .content {
-  padding: 0 2.25rem 3rem 2.25rem !important;
+  padding: 0.5rem 2.25rem 3rem 2.25rem !important;
 }
 
 /* ==============================================================================
@@ -470,6 +532,38 @@ textarea.form-control {
   transition: all 0.2s ease !important;
 }
 
+select.form-control,
+select {
+  background: rgba(18, 12, 28, 0.92) !important;
+  background-color: rgba(18, 12, 28, 0.92) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 12px !important;
+  padding: 0.65rem 1.15rem !important;
+  height: 48px !important;
+  cursor: pointer !important;
+  color-scheme: dark !important;
+}
+
+select.form-control option,
+select option {
+  background: #140e22 !important;
+  background-color: #140e22 !important;
+  color: #ffffff !important;
+  padding: 12px 16px !important;
+  font-size: 0.95rem !important;
+  color-scheme: dark !important;
+}
+
+select.form-control option:checked,
+select.form-control option:hover,
+select option:checked,
+select option:hover {
+  background: #db2777 !important;
+  background-color: #db2777 !important;
+  color: #ffffff !important;
+}
+
 textarea.form-control {
   height: auto !important;
 }
@@ -551,6 +645,17 @@ p.text-muted,
   padding: 0.65rem 1.4rem !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   border: 1px solid transparent !important;
+  white-space: nowrap !important;
+  min-width: max-content !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  box-sizing: border-box !important;
+}
+
+.box-body {
+  padding: 1.85rem 2.25rem !important;
 }
 
 .btn-xs {
@@ -803,7 +908,7 @@ table.table-hover > tbody > tr:hover > td {
   color: #cbd5e1 !important;
   padding: 1.25rem 2.25rem !important;
   font-size: 0.85rem !important;
-  margin-left: 250px !important;
+  margin-left: 265px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
@@ -813,4 +918,179 @@ table.table-hover > tbody > tr:hover > td {
   .main-footer {
     margin-left: 0 !important;
   }
+}
+
+/* ==============================================================================
+   12. LUXURY FROSTED USERS TABLE & DATA STUDIO (15-COLUMN ENTERPRISE SUITE)
+   ============================================================================== */
+.apparatus-users-table-container {
+  overflow-x: auto !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: rgba(18, 12, 28, 0.45) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35) !important;
+  margin-top: 1.25rem !important;
+}
+
+.apparatus-users-table-container::-webkit-scrollbar {
+  height: 8px;
+}
+.apparatus-users-table-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+.apparatus-users-table-container::-webkit-scrollbar-thumb {
+  background: rgba(236, 72, 153, 0.35);
+  border-radius: 4px;
+}
+.apparatus-users-table-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(236, 72, 153, 0.6);
+}
+
+.apparatus-users-table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  font-family: var(--admin-font) !important;
+}
+
+.apparatus-users-table thead th {
+  background: rgba(25, 18, 38, 0.85) !important;
+  color: #94a3b8 !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  padding: 1.1rem 1.15rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-top: none !important;
+  vertical-align: middle !important;
+}
+
+.apparatus-users-table tbody td {
+  padding: 1rem 1.15rem !important;
+  vertical-align: middle !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-top: none !important;
+  color: #cbd5e1 !important;
+  font-size: 0.92rem !important;
+  background: transparent !important;
+  transition: background 0.15s ease !important;
+}
+
+.apparatus-users-table tbody tr:hover td {
+  background: rgba(236, 72, 153, 0.08) !important;
+}
+
+.apparatus-users-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+/* User Profile Avatar Thumbnail */
+.apparatus-user-avatar {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 2px solid rgba(236, 72, 153, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  transition: transform 0.2s ease, border-color 0.2s ease !important;
+  display: block !important;
+}
+
+.apparatus-user-avatar:hover {
+  transform: scale(1.18) !important;
+  border-color: #ec4899 !important;
+}
+
+/* ID Tag */
+.apparatus-user-id {
+  font-family: monospace !important;
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  color: #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.1) !important;
+  padding: 0.2rem 0.5rem !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+}
+
+/* Verified Interactive Toggle Button (Zero capsules) */
+.apparatus-verify-toggle-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.3rem 0.75rem !important;
+  border-radius: 8px !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  border: 1px solid transparent !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+}
+
+.apparatus-verify-toggle-btn.verified {
+  background: rgba(52, 211, 153, 0.12) !important;
+  color: #34d399 !important;
+  border-color: rgba(52, 211, 153, 0.3) !important;
+}
+
+.apparatus-verify-toggle-btn.verified:hover {
+  background: rgba(52, 211, 153, 0.22) !important;
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.3) !important;
+}
+
+.apparatus-verify-toggle-btn.unverified {
+  background: rgba(148, 163, 184, 0.12) !important;
+  color: #94a3b8 !important;
+  border-color: rgba(148, 163, 184, 0.25) !important;
+}
+
+.apparatus-verify-toggle-btn.unverified:hover {
+  background: rgba(251, 113, 133, 0.15) !important;
+  color: #fb7185 !important;
+  border-color: rgba(251, 113, 133, 0.3) !important;
+}
+
+/* Referral Code Copy Badge */
+.apparatus-ref-code {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  font-family: monospace !important;
+  font-size: 0.85rem !important;
+  color: #f472b6 !important;
+  background: rgba(236, 72, 153, 0.1) !important;
+  border: 1px solid rgba(236, 72, 153, 0.25) !important;
+  padding: 0.25rem 0.6rem !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.apparatus-ref-code:hover {
+  background: rgba(236, 72, 153, 0.22) !important;
+  border-color: #ec4899 !important;
+  color: #fff !important;
+}
+
+/* Counter Numbers */
+.apparatus-counter-num {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 26px !important;
+  padding: 0.2rem 0.5rem !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  font-size: 0.88rem !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
 }
