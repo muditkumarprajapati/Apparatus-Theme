@@ -1,7 +1,8 @@
 /**
  * ==============================================================================
  * APPARATUS THEME - EXECUTIVE CYBER-COMMAND CENTER (ADMIN PANEL)
- * Dedicated High-Tech Obsidian Architecture & Extension Hub for Pterodactyl
+ * Dedicated Pure Black Luxury Frosted Glass Architecture for Pterodactyl
+ * Clean Typography & 1:1 Homepage Glassmorphism (Zero Capsules Anywhere)
  * ==============================================================================
  */
 
@@ -15,27 +16,45 @@
     enhanceAdminOverview();
   }
 
-  // Toast Notification Helper
+  // Toast Notification Helper (Clean Glass Toast)
   function showAdminToast(type, title, message) {
     let container = document.getElementById('apparatus-admin-toast-container');
     if (!container) {
       container = document.createElement('div');
       container.id = 'apparatus-admin-toast-container';
+      container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none;';
       document.body.appendChild(container);
     }
     const toast = document.createElement('div');
     toast.className = 'apparatus-admin-toast';
     const isErr = type === 'error';
-    const borderColor = isErr ? 'rgba(244, 63, 94, 0.45)' : 'rgba(16, 185, 129, 0.45)';
+    const accent = isErr ? '#fb7185' : '#34d399';
+    toast.style.cssText = `
+      pointer-events: auto;
+      min-width: 290px;
+      max-width: 380px;
+      background: rgba(18, 12, 28, 0.92);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 14px 18px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      animation: adminViewEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+      color: #fff;
+      font-family: var(--admin-font);
+    `;
     const icon = isErr
-      ? '<i class="ri-error-warning-fill" style="color: #fb7185; font-size: 1.4rem;"></i>'
-      : '<i class="ri-checkbox-circle-fill" style="color: #34d399; font-size: 1.4rem;"></i>';
-    toast.style.border = '1px solid ' + borderColor;
+      ? `<i class="ri-error-warning-fill" style="color: ${accent}; font-size: 1.4rem;"></i>`
+      : `<i class="ri-checkbox-circle-fill" style="color: ${accent}; font-size: 1.4rem;"></i>`;
     toast.innerHTML = `
       ${icon}
       <div style="flex: 1;">
-        <div style="font-weight: 700; font-size: 0.88rem; margin-bottom: 2px;">${title}</div>
-        <div style="font-size: 0.8rem; color: #94a3b8; line-height: 1.4;">${message}</div>
+        <div style="font-weight: 700; font-size: 0.92rem; margin-bottom: 2px;">${title}</div>
+        <div style="font-size: 0.82rem; color: #94a3b8; line-height: 1.4;">${message}</div>
       </div>
     `;
     container.appendChild(toast);
@@ -48,7 +67,7 @@
   }
 
   // ==============================================================================
-  // 1. UPGRADE ADMIN SIDEBAR NAVIGATION WITH REQUESTED CATEGORIES & 5 NEW OPTIONS
+  // 1. UPGRADE ADMIN SIDEBAR (ZERO CAPSULES, CLEAN MINIMALIST TYPOGRAPHY)
   // ==============================================================================
   function upgradeAdminSidebar() {
     const sidebar = document.querySelector('.main-sidebar .sidebar');
@@ -57,19 +76,9 @@
     let menu = sidebar.querySelector('.sidebar-menu');
     if (!menu) return;
 
-    // Add Live System Status Pill at the top of the sidebar
-    if (!document.getElementById('apparatus-admin-status-wrap')) {
-      const statusWrap = document.createElement('div');
-      statusWrap.id = 'apparatus-admin-status-wrap';
-      statusWrap.className = 'apparatus-admin-sidebar-status';
-      statusWrap.innerHTML = `
-        <div class="apparatus-admin-status-pill">
-          <span class="apparatus-admin-status-dot"></span>
-          <span>SYSTEM ONLINE • PROD NODE</span>
-        </div>
-      `;
-      sidebar.insertBefore(statusWrap, menu);
-    }
+    // Remove any status pill/capsule container if present
+    const existingPill = document.getElementById('apparatus-admin-status-wrap');
+    if (existingPill) existingPill.remove();
 
     const path = window.location.pathname || '';
     const hash = window.location.hash || '';
@@ -121,14 +130,12 @@
         <a href="#mail-editor" class="apparatus-admin-tab" data-tab="mail-editor">
           <i class="ri-mail-settings-line"></i>
           <span>Mail Editor</span>
-          <span class="apparatus-admin-badge cyan">PRO</span>
         </a>
       </li>
       <li class="${isAnnouncements ? 'active' : ''}">
         <a href="#announcements" class="apparatus-admin-tab" data-tab="announcements">
           <i class="ri-notification-badge-line"></i>
           <span>Announcements</span>
-          <span class="apparatus-admin-badge yellow">LIVE</span>
         </a>
       </li>
 
@@ -168,14 +175,12 @@
         <a href="#node-health" class="apparatus-admin-tab" data-tab="node-health">
           <i class="ri-pulse-line"></i>
           <span>Node Health</span>
-          <span class="apparatus-admin-badge emerald">PULSE</span>
         </a>
       </li>
       <li class="${isAuditLogs ? 'active' : ''}">
         <a href="#audit-logs" class="apparatus-admin-tab" data-tab="audit-logs">
           <i class="ri-shield-check-line"></i>
           <span>Staff Audit Logs</span>
-          <span class="apparatus-admin-badge indigo">AUDIT</span>
         </a>
       </li>
 
@@ -197,7 +202,6 @@
         <a href="#store-pricing" class="apparatus-admin-tab" data-tab="store-pricing">
           <i class="ri-price-tag-3-line"></i>
           <span>Store & Pricing</span>
-          <span class="apparatus-admin-badge purple">POINTS</span>
         </a>
       </li>
 
@@ -207,21 +211,18 @@
         <a href="#inbuilt-addons" class="apparatus-admin-tab" data-tab="inbuilt-addons">
           <i class="ri-puzzle-line"></i>
           <span>Inbuilt Addons</span>
-          <span class="apparatus-admin-badge emerald">ACTIVE</span>
         </a>
       </li>
       <li class="${isBlueprint ? 'active' : ''}">
         <a href="#blueprint-extensions" class="apparatus-admin-tab" data-tab="blueprint-extensions">
           <i class="ri-install-line"></i>
           <span>Blueprint & Extensions</span>
-          <span class="apparatus-admin-badge pink">HUB</span>
         </a>
       </li>
       <li class="${isWebhooks ? 'active' : ''}">
         <a href="#webhooks" class="apparatus-admin-tab" data-tab="webhooks">
           <i class="ri-discord-line"></i>
           <span>Discord Webhooks</span>
-          <span class="apparatus-admin-badge indigo">BOT</span>
         </a>
       </li>
     `;
@@ -245,17 +246,16 @@
     const navbar = document.querySelector('.main-header .navbar');
     if (!navbar) return;
 
-    // Enhance Logo brand text with clean single ArixByte logo image + ADMIN badge (No duplicated text!)
+    // Clean Logo (Only image, zero duplicate text, zero capsule badge!)
     const logo = document.querySelector('.main-header .logo');
     if (logo && !logo.getAttribute('data-apparatus-logo')) {
       logo.setAttribute('data-apparatus-logo', 'true');
       logo.innerHTML = `
         <img src="/themes/apparatus/arixbyte-logo.png" alt="ArixByte" class="apparatus-admin-logo-img" onerror="this.style.display='none';">
-        <span class="apparatus-admin-logo-badge">ADMIN</span>
       `;
     }
 
-    // Add Return to Client Area Pill in Top Right Navbar
+    // Add Return to Client Area Link in Top Right Navbar
     let customMenu = navbar.querySelector('.navbar-custom-menu');
     if (customMenu && !document.getElementById('apparatus-admin-client-btn')) {
       const clientBtn = document.createElement('a');
@@ -378,7 +378,6 @@
       isolateStudioView(content, studioView, renderBlueprintExtensionsView);
 
     } else {
-      // Normal native Pterodactyl admin overview
       if (studioView) studioView.style.display = 'none';
       Array.from(content.children).forEach(function (c) {
         if (c.id !== 'apparatus-admin-studio-view') c.style.display = '';
@@ -462,12 +461,12 @@ Click the button below to launch your panel console.</textarea>
           <div class="box-header with-border">
             <h3 class="box-title"><i class="ri-eye-line"></i> Live HTML Email Preview</h3>
           </div>
-          <div class="box-body" style="background: rgba(8, 12, 20, 0.6); padding: 1.5rem; border-radius: 12px;">
-            <div style="background: #111827; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 2rem; color: #fff; font-family: sans-serif; box-shadow: 0 12px 30px rgba(0,0,0,0.4);">
+          <div class="box-body" style="background: rgba(0, 0, 0, 0.4); padding: 1.5rem; border-radius: 12px;">
+            <div style="background: #000000; border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 2rem; color: #fff; font-family: var(--admin-font); box-shadow: 0 16px 40px rgba(0,0,0,0.5);">
               <div style="text-align: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
                 <img src="/themes/apparatus/arixbyte-logo.png" alt="ArixByte" style="height: 28px; width: auto;" onerror="this.style.display='none';">
               </div>
-              <h2 id="apparatus-preview-subject" style="font-size: 1.25rem; font-weight: 700; color: #38bdf8; margin-top: 0; margin-bottom: 1rem;">
+              <h2 id="apparatus-preview-subject" style="font-size: 1.25rem; font-weight: 700; color: #ec4899; margin-top: 0; margin-bottom: 1rem;">
                 Welcome to ArixByte Cloud!
               </h2>
               <div id="apparatus-preview-body" style="font-size: 0.92rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 2rem; white-space: pre-wrap;">
@@ -482,7 +481,7 @@ Welcome to ArixByte Cloud! Your high-performance computing environment is ready 
 Click the button below to launch your panel console.
               </div>
               <div style="text-align: center; margin-bottom: 2rem;">
-                <span id="apparatus-preview-btn" style="display: inline-block; background: #0ea5e9; color: #fff; font-weight: 700; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none;">
+                <span id="apparatus-preview-btn" style="display: inline-block; background: #ec4899; color: #fff; font-weight: 700; padding: 0.75rem 2rem; border-radius: 10px; text-decoration: none;">
                   Access Game Server
                 </span>
               </div>
@@ -521,20 +520,20 @@ Click the button below to launch your panel console.
     const saveBtn = container.querySelector('#apparatus-mail-save-btn');
     if (saveBtn) {
       saveBtn.addEventListener('click', function () {
-        showAdminToast('success', 'Template Saved', 'Mail template changes have been updated successfully.');
+        showAdminToast('success', 'Template Saved', 'Mail template changes updated successfully.');
       });
     }
 
     const testBtn = container.querySelector('#apparatus-mail-test-btn');
     if (testBtn) {
       testBtn.addEventListener('click', function () {
-        showAdminToast('success', 'Test Email Dispatched', 'A preview email was dispatched to administrator mailbox.');
+        showAdminToast('success', 'Test Dispatched', 'A preview email was sent to your administrator address.');
       });
     }
   }
 
   // ==============================================================================
-  // 5. GLOBAL ANNOUNCEMENTS VIEW (OPTION 2)
+  // 5. GLOBAL ANNOUNCEMENTS VIEW (ZERO CAPSULES)
   // ==============================================================================
   function renderAnnouncementsView(container) {
     const saved = JSON.parse(localStorage.getItem('apparatus_admin_announcement') || '{"enabled":true,"type":"info","title":"Scheduled Maintenance Notice","msg":"Frankfurt node maintenance will take place Sunday at 02:00 UTC. Instances will experience under 60 seconds of reboot latency.","url":"https://discord.gg/arixbyte","btnText":"Check Status"}');
@@ -543,7 +542,7 @@ Click the button below to launch your panel console.
     container.innerHTML = `
       <div class="box box-primary">
         <div class="box-header with-border">
-          <h3 class="box-title"><i class="ri-notification-badge-line"></i> Global Announcement & Maintenance Banner System</h3>
+          <h3 class="box-title"><i class="ri-notification-badge-line"></i> Global Announcements & Alerts</h3>
         </div>
         <div class="box-body">
           <p style="color: #94a3b8; margin-bottom: 1.5rem;">
@@ -555,21 +554,19 @@ Click the button below to launch your panel console.
             <label style="font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem;">
               Live Banner Preview
             </label>
-            <div id="apparatus-announcement-live-preview" style="background: rgba(14, 165, 233, 0.12); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 12px; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: #fff;">
+            <div id="apparatus-announcement-live-preview" style="background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.35); border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: #fff;">
               <div style="display: flex; align-items: center; gap: 1rem;">
-                <div id="apparatus-announcement-preview-icon" style="width: 38px; height: 38px; border-radius: 10px; background: rgba(56, 189, 248, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #38bdf8;">
-                  <i class="ri-information-line"></i>
-                </div>
+                <i class="ri-information-line" style="font-size: 1.5rem; color: #ec4899;"></i>
                 <div>
-                  <h4 id="apparatus-announcement-preview-title" style="margin: 0 0 0.25rem 0; font-size: 0.94rem; font-weight: 700; color: #fff;">
+                  <h4 id="apparatus-announcement-preview-title" style="margin: 0 0 0.25rem 0; font-size: 0.95rem; font-weight: 700; color: #fff;">
                     ${saved.title}
                   </h4>
-                  <p id="apparatus-announcement-preview-msg" style="margin: 0; font-size: 0.84rem; color: #cbd5e1;">
+                  <p id="apparatus-announcement-preview-msg" style="margin: 0; font-size: 0.85rem; color: #cbd5e1;">
                     ${saved.msg}
                   </p>
                 </div>
               </div>
-              <a id="apparatus-announcement-preview-btn" href="${saved.url}" target="_blank" style="padding: 0.45rem 1rem; border-radius: 8px; background: #0ea5e9; color: #fff; font-size: 0.82rem; font-weight: 700; text-decoration: none; white-space: nowrap;">
+              <a id="apparatus-announcement-preview-btn" href="${saved.url}" target="_blank" style="padding: 0.5rem 1.2rem; border-radius: 10px; background: #ec4899; color: #fff; font-size: 0.84rem; font-weight: 700; text-decoration: none; white-space: nowrap;">
                 ${saved.btnText}
               </a>
             </div>
@@ -584,7 +581,7 @@ Click the button below to launch your panel console.
                     <input type="checkbox" id="apparatus-announcement-status" ${saved.enabled ? 'checked' : ''}>
                     <span class="apparatus-slider"></span>
                   </label>
-                  <span id="apparatus-announcement-status-lbl" style="font-weight: 700; color: ${saved.enabled ? '#34d399' : '#94a3b8'};">
+                  <span id="apparatus-announcement-status-lbl" style="font-weight: 600; color: ${saved.enabled ? '#34d399' : '#94a3b8'};">
                     ${saved.enabled ? 'Active Broadcast (Visible on Panels)' : 'Deactivated (Hidden)'}
                   </span>
                 </div>
@@ -594,9 +591,9 @@ Click the button below to launch your panel console.
                 <label>Banner Severity Style</label>
                 <select class="form-control" id="apparatus-announcement-type">
                   <option value="info" ${saved.type === 'info' ? 'selected' : ''}>Information (Cyan Glow)</option>
-                  <option value="warning" ${saved.type === 'warning' ? 'selected' : ''}>Important Alert / Advisory (Amber Glow)</option>
-                  <option value="emergency" ${saved.type === 'emergency' ? 'selected' : ''}>Critical Emergency / Downtime (Rose Glow)</option>
-                  <option value="success" ${saved.type === 'success' ? 'selected' : ''}>Promotion / Event Announcement (Emerald Glow)</option>
+                  <option value="warning" ${saved.type === 'warning' ? 'selected' : ''}>Important Alert (Amber Glow)</option>
+                  <option value="emergency" ${saved.type === 'emergency' ? 'selected' : ''}>Critical Emergency (Rose Glow)</option>
+                  <option value="success" ${saved.type === 'success' ? 'selected' : ''}>Promotion / Event (Emerald Glow)</option>
                 </select>
               </div>
 
@@ -628,7 +625,7 @@ Click the button below to launch your panel console.
             <button class="btn btn-primary" id="apparatus-announcement-save-btn">
               <i class="ri-broadcast-line"></i> Save & Broadcast Announcement
             </button>
-            <button class="btn btn-danger" id="apparatus-announcement-clear-btn">
+            <button class="btn btn-default" id="apparatus-announcement-clear-btn">
               <i class="ri-delete-bin-line"></i> Deactivate Broadcast
             </button>
           </div>
@@ -639,57 +636,20 @@ Click the button below to launch your panel console.
     const titleInput = container.querySelector('#apparatus-announcement-title');
     const msgInput = container.querySelector('#apparatus-announcement-msg');
     const btnInput = container.querySelector('#apparatus-announcement-btn');
-    const typeSelect = container.querySelector('#apparatus-announcement-type');
     const pTitle = container.querySelector('#apparatus-announcement-preview-title');
     const pMsg = container.querySelector('#apparatus-announcement-preview-msg');
     const pBtn = container.querySelector('#apparatus-announcement-preview-btn');
-    const pIcon = container.querySelector('#apparatus-announcement-preview-icon');
-    const pCard = container.querySelector('#apparatus-announcement-live-preview');
 
-    function updatePreview() {
-      if (pTitle && titleInput) pTitle.textContent = titleInput.value;
-      if (pMsg && msgInput) pMsg.textContent = msgInput.value;
-      if (pBtn && btnInput) pBtn.textContent = btnInput.value;
-
-      const t = typeSelect ? typeSelect.value : 'info';
-      if (t === 'emergency') {
-        pCard.style.background = 'rgba(244, 63, 94, 0.14)';
-        pCard.style.borderColor = 'rgba(244, 63, 94, 0.4)';
-        pIcon.style.background = 'rgba(244, 63, 94, 0.2)';
-        pIcon.style.color = '#fb7185';
-        pBtn.style.background = '#f43f5e';
-      } else if (t === 'warning') {
-        pCard.style.background = 'rgba(245, 158, 11, 0.14)';
-        pCard.style.borderColor = 'rgba(245, 158, 11, 0.4)';
-        pIcon.style.background = 'rgba(245, 158, 11, 0.2)';
-        pIcon.style.color = '#fbbf24';
-        pBtn.style.background = '#f59e0b';
-      } else if (t === 'success') {
-        pCard.style.background = 'rgba(16, 185, 129, 0.14)';
-        pCard.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-        pIcon.style.background = 'rgba(16, 185, 129, 0.2)';
-        pIcon.style.color = '#34d399';
-        pBtn.style.background = '#10b981';
-      } else {
-        pCard.style.background = 'rgba(14, 165, 233, 0.12)';
-        pCard.style.borderColor = 'rgba(56, 189, 248, 0.4)';
-        pIcon.style.background = 'rgba(56, 189, 248, 0.2)';
-        pIcon.style.color = '#38bdf8';
-        pBtn.style.background = '#0ea5e9';
-      }
-    }
-
-    if (titleInput) titleInput.addEventListener('input', updatePreview);
-    if (msgInput) msgInput.addEventListener('input', updatePreview);
-    if (btnInput) btnInput.addEventListener('input', updatePreview);
-    if (typeSelect) typeSelect.addEventListener('change', updatePreview);
+    if (titleInput && pTitle) titleInput.addEventListener('input', () => pTitle.textContent = titleInput.value);
+    if (msgInput && pMsg) msgInput.addEventListener('input', () => pMsg.textContent = msgInput.value);
+    if (btnInput && pBtn) btnInput.addEventListener('input', () => pBtn.textContent = btnInput.value);
 
     const saveBtn = container.querySelector('#apparatus-announcement-save-btn');
     if (saveBtn) {
       saveBtn.addEventListener('click', function () {
         const payload = {
           enabled: container.querySelector('#apparatus-announcement-status').checked,
-          type: typeSelect.value,
+          type: container.querySelector('#apparatus-announcement-type').value,
           title: titleInput.value,
           msg: msgInput.value,
           url: container.querySelector('#apparatus-announcement-url').value,
@@ -697,7 +657,7 @@ Click the button below to launch your panel console.
         };
         localStorage.setItem('apparatus_admin_announcement', JSON.stringify(payload));
         localStorage.setItem('apparatus_global_announcement', JSON.stringify(payload));
-        showAdminToast('success', 'Announcement Broadcasted', 'The global notice banner is now live across user dashboards.');
+        showAdminToast('success', 'Announcement Live', 'Global announcement broadcasted to client dashboards.');
       });
     }
 
@@ -708,13 +668,13 @@ Click the button below to launch your panel console.
         container.querySelector('#apparatus-announcement-status-lbl').textContent = 'Deactivated (Hidden)';
         container.querySelector('#apparatus-announcement-status-lbl').style.color = '#94a3b8';
         localStorage.removeItem('apparatus_global_announcement');
-        showAdminToast('success', 'Banner Deactivated', 'The global announcement has been removed.');
+        showAdminToast('success', 'Banner Deactivated', 'The announcement banner has been hidden.');
       });
     }
   }
 
   // ==============================================================================
-  // 6. NODE HEALTH & DAEMON LATENCY TELEMETRY VIEW (OPTION 4)
+  // 6. NODE HEALTH & DAEMON LATENCY TELEMETRY (ZERO CAPSULES)
   // ==============================================================================
   function renderNodeHealthView(container) {
     container.className = 'apparatus-admin-view';
@@ -729,59 +689,49 @@ Click the button below to launch your panel console.
           </div>
         </div>
         <div class="box-body">
-          <!-- Overall Fleet Summary -->
           <div class="apparatus-admin-grid-4" style="margin-bottom: 2rem;">
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>Cluster Fleet Status</h4>
                 <div class="apparatus-telemetry-val" style="color: #34d399;">100% ONLINE</div>
               </div>
-              <div class="apparatus-telemetry-icon-wrap emerald">
-                <i class="ri-shield-check-line"></i>
-              </div>
+              <i class="ri-shield-check-line apparatus-telemetry-icon-clean"></i>
             </div>
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>Average Daemon Ping</h4>
                 <div class="apparatus-telemetry-val" style="color: #38bdf8;">16ms</div>
               </div>
-              <div class="apparatus-telemetry-icon-wrap cyan">
-                <i class="ri-speed-up-line"></i>
-              </div>
+              <i class="ri-speed-up-line apparatus-telemetry-icon-clean"></i>
             </div>
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>RAM Utilization</h4>
-                <div class="apparatus-telemetry-val" style="color: #818cf8;">54.2%</div>
+                <div class="apparatus-telemetry-val" style="color: #c084fc;">54.2%</div>
               </div>
-              <div class="apparatus-telemetry-icon-wrap indigo">
-                <i class="ri-cpu-line"></i>
-              </div>
+              <i class="ri-cpu-line apparatus-telemetry-icon-clean"></i>
             </div>
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>Wings Architecture</h4>
-                <div class="apparatus-telemetry-val" style="color: #fb7185;">v1.11.7</div>
+                <div class="apparatus-telemetry-val" style="color: #f472b6;">v1.11.7</div>
               </div>
-              <div class="apparatus-telemetry-icon-wrap rose">
-                <i class="ri-terminal-box-line"></i>
-              </div>
+              <i class="ri-terminal-box-line apparatus-telemetry-icon-clean"></i>
             </div>
           </div>
 
-          <!-- Nodes List -->
           <div class="apparatus-admin-grid-3">
             <!-- Node 1 -->
-            <div class="box box-solid" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1.25rem;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+            <div class="box box-solid" style="padding: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
                 <div>
-                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1rem; font-weight: 700; color: #fff;">Prod-Node-01 (Germany)</h4>
-                  <span style="font-size: 0.78rem; color: #94a3b8;">Frankfurt • 159.65.xxx.xxx</span>
+                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1.05rem; font-weight: 700; color: #fff;">Prod-Node-01 (Germany)</h4>
+                  <span style="font-size: 0.8rem; color: #94a3b8;">Frankfurt • 159.65.xxx.xxx</span>
                 </div>
-                <span class="apparatus-status-pill online"><i class="ri-checkbox-circle-fill"></i> 12ms</span>
+                <span style="color: #34d399; font-weight: 700; font-size: 0.88rem;">● 12ms</span>
               </div>
               <div style="margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
                   <span>Memory (RAM)</span>
                   <span style="font-weight: 700;">34.2 / 64 GB (53%)</span>
                 </div>
@@ -790,7 +740,7 @@ Click the button below to launch your panel console.
                 </div>
               </div>
               <div style="margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
                   <span>CPU Load (AMD EPYC)</span>
                   <span style="font-weight: 700;">18.4% (Nominal)</span>
                 </div>
@@ -798,13 +748,13 @@ Click the button below to launch your panel console.
                   <div class="apparatus-progress-bar emerald" style="width: 18%;"></div>
                 </div>
               </div>
-              <div style="margin-bottom: 1.25rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1;">
+              <div style="margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
                   <span>NVMe Storage</span>
                   <span style="font-weight: 700;">480 GB / 2 TB (24%)</span>
                 </div>
                 <div class="apparatus-progress">
-                  <div class="apparatus-progress-bar indigo" style="width: 24%;"></div>
+                  <div class="apparatus-progress-bar amber" style="width: 24%;"></div>
                 </div>
               </div>
               <div style="display: flex; gap: 0.5rem;">
@@ -814,16 +764,16 @@ Click the button below to launch your panel console.
             </div>
 
             <!-- Node 2 -->
-            <div class="box box-solid" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1.25rem;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+            <div class="box box-solid" style="padding: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
                 <div>
-                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1rem; font-weight: 700; color: #fff;">Prod-Node-02 (Singapore)</h4>
-                  <span style="font-size: 0.78rem; color: #94a3b8;">Asia-Pac • 128.199.xxx.xxx</span>
+                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1.05rem; font-weight: 700; color: #fff;">Prod-Node-02 (Singapore)</h4>
+                  <span style="font-size: 0.8rem; color: #94a3b8;">Asia-Pac • 128.199.xxx.xxx</span>
                 </div>
-                <span class="apparatus-status-pill online"><i class="ri-checkbox-circle-fill"></i> 38ms</span>
+                <span style="color: #34d399; font-weight: 700; font-size: 0.88rem;">● 38ms</span>
               </div>
               <div style="margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
                   <span>Memory (RAM)</span>
                   <span style="font-weight: 700;">48.1 / 64 GB (75%)</span>
                 </div>
@@ -832,7 +782,7 @@ Click the button below to launch your panel console.
                 </div>
               </div>
               <div style="margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
                   <span>CPU Load (Ryzen 9)</span>
                   <span style="font-weight: 700;">26.8% (Nominal)</span>
                 </div>
@@ -840,13 +790,13 @@ Click the button below to launch your panel console.
                   <div class="apparatus-progress-bar emerald" style="width: 27%;"></div>
                 </div>
               </div>
-              <div style="margin-bottom: 1.25rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1;">
+              <div style="margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
                   <span>NVMe Storage</span>
                   <span style="font-weight: 700;">620 GB / 2 TB (31%)</span>
                 </div>
                 <div class="apparatus-progress">
-                  <div class="apparatus-progress-bar indigo" style="width: 31%;"></div>
+                  <div class="apparatus-progress-bar cyan" style="width: 31%;"></div>
                 </div>
               </div>
               <div style="display: flex; gap: 0.5rem;">
@@ -856,16 +806,16 @@ Click the button below to launch your panel console.
             </div>
 
             <!-- Node 3 -->
-            <div class="box box-solid" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1.25rem;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+            <div class="box box-solid" style="padding: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
                 <div>
-                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1rem; font-weight: 700; color: #fff;">Prod-Node-03 (US East)</h4>
-                  <span style="font-size: 0.78rem; color: #94a3b8;">New York • 143.198.xxx.xxx</span>
+                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1.05rem; font-weight: 700; color: #fff;">Prod-Node-03 (US East)</h4>
+                  <span style="font-size: 0.8rem; color: #94a3b8;">New York • 143.198.xxx.xxx</span>
                 </div>
-                <span class="apparatus-status-pill online"><i class="ri-checkbox-circle-fill"></i> 64ms</span>
+                <span style="color: #34d399; font-weight: 700; font-size: 0.88rem;">● 64ms</span>
               </div>
               <div style="margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
                   <span>Memory (RAM)</span>
                   <span style="font-weight: 700;">22.5 / 64 GB (35%)</span>
                 </div>
@@ -874,7 +824,7 @@ Click the button below to launch your panel console.
                 </div>
               </div>
               <div style="margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
                   <span>CPU Load (AMD EPYC)</span>
                   <span style="font-weight: 700;">14.2% (Nominal)</span>
                 </div>
@@ -882,13 +832,13 @@ Click the button below to launch your panel console.
                   <div class="apparatus-progress-bar emerald" style="width: 14%;"></div>
                 </div>
               </div>
-              <div style="margin-bottom: 1.25rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1;">
+              <div style="margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
                   <span>NVMe Storage</span>
                   <span style="font-weight: 700;">310 GB / 2 TB (15%)</span>
                 </div>
                 <div class="apparatus-progress">
-                  <div class="apparatus-progress-bar indigo" style="width: 15%;"></div>
+                  <div class="apparatus-progress-bar amber" style="width: 15%;"></div>
                 </div>
               </div>
               <div style="display: flex; gap: 0.5rem;">
@@ -904,13 +854,13 @@ Click the button below to launch your panel console.
     container.querySelectorAll('.apparatus-node-ping-btn').forEach(btn => {
       btn.addEventListener('click', function () {
         const rnd = Math.floor(Math.random() * 8) + 12;
-        showAdminToast('success', 'Ping Result', `Latency check completed: ${rnd}ms response from hypervisor socket.`);
+        showAdminToast('success', 'Ping Result', `Latency check completed: ${rnd}ms response from hypervisor.`);
       });
     });
 
     container.querySelectorAll('.apparatus-node-restart-btn').forEach(btn => {
       btn.addEventListener('click', function () {
-        showAdminToast('success', 'Wings Restart Queued', 'Daemon restart signal sent to target node socket.');
+        showAdminToast('success', 'Wings Signal Sent', 'Daemon restart signal delivered to node socket.');
       });
     });
 
@@ -923,7 +873,7 @@ Click the button below to launch your panel console.
   }
 
   // ==============================================================================
-  // 7. STAFF AUDIT & SECURITY SENTINEL LOG VIEW (OPTION 1)
+  // 7. STAFF AUDIT LOGS VIEW (ZERO CAPSULES)
   // ==============================================================================
   function renderAuditLogsView(container) {
     container.className = 'apparatus-admin-view';
@@ -941,7 +891,7 @@ Click the button below to launch your panel console.
         </div>
         <div class="box-body">
           <p style="color: #94a3b8; margin-bottom: 1.5rem;">
-            Immutable activity stream logging all administrative decisions, privilege grants, and infrastructure mutations.
+            Immutable activity stream logging administrative decisions, privilege grants, and infrastructure mutations.
           </p>
 
           <div class="apparatus-admin-grid-4" style="margin-bottom: 1.75rem;">
@@ -950,33 +900,33 @@ Click the button below to launch your panel console.
                 <h4>Total Events Logged</h4>
                 <div class="apparatus-telemetry-val">1,482</div>
               </div>
-              <div class="apparatus-telemetry-icon-wrap indigo"><i class="ri-file-list-3-line"></i></div>
+              <i class="ri-file-list-3-line apparatus-telemetry-icon-clean"></i>
             </div>
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>Active Staff Sessions</h4>
-                <div class="apparatus-telemetry-val">2 Online</div>
+                <div class="apparatus-telemetry-val" style="color: #34d399;">2 Online</div>
               </div>
-              <div class="apparatus-telemetry-icon-wrap emerald"><i class="ri-user-star-line"></i></div>
+              <i class="ri-user-star-line apparatus-telemetry-icon-clean"></i>
             </div>
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>Elevated Actions (24h)</h4>
-                <div class="apparatus-telemetry-val">34 Actions</div>
+                <div class="apparatus-telemetry-val" style="color: #38bdf8;">34 Actions</div>
               </div>
-              <div class="apparatus-telemetry-icon-wrap cyan"><i class="ri-key-fill"></i></div>
+              <i class="ri-key-fill apparatus-telemetry-icon-clean"></i>
             </div>
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>Security Risk Incidents</h4>
                 <div class="apparatus-telemetry-val" style="color: #34d399;">0 Threats</div>
               </div>
-              <div class="apparatus-telemetry-icon-wrap rose"><i class="ri-shield-flash-line"></i></div>
+              <i class="ri-shield-flash-line apparatus-telemetry-icon-clean"></i>
             </div>
           </div>
 
           <div class="table-responsive">
-            <table class="table table-hover table-striped">
+            <table class="table table-hover">
               <thead>
                 <tr>
                   <th>Timestamp</th>
@@ -989,44 +939,44 @@ Click the button below to launch your panel console.
               </thead>
               <tbody>
                 <tr>
-                  <td><code style="color: #94a3b8;">2026-11-16 10:52:14</code></td>
-                  <td><strong>mudit kumar</strong> <span class="label label-primary">Root Admin</span></td>
+                  <td><code style="color: #94a3b8; background: transparent;">2026-11-16 10:52:14</code></td>
+                  <td><strong style="color: #fff;">mudit kumar</strong> <span style="color: #38bdf8; font-size: 0.8rem; margin-left: 0.35rem;">Root Admin</span></td>
                   <td>Updated server allocation limit & CPU throttle</td>
-                  <td><code>Server #412</code> (Minecraft SMP)</td>
+                  <td><code>Server #412</code></td>
                   <td><code>103.115.xxx.xxx</code></td>
-                  <td><span class="label label-success">LOW RISK</span></td>
+                  <td><span style="color: #34d399; font-weight: 600;">● LOW RISK</span></td>
                 </tr>
                 <tr>
-                  <td><code style="color: #94a3b8;">2026-11-16 09:44:02</code></td>
-                  <td><strong>mudit kumar</strong> <span class="label label-primary">Root Admin</span></td>
+                  <td><code style="color: #94a3b8; background: transparent;">2026-11-16 09:44:02</code></td>
+                  <td><strong style="color: #fff;">mudit kumar</strong> <span style="color: #38bdf8; font-size: 0.8rem; margin-left: 0.35rem;">Root Admin</span></td>
                   <td>Modified global email notification templates</td>
                   <td><code>Mailer Studio</code></td>
                   <td><code>103.115.xxx.xxx</code></td>
-                  <td><span class="label label-success">LOW RISK</span></td>
+                  <td><span style="color: #34d399; font-weight: 600;">● LOW RISK</span></td>
                 </tr>
                 <tr>
-                  <td><code style="color: #94a3b8;">2026-11-16 07:18:55</code></td>
-                  <td><strong>System Daemon</strong> <span class="label label-default">Automated</span></td>
+                  <td><code style="color: #94a3b8; background: transparent;">2026-11-16 07:18:55</code></td>
+                  <td><strong style="color: #fff;">System Daemon</strong> <span style="color: #94a3b8; font-size: 0.8rem; margin-left: 0.35rem;">Automated</span></td>
                   <td>Daily snapshot backup verified on Prod-Node-01</td>
                   <td><code>Node-01 Cluster</code></td>
                   <td><code>127.0.0.1</code></td>
-                  <td><span class="label label-success">ROUTINE</span></td>
+                  <td><span style="color: #34d399; font-weight: 600;">● ROUTINE</span></td>
                 </tr>
                 <tr>
-                  <td><code style="color: #94a3b8;">2026-11-15 22:30:11</code></td>
-                  <td><strong>mudit kumar</strong> <span class="label label-primary">Root Admin</span></td>
+                  <td><code style="color: #94a3b8; background: transparent;">2026-11-15 22:30:11</code></td>
+                  <td><strong style="color: #fff;">mudit kumar</strong> <span style="color: #38bdf8; font-size: 0.8rem; margin-left: 0.35rem;">Root Admin</span></td>
                   <td>Created new node port allocation range (25565 - 25600)</td>
                   <td><code>Frankfurt Hypervisor</code></td>
                   <td><code>103.115.xxx.xxx</code></td>
-                  <td><span class="label label-warning">ELEVATED</span></td>
+                  <td><span style="color: #fbbf24; font-weight: 600;">● ELEVATED</span></td>
                 </tr>
                 <tr>
-                  <td><code style="color: #94a3b8;">2026-11-15 19:12:40</code></td>
-                  <td><strong>mudit kumar</strong> <span class="label label-primary">Root Admin</span></td>
+                  <td><code style="color: #94a3b8; background: transparent;">2026-11-15 19:12:40</code></td>
+                  <td><strong style="color: #fff;">mudit kumar</strong> <span style="color: #38bdf8; font-size: 0.8rem; margin-left: 0.35rem;">Root Admin</span></td>
                   <td>Generated Application API Key (Read/Write)</td>
                   <td><code>API Key #18</code></td>
                   <td><code>103.115.xxx.xxx</code></td>
-                  <td><span class="label label-warning">ELEVATED</span></td>
+                  <td><span style="color: #fbbf24; font-weight: 600;">● ELEVATED</span></td>
                 </tr>
               </tbody>
             </table>
@@ -1036,24 +986,18 @@ Click the button below to launch your panel console.
     `;
 
     const expJson = container.querySelector('#apparatus-audit-export-json');
-    if (expJson) {
-      expJson.addEventListener('click', () => showAdminToast('success', 'Export Complete', 'Audit log export (JSON) downloaded.'));
-    }
+    if (expJson) expJson.addEventListener('click', () => showAdminToast('success', 'Export Complete', 'Audit log export (JSON) downloaded.'));
     const expCsv = container.querySelector('#apparatus-audit-export-csv');
-    if (expCsv) {
-      expCsv.addEventListener('click', () => showAdminToast('success', 'Export Complete', 'Audit log export (CSV) downloaded.'));
-    }
+    if (expCsv) expCsv.addEventListener('click', () => showAdminToast('success', 'Export Complete', 'Audit log export (CSV) downloaded.'));
     const purge = container.querySelector('#apparatus-audit-purge');
-    if (purge) {
-      purge.addEventListener('click', () => showAdminToast('success', 'Archive Maintained', 'Logs older than 90 days pruned from storage.'));
-    }
+    if (purge) purge.addEventListener('click', () => showAdminToast('success', 'Archive Pruned', 'Older log archives pruned successfully.'));
   }
 
   // ==============================================================================
-  // 8. STORE & PRICING MANAGER VIEW (OPTION 5)
+  // 8. STORE & PRICING MANAGER VIEW (ZERO CAPSULES)
   // ==============================================================================
   function renderStorePricingView(container) {
-    const pricing = JSON.parse(localStorage.getItem('apparatus_store_pricing') || '{"currency":"Points","usdRate":100,"dailyBonus":10,"referralBonus":50,"ramRate":25,"cpuRate":40,"diskRate":10,"portRate":15,"dbRate":20,"backupRate":25}');
+    const pricing = JSON.parse(localStorage.getItem('apparatus_store_pricing') || '{"currency":"Points","usdRate":100,"dailyBonus":10,"referralBonus":50,"ramRate":25,"cpuRate":40,"diskRate":10,"portRate":15}');
 
     container.className = 'apparatus-admin-view';
     container.innerHTML = `
@@ -1068,8 +1012,8 @@ Click the button below to launch your panel console.
 
           <div class="apparatus-admin-grid-2">
             <!-- Points Economy -->
-            <div class="box box-solid" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1.5rem;">
-              <h4 style="margin: 0 0 1rem 0; font-weight: 700; color: #c084fc;"><i class="ri-coins-line"></i> Points Currency Settings</h4>
+            <div class="box box-solid" style="padding: 1.5rem;">
+              <h4 style="margin: 0 0 1rem 0; font-weight: 700; color: #ec4899;"><i class="ri-coins-line"></i> Points Currency Settings</h4>
               <div class="form-group">
                 <label>Currency Display Label</label>
                 <input type="text" class="form-control" id="apparatus-pricing-cur" value="${pricing.currency}">
@@ -1090,7 +1034,7 @@ Click the button below to launch your panel console.
                 </div>
               </div>
               <div class="form-group">
-                <label>Referral Bonus per Invited Friend</label>
+                <label>Referral Bonus per Friend</label>
                 <div class="input-group">
                   <input type="number" class="form-control" id="apparatus-pricing-ref" value="${pricing.referralBonus}">
                   <span class="input-group-addon">Points</span>
@@ -1099,7 +1043,7 @@ Click the button below to launch your panel console.
             </div>
 
             <!-- Resource Unit Pricing -->
-            <div class="box box-solid" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1.5rem;">
+            <div class="box box-solid" style="padding: 1.5rem;">
               <h4 style="margin: 0 0 1rem 0; font-weight: 700; color: #38bdf8;"><i class="ri-cpu-line"></i> Resource Unit Rates (per Month)</h4>
               <div class="form-group">
                 <label>Memory (RAM) Rate</label>
@@ -1158,7 +1102,7 @@ Click the button below to launch your panel console.
           portRate: parseInt(container.querySelector('#apparatus-pricing-port').value, 10) || 15
         };
         localStorage.setItem('apparatus_store_pricing', JSON.stringify(payload));
-        showAdminToast('success', 'Pricing Synchronized', 'Resource point rates saved and live across client store views.');
+        showAdminToast('success', 'Pricing Synchronized', 'Resource rates updated across client store.');
       });
     }
 
@@ -1167,22 +1111,22 @@ Click the button below to launch your panel console.
       resetBtn.addEventListener('click', function () {
         localStorage.removeItem('apparatus_store_pricing');
         renderStorePricingView(container);
-        showAdminToast('success', 'Defaults Restored', 'Recommended pricing metrics reloaded.');
+        showAdminToast('success', 'Defaults Restored', 'Recommended pricing rules reloaded.');
       });
     }
   }
 
   // ==============================================================================
-  // 9. DISCORD WEBHOOKS DISPATCHER VIEW (OPTION 3)
+  // 9. DISCORD WEBHOOKS VIEW (ZERO CAPSULES)
   // ==============================================================================
   function renderWebhooksView(container) {
-    const saved = JSON.parse(localStorage.getItem('apparatus_discord_webhooks') || '{"url":"https://discord.com/api/webhooks/example","botName":"ArixByte Staff Sentinel","channel":"#staff-alerts"}');
+    const saved = JSON.parse(localStorage.getItem('apparatus_discord_webhooks') || '{"url":"https://discord.com/api/webhooks/example","botName":"ArixByte Sentinel","channel":"#staff-alerts"}');
 
     container.className = 'apparatus-admin-view';
     container.innerHTML = `
       <div class="box box-primary">
         <div class="box-header with-border">
-          <h3 class="box-title"><i class="ri-discord-line"></i> Discord Staff Bot Webhook Dispatcher</h3>
+          <h3 class="box-title"><i class="ri-discord-line"></i> Discord Staff Bot Webhooks</h3>
         </div>
         <div class="box-body">
           <p style="color: #94a3b8; margin-bottom: 1.5rem;">
@@ -1208,20 +1152,20 @@ Click the button below to launch your panel console.
             <div>
               <label style="font-weight: 700; color: #fff; margin-bottom: 0.75rem; display: block;">Event Alert Subscriptions</label>
               <div style="display: flex; flex-direction: column; gap: 0.85rem;">
-                <label style="display: flex; align-items: center; justify-content: space-between; font-weight: 500; color: #cbd5e1; background: rgba(255,255,255,0.04); padding: 0.65rem 1rem; border-radius: 8px;">
-                  <span><i class="ri-error-warning-fill" style="color: #fb7185; margin-right: 0.5rem;"></i> Node Offline / Heartbeat Dropped (Critical)</span>
+                <label style="display: flex; align-items: center; justify-content: space-between; font-weight: 500; color: #cbd5e1; background: rgba(255,255,255,0.04); padding: 0.75rem 1rem; border-radius: 10px;">
+                  <span><i class="ri-error-warning-fill" style="color: #fb7185; margin-right: 0.5rem;"></i> Node Offline / Heartbeat Dropped</span>
                   <input type="checkbox" checked>
                 </label>
-                <label style="display: flex; align-items: center; justify-content: space-between; font-weight: 500; color: #cbd5e1; background: rgba(255,255,255,0.04); padding: 0.65rem 1rem; border-radius: 8px;">
+                <label style="display: flex; align-items: center; justify-content: space-between; font-weight: 500; color: #cbd5e1; background: rgba(255,255,255,0.04); padding: 0.75rem 1rem; border-radius: 10px;">
                   <span><i class="ri-alarm-warning-fill" style="color: #fbbf24; margin-right: 0.5rem;"></i> Server Out-of-Memory / Daemon Crash</span>
                   <input type="checkbox" checked>
                 </label>
-                <label style="display: flex; align-items: center; justify-content: space-between; font-weight: 500; color: #cbd5e1; background: rgba(255,255,255,0.04); padding: 0.65rem 1rem; border-radius: 8px;">
+                <label style="display: flex; align-items: center; justify-content: space-between; font-weight: 500; color: #cbd5e1; background: rgba(255,255,255,0.04); padding: 0.75rem 1rem; border-radius: 10px;">
                   <span><i class="ri-user-add-line" style="color: #38bdf8; margin-right: 0.5rem;"></i> New Client Account Registered</span>
                   <input type="checkbox" checked>
                 </label>
-                <label style="display: flex; align-items: center; justify-content: space-between; font-weight: 500; color: #cbd5e1; background: rgba(255,255,255,0.04); padding: 0.65rem 1rem; border-radius: 8px;">
-                  <span><i class="ri-shield-keyhole-line" style="color: #c084fc; margin-right: 0.5rem;"></i> Admin Role Escalation & Password Changes</span>
+                <label style="display: flex; align-items: center; justify-content: space-between; font-weight: 500; color: #cbd5e1; background: rgba(255,255,255,0.04); padding: 0.75rem 1rem; border-radius: 10px;">
+                  <span><i class="ri-shield-keyhole-line" style="color: #ec4899; margin-right: 0.5rem;"></i> Admin Role Escalation & Password Changes</span>
                   <input type="checkbox" checked>
                 </label>
               </div>
@@ -1249,20 +1193,20 @@ Click the button below to launch your panel console.
           channel: container.querySelector('#apparatus-webhook-channel').value
         };
         localStorage.setItem('apparatus_discord_webhooks', JSON.stringify(payload));
-        showAdminToast('success', 'Webhook Saved', 'Discord bot dispatcher configuration saved.');
+        showAdminToast('success', 'Webhook Saved', 'Discord staff bot settings saved.');
       });
     }
 
     const testBtn = container.querySelector('#apparatus-webhook-test-btn');
     if (testBtn) {
       testBtn.addEventListener('click', function () {
-        showAdminToast('success', 'Test Event Queued', 'Dispatched test embed payload to staff webhook.');
+        showAdminToast('success', 'Test Event Queued', 'Dispatched test payload to staff webhook.');
       });
     }
   }
 
   // ==============================================================================
-  // 10. INBUILT ADDONS STUDIO VIEW
+  // 10. INBUILT ADDONS VIEW (ZERO CAPSULES)
   // ==============================================================================
   function renderInbuiltAddonsView(container) {
     container.className = 'apparatus-admin-view';
@@ -1277,72 +1221,60 @@ Click the button below to launch your panel console.
           </p>
 
           <div class="apparatus-admin-grid-2">
-            <div class="apparatus-addon-card">
-              <div class="apparatus-addon-top">
-                <div class="apparatus-addon-title-group">
-                  <div class="apparatus-addon-icon"><i class="ri-sparkling-fill"></i></div>
-                  <div>
-                    <h4 class="apparatus-addon-name">Apparatus Glassmorphism Suite</h4>
-                    <span class="apparatus-addon-version">Version 3.2.0 • Active</span>
-                  </div>
+            <div class="box box-solid" style="padding: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div>
+                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1.05rem; font-weight: 700; color: #fff;">Apparatus Glassmorphism Suite</h4>
+                  <span style="font-size: 0.8rem; color: #34d399;">Version 3.2.0 • Active</span>
                 </div>
                 <label class="apparatus-switch">
                   <input type="checkbox" checked disabled>
                   <span class="apparatus-slider"></span>
                 </label>
               </div>
-              <p class="apparatus-addon-desc">High-performance GPU-accelerated frosted glass panels, custom sidebar layouts, and luminous neon accents.</p>
+              <p style="margin: 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.5;">GPU-accelerated frosted glass panels, custom sidebar layouts, and luminous neon accents.</p>
             </div>
 
-            <div class="apparatus-addon-card">
-              <div class="apparatus-addon-top">
-                <div class="apparatus-addon-title-group">
-                  <div class="apparatus-addon-icon"><i class="ri-wallet-3-line"></i></div>
-                  <div>
-                    <h4 class="apparatus-addon-name">Client Wallet & Points Engine</h4>
-                    <span class="apparatus-addon-version">Version 2.1.0 • Enabled</span>
-                  </div>
+            <div class="box box-solid" style="padding: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div>
+                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1.05rem; font-weight: 700; color: #fff;">Client Wallet & Points Engine</h4>
+                  <span style="font-size: 0.8rem; color: #34d399;">Version 2.1.0 • Enabled</span>
                 </div>
                 <label class="apparatus-switch">
                   <input type="checkbox" checked>
                   <span class="apparatus-slider"></span>
                 </label>
               </div>
-              <p class="apparatus-addon-desc">Enables top-up redirection to /store, daily rewards, referral bonuses, and points redemption.</p>
+              <p style="margin: 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.5;">Enables top-up redirection to /store, daily rewards, referral bonuses, and points redemption.</p>
             </div>
 
-            <div class="apparatus-addon-card">
-              <div class="apparatus-addon-top">
-                <div class="apparatus-addon-title-group">
-                  <div class="apparatus-addon-icon"><i class="ri-user-smile-line"></i></div>
-                  <div>
-                    <h4 class="apparatus-addon-name">Avatar Studio & User Profiles</h4>
-                    <span class="apparatus-addon-version">Version 1.8.4 • Active</span>
-                  </div>
+            <div class="box box-solid" style="padding: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div>
+                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1.05rem; font-weight: 700; color: #fff;">Avatar Studio & User Profiles</h4>
+                  <span style="font-size: 0.8rem; color: #34d399;">Version 1.8.4 • Active</span>
                 </div>
                 <label class="apparatus-switch">
                   <input type="checkbox" checked>
                   <span class="apparatus-slider"></span>
                 </label>
               </div>
-              <p class="apparatus-addon-desc">Local image uploading, custom URL avatars, preset selector, and user privacy blur mode.</p>
+              <p style="margin: 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.5;">Local image uploading, custom URL avatars, preset selector, and user privacy blur mode.</p>
             </div>
 
-            <div class="apparatus-addon-card">
-              <div class="apparatus-addon-top">
-                <div class="apparatus-addon-title-group">
-                  <div class="apparatus-addon-icon"><i class="ri-eye-close-line"></i></div>
-                  <div>
-                    <h4 class="apparatus-addon-name">Streamer & Staff Privacy Blur</h4>
-                    <span class="apparatus-addon-version">Version 2.0.0 • Active</span>
-                  </div>
+            <div class="box box-solid" style="padding: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div>
+                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1.05rem; font-weight: 700; color: #fff;">Streamer & Staff Privacy Blur</h4>
+                  <span style="font-size: 0.8rem; color: #34d399;">Version 2.0.0 • Active</span>
                 </div>
                 <label class="apparatus-switch">
                   <input type="checkbox" checked>
                   <span class="apparatus-slider"></span>
                 </label>
               </div>
-              <p class="apparatus-addon-desc">Obfuscates email addresses, server IP ports, and wallet point balances with smooth hover-to-reveal.</p>
+              <p style="margin: 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.5;">Obfuscates email addresses, server IP ports, and wallet point balances with hover-to-reveal.</p>
             </div>
           </div>
         </div>
@@ -1351,7 +1283,7 @@ Click the button below to launch your panel console.
   }
 
   // ==============================================================================
-  // 11. BLUEPRINT & EXTENSIONS HUB VIEW
+  // 11. BLUEPRINT & EXTENSIONS HUB VIEW (ZERO CAPSULES)
   // ==============================================================================
   function renderBlueprintExtensionsView(container) {
     container.className = 'apparatus-admin-view';
@@ -1365,19 +1297,17 @@ Click the button below to launch your panel console.
             <div class="apparatus-telemetry-meta">
               <h4>Framework Engine Status</h4>
               <div class="apparatus-telemetry-val" style="font-size: 1.25rem; color: #34d399;">
-                <i class="ri-checkbox-circle-fill"></i> Blueprint v2.4 Architecture Compatible
+                ● Blueprint v2.4 Architecture Compatible
               </div>
-              <p style="margin: 0.35rem 0 0 0; font-size: 0.82rem; color: #94a3b8;">
+              <p style="margin: 0.35rem 0 0 0; font-size: 0.84rem; color: #94a3b8;">
                 All extensions installed through Blueprint CLI or manual packages are rendered with unified obsidian styling.
               </p>
             </div>
-            <div class="apparatus-telemetry-icon-wrap emerald">
-              <i class="ri-code-box-line"></i>
-            </div>
+            <i class="ri-code-box-line apparatus-telemetry-icon-clean"></i>
           </div>
 
           <div class="table-responsive" style="margin-bottom: 2rem;">
-            <table class="table table-hover table-striped">
+            <table class="table table-hover">
               <thead>
                 <tr>
                   <th>Extension Identifier</th>
@@ -1390,27 +1320,27 @@ Click the button below to launch your panel console.
               <tbody>
                 <tr>
                   <td><code>apparatus-theme</code></td>
-                  <td><strong>Apparatus Glassmorphism Suite</strong></td>
+                  <td><strong style="color: #fff;">Apparatus Glassmorphism Suite</strong></td>
                   <td>3.2.0</td>
                   <td>ArixByte Systems</td>
-                  <td><span class="label label-success">ACTIVE</span></td>
+                  <td><span style="color: #34d399; font-weight: 600;">● Active</span></td>
                 </tr>
                 <tr>
                   <td><code>blueprint-core</code></td>
-                  <td><strong>Blueprint Framework Engine</strong></td>
+                  <td><strong style="color: #fff;">Blueprint Framework Engine</strong></td>
                   <td>2.4.1</td>
                   <td>Emma Robertson</td>
-                  <td><span class="label label-success">OPERATIONAL</span></td>
+                  <td><span style="color: #34d399; font-weight: 600;">● Operational</span></td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div style="background: rgba(8, 12, 20, 0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.25rem;">
-            <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 700; color: #38bdf8;">
+          <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.25rem;">
+            <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 700; color: #ec4899;">
               <i class="ri-terminal-line"></i> CLI Extension Management
             </h4>
-            <pre style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.06); color: #cbd5e1; font-size: 0.82rem; border-radius: 8px; padding: 1rem; margin: 0;">blueprint -install &lt;extension-name&gt;
+            <pre style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.06); color: #cbd5e1; font-size: 0.84rem; border-radius: 8px; padding: 1rem; margin: 0;">blueprint -install &lt;extension-name&gt;
 blueprint -rerun
 php artisan view:clear</pre>
           </div>
@@ -1420,7 +1350,7 @@ php artisan view:clear</pre>
   }
 
   // ==============================================================================
-  // 12. ENHANCE ADMIN OVERVIEW (TELEMETRY & OPERATIONS COMMAND HUB)
+  // 12. ENHANCE ADMIN OVERVIEW (ZERO CAPSULES, PURE GLASS)
   // ==============================================================================
   function enhanceAdminOverview() {
     if (window.location.pathname !== '/admin' || window.location.hash) return;
@@ -1431,7 +1361,7 @@ php artisan view:clear</pre>
     const firstRow = content.querySelector('.row') || content.firstElementChild;
     if (!firstRow) return;
 
-    // 1. Inject Top Telemetry Grid
+    // 1. Inject Top Telemetry Grid (Zero capsule icon wraps)
     if (!document.getElementById('apparatus-admin-telemetry-grid')) {
       const telemetryGrid = document.createElement('div');
       telemetryGrid.id = 'apparatus-admin-telemetry-grid';
@@ -1443,9 +1373,7 @@ php artisan view:clear</pre>
             <h4>Infrastructure Nodes</h4>
             <div class="apparatus-telemetry-val" style="color: #34d399;">3 Live</div>
           </div>
-          <div class="apparatus-telemetry-icon-wrap emerald">
-            <i class="ri-server-line"></i>
-          </div>
+          <i class="ri-server-line apparatus-telemetry-icon-clean"></i>
         </div>
 
         <div class="apparatus-admin-telemetry-tile">
@@ -1453,35 +1381,29 @@ php artisan view:clear</pre>
             <h4>Active Game Servers</h4>
             <div class="apparatus-telemetry-val" style="color: #38bdf8;">Online</div>
           </div>
-          <div class="apparatus-telemetry-icon-wrap cyan">
-            <i class="ri-hard-drive-2-line"></i>
-          </div>
+          <i class="ri-hard-drive-2-line apparatus-telemetry-icon-clean"></i>
         </div>
 
         <div class="apparatus-admin-telemetry-tile">
           <div class="apparatus-telemetry-meta">
             <h4>Client Accounts</h4>
-            <div class="apparatus-telemetry-val" style="color: #818cf8;">Verified</div>
+            <div class="apparatus-telemetry-val" style="color: #c084fc;">Verified</div>
           </div>
-          <div class="apparatus-telemetry-icon-wrap indigo">
-            <i class="ri-user-heart-line"></i>
-          </div>
+          <i class="ri-user-heart-line apparatus-telemetry-icon-clean"></i>
         </div>
 
         <div class="apparatus-admin-telemetry-tile">
           <div class="apparatus-telemetry-meta">
             <h4>Security Sentinel</h4>
-            <div class="apparatus-telemetry-val" style="color: #fb7185;">Guarded</div>
+            <div class="apparatus-telemetry-val" style="color: #f472b6;">Guarded</div>
           </div>
-          <div class="apparatus-telemetry-icon-wrap rose">
-            <i class="ri-shield-flash-line"></i>
-          </div>
+          <i class="ri-shield-flash-line apparatus-telemetry-icon-clean"></i>
         </div>
       `;
       content.insertBefore(telemetryGrid, firstRow);
     }
 
-    // 2. Inject Executive Command Center Hub below the default 4 buttons to eliminate empty void
+    // 2. Inject Operations Hub below native buttons (Zero capsules)
     if (!document.getElementById('apparatus-admin-operations-hub')) {
       const allRows = content.querySelectorAll('.row');
       const lastNativeRow = allRows.length > 0 ? allRows[allRows.length - 1] : null;
@@ -1491,34 +1413,34 @@ php artisan view:clear</pre>
       opsHub.style.marginTop = '2rem';
       opsHub.innerHTML = `
         <div class="apparatus-admin-grid-2" style="margin-bottom: 2rem;">
-          <!-- Quick Operations Shortcuts -->
+          <!-- Quick Operations Launchpad -->
           <div class="box box-primary">
             <div class="box-header with-border">
               <h3 class="box-title"><i class="ri-apps-line"></i> Quick Operations Launchpad</h3>
             </div>
             <div class="box-body" style="padding: 1.25rem;">
               <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem;">
-                <a href="#node-health" class="apparatus-admin-tab" data-tab="node-health" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); padding: 0.85rem 1rem; border-radius: 10px; color: #34d399; text-decoration: none; font-weight: 600;">
+                <a href="#node-health" class="apparatus-admin-tab" data-tab="node-health" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.9rem 1.1rem; border-radius: 12px; color: #34d399; text-decoration: none; font-weight: 600;">
                   <i class="ri-pulse-line" style="font-size: 1.3rem;"></i>
                   <span>Node Health</span>
                 </a>
-                <a href="#store-pricing" class="apparatus-admin-tab" data-tab="store-pricing" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.25); padding: 0.85rem 1rem; border-radius: 10px; color: #c084fc; text-decoration: none; font-weight: 600;">
+                <a href="#store-pricing" class="apparatus-admin-tab" data-tab="store-pricing" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.9rem 1.1rem; border-radius: 12px; color: #c084fc; text-decoration: none; font-weight: 600;">
                   <i class="ri-price-tag-3-line" style="font-size: 1.3rem;"></i>
                   <span>Store & Pricing</span>
                 </a>
-                <a href="#announcements" class="apparatus-admin-tab" data-tab="announcements" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); padding: 0.85rem 1rem; border-radius: 10px; color: #fbbf24; text-decoration: none; font-weight: 600;">
+                <a href="#announcements" class="apparatus-admin-tab" data-tab="announcements" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.9rem 1.1rem; border-radius: 12px; color: #fbbf24; text-decoration: none; font-weight: 600;">
                   <i class="ri-notification-badge-line" style="font-size: 1.3rem;"></i>
                   <span>Announcements</span>
                 </a>
-                <a href="#audit-logs" class="apparatus-admin-tab" data-tab="audit-logs" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25); padding: 0.85rem 1rem; border-radius: 10px; color: #818cf8; text-decoration: none; font-weight: 600;">
+                <a href="#audit-logs" class="apparatus-admin-tab" data-tab="audit-logs" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.9rem 1.1rem; border-radius: 12px; color: #38bdf8; text-decoration: none; font-weight: 600;">
                   <i class="ri-shield-check-line" style="font-size: 1.3rem;"></i>
                   <span>Audit Logs</span>
                 </a>
-                <a href="#mail-editor" class="apparatus-admin-tab" data-tab="mail-editor" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); padding: 0.85rem 1rem; border-radius: 10px; color: #38bdf8; text-decoration: none; font-weight: 600;">
+                <a href="#mail-editor" class="apparatus-admin-tab" data-tab="mail-editor" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.9rem 1.1rem; border-radius: 12px; color: #ec4899; text-decoration: none; font-weight: 600;">
                   <i class="ri-mail-settings-line" style="font-size: 1.3rem;"></i>
                   <span>Mail Editor</span>
                 </a>
-                <a href="#webhooks" class="apparatus-admin-tab" data-tab="webhooks" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.25); padding: 0.85rem 1rem; border-radius: 10px; color: #fb7185; text-decoration: none; font-weight: 600;">
+                <a href="#webhooks" class="apparatus-admin-tab" data-tab="webhooks" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.9rem 1.1rem; border-radius: 12px; color: #f472b6; text-decoration: none; font-weight: 600;">
                   <i class="ri-discord-line" style="font-size: 1.3rem;"></i>
                   <span>Discord Alerts</span>
                 </a>
@@ -1526,33 +1448,33 @@ php artisan view:clear</pre>
             </div>
           </div>
 
-          <!-- Infrastructure Cluster Health -->
+          <!-- Infrastructure Cluster Health (Clean Text, Zero Capsule Pills!) -->
           <div class="box box-info">
             <div class="box-header with-border">
               <h3 class="box-title"><i class="ri-server-line"></i> Infrastructure Connectivity & Daemons</h3>
             </div>
             <div class="box-body" style="padding: 1.25rem;">
-              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+              <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
                   <div>
-                    <strong style="color: #fff; font-size: 0.88rem;">Wings Hypervisor Daemon Cluster</strong>
-                    <div style="font-size: 0.76rem; color: #94a3b8;">Port 8080 SSL • TLS v1.3 Verified</div>
+                    <strong style="color: #fff; font-size: 0.9rem;">Wings Hypervisor Daemon Cluster</strong>
+                    <div style="font-size: 0.78rem; color: #94a3b8;">Port 8080 SSL • TLS v1.3 Verified</div>
                   </div>
-                  <span class="apparatus-status-pill online"><i class="ri-checkbox-circle-fill"></i> Connected</span>
+                  <span style="color: #34d399; font-weight: 600; font-size: 0.88rem;">● Connected</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
                   <div>
-                    <strong style="color: #fff; font-size: 0.88rem;">Database Cluster (MySQL / MariaDB)</strong>
-                    <div style="font-size: 0.76rem; color: #94a3b8;">Port 3306 • Query Latency 0.4ms</div>
+                    <strong style="color: #fff; font-size: 0.9rem;">Database Cluster (MySQL / MariaDB)</strong>
+                    <div style="font-size: 0.78rem; color: #94a3b8;">Port 3306 • Query Latency 0.4ms</div>
                   </div>
-                  <span class="apparatus-status-pill online"><i class="ri-checkbox-circle-fill"></i> Nominal</span>
+                  <span style="color: #34d399; font-weight: 600; font-size: 0.88rem;">● Nominal</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                   <div>
-                    <strong style="color: #fff; font-size: 0.88rem;">Redis Cache & Job Queue Workers</strong>
-                    <div style="font-size: 0.76rem; color: #94a3b8;">Port 6379 • Queue Backlog: 0</div>
+                    <strong style="color: #fff; font-size: 0.9rem;">Redis Cache & Job Queue Workers</strong>
+                    <div style="font-size: 0.78rem; color: #94a3b8;">Port 6379 • Queue Backlog: 0</div>
                   </div>
-                  <span class="apparatus-status-pill online"><i class="ri-checkbox-circle-fill"></i> Synchronized</span>
+                  <span style="color: #34d399; font-weight: 600; font-size: 0.88rem;">● Synchronized</span>
                 </div>
               </div>
             </div>

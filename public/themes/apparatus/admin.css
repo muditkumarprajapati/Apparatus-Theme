@@ -1,43 +1,46 @@
 /* ==============================================================================
    APPARATUS THEME - EXECUTIVE CYBER-COMMAND CENTER (ADMIN PANEL)
-   Dedicated Dark Luxury Obsidian Architecture for Pterodactyl Admin CP
+   Dedicated Pure Black Luxury Frosted Glass Architecture for Pterodactyl Admin CP
+   Matching 1:1 Homepage Glassmorphism & Minimalist Typography (Zero Capsules)
    ============================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css');
 
 :root {
-  --admin-font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --admin-font: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --admin-mono: 'JetBrains Mono', monospace;
-  --admin-bg: #080c14;
-  --admin-bg-surface: #0e1524;
-  --admin-card-bg: rgba(14, 21, 36, 0.72);
-  --admin-border: rgba(255, 255, 255, 0.08);
-  --admin-border-hover: rgba(56, 189, 248, 0.35);
+  --admin-bg: #000000;
+  --admin-bg-surface: #06050a;
+  --admin-card-bg: rgba(24, 16, 36, 0.5);
+  --admin-border: rgba(255, 255, 255, 0.13);
+  --admin-border-hover: rgba(236, 72, 153, 0.45);
+  --admin-accent-pink: #ec4899;
+  --admin-accent-purple: #c084fc;
   --admin-accent-cyan: #38bdf8;
-  --admin-accent-blue: #3b82f6;
-  --admin-accent-indigo: #6366f1;
   --admin-accent-emerald: #10b981;
   --admin-accent-rose: #f43f5e;
   --admin-accent-amber: #f59e0b;
 }
 
-/* Global Reset for AdminLTE Body */
+/* Global Reset - Pure Deep Black Background */
+html,
+body,
 body.skin-blue,
 body.hold-transition,
 body.fixed {
   font-family: var(--admin-font) !important;
-  background-color: var(--admin-bg) !important;
-  background-image: 
-    radial-gradient(ellipse at 50% 0%, rgba(14, 165, 233, 0.09) 0%, transparent 60%),
-    radial-gradient(ellipse at 90% 85%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
-    linear-gradient(180deg, #070a12 0%, #0a0e18 100%) !important;
-  background-attachment: fixed !important;
-  color: #e2e8f0 !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  color: #f1f5f9 !important;
   -webkit-font-smoothing: antialiased;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .wrapper {
-  background: transparent !important;
+  background: #000000 !important;
+  min-height: 100vh !important;
 }
 
 /* ==============================================================================
@@ -45,18 +48,17 @@ body.fixed {
    ============================================================================== */
 .main-header {
   background: transparent !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
   position: relative !important;
   z-index: 1030 !important;
 }
 
 .main-header .navbar {
-  background: rgba(10, 15, 26, 0.78) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  background: rgba(10, 8, 16, 0.8) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border-bottom: 1px solid var(--admin-border) !important;
   margin-left: 250px !important;
-  min-height: 54px !important;
+  min-height: 58px !important;
   display: flex !important;
   align-items: center !important;
 }
@@ -69,26 +71,24 @@ body.fixed {
 
 /* Brand Logo (Top Left) */
 .main-header .logo {
-  background: rgba(8, 12, 20, 0.95) !important;
+  background: rgba(10, 8, 16, 0.8) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border-bottom: 1px solid var(--admin-border) !important;
   border-right: 1px solid var(--admin-border) !important;
+  color: #ffffff !important;
   font-family: var(--admin-font) !important;
-  font-weight: 800 !important;
-  font-size: 1.08rem !important;
+  font-weight: 700 !important;
   letter-spacing: -0.01em !important;
-  color: #fff !important;
-  height: 54px !important;
-  line-height: 54px !important;
+  font-size: 1.15rem !important;
+  height: 58px !important;
+  line-height: 58px !important;
+  padding: 0 1.5rem !important;
+  width: 250px !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
-  gap: 0.6rem !important;
-  padding: 0 1.25rem !important;
-  transition: all 0.25s ease !important;
-}
-
-.main-header .logo:hover {
-  background: rgba(14, 21, 36, 0.95) !important;
+  justify-content: flex-start !important;
+  gap: 0.75rem !important;
 }
 
 .apparatus-admin-logo-img {
@@ -97,29 +97,17 @@ body.fixed {
   object-fit: contain;
 }
 
-.apparatus-admin-logo-badge {
-  font-size: 0.65rem !important;
-  font-weight: 800 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
-  color: var(--admin-accent-cyan) !important;
-  background: rgba(56, 189, 248, 0.12) !important;
-  border: 1px solid rgba(56, 189, 248, 0.3) !important;
-  border-radius: 6px !important;
-  padding: 0.12rem 0.45rem !important;
-}
-
 /* Sidebar Hamburger Toggle */
 .main-header .sidebar-toggle {
   color: #94a3b8 !important;
-  line-height: 54px !important;
+  line-height: 58px !important;
   padding: 0 1.25rem !important;
   transition: all 0.2s ease !important;
 }
 
 .main-header .sidebar-toggle:hover {
   background: rgba(255, 255, 255, 0.05) !important;
-  color: var(--admin-accent-cyan) !important;
+  color: #ffffff !important;
 }
 
 /* Navbar Custom Links & User Profile */
@@ -136,119 +124,62 @@ body.fixed {
   display: flex !important;
   align-items: center !important;
   gap: 0.5rem !important;
-  font-size: 0.88rem !important;
+  font-size: 0.9rem !important;
   font-weight: 600 !important;
   transition: all 0.2s ease !important;
 }
 
 .main-header .navbar-nav > li > a:hover {
   background: rgba(255, 255, 255, 0.05) !important;
-  color: var(--admin-accent-cyan) !important;
+  color: #ffffff !important;
 }
 
-/* Return to Client Area Pill in Top Navbar */
+/* Return to Client Area Link (Clean Frosted Glass, No Capsule!) */
 .apparatus-admin-client-btn {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 0.45rem !important;
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(99, 102, 241, 0.18)) !important;
-  border: 1px solid rgba(56, 189, 248, 0.35) !important;
-  color: #38bdf8 !important;
-  font-size: 0.78rem !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.02em !important;
-  padding: 0.4rem 0.95rem !important;
-  border-radius: 9999px !important;
-  margin-right: 0.75rem !important;
+  gap: 0.5rem !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 10px !important;
+  padding: 0.45rem 0.95rem !important;
+  color: #cbd5e1 !important;
+  font-size: 0.84rem !important;
+  font-weight: 600 !important;
+  margin-right: 1.25rem !important;
   text-decoration: none !important;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.25s ease !important;
 }
 
 .apparatus-admin-client-btn:hover {
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.28), rgba(99, 102, 241, 0.32)) !important;
-  border-color: rgba(56, 189, 248, 0.6) !important;
-  color: #fff !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3) !important;
-}
-
-/* User Account Dropdown */
-.navbar-nav > .user-menu > .dropdown-menu {
-  background: rgba(14, 21, 36, 0.96) !important;
-  backdrop-filter: blur(20px) !important;
-  border: 1px solid var(--admin-border) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55) !important;
-  overflow: hidden !important;
-}
-
-.navbar-nav > .user-menu .user-header {
-  background: rgba(255, 255, 255, 0.03) !important;
-  color: #fff !important;
-}
-
-.navbar-nav > .user-menu .user-footer {
-  background: rgba(0, 0, 0, 0.25) !important;
+  background: rgba(236, 72, 153, 0.15) !important;
+  border-color: rgba(236, 72, 153, 0.45) !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
 }
 
 /* ==============================================================================
-   2. MAIN SIDEBAR NAVIGATION (COMMAND TREE)
+   2. MAIN SIDEBAR NAVIGATION (LEFT)
    ============================================================================== */
 .main-sidebar {
-  background: rgba(8, 12, 22, 0.92) !important;
-  backdrop-filter: blur(28px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+  background: rgba(8, 6, 12, 0.85) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border-right: 1px solid var(--admin-border) !important;
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.45) !important;
-  padding-top: 54px !important;
   width: 250px !important;
-  z-index: 1025 !important;
+  padding-top: 58px !important;
 }
 
 .sidebar {
   padding-bottom: 2rem !important;
 }
 
-/* Sidebar Top System Status Chip */
-.apparatus-admin-sidebar-status {
-  padding: 1.15rem 1.25rem 0.85rem 1.25rem;
-  border-bottom: 1px solid var(--admin-border);
-  margin-bottom: 0.5rem;
-}
-
-.apparatus-admin-status-pill {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.28);
-  border-radius: 8px;
-  padding: 0.45rem 0.75rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #34d399;
-}
-
-.apparatus-admin-status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 8px #10b981;
-  animation: adminStatusPulse 2s infinite ease-in-out;
-}
-
-@keyframes adminStatusPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(0.85); }
-}
-
-/* Category Headers (BASIC ADMINISTRATION, MANAGEMENT, SERVICE MANAGEMENT, EXTENSIONS) */
+/* Category Headers */
 .sidebar-menu > li.header {
   background: transparent !important;
-  color: rgba(148, 163, 184, 0.65) !important;
-  font-size: 0.66rem !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 0.68rem !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.12em !important;
@@ -258,226 +189,200 @@ body.fixed {
 
 /* Navigation Items */
 .sidebar-menu > li > a {
-  font-size: 0.84rem !important;
-  font-weight: 600 !important;
+  font-size: 0.88rem !important;
+  font-weight: 500 !important;
   color: #94a3b8 !important;
-  padding: 0.62rem 1rem !important;
+  padding: 0.65rem 1rem !important;
   margin: 0.18rem 0.75rem !important;
-  border-radius: 10px !important;
+  border-radius: 12px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.7rem !important;
+  gap: 0.75rem !important;
   border: 1px solid transparent !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  position: relative !important;
 }
 
 .sidebar-menu > li > a i {
-  font-size: 1.05rem !important;
-  width: 22px !important;
-  text-align: center !important;
-  color: rgba(148, 163, 184, 0.75) !important;
-  transition: color 0.2s ease !important;
+  font-size: 1.15rem !important;
+  color: #64748b !important;
+  transition: all 0.2s ease !important;
 }
 
-.sidebar-menu > li > a span {
-  flex: 1 !important;
-}
-
-/* Hover State */
-.sidebar-menu > li:not(.active) > a:hover {
+.sidebar-menu > li > a:hover {
   background: rgba(255, 255, 255, 0.05) !important;
-  color: #f8fafc !important;
-  transform: translateX(3px) !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-.sidebar-menu > li:not(.active) > a:hover i {
-  color: var(--admin-accent-cyan) !important;
+.sidebar-menu > li > a:hover i {
+  color: #ffffff !important;
 }
 
-/* Active State */
+/* Active Navigation Item (Luminous Pink/Purple Accent like Homepage) */
 .sidebar-menu > li.active > a {
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(99, 102, 241, 0.12)) !important;
-  color: #38bdf8 !important;
-  border: 1px solid rgba(56, 189, 248, 0.32) !important;
-  box-shadow: 0 4px 18px rgba(14, 165, 233, 0.18) !important;
+  background: rgba(236, 72, 153, 0.14) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(236, 72, 153, 0.38) !important;
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.15) !important;
   font-weight: 700 !important;
 }
 
 .sidebar-menu > li.active > a i {
-  color: #38bdf8 !important;
-  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5) !important;
-}
-
-/* Extensions Tag Badge */
-.apparatus-admin-badge {
-  font-size: 0.62rem !important;
-  font-weight: 700 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.06em !important;
-  padding: 0.15rem 0.45rem !important;
-  border-radius: 6px !important;
-  margin-left: auto !important;
-}
-
-.apparatus-admin-badge.cyan {
-  background: rgba(56, 189, 248, 0.15) !important;
-  color: #38bdf8 !important;
-  border: 1px solid rgba(56, 189, 248, 0.3) !important;
-}
-
-.apparatus-admin-badge.pink {
-  background: rgba(244, 63, 94, 0.15) !important;
-  color: #fb7185 !important;
-  border: 1px solid rgba(244, 63, 94, 0.3) !important;
-}
-
-.apparatus-admin-badge.emerald {
-  background: rgba(16, 185, 129, 0.15) !important;
-  color: #34d399 !important;
-  border: 1px solid rgba(16, 185, 129, 0.3) !important;
-}
-
-.apparatus-admin-badge.purple {
-  background: rgba(168, 85, 247, 0.15) !important;
-  color: #c084fc !important;
-  border: 1px solid rgba(168, 85, 247, 0.3) !important;
-}
-
-.apparatus-admin-badge.indigo {
-  background: rgba(99, 102, 241, 0.15) !important;
-  color: #818cf8 !important;
-  border: 1px solid rgba(99, 102, 241, 0.3) !important;
-}
-
-.apparatus-admin-badge.yellow {
-  background: rgba(245, 158, 11, 0.15) !important;
-  color: #fbbf24 !important;
-  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  color: #f472b6 !important;
+  text-shadow: 0 0 10px rgba(236, 72, 153, 0.5) !important;
 }
 
 /* ==============================================================================
-   3. CONTENT WRAPPER & PAGE HEADERS
+   3. ERADICATE ALL CAPSULE TEXT / BADGES / PILLS
+   ============================================================================== */
+.apparatus-admin-badge,
+.apparatus-admin-status-wrap,
+.apparatus-admin-status-pill,
+.apparatus-status-pill,
+.apparatus-tag-soon,
+.apparatus-admin-logo-badge,
+.apparatus-soon-badge,
+.apparatus-setting-badge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Convert table .label badges to clean unboxed status text */
+.label {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+}
+
+.label-success {
+  color: #34d399 !important;
+}
+
+.label-danger {
+  color: #fb7185 !important;
+}
+
+.label-warning {
+  color: #fbbf24 !important;
+}
+
+.label-primary {
+  color: #38bdf8 !important;
+}
+
+.label-default {
+  color: #94a3b8 !important;
+}
+
+/* ==============================================================================
+   4. CONTENT WRAPPER & PAGE HEADERS
    ============================================================================== */
 .content-wrapper {
-  background: transparent !important;
-  min-height: calc(100vh - 54px) !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  min-height: calc(100vh - 58px) !important;
   padding-bottom: 3.5rem !important;
   box-sizing: border-box !important;
 }
 
 .content-header {
-  padding: 1.75rem 2rem 1.25rem 2rem !important;
+  padding: 2rem 2rem 1.25rem 2rem !important;
 }
 
 .content-header > h1 {
   font-family: var(--admin-font) !important;
-  font-size: 1.55rem !important;
+  font-size: 1.65rem !important;
   font-weight: 800 !important;
   letter-spacing: -0.02em !important;
   color: #ffffff !important;
-  display: flex !important;
-  align-items: baseline !important;
-  gap: 0.75rem !important;
   margin: 0 !important;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
 }
 
 .content-header > h1 > small {
-  font-size: 0.86rem !important;
-  font-weight: 500 !important;
+  font-family: var(--admin-font) !important;
+  font-size: 0.92rem !important;
+  font-weight: 400 !important;
   color: #94a3b8 !important;
-  letter-spacing: 0 !important;
+  margin-left: 0.75rem !important;
 }
 
-/* Breadcrumbs */
 .content-header > .breadcrumb {
-  background: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid var(--admin-border) !important;
-  border-radius: 9999px !important;
-  padding: 0.45rem 1rem !important;
-  font-size: 0.78rem !important;
-  font-weight: 600 !important;
-  color: #94a3b8 !important;
-  top: 1.75rem !important;
+  background: transparent !important;
+  padding: 0 !important;
+  top: 2.25rem !important;
   right: 2rem !important;
+  font-size: 0.82rem !important;
 }
 
 .content-header > .breadcrumb > li > a {
-  color: #cbd5e1 !important;
-  text-decoration: none !important;
+  color: #94a3b8 !important;
 }
 
-.content-header > .breadcrumb > li.active {
-  color: var(--admin-accent-cyan) !important;
+.content-header > .breadcrumb > li > a:hover {
+  color: #ffffff !important;
+}
+
+.content-header > .breadcrumb > .active {
+  color: var(--admin-accent-pink) !important;
+  font-weight: 600 !important;
 }
 
 .content {
-  padding: 0.5rem 2rem 2rem 2rem !important;
+  padding: 0 2rem 2.5rem 2rem !important;
 }
 
 /* ==============================================================================
-   4. GLASS CARDS & BOXES (.box, .box-primary, .box-info, etc.)
+   5. FROSTED GLASS CARDS & BOXES (EXACT HOMEPAGE GLASS TYPE)
    ============================================================================== */
-.box {
-  background: var(--admin-card-bg) !important;
+.box,
+.box.box-primary,
+.box.box-info,
+.box.box-success,
+.box.box-warning,
+.box.box-danger,
+.box.box-solid,
+.apparatus-admin-telemetry-tile {
+  background: rgba(24, 16, 36, 0.5) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-  border: 1px solid var(--admin-border) !important;
-  border-top: none !important; /* Remove old AdminLTE colored top line */
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
   border-radius: 16px !important;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-  margin-bottom: 1.5rem !important;
-  transition: all 0.25s ease !important;
-  position: relative !important;
+  box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.15) !important;
+  margin-bottom: 1.75rem !important;
   overflow: hidden !important;
+  transition: all 0.25s ease !important;
 }
 
-.box:hover {
-  border-color: var(--admin-border-hover) !important;
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(56, 189, 248, 0.2) !important;
-}
-
-/* Subtle glowing accent line on top of box */
-.box::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.7), transparent);
-  pointer-events: none;
-}
-
-.box.box-success::before {
-  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.7), transparent);
-}
-
-.box.box-danger::before {
-  background: linear-gradient(90deg, transparent, rgba(244, 63, 94, 0.7), transparent);
-}
-
-.box.box-warning::before {
-  background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.7), transparent);
+.box:hover,
+.apparatus-admin-telemetry-tile:hover {
+  border-color: rgba(236, 72, 153, 0.45) !important;
+  box-shadow: 0 20px 48px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.25) !important;
 }
 
 .box-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   padding: 1.25rem 1.5rem !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-  color: #fff !important;
-  display: flex !important;
-  align-items: center !important;
 }
 
 .box-header .box-title {
   font-family: var(--admin-font) !important;
-  font-size: 1.05rem !important;
+  font-size: 1.15rem !important;
   font-weight: 700 !important;
   letter-spacing: -0.01em !important;
   color: #ffffff !important;
-  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
 }
 
 .box-body {
@@ -486,120 +391,148 @@ body.fixed {
 }
 
 .box-footer {
-  background: rgba(0, 0, 0, 0.2) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
   padding: 1rem 1.5rem !important;
-  border-radius: 0 0 16px 16px !important;
 }
 
 /* ==============================================================================
-   5. BUTTONS (.btn)
+   6. FROSTED GLASS INPUTS & FORM CONTROLS (NO BLACK BOXES)
+   ============================================================================== */
+.form-control,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+select.form-control,
+textarea.form-control {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  font-family: var(--admin-font) !important;
+  font-size: 0.9rem !important;
+  height: 44px !important;
+  padding: 0.5rem 1rem !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.2s ease !important;
+}
+
+textarea.form-control {
+  height: auto !important;
+}
+
+.form-control:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(236, 72, 153, 0.7) !important;
+  box-shadow: 0 0 16px rgba(236, 72, 153, 0.3) !important;
+  color: #ffffff !important;
+  outline: none !important;
+}
+
+label {
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  color: #94a3b8 !important;
+  margin-bottom: 0.45rem !important;
+}
+
+.input-group-addon {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 10px !important;
+  color: #94a3b8 !important;
+  font-family: var(--admin-font) !important;
+}
+
+/* ==============================================================================
+   7. BUTTONS (CLEAN ROUNDED RECTANGLES, ZERO CAPSULES!)
    ============================================================================== */
 .btn {
   font-family: var(--admin-font) !important;
+  border-radius: 10px !important;
   font-weight: 600 !important;
   letter-spacing: 0.01em !important;
-  border-radius: 10px !important;
-  padding: 0.55rem 1.15rem !important;
-  font-size: 0.84rem !important;
+  padding: 0.6rem 1.25rem !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   border: 1px solid transparent !important;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 0.45rem !important;
 }
 
-.btn:hover {
-  transform: translateY(-1px) !important;
-  filter: brightness(1.12) !important;
+.btn-xs {
+  padding: 0.3rem 0.65rem !important;
+  font-size: 0.76rem !important;
+  border-radius: 8px !important;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
-  border-color: rgba(56, 189, 248, 0.4) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3) !important;
+  background: linear-gradient(135deg, #ec4899, #db2777) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.35) !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #f472b6, #ec4899) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.45) !important;
+}
+
+.btn-default {
+  background: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #cbd5e1 !important;
+}
+
+.btn-default:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 .btn-success {
   background: linear-gradient(135deg, #10b981, #059669) !important;
-  border-color: rgba(16, 185, 129, 0.4) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
-}
-
-.btn-warning {
-  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
-  border-color: rgba(245, 158, 11, 0.4) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3) !important;
+  color: #ffffff !important;
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-  border-color: rgba(239, 68, 68, 0.4) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3) !important;
+  background: linear-gradient(135deg, #f43f5e, #e11d48) !important;
+  color: #ffffff !important;
 }
 
-.btn-default {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
-  color: #e2e8f0 !important;
-}
-
-.btn-default:hover {
-  background: rgba(255, 255, 255, 0.09) !important;
-  color: #fff !important;
-}
-
-/* ==============================================================================
-   6. FORM CONTROLS (.form-control, selects, textareas)
-   ============================================================================== */
-.form-control {
-  background: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 10px !important;
-  color: #fff !important;
-  padding: 0.6rem 0.95rem !important;
-  font-size: 0.86rem !important;
-  height: auto !important;
-  transition: all 0.2s ease !important;
-  box-shadow: none !important;
-}
-
-.form-control:focus {
-  background: rgba(255, 255, 255, 0.07) !important;
-  border-color: var(--admin-accent-cyan) !important;
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.28) !important;
-  outline: none !important;
-  color: #fff !important;
-}
-
-select.form-control option {
-  background: #0f172a !important;
-  color: #fff !important;
-}
-
-.input-group-addon {
-  background: rgba(255, 255, 255, 0.06) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  color: #94a3b8 !important;
-  border-radius: 10px 0 0 10px !important;
+/* 4 Default Admin Overview Action Buttons (Clean Rounded Rectangles) */
+.col-xs-6.col-sm-3 > a > .btn,
+.content .row .btn-warning,
+.content .row .btn-primary,
+.content .row .btn-info,
+.content .row .btn-success {
+  border-radius: 12px !important;
+  height: 46px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.92rem !important;
+  font-weight: 600 !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
 /* ==============================================================================
-   7. TABLES & DATA LISTS
+   8. TABLES & DATA LISTS
    ============================================================================== */
 .table-responsive {
   border: none !important;
-  margin-bottom: 0 !important;
 }
 
 table.table {
-  background: transparent !important;
-  margin-bottom: 0 !important;
+  color: #cbd5e1 !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  width: 100% !important;
 }
 
 table.table > thead > tr > th {
@@ -607,97 +540,34 @@ table.table > thead > tr > th {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-top: none !important;
   color: #94a3b8 !important;
-  font-size: 0.74rem !important;
+  font-size: 0.76rem !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
-  padding: 0.85rem 1rem !important;
+  letter-spacing: 0.06em !important;
+  padding: 1rem !important;
 }
 
 table.table > tbody > tr > td {
-  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-  padding: 0.95rem 1rem !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  padding: 1rem !important;
   color: #cbd5e1 !important;
   vertical-align: middle !important;
-  font-size: 0.86rem !important;
+  font-size: 0.88rem !important;
 }
 
-table.table-hover > tbody > tr:hover > td,
-table.table-hover > tbody > tr:hover > th {
-  background: rgba(56, 189, 248, 0.04) !important;
-}
-
-/* Labels / Status Badges in Tables */
-.label {
-  border-radius: 6px !important;
-  padding: 0.28rem 0.65rem !important;
-  font-size: 0.74rem !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.03em !important;
-}
-
-.label-success {
-  background: rgba(16, 185, 129, 0.18) !important;
-  color: #34d399 !important;
-  border: 1px solid rgba(16, 185, 129, 0.35) !important;
-}
-
-.label-danger {
-  background: rgba(244, 63, 94, 0.18) !important;
-  color: #fb7185 !important;
-  border: 1px solid rgba(244, 63, 94, 0.35) !important;
-}
-
-.label-warning {
-  background: rgba(245, 158, 11, 0.18) !important;
-  color: #fbbf24 !important;
-  border: 1px solid rgba(245, 158, 11, 0.35) !important;
-}
-
-.label-primary {
-  background: rgba(14, 165, 233, 0.18) !important;
-  color: #38bdf8 !important;
-  border: 1px solid rgba(14, 165, 233, 0.35) !important;
+table.table-hover > tbody > tr:hover > td {
+  background: rgba(255, 255, 255, 0.04) !important;
 }
 
 /* ==============================================================================
-   8. FOOTER
-   ============================================================================== */
-.main-footer {
-  background: rgba(8, 12, 20, 0.8) !important;
-  border-top: 1px solid var(--admin-border) !important;
-  color: #64748b !important;
-  padding: 1rem 2rem !important;
-  font-size: 0.8rem !important;
-  margin-left: 250px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-}
-
-@media (max-width: 767px) {
-  .main-footer {
-    margin-left: 0 !important;
-  }
-}
-
-.main-footer a {
-  color: #94a3b8 !important;
-}
-
-.main-footer a:hover {
-  color: var(--admin-accent-cyan) !important;
-}
-
-/* ==============================================================================
-   9. INTERACTIVE STUDIO VIEWS (Mail Editor, Addons, Blueprint Hub)
+   9. TELEMETRY & STUDIO VIEWS
    ============================================================================== */
 .apparatus-admin-view {
   animation: adminViewEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes adminViewEnter {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -729,184 +599,63 @@ table.table-hover > tbody > tr:hover > th {
 
 /* Telemetry Metric Tile */
 .apparatus-admin-telemetry-tile {
-  background: var(--admin-card-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--admin-border);
-  border-radius: 14px;
-  padding: 1.25rem 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: all 0.25s ease;
-}
-
-.apparatus-admin-telemetry-tile:hover {
-  border-color: var(--admin-border-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  padding: 1.4rem 1.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 0 !important;
 }
 
 .apparatus-telemetry-meta h4 {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #94a3b8;
-  margin: 0 0 0.35rem 0;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: #94a3b8 !important;
+  margin: 0 0 0.35rem 0 !important;
 }
 
 .apparatus-telemetry-val {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: -0.02em;
-}
-
-.apparatus-telemetry-icon-wrap {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-}
-
-.apparatus-telemetry-icon-wrap.cyan {
-  background: rgba(56, 189, 248, 0.14);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.3);
-}
-
-.apparatus-telemetry-icon-wrap.emerald {
-  background: rgba(16, 185, 129, 0.14);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.apparatus-telemetry-icon-wrap.indigo {
-  background: rgba(99, 102, 241, 0.14);
-  color: #818cf8;
-  border: 1px solid rgba(99, 102, 241, 0.3);
-}
-
-.apparatus-telemetry-icon-wrap.rose {
-  background: rgba(244, 63, 94, 0.14);
-  color: #fb7185;
-  border: 1px solid rgba(244, 63, 94, 0.3);
-}
-
-/* Mail Preview Frame */
-.apparatus-mail-preview-box {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 2rem;
-  color: #1e293b;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-}
-
-.apparatus-mail-preview-header {
-  border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 1.25rem;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.apparatus-mail-preview-logo {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.apparatus-mail-preview-badge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #64748b;
-  text-transform: uppercase;
-}
-
-.apparatus-mail-preview-body {
-  font-size: 0.92rem;
-  line-height: 1.6;
-  color: #334155;
-}
-
-.apparatus-mail-preview-cta {
-  display: inline-block;
-  background: #0ea5e9;
+  font-size: 1.65rem !important;
+  font-weight: 800 !important;
   color: #ffffff !important;
-  font-weight: 700;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  text-decoration: none;
-  margin: 1.5rem 0;
+  letter-spacing: -0.02em !important;
 }
 
-/* Extension Hub Cards */
-.apparatus-addon-card {
-  background: var(--admin-card-bg);
-  border: 1px solid var(--admin-border);
-  border-radius: 14px;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  transition: all 0.25s ease;
+.apparatus-telemetry-icon-clean {
+  font-size: 2rem !important;
+  color: rgba(255, 255, 255, 0.4) !important;
 }
 
-.apparatus-addon-card:hover {
-  border-color: var(--admin-border-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+/* Progress Bars */
+.apparatus-progress {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0.5rem 0;
 }
 
-.apparatus-addon-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.apparatus-progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
 }
 
-.apparatus-addon-title-group {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+.apparatus-progress-bar.cyan {
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
 }
 
-.apparatus-addon-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  color: #38bdf8;
+.apparatus-progress-bar.emerald {
+  background: linear-gradient(90deg, #10b981, #34d399);
 }
 
-.apparatus-addon-name {
-  font-size: 0.96rem;
-  font-weight: 700;
-  color: #fff;
-  margin: 0;
+.apparatus-progress-bar.amber {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
 }
 
-.apparatus-addon-version {
-  font-size: 0.72rem;
-  color: #94a3b8;
-}
-
-.apparatus-addon-desc {
-  font-size: 0.82rem;
-  color: #94a3b8;
-  line-height: 1.5;
-  margin: 0;
-}
-
-/* Toggle Switch */
+/* Switch Toggle */
 .apparatus-switch {
   position: relative;
   display: inline-block;
@@ -942,108 +691,28 @@ table.table-hover > tbody > tr:hover > th {
 }
 
 .apparatus-switch input:checked + .apparatus-slider {
-  background-color: #10b981;
+  background-color: #ec4899;
 }
 
 .apparatus-switch input:checked + .apparatus-slider:before {
   transform: translateX(20px);
 }
 
-/* ==============================================================================
-   10. PROGRESS BARS, STATUS PILLS & TELEMETRY GAUGES
-   ============================================================================== */
-.apparatus-progress {
-  width: 100%;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  overflow: hidden;
-  margin: 0.5rem 0;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+/* Footer */
+.main-footer {
+  background: #000000 !important;
+  border-top: 1px solid var(--admin-border) !important;
+  color: #64748b !important;
+  padding: 1rem 2rem !important;
+  font-size: 0.8rem !important;
+  margin-left: 250px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
 }
 
-.apparatus-progress-bar {
-  height: 100%;
-  border-radius: 999px;
-  transition: width 0.4s ease;
-}
-
-.apparatus-progress-bar.cyan {
-  background: linear-gradient(90deg, #38bdf8, #818cf8);
-}
-
-.apparatus-progress-bar.emerald {
-  background: linear-gradient(90deg, #10b981, #34d399);
-}
-
-.apparatus-progress-bar.amber {
-  background: linear-gradient(90deg, #f59e0b, #fbbf24);
-}
-
-.apparatus-progress-bar.rose {
-  background: linear-gradient(90deg, #f43f5e, #fb7185);
-}
-
-.apparatus-status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.22rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-}
-
-.apparatus-status-pill.online {
-  background: rgba(16, 185, 129, 0.14);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.apparatus-status-pill.warning {
-  background: rgba(245, 158, 11, 0.14);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-.apparatus-status-pill.danger {
-  background: rgba(244, 63, 94, 0.14);
-  color: #fb7185;
-  border: 1px solid rgba(244, 63, 94, 0.3);
-}
-
-.apparatus-status-pill.info {
-  background: rgba(56, 189, 248, 0.14);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.3);
-}
-
-/* Toast Container & Notification Toast */
-#apparatus-admin-toast-container {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 99999;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  pointer-events: none;
-}
-
-.apparatus-admin-toast {
-  pointer-events: auto;
-  min-width: 290px;
-  max-width: 380px;
-  background: rgba(15, 23, 42, 0.94);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 12px;
-  padding: 12px 16px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  animation: adminViewEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
-  color: #fff;
+@media (max-width: 767px) {
+  .main-footer {
+    margin-left: 0 !important;
+  }
 }

@@ -5671,7 +5671,6 @@
                 <a href="#earn" class="apparatus-nav-link apparatus-earn-link" data-path="/billing/earn">
                   <i class="ri-copper-coin-line apparatus-nav-icon"></i>
                   <span>Earn</span>
-                  <span class="apparatus-tag-soon">Soon</span>
                 </a>
               </li>
             </ul>
@@ -5716,7 +5715,6 @@
                 <a href="#ticket" class="apparatus-nav-link apparatus-ticket-link">
                   <i class="ri-customer-service-2-line apparatus-nav-icon"></i>
                   <span>Ticket</span>
-                  <span class="apparatus-tag-soon">Soon</span>
                 </a>
               </li>
             </ul>

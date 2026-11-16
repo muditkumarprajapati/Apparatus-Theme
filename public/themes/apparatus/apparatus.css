@@ -782,15 +782,10 @@ body.apparatus-auth .apparatus-sidebar {
 }
 
 .apparatus-tag-soon {
-  margin-left: auto !important;
-  font-size: 0.65rem !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.05em !important;
-  background: rgba(244, 114, 182, 0.25) !important;
-  color: #f472b6 !important;
-  padding: 0.15rem 0.45rem !important;
-  border-radius: 6px !important;
-  text-transform: uppercase !important;
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* Mobile Hamburger Toggle */
