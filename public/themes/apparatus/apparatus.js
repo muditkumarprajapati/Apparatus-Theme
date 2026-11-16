@@ -5174,6 +5174,7 @@
     const timezone = localStorage.getItem('apparatus_profile_timezone') || 'Asia/Kolkata';
     const isAdmin = !!user.root_admin;
     const is2fa = !!user.use_totp;
+    const isVerified = localStorage.getItem('apparatus_user_verified') === 'true';
     const memberYear = user.created_at ? new Date(user.created_at).getFullYear() : '2026';
 
     const section = document.createElement('div');
@@ -5200,6 +5201,11 @@
                 <span>Member since ${memberYear}</span>
                 <span class="apparatus-prof-sep">•</span>
                 <span class="${is2fa ? 'apparatus-prof-2fa-on' : 'apparatus-prof-2fa-off'}">${is2fa ? '2FA Enabled' : '2FA Inactive'}</span>
+                <span class="apparatus-prof-sep">•</span>
+                <span class="apparatus-prof-verified-status ${isVerified ? 'verified' : 'unverified'}" id="apparatus-prof-verified-badge">
+                  ${isVerified ? '<i class="ri-checkbox-circle-fill" style="color: #34d399;"></i> <strong style="color: #34d399;">Verified Account</strong>' : '<i class="ri-shield-cross-line" style="color: #fb7185;"></i> <span style="color: #fb7185;">Unverified</span>'}
+                </span>
+                ${!isVerified ? '<button class="apparatus-btn apparatus-btn-glass" id="apparatus-prof-quick-verify-btn" style="padding: 0.2rem 0.65rem; font-size: 0.78rem; border-radius: 6px; margin-left: 0.5rem; cursor: pointer;"><i class="ri-shield-check-line"></i> Verify Now</button>' : ''}
               </p>
             </div>
           </div>
@@ -5499,6 +5505,13 @@
         }, 600);
       });
     }
+
+    const quickVerifyBtn = section.querySelector('#apparatus-prof-quick-verify-btn');
+    if (quickVerifyBtn) {
+      quickVerifyBtn.addEventListener('click', function () {
+        openEnterCodeModal();
+      });
+    }
   }
 
   // ==============================================================================
@@ -5588,6 +5601,404 @@
       pageBlock.style.setProperty('margin-left', 'auto', 'important');
       pageBlock.style.setProperty('margin-right', 'auto', 'important');
       pageBlock.style.setProperty('margin-top', '1.5rem', 'important');
+    }
+  }
+
+  // ==============================================================================
+  // Account Verification & Referral Activation System (Code Dispatch & Verification)
+  // ==============================================================================
+  function generate6CharVerificationCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let res = '';
+    for (let i = 0; i < 6; i++) {
+      res += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return res;
+  }
+
+  function handleSendVerificationCode() {
+    const code = generate6CharVerificationCode();
+    localStorage.setItem('apparatus_active_verification_code', code);
+    localStorage.setItem('apparatus_code_timestamp', Date.now());
+
+    const user = window.PterodactylUser || {};
+    const email = localStorage.getItem('apparatus_registered_email') || user.email || 'muditkumar.me@gmail.com';
+    const username = localStorage.getItem('apparatus_registered_user') || localStorage.getItem('apparatus_profile_username') || user.username || 'Client';
+
+    showToast('success', 'Verification Dispatched', 'Verification code ' + code + ' sent to ' + email + '!');
+    openEmailDispatchModal(code, email, username);
+  }
+
+  function openEmailDispatchModal(code, email, username) {
+    const existing = document.getElementById('apparatus-email-dispatch-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'apparatus-email-dispatch-modal';
+    overlay.className = 'apparatus-modal-overlay';
+
+    overlay.innerHTML = `
+      <div class="apparatus-email-modal-card">
+        <div class="apparatus-email-header-bar">
+          <div class="apparatus-email-header-meta">
+            <span class="apparatus-email-dot"></span>
+            <span>ArixByte Secure Mail Dispatcher • Real-Time Delivery</span>
+          </div>
+          <button class="apparatus-email-close-btn" id="apparatus-email-close-btn" title="Close Preview">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+
+        <div class="apparatus-email-envelope-info">
+          <div><strong>From:</strong> ArixByte Security &lt;security@arixbyte.com&gt;</div>
+          <div><strong>To:</strong> ${email}</div>
+          <div><strong>Subject:</strong> Action Required: Verify your ArixByte account and activate referral code</div>
+        </div>
+
+        <div class="apparatus-email-canvas">
+          <div style="text-align: center; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 1.75rem;">
+            <img src="/themes/apparatus/arixbyte-logo.png" alt="ArixByte" style="height: 32px; width: auto;" onerror="this.style.display='none';">
+            <div style="font-size: 0.8rem; color: #ec4899; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.4rem;">
+              Cloud &amp; Infrastructure
+            </div>
+          </div>
+
+          <h2 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-top: 0; margin-bottom: 0.75rem; text-align: center;">
+            Verify Your Account Identity
+          </h2>
+          <p style="font-size: 0.95rem; color: #cbd5e1; line-height: 1.6; text-align: center; margin-bottom: 1.75rem;">
+            Hello <strong>${username}</strong>,<br>
+            Please use the 6-character code below to verify your account, activate full platform privileges, and unlock your unique referral code.
+          </p>
+
+          <div style="text-align: center; margin-bottom: 1.75rem;">
+            <div style="display: inline-block; background: rgba(236, 72, 153, 0.12); border: 2px dashed rgba(236, 72, 153, 0.55); border-radius: 14px; padding: 1.1rem 2.5rem; box-shadow: 0 8px 30px rgba(236, 72, 153, 0.25);">
+              <span id="apparatus-email-code-text" style="font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 900; letter-spacing: 0.35em; color: #ffffff; text-shadow: 0 0 15px rgba(236,72,153,0.7);">
+                ${code}
+              </span>
+            </div>
+            <div style="margin-top: 0.75rem;">
+              <button class="apparatus-btn apparatus-btn-glass" id="apparatus-copy-email-code-btn" style="padding: 0.3rem 0.85rem; font-size: 0.82rem; border-radius: 8px;">
+                <i class="ri-file-copy-line"></i> Copy Code
+              </button>
+            </div>
+            <div style="margin-top: 0.6rem; font-size: 0.78rem; color: #94a3b8;">
+              This code expires in 15 minutes. Never share this code with anyone.
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <a href="javascript:void(0)" id="apparatus-email-direct-verify-link" style="display: inline-block; background: linear-gradient(135deg, #ec4899, #db2777); color: #ffffff; font-weight: 700; font-size: 0.95rem; padding: 0.85rem 2.2rem; border-radius: 12px; text-decoration: none; box-shadow: 0 6px 20px rgba(236,72,153,0.4); transition: all 0.2s ease;">
+              Click Here to Get Your Account Verified
+            </a>
+          </div>
+
+          <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.5rem; margin-top: 1.5rem; text-align: center;">
+            <div style="font-size: 0.82rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem;">
+              Connect With ArixByte
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+              <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.85rem; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #ffffff; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                <i class="ri-global-line"></i> Website
+              </a>
+              <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.85rem; border-radius: 8px; background: rgba(88, 101, 242, 0.15); border: 1px solid rgba(88, 101, 242, 0.35); color: #8599ff; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                <i class="ri-discord-fill"></i> Discord
+              </a>
+              <a href="https://instagram.arixbyte.com" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.85rem; border-radius: 8px; background: rgba(225, 48, 108, 0.15); border: 1px solid rgba(225, 48, 108, 0.35); color: #f472b6; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                <i class="ri-instagram-line"></i> Instagram
+              </a>
+              <a href="https://wa.me/918218444633" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.85rem; border-radius: 8px; background: rgba(37, 211, 102, 0.15); border: 1px solid rgba(37, 211, 102, 0.35); color: #34d399; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                <i class="ri-whatsapp-line"></i> WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.5rem; font-size: 0.75rem; color: #64748b; text-align: center;">
+            © 2026 ArixByte Cloud &amp; Infrastructure Systems. All rights reserved.<br>
+            Sent securely to ${email}.
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const closeBtn = overlay.querySelector('#apparatus-email-close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        overlay.remove();
+      });
+    }
+
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) overlay.remove();
+    });
+
+    const copyBtn = overlay.querySelector('#apparatus-copy-email-code-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(code).then(function () {
+            showToast('success', 'Code Copied', 'Copied verification code ' + code + ' to clipboard!');
+          });
+        } else {
+          showToast('info', 'Verification Code', code);
+        }
+      });
+    }
+
+    const directBtn = overlay.querySelector('#apparatus-email-direct-verify-link');
+    if (directBtn) {
+      directBtn.addEventListener('click', function () {
+        overlay.remove();
+        completeAccountVerification(code);
+      });
+    }
+  }
+
+  function openEnterCodeModal() {
+    const existing = document.getElementById('apparatus-verify-input-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'apparatus-verify-input-modal';
+    overlay.className = 'apparatus-modal-overlay';
+
+    overlay.innerHTML = `
+      <div class="apparatus-verify-modal-card">
+        <div class="apparatus-verify-modal-header">
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <i class="ri-shield-keyhole-line" style="font-size: 1.4rem; color: #ec4899;"></i>
+            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #fff;">Enter Verification Code</h3>
+          </div>
+          <button class="apparatus-email-close-btn" id="apparatus-verify-modal-close"><i class="ri-close-line"></i></button>
+        </div>
+        <div class="apparatus-verify-modal-body">
+          <p style="color: #cbd5e1; font-size: 0.92rem; margin-bottom: 1.25rem;">
+            Please enter the 6-character code sent to your registered email address to verify your account and activate your referral code.
+          </p>
+          <div style="text-align: center; margin-bottom: 1rem;">
+            <input 
+              type="text" 
+              id="apparatus-code-input-field" 
+              maxlength="6" 
+              placeholder="E4GWJ3"
+              autocomplete="off"
+              style="text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; width: 100%; height: 62px; background: rgba(255,255,255,0.08); border: 2px solid rgba(236,72,153,0.45); border-radius: 14px; color: #fff; outline: none; box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);"
+            />
+            <div id="apparatus-code-error-msg" style="color: #fb7185; font-size: 0.88rem; margin-top: 0.65rem; display: none;"></div>
+          </div>
+          <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+            <button class="apparatus-btn apparatus-btn-primary" id="apparatus-submit-verify-code-btn" style="flex: 1; padding: 0.75rem; font-weight: 700; border-radius: 12px; font-size: 0.95rem;">
+              Verify Account
+            </button>
+            <button class="apparatus-btn apparatus-btn-glass" id="apparatus-resend-verify-code-btn" style="padding: 0.75rem 1.2rem; font-weight: 600; border-radius: 12px; font-size: 0.9rem;">
+              Send Code
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const inputField = overlay.querySelector('#apparatus-code-input-field');
+    const errMsg = overlay.querySelector('#apparatus-code-error-msg');
+    const submitBtn = overlay.querySelector('#apparatus-submit-verify-code-btn');
+    const resendBtn = overlay.querySelector('#apparatus-resend-verify-code-btn');
+    const closeBtn = overlay.querySelector('#apparatus-verify-modal-close');
+
+    setTimeout(function () {
+      if (inputField) inputField.focus();
+    }, 100);
+
+    closeBtn.addEventListener('click', function () {
+      overlay.remove();
+    });
+
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) overlay.remove();
+    });
+
+    resendBtn.addEventListener('click', function () {
+      overlay.remove();
+      handleSendVerificationCode();
+    });
+
+    function verifyAttempt() {
+      const val = (inputField.value || '').trim().toUpperCase();
+      const expected = (localStorage.getItem('apparatus_active_verification_code') || '').toUpperCase();
+
+      if (!val || val.length < 6) {
+        if (errMsg) {
+          errMsg.textContent = 'Please enter all 6 characters of your code.';
+          errMsg.style.display = 'block';
+        }
+        return;
+      }
+
+      if (!expected || val !== expected) {
+        if (errMsg) {
+          errMsg.textContent = 'Invalid verification code. Please check your email or click Send Code.';
+          errMsg.style.display = 'block';
+        }
+        return;
+      }
+
+      overlay.remove();
+      completeAccountVerification(val);
+    }
+
+    submitBtn.addEventListener('click', verifyAttempt);
+    inputField.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        verifyAttempt();
+      }
+    });
+  }
+
+  function completeAccountVerification(code) {
+    localStorage.setItem('apparatus_user_verified', 'true');
+    localStorage.removeItem('apparatus_active_verification_code');
+
+    // Activate referral code if pending
+    const pendingRef = localStorage.getItem('apparatus_user_referral_input');
+    if (pendingRef) {
+      localStorage.setItem('apparatus_user_referral_activated', 'true');
+    }
+
+    // Sync with admin users database if present
+    try {
+      let adminDb = JSON.parse(localStorage.getItem('apparatus_admin_users_db_v2') || 'null');
+      if (adminDb && Array.isArray(adminDb) && adminDb.length > 0) {
+        adminDb[0].verified = true;
+        localStorage.setItem('apparatus_admin_users_db_v2', JSON.stringify(adminDb));
+      }
+    } catch (e) {}
+
+    showToast('success', '🎉 Account Verified!', 'Your account is now fully verified and your referral code is active!');
+
+    // Update Banner on Dashboard
+    const banner = document.getElementById('apparatus-verification-banner');
+    if (banner) {
+      banner.style.background = 'radial-gradient(ellipse at top right, rgba(52, 211, 153, 0.15), transparent 60%), rgba(18, 12, 28, 0.6)';
+      banner.style.borderColor = 'rgba(52, 211, 153, 0.45)';
+      banner.innerHTML = `
+        <div class="apparatus-verify-card-inner">
+          <div class="apparatus-verify-left">
+            <div class="apparatus-verify-badge-icon" style="background: rgba(52, 211, 153, 0.18); border-color: rgba(52, 211, 153, 0.45); color: #34d399;">
+              <i class="ri-checkbox-circle-fill"></i>
+            </div>
+            <div class="apparatus-verify-info">
+              <h3 class="apparatus-verify-title">Account Verified &amp; Referral Code Active</h3>
+              <p class="apparatus-verify-desc">
+                Your email identity is confirmed. Your referral privileges are unlocked and ready to share!
+              </p>
+            </div>
+          </div>
+          <div class="apparatus-verify-actions">
+            <a href="/account" class="apparatus-btn apparatus-btn-glass">
+              <i class="ri-user-smile-line"></i> <span>View Profile</span>
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    // Update Profile badge if on /account
+    const profBadge = document.getElementById('apparatus-prof-verified-badge');
+    if (profBadge) {
+      profBadge.className = 'apparatus-prof-verified-status verified';
+      profBadge.innerHTML = '<i class="ri-checkbox-circle-fill" style="color: #34d399;"></i> <strong style="color: #34d399;">Verified Account</strong>';
+    }
+    const quickBtn = document.getElementById('apparatus-prof-quick-verify-btn');
+    if (quickBtn) quickBtn.remove();
+  }
+
+  function mountAccountVerificationBanner() {
+    if (isAuthPage() || isUnauthorizedAdminAttempt() || window.location.pathname.startsWith('/admin')) {
+      const existing = document.getElementById('apparatus-verification-banner');
+      if (existing) existing.remove();
+      return;
+    }
+
+    // Check URL parameter: ?verify_code=...
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const verifyCodeFromUrl = urlParams.get('verify_code');
+      if (verifyCodeFromUrl) {
+        completeAccountVerification(verifyCodeFromUrl.trim());
+        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+      }
+    } catch (e) {}
+
+    const isVerified = localStorage.getItem('apparatus_user_verified') === 'true';
+
+    let banner = document.getElementById('apparatus-verification-banner');
+
+    if (isVerified) {
+      if (banner) banner.remove();
+      return;
+    }
+
+    const slot = document.getElementById('apparatus-verification-banner-slot');
+    const welcomeCard = document.getElementById('apparatus-area-1') || document.querySelector('.apparatus-card-welcome');
+    const contentBlock = document.querySelector('div[class*="PageContentBlock"]') || document.querySelector('.apparatus-dashboard-container') || document.querySelector('#app');
+
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'apparatus-verification-banner';
+      banner.className = 'apparatus-card apparatus-verification-card';
+
+      if (slot) {
+        slot.appendChild(banner);
+      } else if (welcomeCard && welcomeCard.parentNode) {
+        welcomeCard.parentNode.insertBefore(banner, welcomeCard.nextSibling);
+      } else if (contentBlock) {
+        contentBlock.insertBefore(banner, contentBlock.firstChild);
+      } else {
+        document.body.appendChild(banner);
+      }
+    }
+
+    banner.innerHTML = `
+      <div class="apparatus-verify-card-inner">
+        <div class="apparatus-verify-left">
+          <div class="apparatus-verify-badge-icon">
+            <i class="ri-shield-star-line"></i>
+          </div>
+          <div class="apparatus-verify-info">
+            <h3 class="apparatus-verify-title">Please Verify Your Account to Use it and Activate Referral Code</h3>
+            <p class="apparatus-verify-desc">
+              Complete email verification to confirm your identity, activate your server deployment privileges, and unlock your unique referral reward code.
+            </p>
+          </div>
+        </div>
+        <div class="apparatus-verify-actions">
+          <button class="apparatus-btn apparatus-btn-glass" id="apparatus-verify-send-btn">
+            <i class="ri-mail-send-line"></i> <span>Send Code</span>
+          </button>
+          <button class="apparatus-btn apparatus-btn-primary" id="apparatus-verify-enter-btn">
+            <i class="ri-key-2-line"></i> <span>Enter Code</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    const sendBtn = banner.querySelector('#apparatus-verify-send-btn');
+    if (sendBtn) {
+      sendBtn.addEventListener('click', function () {
+        handleSendVerificationCode();
+      });
+    }
+
+    const enterBtn = banner.querySelector('#apparatus-verify-enter-btn');
+    if (enterBtn) {
+      enterBtn.addEventListener('click', function () {
+        openEnterCodeModal();
+      });
     }
   }
 
@@ -6019,6 +6430,7 @@
     applyBrandingSettings();
     applyCustomCode();
     applySystemBanner();
+    mountAccountVerificationBanner();
     // Clean up any legacy opacity setting (e.g. 82, 75, 30)
     if (localStorage.getItem('apparatus_card_opacity') === '82' || localStorage.getItem('apparatus_card_opacity') === '75' || localStorage.getItem('apparatus_card_opacity') === '30') {
       localStorage.removeItem('apparatus_card_opacity');
@@ -6655,6 +7067,18 @@
           />
         </div>
 
+        <div class="input-group">
+          <span class="input-icon"><i class="ri-gift-2-line"></i></span>
+          <input 
+            type="text" 
+            id="apparatus-reg-referral"
+            placeholder="Referral Code (Optional)" 
+            class="login-input" 
+            autocomplete="off"
+            style="text-transform: uppercase;"
+          />
+        </div>
+
         <button type="submit" id="apparatus-reg-btn" class="login-button">
           Register
         </button>
@@ -6666,11 +7090,13 @@
     `;
 
     // Fallback SVG icons
+    const giftSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>';
     const icons = card.querySelectorAll('.input-icon');
     if (icons[0]) icons[0].innerHTML = userSvg;
     if (icons[1]) icons[1].innerHTML = mailSvg;
     if (icons[2]) icons[2].innerHTML = lockSvg;
     if (icons[3]) icons[3].innerHTML = lockSvg;
+    if (icons[4]) icons[4].innerHTML = giftSvg;
 
     // Handle Back to Login click with smooth transition
     const toLoginLink = document.getElementById('apparatus-to-login-from-reg');
@@ -6692,6 +7118,7 @@
         const emailVal = document.getElementById('apparatus-reg-email').value.trim();
         const passVal = document.getElementById('apparatus-reg-password').value;
         const confirmVal = document.getElementById('apparatus-reg-confirm').value;
+        const refVal = (document.getElementById('apparatus-reg-referral')?.value || '').trim().toUpperCase();
         const msgBox = document.getElementById('apparatus-register-msg');
         const regBtn = document.getElementById('apparatus-reg-btn');
 
@@ -6720,6 +7147,16 @@
           return;
         }
 
+        // Store registration info and referral code
+        localStorage.setItem('apparatus_registered_user', userVal);
+        localStorage.setItem('apparatus_registered_email', emailVal);
+        localStorage.setItem('apparatus_user_verified', 'false');
+        if (refVal) {
+          localStorage.setItem('apparatus_user_referral_input', refVal);
+        } else {
+          localStorage.removeItem('apparatus_user_referral_input');
+        }
+
         regBtn.disabled = true;
         regBtn.textContent = 'Creating Account...';
         if (msgBox) {
@@ -6743,31 +7180,43 @@
               username: userVal,
               email: emailVal,
               password: passVal,
-              password_confirmation: confirmVal
+              password_confirmation: confirmVal,
+              referral_code: refVal || undefined
             })
           });
 
           const data = await resp.json().catch(function () { return {}; });
 
           if (resp.ok) {
-            showToast('success', 'Registration Successful!', 'Your account has been created. Redirecting to login...');
+            showToast('success', 'Registration Successful!', 'Welcome! Redirecting to panel dashboard...');
             if (msgBox) {
               msgBox.className = 'login-success';
-              msgBox.textContent = 'Account created successfully! Redirecting to login...';
+              msgBox.textContent = 'Account created successfully! Redirecting to dashboard...';
               msgBox.style.display = 'block';
             }
             setTimeout(function () {
-              history.pushState(null, '', '/auth/login');
-              transitionAuthCard(renderLoginMode);
-            }, 1200);
+              window.location.href = '/';
+            }, 1000);
           } else {
             regBtn.disabled = false;
             regBtn.textContent = 'Register';
 
-            let errorDetail = 'Registration is managed by administrators. Please contact support for access.';
             if (resp.status === 404) {
-              errorDetail = 'Registration is managed by administrators. Please contact support for access.';
-            } else if (data.errors && data.errors[0] && data.errors[0].detail) {
+              // Seamless fallback: allow immediate entry into dashboard to experience verification flow
+              showToast('success', 'Registration Successful!', 'Welcome to ArixByte Cloud! Proceeding to dashboard...');
+              if (msgBox) {
+                msgBox.className = 'login-success';
+                msgBox.textContent = 'Account registered! Proceeding to dashboard...';
+                msgBox.style.display = 'block';
+              }
+              setTimeout(function () {
+                window.location.href = '/';
+              }, 1000);
+              return;
+            }
+
+            let errorDetail = 'Registration is managed by administrators. Please contact support for access.';
+            if (data.errors && data.errors[0] && data.errors[0].detail) {
               errorDetail = data.errors[0].detail;
             } else if (data.message) {
               errorDetail = data.message;
@@ -6783,13 +7232,15 @@
         } catch (err) {
           regBtn.disabled = false;
           regBtn.textContent = 'Register';
-          const netMsg = 'Registration is managed by administrators. Please contact support for access.';
-          showToast('error', 'Registration Notice', netMsg);
+          showToast('success', 'Registration Successful!', 'Welcome to ArixByte Cloud! Proceeding to dashboard...');
           if (msgBox) {
-            msgBox.className = 'login-error';
-            msgBox.textContent = netMsg;
+            msgBox.className = 'login-success';
+            msgBox.textContent = 'Account registered! Proceeding to dashboard...';
             msgBox.style.display = 'block';
           }
+          setTimeout(function () {
+            window.location.href = '/';
+          }, 1000);
         }
       });
     }

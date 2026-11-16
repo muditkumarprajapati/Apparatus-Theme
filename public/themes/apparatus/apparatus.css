@@ -503,35 +503,44 @@ body.apparatus-auth #apparatus-desert-wrapper {
   margin-top: 1.5rem !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 0.55rem !important;
-  font-size: 0.92rem !important;
+  gap: 0.75rem !important;
+  font-size: 0.94rem !important;
+  text-align: center !important;
 }
 
 .apparatus-footer-links p {
   margin: 0 !important;
-  color: rgba(255, 255, 255, 0.78) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.65rem !important;
 }
 
 .apparatus-footer-links a {
-  color: #fff !important;
-  font-weight: 600 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
   text-decoration: none !important;
-  position: relative !important;
-  display: inline-block !important;
-  padding: 0.15rem 0.55rem !important;
-  border-radius: 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.28rem 0.85rem !important;
+  border-radius: 9px !important;
   background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
   cursor: pointer !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
 }
 
 .apparatus-footer-links a:hover {
   background: rgba(255, 255, 255, 0.22) !important;
-  border-color: rgba(255, 255, 255, 0.38) !important;
-  color: #fff !important;
-  transform: translateY(-1px) scale(1.03) !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.48) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) scale(1.04) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
 }
 
 .apparatus-footer-links a:active {
@@ -5805,4 +5814,223 @@ div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon {
 
 .apparatus-banner-link:hover {
   background: rgba(255, 255, 255, 0.28);
+}
+
+/* ==============================================================================
+   ACCOUNT VERIFICATION & REFERRAL ACTIVATION STUDIO (DASHBOARD & EMAIL)
+   ============================================================================== */
+.apparatus-verification-card {
+  background: radial-gradient(ellipse at top right, rgba(236, 72, 153, 0.15), transparent 60%), rgba(18, 12, 28, 0.6) !important;
+  border: 1px solid rgba(236, 72, 153, 0.45) !important;
+  border-radius: 18px !important;
+  padding: 1.5rem 1.85rem !important;
+  margin-bottom: 2rem !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 0 25px rgba(236, 72, 153, 0.15) !important;
+  animation: apparatusAuthCardEntrance 0.35s ease-out forwards;
+}
+
+.apparatus-verify-card-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1.5rem !important;
+  flex-wrap: wrap !important;
+}
+
+.apparatus-verify-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1.25rem !important;
+  flex: 1 !important;
+  min-width: 280px !important;
+}
+
+.apparatus-verify-badge-icon {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 14px !important;
+  background: rgba(236, 72, 153, 0.18) !important;
+  border: 1px solid rgba(236, 72, 153, 0.45) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.75rem !important;
+  color: #f472b6 !important;
+  flex-shrink: 0 !important;
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.25) !important;
+}
+
+.apparatus-verify-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+}
+
+.apparatus-verify-title {
+  margin: 0 !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  letter-spacing: -0.01em !important;
+}
+
+.apparatus-verify-desc {
+  margin: 0 !important;
+  font-size: 0.88rem !important;
+  color: #cbd5e1 !important;
+  line-height: 1.5 !important;
+}
+
+.apparatus-verify-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+.apparatus-verify-actions .apparatus-btn {
+  padding: 0.65rem 1.35rem !important;
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+  border-radius: 12px !important;
+}
+
+/* Modals Overlay */
+.apparatus-modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 999999 !important;
+  background: rgba(5, 3, 10, 0.82) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1.5rem !important;
+  animation: apparatusModalFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes apparatusModalFadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Premium Dispatched Email Modal Card */
+.apparatus-email-modal-card {
+  width: 100% !important;
+  max-width: 620px !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  background: #09060f !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(236, 72, 153, 0.15) !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.apparatus-email-header-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 1rem 1.4rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.apparatus-email-header-meta {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+  font-size: 0.84rem !important;
+  color: #94a3b8 !important;
+  font-weight: 600 !important;
+}
+
+.apparatus-email-dot {
+  width: 9px !important;
+  height: 9px !important;
+  border-radius: 50% !important;
+  background: #34d399 !important;
+  box-shadow: 0 0 10px #34d399 !important;
+}
+
+.apparatus-email-close-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  font-size: 1.25rem !important;
+  cursor: pointer !important;
+  padding: 0.25rem !important;
+  transition: color 0.2s ease !important;
+}
+
+.apparatus-email-close-btn:hover {
+  color: #ffffff !important;
+}
+
+.apparatus-email-envelope-info {
+  background: rgba(255, 255, 255, 0.02) !important;
+  padding: 0.85rem 1.4rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  font-size: 0.82rem !important;
+  color: #94a3b8 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+  line-height: 1.4 !important;
+}
+
+.apparatus-email-envelope-info strong {
+  color: #ffffff !important;
+}
+
+.apparatus-email-canvas {
+  padding: 2.25rem 2rem !important;
+  color: #ffffff !important;
+  font-family: var(--admin-font, -apple-system, sans-serif) !important;
+}
+
+/* Enter Code Modal Card */
+.apparatus-verify-modal-card {
+  width: 100% !important;
+  max-width: 480px !important;
+  background: rgba(18, 12, 28, 0.95) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(236, 72, 153, 0.2) !important;
+  overflow: hidden !important;
+}
+
+.apparatus-verify-modal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 1.25rem 1.5rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.apparatus-verify-modal-body {
+  padding: 1.75rem 1.5rem 2rem 1.5rem !important;
+}
+
+/* Profile Verified Badge */
+.apparatus-prof-verified-status {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+}
+
+.apparatus-prof-verified-status.verified {
+  color: #34d399 !important;
+}
+
+.apparatus-prof-verified-status.unverified {
+  color: #fb7185 !important;
 }
