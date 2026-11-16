@@ -109,6 +109,9 @@ class RegisterController extends Controller
                 if (Schema::hasColumn('users', 'external_id')) {
                     $insertData['external_id'] = null;
                 }
+                if (Schema::hasColumn('users', 'remember_token')) {
+                    $insertData['remember_token'] = Str::random(60);
+                }
 
                 $userId = DB::table('users')->insertGetId($insertData);
                 Log::info("Self-registration successful in database for user {$username} (ID: {$userId})");
@@ -162,14 +165,17 @@ class RegisterController extends Controller
                 ], 500);
             }
 
-            // Automatically authenticate user session so they don't even need to re-login
+            // Automatically authenticate user session without remember cookie
             if ($userId) {
                 try {
-                    if (auth()->guard()) {
-                        auth()->guard()->loginUsingId($userId, true);
-                        if ($request->hasSession()) {
-                            $request->session()->regenerate();
-                        }
+                    $createdUser = User::find($userId);
+                    if ($createdUser) {
+                        auth()->guard()->login($createdUser, false);
+                    } else {
+                        auth()->guard()->loginUsingId($userId, false);
+                    }
+                    if ($request->hasSession()) {
+                        $request->session()->regenerate();
                     }
                 } catch (\Throwable $le) {
                     Log::warning('Session auto-login note: ' . $le->getMessage());
