@@ -230,15 +230,21 @@ body.fixed {
   padding-bottom: 2.5rem !important;
 }
 
+:root,
+html,
+body {
+  color-scheme: dark !important;
+}
+
 /* Category Headers - 1:1 Matching Client Dashboard */
 .sidebar-menu > li.header {
   background: transparent !important;
-  color: rgba(255, 255, 255, 0.45) !important;
-  font-size: 0.74rem !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 0.8rem !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.08em !important;
-  padding: 1.15rem 1rem 0.35rem 1rem !important;
+  padding: 1.25rem 1.15rem 0.45rem 1.15rem !important;
   margin-top: 0.35rem !important;
 }
 
@@ -247,17 +253,17 @@ body.skin-blue .sidebar-menu > li > a,
 body.skin-blue .sidebar-menu li a,
 .sidebar-menu > li > a,
 .sidebar-menu li a {
-  font-size: 0.94rem !important;
+  font-size: 1rem !important;
   font-weight: 500 !important;
-  color: rgba(255, 255, 255, 0.78) !important;
-  padding: 0.65rem 0.95rem !important;
-  margin: 0.2rem 0.75rem !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  padding: 0.75rem 1rem !important;
+  margin: 0.25rem 0.75rem !important;
   border-radius: 12px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.75rem !important;
+  gap: 0.85rem !important;
   border: none !important;
-  border-left: none !important;
+  border-left: 3.5px solid transparent !important;
   background: transparent !important;
   box-shadow: none !important;
   text-shadow: none !important;
@@ -268,7 +274,7 @@ body.skin-blue .sidebar-menu li a,
 body.skin-blue .sidebar-menu > li > a span,
 .sidebar-menu > li > a span,
 .sidebar-menu li a span {
-  font-size: 0.94rem !important;
+  font-size: 1rem !important;
   font-weight: 500 !important;
   letter-spacing: normal !important;
   color: inherit !important;
@@ -278,8 +284,8 @@ body.skin-blue .sidebar-menu > li > a span,
 body.skin-blue .sidebar-menu > li > a i,
 .sidebar-menu > li > a i,
 .sidebar-menu li a i {
-  font-size: 1.18rem !important;
-  color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 1.25rem !important;
+  color: rgba(255, 255, 255, 0.8) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -292,10 +298,10 @@ body.skin-blue .sidebar-menu > li:hover > a,
 body.skin-blue .sidebar-menu > li > a:hover,
 .sidebar-menu > li > a:hover,
 .sidebar-menu li a:hover {
-  background: rgba(255, 255, 255, 0.09) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   color: #ffffff !important;
   border: none !important;
-  border-left: none !important;
+  border-left: 3.5px solid transparent !important;
   box-shadow: none !important;
   transform: translateX(3px) !important;
 }
@@ -318,13 +324,13 @@ body.skin-blue .sidebar-menu > li > a.active,
 .sidebar-menu > li.menu-open > a,
 .sidebar-menu > li > a.active,
 .sidebar-menu li.active > a {
-  background: rgba(255, 255, 255, 0.14) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
   color: #ffffff !important;
   font-weight: 600 !important;
   border: none !important;
-  border-left: none !important;
+  border-left: 3.5px solid #f472b6 !important;
   border-radius: 12px !important;
-  box-shadow: inset 3.5px 0 0 #f472b6 !important;
+  box-shadow: none !important;
   transform: none !important;
 }
 
@@ -526,8 +532,13 @@ body.fixed .content-wrapper,
   padding: 1.25rem 1.75rem !important;
 }
 
-/* Nav Tabs on /admin/settings (General, Mail, Advanced) - Zero Cyan Line & Luxury Glass */
+/* Nav Tabs on /admin/settings (General, Mail, Advanced) - Zero Cyan Line & Luxury Glass (1:1 Matching Client Dashboard) */
 .nav-tabs-custom,
+.nav-tabs-custom.tab-info,
+.nav-tabs-custom.tab-primary,
+.nav-tabs-custom.tab-danger,
+.nav-tabs-custom.tab-success,
+.nav-tabs-custom.tab-warning,
 .nav-tabs-custom > .nav-tabs,
 .nav-tabs-custom > .nav-tabs > li,
 .nav-tabs-custom > .nav-tabs > li.active,
@@ -541,6 +552,7 @@ body.fixed .content-wrapper,
   border-top-color: transparent !important;
   border-top-width: 0 !important;
   border-top-style: none !important;
+  box-shadow: none !important;
 }
 
 .nav-tabs-custom {
@@ -577,11 +589,12 @@ body.fixed .content-wrapper,
   border-radius: 10px !important;
   font-family: var(--admin-font) !important;
   font-size: 0.95rem !important;
-  font-weight: 600 !important;
-  color: #94a3b8 !important;
+  font-weight: 500 !important;
+  color: rgba(255, 255, 255, 0.75) !important;
   padding: 0.55rem 1.25rem !important;
   border: 1px solid transparent !important;
   background: transparent !important;
+  box-shadow: none !important;
   transition: all 0.2s ease !important;
   margin: 0 !important;
 }
@@ -593,11 +606,11 @@ body.fixed .content-wrapper,
 }
 
 .nav-tabs-custom > .nav-tabs > li.active > a {
-  background: rgba(236, 72, 153, 0.22) !important;
-  border: 1px solid rgba(236, 72, 153, 0.5) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
   color: #ffffff !important;
-  font-weight: 700 !important;
-  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.25) !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
 }
 
 .nav-tabs-custom > .tab-content {
@@ -631,8 +644,8 @@ textarea.form-control {
 
 select.form-control,
 select {
-  background: rgba(18, 12, 28, 0.92) !important;
-  background-color: rgba(18, 12, 28, 0.92) !important;
+  background: #140e22 !important;
+  background-color: #140e22 !important;
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.22) !important;
   border-radius: 12px !important;
@@ -643,7 +656,8 @@ select {
 }
 
 select.form-control option,
-select option {
+select option,
+select optgroup {
   background: #140e22 !important;
   background-color: #140e22 !important;
   color: #ffffff !important;
@@ -656,8 +670,8 @@ select.form-control option:checked,
 select.form-control option:hover,
 select option:checked,
 select option:hover {
-  background: #db2777 !important;
-  background-color: #db2777 !important;
+  background: #2a1b42 !important;
+  background-color: #2a1b42 !important;
   color: #ffffff !important;
 }
 
@@ -766,7 +780,8 @@ p.text-muted,
 .box-footer button[type="submit"] {
   background: linear-gradient(135deg, #ec4899, #db2777) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 18px rgba(236, 72, 153, 0.4) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  border: none !important;
   border-radius: 12px !important;
   height: 46px !important;
   font-size: 0.95rem !important;
@@ -778,7 +793,7 @@ p.text-muted,
 .box-footer button[type="submit"]:hover {
   background: linear-gradient(135deg, #f472b6, #ec4899) !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 6px 24px rgba(236, 72, 153, 0.5) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35) !important;
 }
 
 .btn-default {

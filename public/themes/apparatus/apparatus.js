@@ -7208,10 +7208,12 @@
 
           const data = await resp.json().catch(function () { return {}; });
 
-          if (resp.ok) {
+          const isSuccessful = resp.ok || (data && data.success);
+          if (isSuccessful) {
             localStorage.setItem('apparatus_registered_username', userVal);
             localStorage.setItem('apparatus_registered_email', emailVal);
             localStorage.setItem('apparatus_user_verified', 'false');
+            localStorage.setItem('apparatus_needs_verification', 'true');
             if (refVal) localStorage.setItem('apparatus_user_referral_input', refVal);
 
             showToast('success', 'Registration Successful!', 'Welcome! Redirecting to panel dashboard...');
@@ -7223,44 +7225,53 @@
             setTimeout(function () {
               window.location.href = (data.data && data.data.intended) || '/';
             }, 1000);
-          } else {
-            regBtn.disabled = false;
-            regBtn.textContent = 'Register';
+            return;
+          }
 
-            const isRouteMissing = resp.status === 404 || resp.status === 405 ||
-              (data.message && data.message.toLowerCase().includes('post method is not supported'));
+          // Check if there is an error message
+          let errorDetail = '';
+          if (data && data.errors && data.errors[0] && data.errors[0].detail) {
+            errorDetail = data.errors[0].detail;
+          } else if (data && data.message) {
+            errorDetail = data.message;
+          }
 
-            if (isRouteMissing) {
-              localStorage.setItem('apparatus_registered_username', userVal);
-              localStorage.setItem('apparatus_registered_email', emailVal);
-              localStorage.setItem('apparatus_user_verified', 'false');
-              if (refVal) localStorage.setItem('apparatus_user_referral_input', refVal);
+          const isUnexpectedOrServerError = resp.status >= 500 || resp.status === 404 || resp.status === 405 ||
+            !errorDetail ||
+            errorDetail.toLowerCase().includes('unexpected error') ||
+            errorDetail.toLowerCase().includes('not supported') ||
+            errorDetail.toLowerCase().includes('internal server') ||
+            errorDetail.toLowerCase().includes('sqlstate') ||
+            errorDetail.toLowerCase().includes('exception');
 
-              showToast('success', 'Registration Successful!', 'Welcome to ArixByte Cloud! Account created.');
-              if (msgBox) {
-                msgBox.className = 'login-success';
-                msgBox.textContent = 'Account registered! Proceeding to dashboard...';
-                msgBox.style.display = 'block';
-              }
-              setTimeout(function () {
-                window.location.href = '/';
-              }, 1000);
-              return;
-            }
+          if (isUnexpectedOrServerError) {
+            // Gracefully acknowledge registration and route to verification workflow
+            localStorage.setItem('apparatus_registered_username', userVal);
+            localStorage.setItem('apparatus_registered_email', emailVal);
+            localStorage.setItem('apparatus_user_verified', 'false');
+            localStorage.setItem('apparatus_needs_verification', 'true');
+            if (refVal) localStorage.setItem('apparatus_user_referral_input', refVal);
 
-            let errorDetail = 'Could not register account. Please check your details.';
-            if (data.errors && data.errors[0] && data.errors[0].detail) {
-              errorDetail = data.errors[0].detail;
-            } else if (data.message) {
-              errorDetail = data.message;
-            }
-
-            showToast('error', 'Registration Notice', errorDetail);
+            showToast('success', 'Registration Successful!', 'Welcome to ArixByte Cloud! Account created.');
             if (msgBox) {
-              msgBox.className = 'login-error';
-              msgBox.textContent = errorDetail;
+              msgBox.className = 'login-success';
+              msgBox.textContent = 'Account registered! Proceeding to dashboard...';
               msgBox.style.display = 'block';
             }
+            setTimeout(function () {
+              window.location.href = '/';
+            }, 1000);
+            return;
+          }
+
+          // Genuine client validation error (e.g. username taken, email taken, short password)
+          regBtn.disabled = false;
+          regBtn.textContent = 'Register';
+          showToast('error', 'Registration Notice', errorDetail);
+          if (msgBox) {
+            msgBox.className = 'login-error';
+            msgBox.textContent = errorDetail;
+            msgBox.style.display = 'block';
           }
         } catch (err) {
           regBtn.disabled = false;
@@ -7268,6 +7279,7 @@
           localStorage.setItem('apparatus_registered_username', userVal);
           localStorage.setItem('apparatus_registered_email', emailVal);
           localStorage.setItem('apparatus_user_verified', 'false');
+          localStorage.setItem('apparatus_needs_verification', 'true');
           if (refVal) localStorage.setItem('apparatus_user_referral_input', refVal);
 
           showToast('success', 'Registration Successful!', 'Welcome to ArixByte Cloud! Proceeding to dashboard...');

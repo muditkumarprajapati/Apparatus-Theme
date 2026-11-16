@@ -518,8 +518,31 @@ This is an advance notice that scheduled hardware maintenance is planned for clu
             <h3 class="box-title"><i class="ri-edit-2-line"></i> Template Configuration</h3>
           </div>
           <div class="box-body">
-            <div class="form-group">
-              <label>Select Email Template</label>
+            <!-- Clickable Visual Template Selector Tabs -->
+            <div style="margin-bottom: 1.25rem;">
+              <label style="font-size: 0.85rem; color: #94a3b8; font-weight: 600; display: block; margin-bottom: 0.6rem;">
+                Select Email Template
+              </label>
+              <div id="apparatus-mail-tab-pills" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+                <button type="button" class="apparatus-mail-pill active" data-tpl="verification" style="padding: 0.45rem 0.85rem; border-radius: 10px; font-size: 0.84rem; font-weight: 600; cursor: pointer; border: 1px solid rgba(236,72,153,0.4); background: rgba(236,72,153,0.18); color: #fff;">
+                  <i class="ri-shield-star-line"></i> Verification
+                </button>
+                <button type="button" class="apparatus-mail-pill" data-tpl="welcome" style="padding: 0.45rem 0.85rem; border-radius: 10px; font-size: 0.84rem; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); color: #cbd5e1;">
+                  <i class="ri-user-smile-line"></i> Welcome
+                </button>
+                <button type="button" class="apparatus-mail-pill" data-tpl="password_reset" style="padding: 0.45rem 0.85rem; border-radius: 10px; font-size: 0.84rem; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); color: #cbd5e1;">
+                  <i class="ri-key-2-line"></i> Password Reset
+                </button>
+                <button type="button" class="apparatus-mail-pill" data-tpl="server_created" style="padding: 0.45rem 0.85rem; border-radius: 10px; font-size: 0.84rem; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); color: #cbd5e1;">
+                  <i class="ri-server-line"></i> Server Deployed
+                </button>
+                <button type="button" class="apparatus-mail-pill" data-tpl="two_factor" style="padding: 0.45rem 0.85rem; border-radius: 10px; font-size: 0.84rem; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); color: #cbd5e1;">
+                  <i class="ri-shield-keyhole-line"></i> 2FA Alert
+                </button>
+                <button type="button" class="apparatus-mail-pill" data-tpl="maintenance" style="padding: 0.45rem 0.85rem; border-radius: 10px; font-size: 0.84rem; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); color: #cbd5e1;">
+                  <i class="ri-tools-line"></i> Maintenance
+                </button>
+              </div>
               <select class="form-control" id="apparatus-mail-template-select">
                 <option value="verification" selected>Account Verification & Referral Activation</option>
                 <option value="welcome">Welcome to ArixByte Cloud</option>
@@ -591,11 +614,16 @@ ${formatMailBody(currentTpl.body)}
                 </div>
               </div>
 
-              <!-- Call to Action Button -->
+              <!-- Call to Action Button & Direct Verification Link -->
               <div style="text-align: center; margin-bottom: 2rem;">
-                <a href="https://control.arixbyte.com" target="_blank" id="apparatus-preview-btn" style="display: inline-block; background: linear-gradient(135deg, #ec4899, #db2777); color: #fff; font-weight: 700; font-size: 0.95rem; padding: 0.85rem 2.2rem; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 18px rgba(236,72,153,0.4);">
+                <a href="${activeKey === 'verification' ? 'https://control.arixbyte.com/account?verify_code=E4GWJ3' : 'https://control.arixbyte.com'}" target="_blank" id="apparatus-preview-btn" style="display: inline-block; background: linear-gradient(135deg, #ec4899, #db2777); color: #fff; font-weight: 700; font-size: 0.95rem; padding: 0.85rem 2.2rem; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 18px rgba(236,72,153,0.4);">
                   ${currentTpl.btnText}
                 </a>
+                <div id="apparatus-preview-direct-link" style="display: ${activeKey === 'verification' ? 'block' : 'none'}; margin-top: 0.75rem; font-size: 0.85rem;">
+                  <a href="https://control.arixbyte.com/account?verify_code=E4GWJ3" target="_blank" style="color: #38bdf8; text-decoration: underline; font-weight: 600;">
+                    Click here to get your account verified
+                  </a>
+                </div>
               </div>
 
               <!-- Official Social Channels -->
@@ -644,25 +672,53 @@ ${formatMailBody(currentTpl.body)}
     const btnInput = container.querySelector('#apparatus-mail-btn-text');
     const previewBtn = container.querySelector('#apparatus-preview-btn');
     const codeBox = container.querySelector('#apparatus-preview-code-box');
+    const directLinkBox = container.querySelector('#apparatus-preview-direct-link');
+    const pillBtns = container.querySelectorAll('.apparatus-mail-pill');
+
+    function switchTemplate(key) {
+      const selected = mailTemplates[key];
+      if (!selected) return;
+      activeKey = key;
+
+      if (tplSelect) tplSelect.value = key;
+      subjInput.value = selected.subject;
+      senderInput.value = selected.sender;
+      btnInput.value = selected.btnText;
+      bodyInput.value = selected.body;
+
+      previewSubj.textContent = selected.subject;
+      previewBody.innerHTML = formatMailBody(selected.body);
+      previewBtn.textContent = selected.btnText;
+      previewBtn.href = (key === 'verification') ? 'https://control.arixbyte.com/account?verify_code=E4GWJ3' : 'https://control.arixbyte.com';
+      if (codeBox) codeBox.style.display = selected.showCode ? 'block' : 'none';
+      if (directLinkBox) directLinkBox.style.display = (key === 'verification') ? 'block' : 'none';
+
+      // Update pills styling
+      pillBtns.forEach(function (pill) {
+        if (pill.getAttribute('data-tpl') === key) {
+          pill.style.border = '1px solid rgba(236,72,153,0.4)';
+          pill.style.background = 'rgba(236,72,153,0.18)';
+          pill.style.color = '#fff';
+        } else {
+          pill.style.border = '1px solid rgba(255,255,255,0.14)';
+          pill.style.background = 'rgba(255,255,255,0.06)';
+          pill.style.color = '#cbd5e1';
+        }
+      });
+    }
+
+    // Switch templates live on pill tab click
+    pillBtns.forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        const key = this.getAttribute('data-tpl');
+        switchTemplate(key);
+      });
+    });
 
     // Switch templates live on dropdown change
     if (tplSelect) {
       tplSelect.addEventListener('change', function () {
-        const val = this.value;
-        const selected = mailTemplates[val];
-        if (!selected) return;
-
-        subjInput.value = selected.subject;
-        senderInput.value = selected.sender;
-        btnInput.value = selected.btnText;
-        bodyInput.value = selected.body;
-
-        previewSubj.textContent = selected.subject;
-        previewBody.innerHTML = formatMailBody(selected.body);
-        previewBtn.textContent = selected.btnText;
-        if (codeBox) {
-          codeBox.style.display = selected.showCode ? 'block' : 'none';
-        }
+        switchTemplate(this.value);
       });
     }
 
@@ -1847,21 +1903,21 @@ php artisan view:clear</pre>
             <table class="apparatus-users-table" id="apparatus-users-data-table">
               <thead>
                 <tr>
-                  <th style="width: 50px; text-align: center;">ICON</th>
                   <th style="width: 70px;">ID</th>
+                  <th>EMAIL</th>
                   <th>CLIENT NAME</th>
                   <th>USERNAME</th>
-                  <th>EMAIL</th>
                   <th style="text-align: center;">2FA</th>
-                  <th style="text-align: center;">SERVERS</th>
-                  <th style="text-align: center;">VPS</th>
+                  <th style="text-align: center;">SERVERS OWNED</th>
+                  <th style="text-align: center;">VPS OWNED</th>
                   <th>CAN ACCESS</th>
                   <th style="text-align: center;">VERIFIED</th>
                   <th>CASH BALANCE</th>
                   <th>LAST LOGIN</th>
                   <th>ACCOUNT CREATED</th>
                   <th>REFERRAL CODE</th>
-                  <th style="text-align: center;">TOTAL REFS</th>
+                  <th style="text-align: center;">TOTAL REFERRALS</th>
+                  <th style="width: 60px; text-align: center;">PROFILE ICON</th>
                   <th style="text-align: center;">ACTIONS</th>
                 </tr>
               </thead>
@@ -1921,13 +1977,15 @@ php artisan view:clear</pre>
 
         return `
           <tr data-user-id="${u.id}">
-            <!-- 1. Profile Icon -->
-            <td style="text-align: center;">
-              <img src="${u.avatar}" alt="${u.username}" class="apparatus-user-avatar">
-            </td>
-            <!-- 2. ID -->
+            <!-- 1. ID -->
             <td>
               <span class="apparatus-user-id">#${u.id}</span>
+            </td>
+            <!-- 2. Email -->
+            <td>
+              <a href="mailto:${u.email}" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem;" title="Send email to ${u.email}">
+                ${u.email}
+              </a>
             </td>
             <!-- 3. Client Name -->
             <td>
@@ -1937,55 +1995,53 @@ php artisan view:clear</pre>
             <td>
               <span style="color: #f472b6; font-weight: 600;">@${u.username}</span>
             </td>
-            <!-- 5. Email -->
-            <td>
-              <a href="mailto:${u.email}" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem;" title="Send email to ${u.email}">
-                ${u.email}
-              </a>
-            </td>
-            <!-- 6. 2FA -->
+            <!-- 5. 2FA -->
             <td style="text-align: center;">
               ${twoFaHtml}
             </td>
-            <!-- 7. Servers Owned -->
+            <!-- 6. Servers Owned -->
             <td style="text-align: center;">
               <span class="apparatus-counter-num" style="border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;">${u.serversOwned || 0}</span>
             </td>
-            <!-- 8. VPS Owned -->
+            <!-- 7. VPS Owned -->
             <td style="text-align: center;">
               <span class="apparatus-counter-num" style="border-color: rgba(192, 132, 252, 0.35); color: #c084fc;">${u.vpsOwned || 0}</span>
             </td>
-            <!-- 9. Can Access -->
+            <!-- 8. Can Access -->
             <td>
               <span style="color: #e2e8f0; font-size: 0.88rem; font-weight: 600;">${u.canAccess || 'Client Area'}</span>
             </td>
-            <!-- 10. Verified (Interactive Toggle Button) -->
+            <!-- 9. Verified (Interactive Toggle Button) -->
             <td style="text-align: center;">
               ${verifiedBtnHtml}
             </td>
-            <!-- 11. Cash Balance -->
+            <!-- 10. Cash Balance -->
             <td>
               <strong style="color: #34d399; font-size: 0.94rem; font-family: monospace;">${u.balance || '₹0.00'}</strong>
             </td>
-            <!-- 12. Last Login -->
+            <!-- 11. Last Login -->
             <td>
               <span style="color: #94a3b8; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem;">
                 <i class="ri-time-line"></i> ${u.lastLogin || 'Recently'}
               </span>
             </td>
-            <!-- 13. Account Created -->
+            <!-- 12. Account Created -->
             <td>
               <span style="color: #94a3b8; font-size: 0.85rem;">${u.created || '2026-01-15'}</span>
             </td>
-            <!-- 14. Referral Code (Click to Copy) -->
+            <!-- 13. Referral Code (Click to Copy) -->
             <td>
               <button class="apparatus-ref-code" data-code="${u.referralCode}" title="Click to copy referral code">
                 <i class="ri-file-copy-line"></i> ${u.referralCode}
               </button>
             </td>
-            <!-- 15. Total Referrals -->
+            <!-- 14. Total Referrals -->
             <td style="text-align: center;">
               <span class="apparatus-counter-num" style="border-color: rgba(236, 72, 153, 0.35); color: #f472b6;">${u.totalReferrals || 0}</span>
+            </td>
+            <!-- 15. Profile Icon -->
+            <td style="text-align: center;">
+              <img src="${u.avatar}" alt="${u.username}" class="apparatus-user-avatar">
             </td>
             <!-- Actions -->
             <td style="text-align: center;">
