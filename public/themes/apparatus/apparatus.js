@@ -7771,7 +7771,17 @@
 
         try {
           const token = getCsrfToken();
+          const reqHeaders = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          };
+          if (token) {
+            reqHeaders['X-CSRF-TOKEN'] = token;
+            reqHeaders['X-XSRF-TOKEN'] = token;
+          }
           const payload = JSON.stringify({
+            _token: token || undefined,
             username: userVal,
             email: emailVal,
             password: passVal,
@@ -7782,12 +7792,7 @@
           let resp = await fetch('/auth/register', {
             method: 'POST',
             credentials: 'same-origin',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'X-CSRF-TOKEN': token,
-              'X-Requested-With': 'XMLHttpRequest'
-            },
+            headers: reqHeaders,
             body: payload
           });
 
@@ -7795,12 +7800,7 @@
             resp = await fetch('/register', {
               method: 'POST',
               credentials: 'same-origin',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': token,
-                'X-Requested-With': 'XMLHttpRequest'
-              },
+              headers: reqHeaders,
               body: payload
             });
           }

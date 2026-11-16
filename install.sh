@@ -139,15 +139,21 @@ install_theme() {
     if [ ! -f "$CSRF_FILE.apparatus.bak" ]; then
       cp "$CSRF_FILE" "$CSRF_FILE.apparatus.bak"
     fi
-    python3 -c "
-with open('$CSRF_FILE', 'r') as f:
-    c = f.read()
-
-if 'auth/register' not in c:
-    c = c.replace('protected \$except = [', 'protected \$except = [\n        \'register\',\n        \'auth/register\',\n        \'auth/mail/*\',')
-    with open('$CSRF_FILE', 'w') as f:
-        f.write(c)
-" 2>/dev/null || true
+    python3 -c '
+import re, sys
+target_file = sys.argv[1]
+try:
+    with open(target_file, "r") as fp:
+        c = fp.read()
+    if "auth/register" not in c:
+        pattern = r"protected\s+\$except\s*=\s*\["
+        replacement = "protected $except = [\n        '\''register\'',\n        '\''auth/register\'',\n        '\''auth/mail/*\'',"
+        c = re.sub(pattern, replacement, c, count=1)
+        with open(target_file, "w") as fp:
+            fp.write(c)
+except Exception:
+    pass
+' "$CSRF_FILE" 2>/dev/null || true
   fi
 
   # Inject Registration Routes into routes/auth.php and routes/base.php
