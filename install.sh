@@ -156,79 +156,87 @@ except Exception:
 ' "$CSRF_FILE" 2>/dev/null || true
   fi
 
-  # Inject Registration Routes into routes/auth.php BEFORE Route::fallback
+  # Inject Registration Routes into routes/auth.php
   AUTH_ROUTES="$PTERO_DIR/routes/auth.php"
   if [ -f "$AUTH_ROUTES" ]; then
     if [ ! -f "$AUTH_ROUTES.apparatus.bak" ]; then
       cp "$AUTH_ROUTES" "$AUTH_ROUTES.apparatus.bak"
+    else
+      cp "$AUTH_ROUTES.apparatus.bak" "$AUTH_ROUTES"
     fi
-    sed -i '/RegisterController/d' "$AUTH_ROUTES"
-    sed -i '/Apparatus Self-Registration Routes/d' "$AUTH_ROUTES"
-    python3 - "$AUTH_ROUTES" << 'PYEOF' 2>/dev/null || {
+    python3 - "$AUTH_ROUTES" << 'PYEOF' 2>/dev/null || true
 import sys
 
 target = sys.argv[1]
 with open(target, 'r') as f:
     c = f.read()
 
-snippet = r'''
-// Apparatus Self-Registration Routes
+# Strip any stray text prepended before <?php
+idx = c.find('<?php')
+if idx != -1:
+    c = c[idx:]
+
+# Filter out old RegisterController lines
+lines = [l for l in c.splitlines() if 'RegisterController' not in l and 'Apparatus Self-Registration' not in l]
+c = '\n'.join(lines)
+
+snippet = r'''// Apparatus Self-Registration Routes
 Route::get('/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'index'])->name('auth.register');
 Route::post('/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'register'])->name('auth.register.post');
 Route::get('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'index']);
 Route::post('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'register']);
 Route::post('/auth/mail/test', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendTestMail']);
-Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendVerificationCode']);
-'''
+Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendVerificationCode']);'''
 
-if 'RegisterController' not in c:
-    if 'Route::fallback' in c:
-        c = c.replace('Route::fallback', snippet + '\nRoute::fallback', 1)
-    else:
-        c = snippet + '\n' + c
-    with open(target, 'w') as f:
-        f.write(c)
+if '<?php' in c:
+    c = c.replace('<?php', '<?php\n\n' + snippet, 1)
+else:
+    c = '<?php\n\n' + snippet + '\n\n' + c
+
+with open(target, 'w') as f:
+    f.write(c)
 PYEOF
-      sed -i "1i Route::get('/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'index'])->name('auth.register');\nRoute::post('/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'register'])->name('auth.register.post');\nRoute::get('/auth/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'index']);\nRoute::post('/auth/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'register']);" "$AUTH_ROUTES"
-    }
   fi
 
   BASE_ROUTES="$PTERO_DIR/routes/base.php"
   if [ -f "$BASE_ROUTES" ]; then
     if [ ! -f "$BASE_ROUTES.apparatus.bak" ]; then
       cp "$BASE_ROUTES" "$BASE_ROUTES.apparatus.bak"
+    else
+      cp "$BASE_ROUTES.apparatus.bak" "$BASE_ROUTES"
     fi
-    sed -i '/RegisterController/d' "$BASE_ROUTES"
-    sed -i '/Apparatus Self-Registration Routes/d' "$BASE_ROUTES"
-    python3 - "$BASE_ROUTES" << 'PYEOF' 2>/dev/null || {
+    python3 - "$BASE_ROUTES" << 'PYEOF' 2>/dev/null || true
 import sys
 
 target = sys.argv[1]
 with open(target, 'r') as f:
     c = f.read()
 
-snippet = r'''
-// Apparatus Self-Registration Routes (Base Web)
+# Strip any stray text prepended before <?php
+idx = c.find('<?php')
+if idx != -1:
+    c = c[idx:]
+
+# Filter out old RegisterController lines
+lines = [l for l in c.splitlines() if 'RegisterController' not in l and 'Apparatus Self-Registration' not in l]
+c = '\n'.join(lines)
+
+snippet = r'''// Apparatus Self-Registration Routes (Base Web)
 Route::get('/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'index']);
 Route::post('/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'register']);
 Route::get('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'index']);
 Route::post('/auth/register', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'register']);
 Route::post('/auth/mail/test', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendTestMail']);
-Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendVerificationCode']);
-'''
+Route::post('/auth/mail/verify-code', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'sendVerificationCode']);'''
 
-if 'RegisterController' not in c:
-    if "Route::get('/{path?'" in c:
-        c = c.replace("Route::get('/{path?'", snippet + "\nRoute::get('/{path?'", 1)
-    elif 'Route::fallback' in c:
-        c = c.replace('Route::fallback', snippet + '\nRoute::fallback', 1)
-    else:
-        c = snippet + '\n' + c
-    with open(target, 'w') as f:
-        f.write(c)
+if '<?php' in c:
+    c = c.replace('<?php', '<?php\n\n' + snippet, 1)
+else:
+    c = '<?php\n\n' + snippet + '\n\n' + c
+
+with open(target, 'w') as f:
+    f.write(c)
 PYEOF
-      sed -i "1i Route::get('/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'index']);\nRoute::post('/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'register']);\nRoute::get('/auth/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'index']);\nRoute::post('/auth/register', [\\\\Pterodactyl\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController::class, 'register']);" "$BASE_ROUTES"
-    }
   fi
 
   # Deploy custom 403 Hacking Attempt error page for /admin access denial
@@ -314,15 +322,15 @@ if '</head>' in content:
 
   echo -e "${GREEN}✓ Injected theme loader successfully.${NC}"
 
-  # Step 4: Disable broken reCAPTCHA if quota exceeded and Clear Cache
-  echo -e "${BLUE}[4/4] Optimizing login and clearing Pterodactyl cache...${NC}"
+  # Step 4: Clear Pterodactyl Caches cleanly
+  echo -e "${BLUE}[4/4] Optimizing routing and clearing Pterodactyl cache...${NC}"
   cd "$PTERO_DIR"
-  php artisan tinker --execute="use Pterodactyl\Models\Setting; Setting::updateOrCreate(['key' => 'settings::recaptcha:enabled'], ['value' => 'false']);" 2>/dev/null || true
-  composer dump-autoload -o 2>/dev/null || true
-  php artisan route:clear
-  php artisan view:clear
-  php artisan cache:clear
-  php artisan config:clear
+  export COMPOSER_ALLOW_SUPERUSER=1
+  composer dump-autoload -o --no-interaction --quiet 2>/dev/null || true
+  php artisan route:clear --no-interaction 2>/dev/null || true
+  php artisan view:clear --no-interaction 2>/dev/null || true
+  php artisan cache:clear --no-interaction 2>/dev/null || true
+  php artisan config:clear --no-interaction 2>/dev/null || true
 
   echo -e "\n${GREEN}========================================================================${NC}"
   echo -e "${GREEN}✓ APPARATUS THEME SUCCESSFULLY INSTALLED!${NC}"
