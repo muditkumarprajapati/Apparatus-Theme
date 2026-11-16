@@ -2005,22 +2005,18 @@
                   <i class="ri-flashlight-line"></i> Quick Server Purchase
                 </span>
                 <div class="apparatus-upgrades-grid" style="grid-template-columns: 1fr;">
-                  <button type="button" class="apparatus-upgrade-pill apparatus-quick-purchase-card" data-upgrade="4GB RAM • 150% CPU • 15GB Disk" data-price="1000 Pts or ₹100/m" style="padding: 0.85rem 1.1rem; width: 100%; box-sizing: border-box; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0.75rem; text-align: left; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; cursor: pointer; transition: all 0.25s ease;">
+                  <button type="button" class="apparatus-upgrade-pill apparatus-quick-purchase-card" data-upgrade="4GB • 150% • 15GB Disk" data-price="1000 Pts or ₹100/m" style="padding: 0.85rem 1.15rem; width: 100%; box-sizing: border-box; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0.75rem; text-align: left; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; cursor: pointer; transition: all 0.25s ease;">
                     <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                      <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                        <span style="font-size: 0.9rem; font-weight: 800; color: #ffffff; letter-spacing: 0.02em;">4GB RAM</span>
-                        <span style="color: rgba(255, 255, 255, 0.35); font-size: 0.75rem;">•</span>
-                        <span style="font-size: 0.9rem; font-weight: 800; color: #38bdf8; letter-spacing: 0.02em;">150% CPU</span>
-                        <span style="color: rgba(255, 255, 255, 0.35); font-size: 0.75rem;">•</span>
-                        <span style="font-size: 0.9rem; font-weight: 800; color: #a78bfa; letter-spacing: 0.02em;">15GB Disk</span>
+                      <div style="font-size: 0.95rem; font-weight: 800; color: #ffffff; letter-spacing: 0.02em; white-space: nowrap;">
+                        4GB • 150% • 15GB Disk
                       </div>
-                      <span style="font-size: 0.76rem; color: rgba(255, 255, 255, 0.55); font-weight: 500;">High-Performance Cloud Gaming &amp; Bot Node</span>
+                      <span style="font-size: 0.78rem; color: rgba(255, 255, 255, 0.6); font-weight: 500;">Intel Platinum 8269cy</span>
                     </div>
-                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.15rem; text-align: right; min-width: 135px;">
-                      <div style="font-size: 0.95rem; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 0.25rem;">
-                        <i class="ri-copper-coin-line"></i> 1,000 Pts <span style="font-size: 0.72rem; color: rgba(255, 255, 255, 0.45); font-weight: 500;">/ m</span>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.15rem; text-align: right; min-width: 120px;">
+                      <div style="font-size: 0.95rem; font-weight: 800; color: #fbbf24; white-space: nowrap;">
+                        1,000 Pts <span style="font-size: 0.72rem; color: rgba(255, 255, 255, 0.45); font-weight: 500;">/ m</span>
                       </div>
-                      <div style="font-size: 0.8rem; font-weight: 700; color: #f472b6;">
+                      <div style="font-size: 0.8rem; font-weight: 700; color: #f472b6; white-space: nowrap;">
                         or <span style="font-weight: 800; color: #34d399;">₹100</span> <span style="font-size: 0.72rem; color: rgba(255, 255, 255, 0.45); font-weight: 500;">/ m</span>
                       </div>
                     </div>
@@ -6045,29 +6041,59 @@
     const rawPath = window.location.pathname || '';
     if (rawPath !== '/account' && rawPath !== '/account/') return null;
 
-    let gridContainer = document.querySelector('div.md\\:grid') ||
-      document.querySelector('div[class*="md:grid"]') ||
-      document.querySelector('.sc-12to0iy-1') ||
-      document.querySelector('div[class*="AccountOverviewContainer"] div[class*="grid"]') ||
-      document.querySelector('div[class*="AccountOverviewContainer"] > div');
+    let gridContainer = null;
 
+    // Check 1: Find grid container inside PageContentBlock or AccountOverviewContainer
+    const contentBlock = document.querySelector('div[class*="PageContentBlock"]') ||
+      document.querySelector('div[class*="AccountOverviewContainer"]') ||
+      document.querySelector('#app');
+
+    if (contentBlock) {
+      gridContainer = contentBlock.querySelector('div.md\\:grid') ||
+        contentBlock.querySelector('div[class*="md:grid"]') ||
+        contentBlock.querySelector('div[class*="grid-cols-2"]') ||
+        contentBlock.querySelector('.sc-12to0iy-1') ||
+        contentBlock.querySelector('div[class*="grid"]');
+    }
+
+    // Check 2: Find via heading "Update Password" or "Update Email Address"
     if (!gridContainer) {
-      const pwInput = document.querySelector('input[type="password"]');
-      if (pwInput) {
-        const form = pwInput.closest('form');
-        if (form && form.parentElement) {
-          gridContainer = form.parentElement;
+      const headings = document.querySelectorAll('h1, h2, h3, h4');
+      for (let i = 0; i < headings.length; i++) {
+        const text = (headings[i].textContent || '').trim().toLowerCase();
+        if (text === 'update password' || text === 'update email address') {
+          let curr = headings[i].parentElement;
+          while (curr && curr !== document.body) {
+            if (curr.parentElement) {
+              const p = curr.parentElement;
+              const pText = (p.textContent || '').toLowerCase();
+              if ((pText.includes('update email') && pText.includes('update password')) || (p.className && (p.className.includes('grid') || p.className.includes('sc-')))) {
+                gridContainer = p;
+                break;
+              }
+            }
+            curr = curr.parentElement;
+          }
+          if (gridContainer) break;
         }
       }
     }
 
-    if (!gridContainer) return null;
+    // Check 3: Global querySelector fallback
+    if (!gridContainer) {
+      gridContainer = document.querySelector('div.md\\:grid') ||
+        document.querySelector('div[class*="md:grid"]') ||
+        document.querySelector('div[class*="grid-cols-2"]') ||
+        document.querySelector('.sc-12to0iy-1') ||
+        document.querySelector('div[class*="AccountOverviewContainer"] div[class*="grid"]') ||
+        document.querySelector('div[class*="AccountOverviewContainer"] > div');
+    }
 
-    const pageContainer = gridContainer.parentElement;
+    if (!gridContainer) return null;
 
     return {
       gridContainer: gridContainer,
-      pageContainer: pageContainer
+      pageContainer: gridContainer.parentElement
     };
   }
 
@@ -6080,17 +6106,9 @@
     }
 
     const els = getAccountPageElements();
-    if (!els || (!els.gridContainer && !els.pageContainer)) {
-      if (!window.__apparatus_profile_retry) {
-        window.__apparatus_profile_retry = 0;
-      }
-      if (window.__apparatus_profile_retry < 35) {
-        window.__apparatus_profile_retry++;
-        setTimeout(injectUserProfileSection, 100);
-      }
+    if (!els || !els.gridContainer) {
       return;
     }
-    window.__apparatus_profile_retry = 0;
 
     let section = document.getElementById('apparatus-user-profile-section');
     const isNew = !section;
@@ -6436,11 +6454,10 @@
     }
   }
 
-  // Mount section right above gridContainer in pageContainer (guaranteed on every route sync)
-  const targetParent = els.pageContainer || (els.gridContainer ? els.gridContainer.parentElement : null);
-  if (targetParent && els.gridContainer) {
-    if (section.parentElement !== targetParent || section.nextSibling !== els.gridContainer) {
-      targetParent.insertBefore(section, els.gridContainer);
+  // Mount section right above gridContainer in its real DOM parent (guaranteed on every route sync)
+  if (els.gridContainer && els.gridContainer.parentNode) {
+    if (section.parentElement !== els.gridContainer.parentNode || section.nextSibling !== els.gridContainer) {
+      els.gridContainer.parentNode.insertBefore(section, els.gridContainer);
     }
   } else if (els.pageContainer) {
     if (section.parentElement !== els.pageContainer) {
@@ -6465,12 +6482,13 @@
     const grid = els.gridContainer;
     grid.style.setProperty('display', 'flex', 'important');
     grid.style.setProperty('flex-direction', 'column', 'important');
-    grid.style.setProperty('grid-template-columns', '1fr', 'important');
+    grid.style.setProperty('grid-template-columns', '100%', 'important');
     grid.style.setProperty('gap', '1.5rem', 'important');
     grid.style.setProperty('width', '100%', 'important');
     grid.style.setProperty('max-width', '100%', 'important');
     grid.style.setProperty('margin-left', '0', 'important');
     grid.style.setProperty('margin-right', '0', 'important');
+    grid.style.setProperty('margin-top', '1.5rem', 'important');
     grid.style.setProperty('padding', '0', 'important');
     grid.style.setProperty('align-items', 'stretch', 'important');
     grid.style.setProperty('box-sizing', 'border-box', 'important');
@@ -6481,12 +6499,15 @@
       child.style.setProperty('flex-direction', 'column', 'important');
       child.style.setProperty('width', '100%', 'important');
       child.style.setProperty('max-width', '100%', 'important');
+      child.style.setProperty('min-width', '100%', 'important');
       child.style.setProperty('grid-column', '1 / -1', 'important');
       child.style.setProperty('margin-left', '0', 'important');
       child.style.setProperty('margin-right', '0', 'important');
       child.style.setProperty('margin-top', '0', 'important');
+      child.style.setProperty('margin-bottom', '0', 'important');
       child.style.setProperty('box-sizing', 'border-box', 'important');
       child.style.setProperty('align-self', 'stretch', 'important');
+      child.style.setProperty('flex', '1 1 100%', 'important');
 
       const forms = child.querySelectorAll('form');
       forms.forEach(function (f) {
@@ -6496,9 +6517,10 @@
         f.style.setProperty('align-self', 'stretch', 'important');
         f.style.setProperty('margin-left', '0', 'important');
         f.style.setProperty('margin-right', '0', 'important');
+        f.style.setProperty('margin-top', '0', 'important');
       });
 
-      const innerBoxes = child.querySelectorAll('.sc-mjlt6f-2, [class*="sc-mjlt6f-2"], [class*="ContentBox"]');
+      const innerBoxes = child.querySelectorAll('.sc-mjlt6f-2, [class*="sc-mjlt6f-2"], [class*="ContentBox"], div[class*="ContentBox___StyledDiv"], div.bg-neutral-700, div[class*="bg-neutral-700"]');
       innerBoxes.forEach(function (innerBox) {
         innerBox.style.setProperty('width', '100%', 'important');
         innerBox.style.setProperty('max-width', '100%', 'important');
@@ -6507,7 +6529,8 @@
         innerBox.style.setProperty('margin-left', '0', 'important');
         innerBox.style.setProperty('margin-right', '0', 'important');
         innerBox.style.setProperty('margin-top', '0', 'important');
-        innerBox.style.setProperty('padding-top', '1rem', 'important');
+        innerBox.style.setProperty('padding-top', '1.25rem', 'important');
+        innerBox.style.setProperty('padding-bottom', '1.25rem', 'important');
 
         // Hide empty fade/spinner overlays or phantom empty divs
         innerBox.querySelectorAll('div').forEach(function (el) {
@@ -6805,10 +6828,12 @@
       insertBeforeEl = null;
     } else if (isAccountPage) {
       const els = getAccountPageElements();
-      if (els && (els.pageContainer || els.gridContainer)) {
-        targetParent = els.pageContainer || (els.gridContainer ? els.gridContainer.parentElement : null);
+      if (els && els.gridContainer) {
         const profileSec = document.getElementById('apparatus-user-profile-section');
         insertBeforeEl = profileSec || els.gridContainer;
+        if (insertBeforeEl && insertBeforeEl.parentNode) {
+          targetParent = insertBeforeEl.parentNode;
+        }
       }
     } else {
       const welcomeCard = document.getElementById('apparatus-area-1') || document.querySelector('.apparatus-card-welcome');
