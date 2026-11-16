@@ -5860,12 +5860,20 @@ div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon {
    ACCOUNT VERIFICATION & REFERRAL ACTIVATION STUDIO (DASHBOARD & EMAIL)
    ============================================================================== */
 .apparatus-verification-card {
-  background: radial-gradient(ellipse at top right, rgba(236, 72, 153, 0.15), transparent 60%), rgba(18, 12, 28, 0.6) !important;
-  border: 1px solid rgba(236, 72, 153, 0.45) !important;
-  border-radius: 18px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 1.5rem !important;
+  background: radial-gradient(ellipse at top right, rgba(236, 72, 153, 0.12), transparent 60%), rgba(18, 12, 28, 0.55) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 16px !important;
   padding: 1.5rem 1.85rem !important;
-  margin-bottom: 2rem !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 0 25px rgba(236, 72, 153, 0.15) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3) !important;
   animation: apparatusAuthCardEntrance 0.35s ease-out forwards;
 }
 
@@ -5889,15 +5897,15 @@ div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon {
   width: 52px !important;
   height: 52px !important;
   border-radius: 14px !important;
-  background: rgba(236, 72, 153, 0.18) !important;
-  border: 1px solid rgba(236, 72, 153, 0.45) !important;
+  background: rgba(236, 72, 153, 0.15) !important;
+  border: 1px solid rgba(236, 72, 153, 0.35) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   font-size: 1.75rem !important;
   color: #f472b6 !important;
   flex-shrink: 0 !important;
-  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.25) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
 }
 
 .apparatus-verify-info {
@@ -6044,12 +6052,12 @@ div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon {
 .apparatus-verify-modal-card {
   width: 100% !important;
   max-width: 480px !important;
-  background: rgba(18, 12, 28, 0.95) !important;
+  background: rgba(18, 12, 28, 0.96) !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(236, 72, 153, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8) !important;
   overflow: hidden !important;
 }
 
