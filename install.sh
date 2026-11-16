@@ -133,6 +133,23 @@ install_theme() {
   chown www-data:www-data "$REG_FILE"
   chmod 644 "$REG_FILE"
 
+  # Configure CSRF exemptions for registration & mail endpoints
+  CSRF_FILE="$PTERO_DIR/app/Http/Middleware/VerifyCsrfToken.php"
+  if [ -f "$CSRF_FILE" ]; then
+    if [ ! -f "$CSRF_FILE.apparatus.bak" ]; then
+      cp "$CSRF_FILE" "$CSRF_FILE.apparatus.bak"
+    fi
+    python3 -c "
+with open('$CSRF_FILE', 'r') as f:
+    c = f.read()
+
+if 'auth/register' not in c:
+    c = c.replace('protected \$except = [', 'protected \$except = [\n        \'register\',\n        \'auth/register\',\n        \'auth/mail/*\',')
+    with open('$CSRF_FILE', 'w') as f:
+        f.write(c)
+" 2>/dev/null || true
+  fi
+
   # Inject Registration Routes into routes/auth.php and routes/base.php
   AUTH_ROUTES="$PTERO_DIR/routes/auth.php"
   if [ -f "$AUTH_ROUTES" ]; then
@@ -145,11 +162,11 @@ install_theme() {
 
 // Apparatus Self-Registration Routes
 Route::get('/register', 'RegisterController@index')->name('auth.register');
-Route::post('/register', 'RegisterController@register')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])->name('auth.register.post');
+Route::post('/register', 'RegisterController@register')->name('auth.register.post');
 Route::get('/auth/register', 'RegisterController@index');
-Route::post('/auth/register', 'RegisterController@register')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
-Route::post('/auth/mail/test', 'RegisterController@sendTestMail')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
-Route::post('/auth/mail/verify-code', 'RegisterController@sendVerificationCode')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+Route::post('/auth/register', 'RegisterController@register');
+Route::post('/auth/mail/test', 'RegisterController@sendTestMail');
+Route::post('/auth/mail/verify-code', 'RegisterController@sendVerificationCode');
 EOF
   fi
 
@@ -167,11 +184,11 @@ with open('$BASE_ROUTES', 'r') as f:
 snippet = '''
 // Apparatus Self-Registration Routes (Base Web)
 Route::get('/register', 'Auth\\\RegisterController@index');
-Route::post('/register', 'Auth\\\RegisterController@register')->withoutMiddleware([\\\App\\\Http\\\Middleware\\\VerifyCsrfToken::class]);
+Route::post('/register', 'Auth\\\RegisterController@register');
 Route::get('/auth/register', 'Auth\\\RegisterController@index');
-Route::post('/auth/register', 'Auth\\\RegisterController@register')->withoutMiddleware([\\\App\\\Http\\\Middleware\\\VerifyCsrfToken::class]);
-Route::post('/auth/mail/test', 'Auth\\\RegisterController@sendTestMail')->withoutMiddleware([\\\App\\\Http\\\Middleware\\\VerifyCsrfToken::class]);
-Route::post('/auth/mail/verify-code', 'Auth\\\RegisterController@sendVerificationCode')->withoutMiddleware([\\\App\\\Http\\\Middleware\\\VerifyCsrfToken::class]);
+Route::post('/auth/register', 'Auth\\\RegisterController@register');
+Route::post('/auth/mail/test', 'Auth\\\RegisterController@sendTestMail');
+Route::post('/auth/mail/verify-code', 'Auth\\\RegisterController@sendVerificationCode');
 '''
 
 if 'RegisterController' not in c:
@@ -182,6 +199,16 @@ if 'RegisterController' not in c:
     with open('$BASE_ROUTES', 'w') as f:
         f.write(c)
 " 2>/dev/null || cat << 'EOF' >> "$BASE_ROUTES"
+
+// Apparatus Self-Registration Routes (Base Web)
+Route::get('/register', 'Auth\RegisterController@index');
+Route::post('/register', 'Auth\RegisterController@register');
+Route::get('/auth/register', 'Auth\RegisterController@index');
+Route::post('/auth/register', 'Auth\RegisterController@register');
+Route::post('/auth/mail/test', 'Auth\RegisterController@sendTestMail');
+Route::post('/auth/mail/verify-code', 'Auth\RegisterController@sendVerificationCode');
+EOF
+  fi
 
 // Apparatus Self-Registration Routes (Base Web)
 Route::get('/register', 'Auth\RegisterController@index');
@@ -367,6 +394,12 @@ remove_theme() {
     cp "$BASE_ROUTES.apparatus.bak" "$BASE_ROUTES"
     rm -f "$BASE_ROUTES.apparatus.bak"
     echo -e "${GREEN}✓ Restored original routes/base.php.${NC}"
+  fi
+  CSRF_FILE="$PTERO_DIR/app/Http/Middleware/VerifyCsrfToken.php"
+  if [ -f "$CSRF_FILE.apparatus.bak" ]; then
+    cp "$CSRF_FILE.apparatus.bak" "$CSRF_FILE"
+    rm -f "$CSRF_FILE.apparatus.bak"
+    echo -e "${GREEN}✓ Restored original VerifyCsrfToken.php.${NC}"
   fi
 
   # Restore 403 error page

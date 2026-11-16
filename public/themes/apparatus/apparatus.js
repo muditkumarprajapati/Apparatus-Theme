@@ -7848,44 +7848,16 @@
             errorDetail = data.message;
           }
 
-          const isUnexpectedOrServerError = resp.status >= 500 || resp.status === 404 || resp.status === 405 ||
-            !errorDetail ||
-            errorDetail.toLowerCase().includes('unexpected error') ||
-            errorDetail.toLowerCase().includes('not supported') ||
-            errorDetail.toLowerCase().includes('internal server') ||
-            errorDetail.toLowerCase().includes('sqlstate') ||
-            errorDetail.toLowerCase().includes('exception');
-
-          if (isUnexpectedOrServerError) {
-            // Gracefully acknowledge registration and route to verification workflow
-            localStorage.setItem('apparatus_registered_username', userVal);
-            localStorage.setItem('apparatus_registered_email', emailVal);
-            localStorage.setItem('apparatus_user_verified', 'false');
-            localStorage.setItem('apparatus_needs_verification', 'true');
-            if (refVal) {
-              localStorage.setItem('apparatus_user_referral_input', refVal);
-              localStorage.setItem('apparatus_referral_claimed', 'true');
-              localStorage.setItem('apparatus_claimed_referral_code', refVal);
-              const curPts = parseInt(localStorage.getItem('apparatus_coins') || '100', 10);
-              localStorage.setItem('apparatus_coins', (curPts + 20).toString());
-              creditReferralPointsToOwner(refVal, 10);
-            } else {
-              localStorage.removeItem('apparatus_user_referral_input');
-              localStorage.removeItem('apparatus_referral_claimed');
-              localStorage.removeItem('apparatus_claimed_referral_code');
-            }
-
-            showToast('success', 'Registration Successful!', 'Welcome to ArixByte Cloud! Account created.');
-            if (msgBox) {
-              msgBox.className = 'login-success';
-              msgBox.textContent = 'Account registered! Proceeding to dashboard...';
-              msgBox.style.display = 'block';
-            }
-            setTimeout(function () {
-              window.location.href = '/';
-            }, 1000);
-            return;
+          regBtn.disabled = false;
+          regBtn.textContent = 'Register';
+          const errorMsg = errorDetail || 'Registration could not be completed. Please try again.';
+          showToast('error', 'Registration Failed', errorMsg);
+          if (msgBox) {
+            msgBox.className = 'login-error';
+            msgBox.textContent = errorMsg;
+            msgBox.style.display = 'block';
           }
+          return;
 
           // Genuine client validation error (e.g. username taken, email taken, short password)
           regBtn.disabled = false;
