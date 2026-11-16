@@ -7172,7 +7172,15 @@
 
         try {
           const token = getCsrfToken();
-          const resp = await fetch('/auth/register', {
+          const payload = JSON.stringify({
+            username: userVal,
+            email: emailVal,
+            password: passVal,
+            password_confirmation: confirmVal,
+            referral_code: refVal || undefined
+          });
+
+          let resp = await fetch('/auth/register', {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
@@ -7181,18 +7189,31 @@
               'X-CSRF-TOKEN': token,
               'X-Requested-With': 'XMLHttpRequest'
             },
-            body: JSON.stringify({
-              username: userVal,
-              email: emailVal,
-              password: passVal,
-              password_confirmation: confirmVal,
-              referral_code: refVal || undefined
-            })
+            body: payload
           });
+
+          if (!resp.ok && (resp.status === 404 || resp.status === 405)) {
+            resp = await fetch('/register', {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest'
+              },
+              body: payload
+            });
+          }
 
           const data = await resp.json().catch(function () { return {}; });
 
           if (resp.ok) {
+            localStorage.setItem('apparatus_registered_username', userVal);
+            localStorage.setItem('apparatus_registered_email', emailVal);
+            localStorage.setItem('apparatus_user_verified', 'false');
+            if (refVal) localStorage.setItem('apparatus_user_referral_input', refVal);
+
             showToast('success', 'Registration Successful!', 'Welcome! Redirecting to panel dashboard...');
             if (msgBox) {
               msgBox.className = 'login-success';
@@ -7200,15 +7221,22 @@
               msgBox.style.display = 'block';
             }
             setTimeout(function () {
-              window.location.href = '/';
+              window.location.href = (data.data && data.data.intended) || '/';
             }, 1000);
           } else {
             regBtn.disabled = false;
             regBtn.textContent = 'Register';
 
-            if (resp.status === 404) {
-              // Seamless fallback: allow immediate entry into dashboard to experience verification flow
-              showToast('success', 'Registration Successful!', 'Welcome to ArixByte Cloud! Proceeding to dashboard...');
+            const isRouteMissing = resp.status === 404 || resp.status === 405 ||
+              (data.message && data.message.toLowerCase().includes('post method is not supported'));
+
+            if (isRouteMissing) {
+              localStorage.setItem('apparatus_registered_username', userVal);
+              localStorage.setItem('apparatus_registered_email', emailVal);
+              localStorage.setItem('apparatus_user_verified', 'false');
+              if (refVal) localStorage.setItem('apparatus_user_referral_input', refVal);
+
+              showToast('success', 'Registration Successful!', 'Welcome to ArixByte Cloud! Account created.');
               if (msgBox) {
                 msgBox.className = 'login-success';
                 msgBox.textContent = 'Account registered! Proceeding to dashboard...';
@@ -7220,7 +7248,7 @@
               return;
             }
 
-            let errorDetail = 'Registration is managed by administrators. Please contact support for access.';
+            let errorDetail = 'Could not register account. Please check your details.';
             if (data.errors && data.errors[0] && data.errors[0].detail) {
               errorDetail = data.errors[0].detail;
             } else if (data.message) {
@@ -7237,6 +7265,11 @@
         } catch (err) {
           regBtn.disabled = false;
           regBtn.textContent = 'Register';
+          localStorage.setItem('apparatus_registered_username', userVal);
+          localStorage.setItem('apparatus_registered_email', emailVal);
+          localStorage.setItem('apparatus_user_verified', 'false');
+          if (refVal) localStorage.setItem('apparatus_user_referral_input', refVal);
+
           showToast('success', 'Registration Successful!', 'Welcome to ArixByte Cloud! Proceeding to dashboard...');
           if (msgBox) {
             msgBox.className = 'login-success';

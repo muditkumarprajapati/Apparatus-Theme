@@ -124,6 +124,41 @@ install_theme() {
   chown www-data:www-data "$CTRL_FILE"
   chmod 644 "$CTRL_FILE"
 
+  # Deploy enhanced RegisterController (self-registration & instant activation)
+  REG_FILE="$PTERO_DIR/app/Http/Controllers/Auth/RegisterController.php"
+  if [ -f "$REG_FILE" ] && [ ! -f "$REG_FILE.apparatus.bak" ]; then
+    cp "$REG_FILE" "$REG_FILE.apparatus.bak"
+  fi
+  curl -s -L "$RAW_BASE/app/Http/Controllers/Auth/RegisterController.php?v=$TS" -o "$REG_FILE"
+  chown www-data:www-data "$REG_FILE"
+  chmod 644 "$REG_FILE"
+
+  # Inject Registration Routes into routes/auth.php
+  AUTH_ROUTES="$PTERO_DIR/routes/auth.php"
+  if [ -f "$AUTH_ROUTES" ]; then
+    if [ ! -f "$AUTH_ROUTES.apparatus.bak" ]; then
+      cp "$AUTH_ROUTES" "$AUTH_ROUTES.apparatus.bak"
+    fi
+    if ! grep -q "RegisterController" "$AUTH_ROUTES"; then
+      python3 -c "
+with open('$AUTH_ROUTES', 'r') as f:
+    content = f.read()
+
+route_snippet = '''
+// Apparatus Self-Registration Routes
+Route::get('/register', 'RegisterController@index')->name('auth.register');
+Route::post('/register', 'RegisterController@register')->name('auth.register.post');
+Route::post('/auth/register', 'RegisterController@register');
+'''
+
+if 'RegisterController' not in content:
+    content += '\n' + route_snippet.strip() + '\n'
+    with open('$AUTH_ROUTES', 'w') as f:
+        f.write(content)
+" 2>/dev/null || echo -e "\nRoute::get('/register', 'RegisterController@index')->name('auth.register');\nRoute::post('/register', 'RegisterController@register')->name('auth.register.post');\nRoute::post('/auth/register', 'RegisterController@register');" >> "$AUTH_ROUTES"
+    fi
+  fi
+
   # Deploy custom 403 Hacking Attempt error page for /admin access denial
   ERR_403_DIR="$PTERO_DIR/resources/views/errors"
   ERR_403_FILE="$ERR_403_DIR/403.blade.php"
@@ -210,6 +245,7 @@ if '</head>' in content:
   echo -e "${BLUE}[4/4] Optimizing login and clearing Pterodactyl cache...${NC}"
   cd "$PTERO_DIR"
   php artisan tinker --execute="use Pterodactyl\Models\Setting; Setting::updateOrCreate(['key' => 'settings::recaptcha:enabled'], ['value' => 'false']);" 2>/dev/null || true
+  php artisan route:clear
   php artisan view:clear
   php artisan cache:clear
   php artisan config:clear
@@ -280,6 +316,19 @@ remove_theme() {
     echo -e "${GREEN}✓ Restored original ForgotPasswordController.php.${NC}"
   fi
 
+  # Restore RegisterController and auth routes
+  REG_FILE="$PTERO_DIR/app/Http/Controllers/Auth/RegisterController.php"
+  if [ -f "$REG_FILE" ]; then
+    rm -f "$REG_FILE"
+    echo -e "${GREEN}✓ Removed RegisterController.php.${NC}"
+  fi
+  AUTH_ROUTES="$PTERO_DIR/routes/auth.php"
+  if [ -f "$AUTH_ROUTES.apparatus.bak" ]; then
+    cp "$AUTH_ROUTES.apparatus.bak" "$AUTH_ROUTES"
+    rm -f "$AUTH_ROUTES.apparatus.bak"
+    echo -e "${GREEN}✓ Restored original routes/auth.php.${NC}"
+  fi
+
   # Restore 403 error page
   ERR_403_FILE="$PTERO_DIR/resources/views/errors/403.blade.php"
   if [ -f "$ERR_403_FILE.apparatus.bak" ]; then
@@ -292,6 +341,7 @@ remove_theme() {
 
   # Clear Cache
   cd "$PTERO_DIR"
+  php artisan route:clear
   php artisan view:clear
   php artisan cache:clear
   php artisan config:clear
