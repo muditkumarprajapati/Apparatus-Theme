@@ -91,7 +91,7 @@ body:not(.apparatus-auth) div[class*="PageContentBlock"],
 body:not(.apparatus-auth) div[class*="ServerViewContainer"],
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"],
 body:not(.apparatus-auth) div[class*="ServerDetailsBlock"],
-body:not(.apparatus-auth) div[class*="DashboardContainer"] > div {
+body:not(.apparatus-auth) div[class*="DashboardContainer"]>div {
   width: 90% !important;
   max-width: 1380px !important;
   margin-left: auto !important;
@@ -100,7 +100,7 @@ body:not(.apparatus-auth) div[class*="DashboardContainer"] > div {
 }
 
 /* Ensure Activity Log card spans full container width */
-div[class*="ActivityLogContainer"] > div,
+div[class*="ActivityLogContainer"]>div,
 .bg-gray-700 {
   width: 100% !important;
   max-width: 100% !important;
@@ -114,7 +114,7 @@ div[class*="ActivityLogContainer"] > div,
 }
 
 /* Make Pterodactyl container backgrounds transparent so desert is visible */
-body:not(.apparatus-auth) #app > div,
+body:not(.apparatus-auth) #app>div,
 body:not(.apparatus-auth) main,
 body:not(.apparatus-auth) div.min-h-screen,
 body:not(.apparatus-auth) div.w-full.bg-neutral-900:not(nav):not([class*="NavigationBar"]) {
@@ -702,6 +702,7 @@ body.apparatus-auth .apparatus-sidebar {
 .apparatus-sidebar-scroll::-webkit-scrollbar {
   width: 4px;
 }
+
 .apparatus-sidebar-scroll::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
@@ -824,6 +825,7 @@ body.apparatus-auth .apparatus-sidebar {
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5) !important;
   }
 }
+
 .apparatus-nav-link.apparatus-logout-link {
   color: #fca5a5 !important;
   margin-top: 0.25rem !important;
@@ -1066,7 +1068,7 @@ body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-ser
   box-sizing: border-box !important;
 }
 
-body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="DashboardContainer"] > div {
+body:not(.apparatus-auth):not(.apparatus-page-dashboard):not(.apparatus-page-servers):not(.apparatus-page-vps) div[class*="DashboardContainer"]>div {
   width: 100% !important;
 }
 
@@ -1153,13 +1155,15 @@ body.apparatus-auth #apparatus-mobile-toggle {
 
 .apparatus-dash-row-bottom {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* EQUAL SAME SIZE (50% / 50%) */
+  grid-template-columns: 1fr 1fr;
+  /* EQUAL SAME SIZE (50% / 50%) */
   gap: 1.25rem;
   width: 100%;
   align-items: stretch;
 }
 
 @media (max-width: 1080px) {
+
   .apparatus-dash-row-top,
   .apparatus-dash-row-bottom {
     grid-template-columns: 1fr;
@@ -1365,8 +1369,17 @@ body.apparatus-auth #apparatus-mobile-toggle {
 }
 
 @keyframes apparatus-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(0.85); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
 }
 
 .apparatus-welcome-title {
@@ -1491,6 +1504,7 @@ body:not(.apparatus-auth) span.apparatus-user-name {
   .apparatus-welcome-content {
     max-width: 100% !important;
   }
+
   .apparatus-welcome-actions {
     flex-wrap: wrap !important;
     gap: 0.5rem !important;
@@ -1542,9 +1556,11 @@ body:not(.apparatus-auth) span.apparatus-user-name {
   .apparatus-welcome-decor {
     display: none;
   }
+
   .apparatus-card-welcome {
     padding: 1.5rem 1.4rem !important;
   }
+
   .apparatus-welcome-title {
     font-size: 1.75rem;
   }
@@ -1888,8 +1904,13 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 }
 
 @keyframes apparatus-spin-kf {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Disabled Button Utility */
@@ -2576,8 +2597,8 @@ body:not(.apparatus-auth) nav#SubNavigation,
 body:not(.apparatus-auth) div[class*="SubNavigation"],
 body:not(.apparatus-auth) nav[class*="SubNavigation"],
 body:not(.apparatus-auth) [class*="SubNavigation"],
-body:not(.apparatus-auth) #app > div > div.bg-neutral-900:first-child,
-body:not(.apparatus-auth) #app > div > div.shadow-md:first-child {
+body:not(.apparatus-auth) #app>div>div.bg-neutral-900:first-child,
+body:not(.apparatus-auth) #app>div>div.shadow-md:first-child {
   display: none !important;
   visibility: hidden !important;
   height: 0 !important;
@@ -2638,8 +2659,8 @@ div[style*="hsl(178"],
 div[style*="hsl(178,78%,57%)"],
 div[style*="211, 238"],
 div[style*="rgba(34, 211, 238"],
-#app > div[style*="height: 2px"],
-#app > div[style*="height:2px"],
+#app>div[style*="height: 2px"],
+#app>div[style*="height:2px"],
 div[style*="height: 2px"][style*="position: fixed"],
 div[style*="height:2px"][style*="position:fixed"],
 div[style*="height: 2px"][style*="position: absolute"],
@@ -2692,27 +2713,27 @@ body:not(.apparatus-auth) h2[class*="text-neutral-300"] {
 body:not(.apparatus-auth) .sc-12to0iy-1,
 body:not(.apparatus-auth) .sc-1c4s3nm-0,
 body:not(.apparatus-auth) .sc-yksipt-0,
-body:not(.apparatus-auth) div[class*="AccountOverviewContainer"] > div,
-body:not(.apparatus-auth) div[class*="AccountApiContainer"] > div,
-body:not(.apparatus-auth) div[class*="AccountSSHContainer"] > div {
+body:not(.apparatus-auth) div[class*="AccountOverviewContainer"]>div,
+body:not(.apparatus-auth) div[class*="AccountApiContainer"]>div,
+body:not(.apparatus-auth) div[class*="AccountSSHContainer"]>div {
   display: flex !important;
   align-items: stretch !important;
 }
 
-body:not(.apparatus-auth) .sc-12to0iy-1 > div,
-body:not(.apparatus-auth) .sc-1c4s3nm-0 > div,
-body:not(.apparatus-auth) .sc-yksipt-0 > div,
+body:not(.apparatus-auth) .sc-12to0iy-1>div,
+body:not(.apparatus-auth) .sc-1c4s3nm-0>div,
+body:not(.apparatus-auth) .sc-yksipt-0>div,
 body:not(.apparatus-auth) div:has(> .sc-mjlt6f-2),
 body:not(.apparatus-auth) div:has(> div[class*="sc-mjlt6f-2"]) {
   display: flex !important;
   flex-direction: column !important;
 }
 
-body:not(.apparatus-auth) .sc-12to0iy-1 > div > .sc-mjlt6f-2,
-body:not(.apparatus-auth) .sc-1c4s3nm-0 > div > .sc-mjlt6f-2,
-body:not(.apparatus-auth) .sc-yksipt-0 > div > .sc-mjlt6f-2,
-body:not(.apparatus-auth) div:has(> .sc-mjlt6f-2) > .sc-mjlt6f-2,
-body:not(.apparatus-auth) div:has(> div[class*="sc-mjlt6f-2"]) > div[class*="sc-mjlt6f-2"] {
+body:not(.apparatus-auth) .sc-12to0iy-1>div>.sc-mjlt6f-2,
+body:not(.apparatus-auth) .sc-1c4s3nm-0>div>.sc-mjlt6f-2,
+body:not(.apparatus-auth) .sc-yksipt-0>div>.sc-mjlt6f-2,
+body:not(.apparatus-auth) div:has(> .sc-mjlt6f-2)>.sc-mjlt6f-2,
+body:not(.apparatus-auth) div:has(> div[class*="sc-mjlt6f-2"])>div[class*="sc-mjlt6f-2"] {
   flex: 1 1 auto !important;
   display: flex !important;
   flex-direction: column !important;
@@ -2743,10 +2764,10 @@ body:not(.apparatus-auth) div[class*="TitledGreyBox"]:hover {
 }
 
 /* Strip unwanted lines and borders inside ContentBox cards */
-body:not(.apparatus-auth) .sc-mjlt6f-2 > div,
-body:not(.apparatus-auth) div[class*="ContentBox___StyledDiv"] > div,
+body:not(.apparatus-auth) .sc-mjlt6f-2>div,
+body:not(.apparatus-auth) div[class*="ContentBox___StyledDiv"]>div,
 body:not(.apparatus-auth) .sc-mjlt6f-2 form,
-body:not(.apparatus-auth) .sc-mjlt6f-2 form > div,
+body:not(.apparatus-auth) .sc-mjlt6f-2 form>div,
 body:not(.apparatus-auth) .sc-mjlt6f-2 hr,
 body:not(.apparatus-auth) .sc-mjlt6f-2 [class*="Fade"],
 body:not(.apparatus-auth) .sc-mjlt6f-2 [class*="sc-1p0gm8n"],
@@ -2774,15 +2795,15 @@ body:not(.apparatus-auth) .sc-mjlt6f-2 [class*="SpinnerOverlay"]:empty {
 }
 
 /* Card Header in TitledGreyBox */
-body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:first-child {
+body:not(.apparatus-auth) div[class*="TitledGreyBox"]>div:first-child {
   background: rgba(255, 255, 255, 0.04) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   padding: 1rem 1.25rem !important;
 }
 
-body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:first-child p,
-body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:first-child h2,
-body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:first-child h3 {
+body:not(.apparatus-auth) div[class*="TitledGreyBox"]>div:first-child p,
+body:not(.apparatus-auth) div[class*="TitledGreyBox"]>div:first-child h2,
+body:not(.apparatus-auth) div[class*="TitledGreyBox"]>div:first-child h3 {
   font-size: 0.95rem !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
@@ -2791,7 +2812,7 @@ body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:first-child h3 {
 }
 
 /* Card Body */
-body:not(.apparatus-auth) div[class*="TitledGreyBox"] > div:last-child {
+body:not(.apparatus-auth) div[class*="TitledGreyBox"]>div:last-child {
   background: transparent !important;
   padding: 1.25rem !important;
 }
@@ -2801,9 +2822,9 @@ body:not(.apparatus-auth) .sc-1c4s3nm-3,
 body:not(.apparatus-auth) .sc-yksipt-3,
 body:not(.apparatus-auth) p[class*="sc-1c4s3nm-3"],
 body:not(.apparatus-auth) p[class*="sc-yksipt-3"],
-body:not(.apparatus-auth) .sc-mjlt6f-2 > p.text-center,
-body:not(.apparatus-auth) .sc-mjlt6f-2 > p,
-body:not(.apparatus-auth) div.bg-neutral-700 > p.text-center,
+body:not(.apparatus-auth) .sc-mjlt6f-2>p.text-center,
+body:not(.apparatus-auth) .sc-mjlt6f-2>p,
+body:not(.apparatus-auth) div.bg-neutral-700>p.text-center,
 body:not(.apparatus-auth) div[class*="ContentBox"] p.text-center {
   background: rgba(255, 255, 255, 0.05) !important;
   border: 1px dashed rgba(255, 255, 255, 0.22) !important;
@@ -2993,7 +3014,7 @@ body:not(.apparatus-auth) div[class*="ModalMask"] {
 
 body:not(.apparatus-auth) div[class*="Modal"],
 body:not(.apparatus-auth) div[class*="Dialog"],
-body:not(.apparatus-auth) div[class*="ModalMask"] > div {
+body:not(.apparatus-auth) div[class*="ModalMask"]>div {
   background: rgba(14, 10, 24, 0.9) !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
@@ -3059,7 +3080,7 @@ body:not(.apparatus-auth) .apparatus-section-title {
 
 body:not(.apparatus-auth) div.bg-gray-700,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.bg-gray-700,
-body:not(.apparatus-auth) div[class*="ActivityLogContainer"] > div,
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"]>div,
 body:not(.apparatus-auth) .bg-gray-700 {
   display: block !important;
   width: 100% !important;
@@ -3077,7 +3098,7 @@ body:not(.apparatus-auth) .bg-gray-700 {
 }
 
 /* Activity rows: flex layout so circular avatar is side-by-side with text details */
-body:not(.apparatus-auth) div.bg-gray-700 > div.grid,
+body:not(.apparatus-auth) div.bg-gray-700>div.grid,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid,
 body:not(.apparatus-auth) div[class*="ActivityLogEntry"] {
   display: flex !important;
@@ -3092,20 +3113,20 @@ body:not(.apparatus-auth) div[class*="ActivityLogEntry"] {
   box-sizing: border-box !important;
 }
 
-body:not(.apparatus-auth) div.bg-gray-700 > div.grid:hover,
+body:not(.apparatus-auth) div.bg-gray-700>div.grid:hover,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid:hover,
 body:not(.apparatus-auth) div[class*="ActivityLogEntry"]:hover {
   background: rgba(255, 255, 255, 0.05) !important;
 }
 
-body:not(.apparatus-auth) div.bg-gray-700 > div.grid:last-child,
+body:not(.apparatus-auth) div.bg-gray-700>div.grid:last-child,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid:last-child {
   border-bottom: none !important;
 }
 
 /* Activity Log Avatar icon container */
-body:not(.apparatus-auth) div.bg-gray-700 > div.grid > div:first-child,
-body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid > div:first-child {
+body:not(.apparatus-auth) div.bg-gray-700>div.grid>div:first-child,
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid>div:first-child {
   display: flex !important;
   flex-shrink: 0 !important;
   width: auto !important;
@@ -3133,8 +3154,8 @@ body:not(.apparatus-auth) div.bg-gray-700 .bg-gray-600 svg {
 }
 
 /* Activity Log text details beside avatar */
-body:not(.apparatus-auth) div.bg-gray-700 > div.grid > div:nth-child(2),
-body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid > div:nth-child(2) {
+body:not(.apparatus-auth) div.bg-gray-700>div.grid>div:nth-child(2),
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid>div:nth-child(2) {
   display: flex !important;
   flex-direction: column !important;
   flex: 1 1 auto !important;
@@ -3143,8 +3164,8 @@ body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid > div:nth-
 }
 
 /* Activity Log timestamp column: nicely right-aligned across full card */
-body:not(.apparatus-auth) div.bg-gray-700 > div.grid > div:nth-child(3),
-body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid > div:nth-child(3) {
+body:not(.apparatus-auth) div.bg-gray-700>div.grid>div:nth-child(3),
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid>div:nth-child(3) {
   margin-left: auto !important;
   display: flex !important;
   flex-direction: column !important;
@@ -3313,7 +3334,7 @@ body:not(.apparatus-auth) .apparatus-ip-blurred {
 body:not(.apparatus-auth) .apparatus-ip-container:hover .apparatus-ip-blurred,
 body:not(.apparatus-auth) .apparatus-ip-blurred:hover,
 body:not(.apparatus-auth) .apparatus-ip-blurred.revealed,
-body:not(.apparatus-auth) div.bg-gray-700 > div:hover .apparatus-ip-blurred,
+body:not(.apparatus-auth) div.bg-gray-700>div:hover .apparatus-ip-blurred,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid:hover .apparatus-ip-blurred {
   filter: blur(0px) !important;
   -webkit-filter: blur(0px) !important;
@@ -3355,9 +3376,12 @@ body.apparatus-hacking-mode .background-title {
 }
 
 @keyframes apparatusHackingTextGlow {
-  0%, 100% {
+
+  0%,
+  100% {
     text-shadow: 0 10px 40px rgba(239, 68, 68, 0.45), 0 0 20px rgba(239, 68, 68, 0.3);
   }
+
   50% {
     text-shadow: 0 10px 50px rgba(239, 68, 68, 0.8), 0 0 35px rgba(239, 68, 68, 0.6);
   }
@@ -3388,10 +3412,13 @@ body.apparatus-hacking-mode .background-subtitle {
 }
 
 @keyframes apparatusPulseWarning {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 0 25px rgba(239, 68, 68, 0.35);
   }
+
   50% {
     transform: scale(1.08);
     box-shadow: 0 0 35px rgba(239, 68, 68, 0.65);
@@ -3416,6 +3443,38 @@ body.apparatus-page-resource #apparatus-resource-view {
 
 body.apparatus-page-resource #apparatus-dashboard-view {
   display: none !important;
+}
+
+/* Dedicated Store View (/store) */
+body.apparatus-page-store #apparatus-store-view {
+  display: block !important;
+}
+
+body.apparatus-page-store #apparatus-dashboard-view,
+body.apparatus-page-store #apparatus-resource-view,
+body.apparatus-page-store #apparatus-settings-view,
+body.apparatus-page-store #apparatus-admin-settings-view {
+  display: none !important;
+}
+
+body.apparatus-page-resource #apparatus-store-view,
+body.apparatus-page-settings #apparatus-store-view,
+body.apparatus-page-apparatus-settings #apparatus-store-view,
+body.apparatus-page-dashboard #apparatus-store-view,
+body.apparatus-page-servers #apparatus-store-view,
+body.apparatus-page-vps #apparatus-store-view {
+  display: none !important;
+}
+
+.apparatus-store-view .apparatus-dashboard-container {
+  width: 90% !important;
+  max-width: 1380px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.25rem !important;
+  box-sizing: border-box !important;
 }
 
 .apparatus-resource-view .apparatus-dashboard-container {
@@ -3945,7 +4004,20 @@ body.apparatus-page-apparatus-settings .sc-1topkxf-3,
 body.apparatus-page-apparatus-settings div.bg-gray-700,
 body.apparatus-page-apparatus-settings [class*="PageContentBlock"],
 body.apparatus-page-apparatus-settings [class*="NotFound"],
-body.apparatus-page-apparatus-settings div[class*="NotFoundContainer"] {
+body.apparatus-page-apparatus-settings div[class*="NotFoundContainer"],
+body.apparatus-page-store div[class*="AccountOverviewContainer"],
+body.apparatus-page-store div[class*="AccountApiContainer"],
+body.apparatus-page-store div[class*="AccountSSHContainer"],
+body.apparatus-page-store div[class*="ActivityLogContainer"],
+body.apparatus-page-store .sc-12to0iy-1,
+body.apparatus-page-store .sc-1c4s3nm-0,
+body.apparatus-page-store .sc-yksipt-0,
+body.apparatus-page-store p[class*="DashboardContainer"],
+body.apparatus-page-store .sc-1topkxf-3,
+body.apparatus-page-store div.bg-gray-700,
+body.apparatus-page-store [class*="PageContentBlock"],
+body.apparatus-page-store [class*="NotFound"],
+body.apparatus-page-store div[class*="NotFoundContainer"] {
   display: none !important;
 }
 
@@ -4465,12 +4537,12 @@ body:not(.apparatus-privacy-active) #apparatus-metric-balance {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
 }
 
-.apparatus-switch input:checked + .apparatus-slider {
+.apparatus-switch input:checked+.apparatus-slider {
   background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
   border-color: #a78bfa;
 }
 
-.apparatus-switch input:checked + .apparatus-slider:before {
+.apparatus-switch input:checked+.apparatus-slider:before {
   transform: translateX(22px);
   background-color: #fff;
 }
@@ -4529,18 +4601,22 @@ body:not(.apparatus-privacy-active) #apparatus-metric-balance {
   .apparatus-setting-card {
     padding: 1.25rem;
   }
+
   .apparatus-custom-wp-bar {
     flex-direction: column;
     align-items: stretch;
   }
+
   .apparatus-setting-sub-grid {
     grid-template-columns: 1fr;
   }
+
   .apparatus-setting-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
   }
+
   .apparatus-setting-ctrl {
     align-self: flex-end;
   }
@@ -4616,9 +4692,11 @@ html.lenis body {
   0% {
     box-shadow: 0 0 0 0 rgba(236, 72, 153, 0), 0 0 0 0 rgba(168, 85, 247, 0);
   }
+
   25% {
     box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.6), 0 12px 35px rgba(236, 72, 153, 0.35);
   }
+
   100% {
     box-shadow: 0 0 0 0 rgba(236, 72, 153, 0), 0 8px 32px rgba(0, 0, 0, 0.35);
   }
@@ -4631,9 +4709,9 @@ html.lenis body {
 .apparatus-copy-ref-btn {
   position: relative;
   transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.2s ease,
-              background 0.2s ease,
-              border-color 0.2s ease;
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .apparatus-metric-tile,
@@ -4641,8 +4719,8 @@ html.lenis body {
 .apparatus-act-row {
   position: relative;
   transition: box-shadow 0.2s ease,
-              background 0.2s ease,
-              border-color 0.2s ease;
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 /* GPU Hardware Acceleration for Compositing & Backdrop Filters */
@@ -4716,6 +4794,7 @@ html.lenis body {
     transform: scale(0);
     opacity: 0.85;
   }
+
   100% {
     transform: scale(2.4);
     opacity: 0;
@@ -4734,6 +4813,7 @@ html.lenis body {
     opacity: 0;
     transform: translateY(12px) scale(0.992);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -4786,13 +4866,26 @@ html.lenis body {
 }
 
 @keyframes apparatusOrbitalSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes apparatusCorePulse {
-  0% { transform: scale(0.75); opacity: 0.5; }
-  100% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 8px #ec4899); }
+  0% {
+    transform: scale(0.75);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1.15);
+    opacity: 1;
+    filter: drop-shadow(0 0 8px #ec4899);
+  }
 }
 
 .apparatus-loading-text {
@@ -4860,12 +4953,10 @@ html.lenis body {
 }
 
 .apparatus-skeleton {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.04) 25%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0.04) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.04) 25%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.04) 75%);
   background-size: 200% 100%;
   animation: apparatusShimmerSweep 1.6s infinite ease-in-out;
   border-radius: 6px;
@@ -4875,6 +4966,7 @@ html.lenis body {
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
@@ -4906,9 +4998,9 @@ html.lenis body {
   -webkit-backdrop-filter: blur(16px) !important;
   text-decoration: none !important;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              background 0.2s ease,
-              border-color 0.2s ease,
-              box-shadow 0.2s ease !important;
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease !important;
 }
 
 .apparatus-social-btn i:first-child {
@@ -4944,6 +5036,7 @@ html.lenis body {
   border-color: rgba(56, 189, 248, 0.45) !important;
   box-shadow: 0 6px 20px rgba(56, 189, 248, 0.18) !important;
 }
+
 .apparatus-social-web:hover i:first-child {
   color: #38bdf8;
 }
@@ -4952,6 +5045,7 @@ html.lenis body {
   border-color: rgba(88, 101, 242, 0.45) !important;
   box-shadow: 0 6px 20px rgba(88, 101, 242, 0.2) !important;
 }
+
 .apparatus-social-discord:hover i:first-child {
   color: #5865f2;
 }
@@ -4960,6 +5054,7 @@ html.lenis body {
   border-color: rgba(225, 48, 108, 0.45) !important;
   box-shadow: 0 6px 20px rgba(225, 48, 108, 0.2) !important;
 }
+
 .apparatus-social-insta:hover i:first-child {
   color: #e1306c;
 }
@@ -4968,6 +5063,7 @@ html.lenis body {
   border-color: rgba(37, 211, 102, 0.45) !important;
   box-shadow: 0 6px 20px rgba(37, 211, 102, 0.2) !important;
 }
+
 .apparatus-social-wa:hover i:first-child {
   color: #25d366;
 }
@@ -4995,7 +5091,7 @@ div[class*="PageContentBlock"] {
 }
 
 div[class*="AccountOverviewContainer"],
-div[class*="PageContentBlock"] > div:not([class*="ActivityLogContainer"]) {
+div[class*="PageContentBlock"]>div:not([class*="ActivityLogContainer"]) {
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
@@ -5005,7 +5101,7 @@ div[class*="PageContentBlock"] > div:not([class*="ActivityLogContainer"]) {
 }
 
 /* Ensure the native cards row sits in a clean 3-column grid under User Profile */
-div[class*="AccountOverviewContainer"] > div:not(.apparatus-user-profile-section) {
+div[class*="AccountOverviewContainer"]>div:not(.apparatus-user-profile-section) {
   display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   gap: 1.25rem !important;
@@ -5014,7 +5110,7 @@ div[class*="AccountOverviewContainer"] > div:not(.apparatus-user-profile-section
 }
 
 @media (max-width: 1024px) {
-  div[class*="AccountOverviewContainer"] > div:not(.apparatus-user-profile-section) {
+  div[class*="AccountOverviewContainer"]>div:not(.apparatus-user-profile-section) {
     grid-template-columns: 1fr !important;
   }
 }
@@ -5169,6 +5265,7 @@ div[class*="AccountOverviewContainer"] > div:not(.apparatus-user-profile-section
 }
 
 @media (max-width: 820px) {
+
   .apparatus-prof-row-3col,
   .apparatus-prof-row-2col {
     grid-template-columns: 1fr;

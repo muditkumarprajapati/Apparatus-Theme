@@ -7,8 +7,8 @@
 
   // Embedded Lenis 1.3.26 Smooth Scroll Engine (Matching https://moradosolution.in architecture)
   if (typeof globalThis.Lenis === 'undefined') {
-    (function(){var e=`1.3.26`;function t(e,t,n){return Math.max(e,Math.min(t,n))}function n(e,t,n){return(1-n)*e+n*t}function r(e,t,r,i){return n(e,t,1-Math.exp(-r*i))}function i(e,t){return(e%t+t)%t}var a=class{isRunning=!1;value=0;from=0;to=0;currentTime=0;lerp;duration;easing;onUpdate;advance(e){if(!this.isRunning)return;let n=!1;if(this.duration&&this.easing){this.currentTime+=e;let r=t(0,this.currentTime/this.duration,1);n=r>=1;let i=n?1:this.easing(r);this.value=this.from+(this.to-this.from)*i}else this.lerp?(this.value=r(this.value,this.to,this.lerp*60,e),Math.round(this.value)===Math.round(this.to)&&(this.value=this.to,n=!0)):(this.value=this.to,n=!0);n&&this.stop(),this.onUpdate?.(this.value,n)}stop(){this.isRunning=!1}fromTo(e,t,{lerp:n,duration:r,easing:i,onStart:a,onUpdate:o}){this.from=this.value=e,this.to=t,this.lerp=n,this.duration=r,this.easing=i,this.currentTime=0,this.isRunning=!0,a?.(),this.onUpdate=o}};function o(e,t){let n;return function(...r){clearTimeout(n),n=setTimeout(()=>{n=void 0,e.apply(this,r)},t)}}var s=class{width=0;height=0;scrollHeight=0;scrollWidth=0;debouncedResize;wrapperResizeObserver;contentResizeObserver;constructor(e,t,{autoResize:n=!0,debounce:r=250}={}){this.wrapper=e,this.content=t,n&&(this.debouncedResize=o(this.resize,r),this.wrapper instanceof Window?window.addEventListener(`resize`,this.debouncedResize):(this.wrapperResizeObserver=new ResizeObserver(this.debouncedResize),this.wrapperResizeObserver.observe(this.wrapper)),this.contentResizeObserver=new ResizeObserver(this.debouncedResize),this.contentResizeObserver.observe(this.content)),this.resize()}destroy(){this.wrapperResizeObserver?.disconnect(),this.contentResizeObserver?.disconnect(),this.wrapper===window&&this.debouncedResize&&window.removeEventListener(`resize`,this.debouncedResize)}resize=()=>{this.onWrapperResize(),this.onContentResize()};onWrapperResize=()=>{this.wrapper instanceof Window?(this.width=window.innerWidth,this.height=window.innerHeight):(this.width=this.wrapper.clientWidth,this.height=this.wrapper.clientHeight)};onContentResize=()=>{this.wrapper instanceof Window?(this.scrollHeight=this.content.scrollHeight,this.scrollWidth=this.content.scrollWidth):(this.scrollHeight=this.wrapper.scrollHeight,this.scrollWidth=this.wrapper.scrollWidth)};get limit(){return{x:this.scrollWidth-this.width,y:this.scrollHeight-this.height}}},c=class{events={};emit(e,...t){let n=this.events[e]||[];for(let e=0,r=n.length;e<r;e++)n[e]?.(...t)}on(e,t){return this.events[e]?this.events[e].push(t):this.events[e]=[t],()=>{this.events[e]=this.events[e]?.filter(e=>t!==e)}}off(e,t){this.events[e]=this.events[e]?.filter(e=>t!==e)}destroy(){this.events={}}};let l={passive:!1};function u(e,t){return e===1?16.666666666666668:e===2?t:1}var d=class{touchStart={x:0,y:0};lastDelta={x:0,y:0};window={width:0,height:0};emitter=new c;constructor(e,t={wheelMultiplier:1,touchMultiplier:1}){this.element=e,this.options=t,window.addEventListener(`resize`,this.onWindowResize),this.onWindowResize(),this.element.addEventListener(`wheel`,this.onWheel,l),this.element.addEventListener(`touchstart`,this.onTouchStart,l),this.element.addEventListener(`touchmove`,this.onTouchMove,l),this.element.addEventListener(`touchend`,this.onTouchEnd,l)}on(e,t){return this.emitter.on(e,t)}destroy(){this.emitter.destroy(),window.removeEventListener(`resize`,this.onWindowResize),this.element.removeEventListener(`wheel`,this.onWheel,l),this.element.removeEventListener(`touchstart`,this.onTouchStart,l),this.element.removeEventListener(`touchmove`,this.onTouchMove,l),this.element.removeEventListener(`touchend`,this.onTouchEnd,l)}onTouchStart=e=>{let{clientX:t,clientY:n}=e.targetTouches?e.targetTouches[0]:e;this.touchStart.x=t,this.touchStart.y=n,this.lastDelta={x:0,y:0},this.emitter.emit(`scroll`,{deltaX:0,deltaY:0,event:e})};onTouchMove=e=>{let{clientX:t,clientY:n}=e.targetTouches?e.targetTouches[0]:e,r=-(t-this.touchStart.x)*this.options.touchMultiplier,i=-(n-this.touchStart.y)*this.options.touchMultiplier;this.touchStart.x=t,this.touchStart.y=n,this.lastDelta={x:r,y:i},this.emitter.emit(`scroll`,{deltaX:r,deltaY:i,event:e})};onTouchEnd=e=>{this.emitter.emit(`scroll`,{deltaX:this.lastDelta.x,deltaY:this.lastDelta.y,event:e})};onWheel=e=>{let{deltaX:t,deltaY:n,deltaMode:r}=e,i=u(r,this.window.width),a=u(r,this.window.height);t*=i,n*=a,t*=this.options.wheelMultiplier,n*=this.options.wheelMultiplier,this.emitter.emit(`scroll`,{deltaX:t,deltaY:n,event:e})};onWindowResize=()=>{this.window={width:window.innerWidth,height:window.innerHeight}}};let f=e=>Math.min(1,1.001-2**(-10*e));var p=class{_isScrolling=!1;_isStopped=!1;_isLocked=!1;_preventNextNativeScrollEvent=!1;_resetVelocityTimeout=null;_rafId=null;_isDraggingSelection=!1;reducedMotionMediaQuery=window.matchMedia(`(prefers-reduced-motion: reduce)`);isTouching;isIos;time=0;userData={};lastVelocity=0;velocity=0;direction=0;options;targetScroll;animatedScroll;animate=new a;emitter=new c;dimensions;virtualScroll;constructor({wrapper:t=window,content:n=document.documentElement,eventsTarget:r=t,smoothWheel:i=!0,syncTouch:a=!1,syncTouchLerp:o=.075,touchInertiaExponent:c=1.7,duration:l,easing:u,lerp:p=.1,infinite:m=!1,orientation:h=`vertical`,gestureOrientation:g=h===`horizontal`?`both`:`vertical`,touchMultiplier:_=1,wheelMultiplier:v=1,autoResize:y=!0,prevent:b,virtualScroll:x,overscroll:S=!0,autoRaf:C=!1,anchors:w=!1,autoToggle:T=!1,allowNestedScroll:E=!1,__experimental__naiveDimensions:D=!1,naiveDimensions:O=D,stopInertiaOnNavigate:k=!1,respectReducedMotion:A=!0}={}){window.lenisVersion=e,window.lenis||(window.lenis={}),window.lenis.version=e,h===`horizontal`&&(window.lenis.horizontal=!0),a===!0&&(window.lenis.touch=!0),this.isIos=/(iPad|iPhone|iPod)/g.test(navigator.userAgent),(!t||t===document.documentElement)&&(t=window),typeof l==`number`&&typeof u!=`function`?u=f:typeof u==`function`&&typeof l!=`number`&&(l=1),this.options={wrapper:t,content:n,eventsTarget:r,smoothWheel:i,syncTouch:a,syncTouchLerp:o,touchInertiaExponent:c,duration:l,easing:u,lerp:p,infinite:m,gestureOrientation:g,orientation:h,touchMultiplier:_,wheelMultiplier:v,autoResize:y,prevent:b,virtualScroll:x,overscroll:S,autoRaf:C,anchors:w,autoToggle:T,allowNestedScroll:E,naiveDimensions:O,stopInertiaOnNavigate:k,respectReducedMotion:A},this.dimensions=new s(t,n,{autoResize:y}),this.updateClassName(),this.targetScroll=this.animatedScroll=this.actualScroll,this.options.wrapper.addEventListener(`scroll`,this.onNativeScroll),this.options.wrapper.addEventListener(`scrollend`,this.onScrollEnd,{capture:!0}),(this.options.anchors||this.options.stopInertiaOnNavigate)&&this.options.wrapper.addEventListener(`click`,this.onClick),this.options.wrapper.addEventListener(`pointerdown`,this.onPointerDown),this.virtualScroll=new d(r,{touchMultiplier:_,wheelMultiplier:v}),this.virtualScroll.on(`scroll`,this.onVirtualScroll),this.options.autoToggle&&(this.checkOverflow(),this.rootElement.addEventListener(`transitionend`,this.onTransitionEnd)),this.options.autoRaf&&(this._rafId=requestAnimationFrame(this.raf))}destroy(){this.emitter.destroy(),this.options.wrapper.removeEventListener(`scroll`,this.onNativeScroll),this.options.wrapper.removeEventListener(`scrollend`,this.onScrollEnd,{capture:!0}),this.options.wrapper.removeEventListener(`pointerdown`,this.onPointerDown),(this.options.anchors||this.options.stopInertiaOnNavigate)&&this.options.wrapper.removeEventListener(`click`,this.onClick),this.virtualScroll.destroy(),this.dimensions.destroy(),this.cleanUpClassName(),this._rafId&&cancelAnimationFrame(this._rafId)}on(e,t){return this.emitter.on(e,t)}off(e,t){return this.emitter.off(e,t)}onScrollEnd=e=>{e instanceof CustomEvent||(this.isScrolling===`smooth`||this.isScrolling===!1)&&e.stopPropagation()};dispatchScrollendEvent=()=>{this.options.wrapper.dispatchEvent(new CustomEvent(`scrollend`,{bubbles:this.options.wrapper===window,detail:{lenisScrollEnd:!0}}))};get overflow(){let e=this.isHorizontal?`overflow-x`:`overflow-y`;return getComputedStyle(this.rootElement)[e]}checkOverflow(){[`hidden`,`clip`].includes(this.overflow)?this.internalStop():this.internalStart()}onTransitionEnd=e=>{e.propertyName?.includes(`overflow`)&&e.target===this.rootElement&&this.checkOverflow()};setScroll(e){this.isHorizontal?this.options.wrapper.scrollTo({left:e,behavior:`instant`}):this.options.wrapper.scrollTo({top:e,behavior:`instant`})}onClick=e=>{let t=e.composedPath().filter(e=>e instanceof HTMLAnchorElement&&e.href).map(e=>new URL(e.href)),n=new URL(window.location.href);if(this.options.anchors){let e=t.find(e=>n.host===e.host&&n.pathname===e.pathname&&e.hash);if(e){let t=typeof this.options.anchors==`object`&&this.options.anchors?this.options.anchors:void 0,n=decodeURIComponent(e.hash);this.scrollTo(n,t);return}}if(this.options.stopInertiaOnNavigate&&t.some(e=>n.host===e.host&&n.pathname!==e.pathname)){this.reset();return}};onPointerDown=e=>{e.button===1&&this.reset()};isTouchOnSelectionHandle(e){let t=window.getSelection();if(!t||t.isCollapsed||t.rangeCount===0)return!1;let n=e.targetTouches[0]??e.changedTouches[0];if(!n)return!1;let r=t.getRangeAt(0).getClientRects();if(r.length===0)return!1;let i=r[0],a=r[r.length-1],o=Math.hypot(n.clientX-i.left,n.clientY-i.top)<=40,s=Math.hypot(n.clientX-a.right,n.clientY-a.bottom)<=40;return o||s}onVirtualScroll=e=>{if(typeof this.options.virtualScroll==`function`&&this.options.virtualScroll(e)===!1)return;let{deltaX:t,deltaY:n,event:r}=e;if(this.emitter.emit(`virtual-scroll`,{deltaX:t,deltaY:n,event:r}),r.ctrlKey||r.lenisStopPropagation)return;let i=r.type.includes(`touch`),a=r.type.includes(`wheel`);if(i&&this.isIos&&(r.type===`touchstart`&&(this._isDraggingSelection=this.isTouchOnSelectionHandle(r)),this._isDraggingSelection)){r.type===`touchend`&&(this._isDraggingSelection=!1);return}this.isTouching=r.type===`touchstart`||r.type===`touchmove`;let o=t===0&&n===0;if(this.options.syncTouch&&i&&r.type===`touchstart`&&o&&!this.isStopped&&!this.isLocked){this.reset();return}let s=this.options.gestureOrientation===`vertical`&&n===0||this.options.gestureOrientation===`horizontal`&&t===0;if(o||s)return;let c=r.composedPath();c=c.slice(0,c.indexOf(this.rootElement));let l=this.options.prevent,u=Math.abs(t)>=Math.abs(n)?`horizontal`:`vertical`;if(c.find(e=>e instanceof HTMLElement&&(typeof l==`function`&&l?.(e)||e.hasAttribute?.(`data-lenis-prevent`)||u===`vertical`&&e.hasAttribute?.(`data-lenis-prevent-vertical`)||u===`horizontal`&&e.hasAttribute?.(`data-lenis-prevent-horizontal`)||i&&e.hasAttribute?.(`data-lenis-prevent-touch`)||a&&e.hasAttribute?.(`data-lenis-prevent-wheel`)||this.options.allowNestedScroll&&this.hasNestedScroll(e,{deltaX:t,deltaY:n}))))return;if(this.isStopped||this.isLocked){r.cancelable&&r.preventDefault();return}if(!(this.options.syncTouch&&i||this.options.smoothWheel&&a)){this.isScrolling=`native`,this.animate.stop(),r.lenisStopPropagation=!0;return}let d=n;this.options.gestureOrientation===`both`?d=Math.abs(n)>Math.abs(t)?n:t:this.options.gestureOrientation===`horizontal`&&(d=t),(!this.options.overscroll||this.options.infinite||this.options.wrapper!==window&&this.limit>0&&(this.animatedScroll>0&&this.animatedScroll<this.limit||this.animatedScroll===0&&n>0||this.animatedScroll===this.limit&&n<0))&&(r.lenisStopPropagation=!0),r.cancelable&&r.preventDefault();let f=i&&this.options.syncTouch,p=i&&r.type===`touchend`;p&&(d=Math.sign(d)*Math.abs(this.velocity)**this.options.touchInertiaExponent),this.scrollTo(this.targetScroll+d,{programmatic:!1,...f?{lerp:p?this.options.syncTouchLerp:1}:{lerp:this.options.lerp,duration:this.options.duration,easing:this.options.easing}})};resize(){this.dimensions.resize(),this.animatedScroll=this.targetScroll=this.actualScroll,this.emit()}emit(){this.emitter.emit(`scroll`,this)}onNativeScroll=()=>{if(this._resetVelocityTimeout!==null&&(clearTimeout(this._resetVelocityTimeout),this._resetVelocityTimeout=null),this._preventNextNativeScrollEvent){this._preventNextNativeScrollEvent=!1;return}if(this.isScrolling===!1||this.isScrolling===`native`){let e=this.animatedScroll;this.animatedScroll=this.targetScroll=this.actualScroll,this.lastVelocity=this.velocity,this.velocity=this.animatedScroll-e,this.direction=Math.sign(this.animatedScroll-e),this.isStopped||(this.isScrolling=`native`),this.emit(),this.velocity!==0&&(this._resetVelocityTimeout=setTimeout(()=>{this.lastVelocity=this.velocity,this.velocity=0,this.isScrolling=!1,this.emit()},400))}};reset(){this.isLocked=!1,this.isScrolling=!1,this.animatedScroll=this.targetScroll=this.actualScroll,this.lastVelocity=this.velocity=0,this.animate.stop()}start(){if(this.isStopped){if(this.options.autoToggle){this.rootElement.style.removeProperty(`overflow`);return}this.internalStart()}}internalStart(){this.isStopped&&(this.reset(),this.isStopped=!1,this.emit())}stop(){if(!this.isStopped){if(this.options.autoToggle){this.rootElement.style.setProperty(`overflow`,`clip`);return}this.internalStop()}}internalStop(){this.isStopped||(this.reset(),this.isStopped=!0,this.emit())}raf=e=>{let t=e-(this.time||e);this.time=e,this.animate.advance(t*.001),this.options.autoRaf&&(this._rafId=requestAnimationFrame(this.raf))};scrollTo(e,{offset:n=0,immediate:r=!1,lock:i=!1,programmatic:a=!0,lerp:o=a?this.options.lerp:void 0,duration:s=a?this.options.duration:void 0,easing:c=a?this.options.easing:void 0,onStart:l,onComplete:u,force:d=!1,userData:p}={}){if(this.prefersReducedMotion&&(a?r=!0:(o=1,s=void 0,c=void 0)),(this.isStopped||this.isLocked)&&!d)return;let m=e,h=n;if(typeof m==`string`&&[`top`,`left`,`start`,`#`].includes(m))m=0;else if(typeof m==`string`&&[`bottom`,`right`,`end`].includes(m))m=this.limit;else{let e=null;if(typeof m==`string`?(e=m.startsWith(`#`)?document.getElementById(m.slice(1)):document.querySelector(m),e||(m===`#top`?m=0:console.warn(`Lenis: Target not found`,m))):m instanceof HTMLElement&&m?.nodeType&&(e=m),e){if(this.options.wrapper!==window){let e=this.rootElement.getBoundingClientRect();h-=this.isHorizontal?e.left:e.top}let t=e.getBoundingClientRect(),n=getComputedStyle(e),r=this.isHorizontal?Number.parseFloat(n.scrollMarginLeft):Number.parseFloat(n.scrollMarginTop),i=getComputedStyle(this.rootElement),a=this.isHorizontal?Number.parseFloat(i.scrollPaddingLeft):Number.parseFloat(i.scrollPaddingTop);m=(this.isHorizontal?t.left:t.top)+this.animatedScroll-(Number.isNaN(r)?0:r)-(Number.isNaN(a)?0:a)}}if(typeof m==`number`){if(m+=h,this.options.infinite){if(a){this.targetScroll=this.animatedScroll=this.scroll;let e=m-this.animatedScroll;e>this.limit/2?m-=this.limit:e<-this.limit/2&&(m+=this.limit)}}else m=t(0,m,this.limit);if(m===this.targetScroll){l?.(this),u?.(this);return}if(this.userData=p??{},r){this.animatedScroll=this.targetScroll=m,this.setScroll(this.scroll),this.reset(),this.preventNextNativeScrollEvent(),this.emit(),u?.(this),this.userData={},requestAnimationFrame(()=>{this.dispatchScrollendEvent()});return}a||(this.targetScroll=m),typeof s==`number`&&typeof c!=`function`?c=f:typeof c==`function`&&typeof s!=`number`&&(s=1),this.animate.fromTo(this.animatedScroll,m,{duration:s,easing:c,lerp:o,onStart:()=>{i&&(this.isLocked=!0),this.isScrolling=`smooth`,l?.(this)},onUpdate:(e,t)=>{this.isScrolling=`smooth`,this.lastVelocity=this.velocity,this.velocity=e-this.animatedScroll,this.direction=Math.sign(this.velocity),this.animatedScroll=e,this.setScroll(this.scroll),a&&(this.targetScroll=e),t||this.emit(),t&&(this.reset(),this.emit(),u?.(this),this.userData={},requestAnimationFrame(()=>{this.dispatchScrollendEvent()}),this.preventNextNativeScrollEvent())}})}}preventNextNativeScrollEvent(){this._preventNextNativeScrollEvent=!0,requestAnimationFrame(()=>{this._preventNextNativeScrollEvent=!1})}hasNestedScroll(e,{deltaX:t,deltaY:n}){let r=Date.now();e._lenis||={};let i=e._lenis,a,o,s,c,l,u,d,f,p,m;if(r-(i.time??0)>2e3){i.time=Date.now();let t=window.getComputedStyle(e);if(i.computedStyle=t,a=[`auto`,`overlay`,`scroll`].includes(t.overflowX),o=[`auto`,`overlay`,`scroll`].includes(t.overflowY),l=[`auto`].includes(t.overscrollBehaviorX),u=[`auto`].includes(t.overscrollBehaviorY),i.hasOverflowX=a,i.hasOverflowY=o,!(a||o))return!1;d=e.scrollWidth,f=e.scrollHeight,p=e.clientWidth,m=e.clientHeight,s=d>p,c=f>m,i.isScrollableX=s,i.isScrollableY=c,i.scrollWidth=d,i.scrollHeight=f,i.clientWidth=p,i.clientHeight=m,i.hasOverscrollBehaviorX=l,i.hasOverscrollBehaviorY=u}else s=i.isScrollableX,c=i.isScrollableY,a=i.hasOverflowX,o=i.hasOverflowY,d=i.scrollWidth,f=i.scrollHeight,p=i.clientWidth,m=i.clientHeight,l=i.hasOverscrollBehaviorX,u=i.hasOverscrollBehaviorY;if(!(a&&s||o&&c))return!1;let h=Math.abs(t)>=Math.abs(n)?`horizontal`:`vertical`,g,_,v,y,b,x;if(h===`horizontal`)g=Math.round(e.scrollLeft),_=d-p,v=t,y=a,b=s,x=l;else if(h===`vertical`)g=Math.round(e.scrollTop),_=f-m,v=n,y=o,b=c,x=u;else return!1;return!x&&(g>=_||g<=0)?!0:(v>0?g<_:g>0)&&y&&b}get rootElement(){return this.options.wrapper===window?document.documentElement:this.options.wrapper}get limit(){return this.options.naiveDimensions?this.isHorizontal?this.rootElement.scrollWidth-this.rootElement.clientWidth:this.rootElement.scrollHeight-this.rootElement.clientHeight:this.dimensions.limit[this.isHorizontal?`x`:`y`]}get isHorizontal(){return this.options.orientation===`horizontal`}get actualScroll(){let e=this.options.wrapper;return this.isHorizontal?e.scrollX??e.scrollLeft:e.scrollY??e.scrollTop}get scroll(){return this.options.infinite?i(this.animatedScroll,this.limit):this.animatedScroll}get progress(){return this.limit===0?1:this.scroll/this.limit}get isScrolling(){return this._isScrolling}set isScrolling(e){this._isScrolling!==e&&(this._isScrolling=e,this.updateClassName())}get isStopped(){return this._isStopped}set isStopped(e){this._isStopped!==e&&(this._isStopped=e,this.updateClassName())}get isLocked(){return this._isLocked}set isLocked(e){this._isLocked!==e&&(this._isLocked=e,this.updateClassName())}get isSmooth(){return this.isScrolling===`smooth`}get prefersReducedMotion(){return this.options.respectReducedMotion&&this.reducedMotionMediaQuery.matches}get className(){let e=`lenis`;return this.options.autoToggle&&(e+=` lenis-autoToggle`),this.isStopped&&(e+=` lenis-stopped`),this.isLocked&&(e+=` lenis-locked`),this.isScrolling&&(e+=` lenis-scrolling`),this.isScrolling===`smooth`&&(e+=` lenis-smooth`),e}updateClassName(){this.cleanUpClassName(),this.className.split(` `).forEach(e=>{this.rootElement.classList.add(e)})}cleanUpClassName(){for(let e of Array.from(this.rootElement.classList))(e===`lenis`||e.startsWith(`lenis-`))&&this.rootElement.classList.remove(e)}};globalThis.Lenis=p,globalThis.Lenis.prototype=p.prototype})();
-//# sourceMappingURL=lenis.min.js.map
+    (function () { var e = `1.3.26`; function t(e, t, n) { return Math.max(e, Math.min(t, n)) } function n(e, t, n) { return (1 - n) * e + n * t } function r(e, t, r, i) { return n(e, t, 1 - Math.exp(-r * i)) } function i(e, t) { return (e % t + t) % t } var a = class { isRunning = !1; value = 0; from = 0; to = 0; currentTime = 0; lerp; duration; easing; onUpdate; advance(e) { if (!this.isRunning) return; let n = !1; if (this.duration && this.easing) { this.currentTime += e; let r = t(0, this.currentTime / this.duration, 1); n = r >= 1; let i = n ? 1 : this.easing(r); this.value = this.from + (this.to - this.from) * i } else this.lerp ? (this.value = r(this.value, this.to, this.lerp * 60, e), Math.round(this.value) === Math.round(this.to) && (this.value = this.to, n = !0)) : (this.value = this.to, n = !0); n && this.stop(), this.onUpdate?.(this.value, n) } stop() { this.isRunning = !1 } fromTo(e, t, { lerp: n, duration: r, easing: i, onStart: a, onUpdate: o }) { this.from = this.value = e, this.to = t, this.lerp = n, this.duration = r, this.easing = i, this.currentTime = 0, this.isRunning = !0, a?.(), this.onUpdate = o } }; function o(e, t) { let n; return function (...r) { clearTimeout(n), n = setTimeout(() => { n = void 0, e.apply(this, r) }, t) } } var s = class { width = 0; height = 0; scrollHeight = 0; scrollWidth = 0; debouncedResize; wrapperResizeObserver; contentResizeObserver; constructor(e, t, { autoResize: n = !0, debounce: r = 250 } = {}) { this.wrapper = e, this.content = t, n && (this.debouncedResize = o(this.resize, r), this.wrapper instanceof Window ? window.addEventListener(`resize`, this.debouncedResize) : (this.wrapperResizeObserver = new ResizeObserver(this.debouncedResize), this.wrapperResizeObserver.observe(this.wrapper)), this.contentResizeObserver = new ResizeObserver(this.debouncedResize), this.contentResizeObserver.observe(this.content)), this.resize() } destroy() { this.wrapperResizeObserver?.disconnect(), this.contentResizeObserver?.disconnect(), this.wrapper === window && this.debouncedResize && window.removeEventListener(`resize`, this.debouncedResize) } resize = () => { this.onWrapperResize(), this.onContentResize() }; onWrapperResize = () => { this.wrapper instanceof Window ? (this.width = window.innerWidth, this.height = window.innerHeight) : (this.width = this.wrapper.clientWidth, this.height = this.wrapper.clientHeight) }; onContentResize = () => { this.wrapper instanceof Window ? (this.scrollHeight = this.content.scrollHeight, this.scrollWidth = this.content.scrollWidth) : (this.scrollHeight = this.wrapper.scrollHeight, this.scrollWidth = this.wrapper.scrollWidth) }; get limit() { return { x: this.scrollWidth - this.width, y: this.scrollHeight - this.height } } }, c = class { events = {}; emit(e, ...t) { let n = this.events[e] || []; for (let e = 0, r = n.length; e < r; e++)n[e]?.(...t) } on(e, t) { return this.events[e] ? this.events[e].push(t) : this.events[e] = [t], () => { this.events[e] = this.events[e]?.filter(e => t !== e) } } off(e, t) { this.events[e] = this.events[e]?.filter(e => t !== e) } destroy() { this.events = {} } }; let l = { passive: !1 }; function u(e, t) { return e === 1 ? 16.666666666666668 : e === 2 ? t : 1 } var d = class { touchStart = { x: 0, y: 0 }; lastDelta = { x: 0, y: 0 }; window = { width: 0, height: 0 }; emitter = new c; constructor(e, t = { wheelMultiplier: 1, touchMultiplier: 1 }) { this.element = e, this.options = t, window.addEventListener(`resize`, this.onWindowResize), this.onWindowResize(), this.element.addEventListener(`wheel`, this.onWheel, l), this.element.addEventListener(`touchstart`, this.onTouchStart, l), this.element.addEventListener(`touchmove`, this.onTouchMove, l), this.element.addEventListener(`touchend`, this.onTouchEnd, l) } on(e, t) { return this.emitter.on(e, t) } destroy() { this.emitter.destroy(), window.removeEventListener(`resize`, this.onWindowResize), this.element.removeEventListener(`wheel`, this.onWheel, l), this.element.removeEventListener(`touchstart`, this.onTouchStart, l), this.element.removeEventListener(`touchmove`, this.onTouchMove, l), this.element.removeEventListener(`touchend`, this.onTouchEnd, l) } onTouchStart = e => { let { clientX: t, clientY: n } = e.targetTouches ? e.targetTouches[0] : e; this.touchStart.x = t, this.touchStart.y = n, this.lastDelta = { x: 0, y: 0 }, this.emitter.emit(`scroll`, { deltaX: 0, deltaY: 0, event: e }) }; onTouchMove = e => { let { clientX: t, clientY: n } = e.targetTouches ? e.targetTouches[0] : e, r = -(t - this.touchStart.x) * this.options.touchMultiplier, i = -(n - this.touchStart.y) * this.options.touchMultiplier; this.touchStart.x = t, this.touchStart.y = n, this.lastDelta = { x: r, y: i }, this.emitter.emit(`scroll`, { deltaX: r, deltaY: i, event: e }) }; onTouchEnd = e => { this.emitter.emit(`scroll`, { deltaX: this.lastDelta.x, deltaY: this.lastDelta.y, event: e }) }; onWheel = e => { let { deltaX: t, deltaY: n, deltaMode: r } = e, i = u(r, this.window.width), a = u(r, this.window.height); t *= i, n *= a, t *= this.options.wheelMultiplier, n *= this.options.wheelMultiplier, this.emitter.emit(`scroll`, { deltaX: t, deltaY: n, event: e }) }; onWindowResize = () => { this.window = { width: window.innerWidth, height: window.innerHeight } } }; let f = e => Math.min(1, 1.001 - 2 ** (-10 * e)); var p = class { _isScrolling = !1; _isStopped = !1; _isLocked = !1; _preventNextNativeScrollEvent = !1; _resetVelocityTimeout = null; _rafId = null; _isDraggingSelection = !1; reducedMotionMediaQuery = window.matchMedia(`(prefers-reduced-motion: reduce)`); isTouching; isIos; time = 0; userData = {}; lastVelocity = 0; velocity = 0; direction = 0; options; targetScroll; animatedScroll; animate = new a; emitter = new c; dimensions; virtualScroll; constructor({ wrapper: t = window, content: n = document.documentElement, eventsTarget: r = t, smoothWheel: i = !0, syncTouch: a = !1, syncTouchLerp: o = .075, touchInertiaExponent: c = 1.7, duration: l, easing: u, lerp: p = .1, infinite: m = !1, orientation: h = `vertical`, gestureOrientation: g = h === `horizontal` ? `both` : `vertical`, touchMultiplier: _ = 1, wheelMultiplier: v = 1, autoResize: y = !0, prevent: b, virtualScroll: x, overscroll: S = !0, autoRaf: C = !1, anchors: w = !1, autoToggle: T = !1, allowNestedScroll: E = !1, __experimental__naiveDimensions: D = !1, naiveDimensions: O = D, stopInertiaOnNavigate: k = !1, respectReducedMotion: A = !0 } = {}) { window.lenisVersion = e, window.lenis || (window.lenis = {}), window.lenis.version = e, h === `horizontal` && (window.lenis.horizontal = !0), a === !0 && (window.lenis.touch = !0), this.isIos = /(iPad|iPhone|iPod)/g.test(navigator.userAgent), (!t || t === document.documentElement) && (t = window), typeof l == `number` && typeof u != `function` ? u = f : typeof u == `function` && typeof l != `number` && (l = 1), this.options = { wrapper: t, content: n, eventsTarget: r, smoothWheel: i, syncTouch: a, syncTouchLerp: o, touchInertiaExponent: c, duration: l, easing: u, lerp: p, infinite: m, gestureOrientation: g, orientation: h, touchMultiplier: _, wheelMultiplier: v, autoResize: y, prevent: b, virtualScroll: x, overscroll: S, autoRaf: C, anchors: w, autoToggle: T, allowNestedScroll: E, naiveDimensions: O, stopInertiaOnNavigate: k, respectReducedMotion: A }, this.dimensions = new s(t, n, { autoResize: y }), this.updateClassName(), this.targetScroll = this.animatedScroll = this.actualScroll, this.options.wrapper.addEventListener(`scroll`, this.onNativeScroll), this.options.wrapper.addEventListener(`scrollend`, this.onScrollEnd, { capture: !0 }), (this.options.anchors || this.options.stopInertiaOnNavigate) && this.options.wrapper.addEventListener(`click`, this.onClick), this.options.wrapper.addEventListener(`pointerdown`, this.onPointerDown), this.virtualScroll = new d(r, { touchMultiplier: _, wheelMultiplier: v }), this.virtualScroll.on(`scroll`, this.onVirtualScroll), this.options.autoToggle && (this.checkOverflow(), this.rootElement.addEventListener(`transitionend`, this.onTransitionEnd)), this.options.autoRaf && (this._rafId = requestAnimationFrame(this.raf)) } destroy() { this.emitter.destroy(), this.options.wrapper.removeEventListener(`scroll`, this.onNativeScroll), this.options.wrapper.removeEventListener(`scrollend`, this.onScrollEnd, { capture: !0 }), this.options.wrapper.removeEventListener(`pointerdown`, this.onPointerDown), (this.options.anchors || this.options.stopInertiaOnNavigate) && this.options.wrapper.removeEventListener(`click`, this.onClick), this.virtualScroll.destroy(), this.dimensions.destroy(), this.cleanUpClassName(), this._rafId && cancelAnimationFrame(this._rafId) } on(e, t) { return this.emitter.on(e, t) } off(e, t) { return this.emitter.off(e, t) } onScrollEnd = e => { e instanceof CustomEvent || (this.isScrolling === `smooth` || this.isScrolling === !1) && e.stopPropagation() }; dispatchScrollendEvent = () => { this.options.wrapper.dispatchEvent(new CustomEvent(`scrollend`, { bubbles: this.options.wrapper === window, detail: { lenisScrollEnd: !0 } })) }; get overflow() { let e = this.isHorizontal ? `overflow-x` : `overflow-y`; return getComputedStyle(this.rootElement)[e] } checkOverflow() { [`hidden`, `clip`].includes(this.overflow) ? this.internalStop() : this.internalStart() } onTransitionEnd = e => { e.propertyName?.includes(`overflow`) && e.target === this.rootElement && this.checkOverflow() }; setScroll(e) { this.isHorizontal ? this.options.wrapper.scrollTo({ left: e, behavior: `instant` }) : this.options.wrapper.scrollTo({ top: e, behavior: `instant` }) } onClick = e => { let t = e.composedPath().filter(e => e instanceof HTMLAnchorElement && e.href).map(e => new URL(e.href)), n = new URL(window.location.href); if (this.options.anchors) { let e = t.find(e => n.host === e.host && n.pathname === e.pathname && e.hash); if (e) { let t = typeof this.options.anchors == `object` && this.options.anchors ? this.options.anchors : void 0, n = decodeURIComponent(e.hash); this.scrollTo(n, t); return } } if (this.options.stopInertiaOnNavigate && t.some(e => n.host === e.host && n.pathname !== e.pathname)) { this.reset(); return } }; onPointerDown = e => { e.button === 1 && this.reset() }; isTouchOnSelectionHandle(e) { let t = window.getSelection(); if (!t || t.isCollapsed || t.rangeCount === 0) return !1; let n = e.targetTouches[0] ?? e.changedTouches[0]; if (!n) return !1; let r = t.getRangeAt(0).getClientRects(); if (r.length === 0) return !1; let i = r[0], a = r[r.length - 1], o = Math.hypot(n.clientX - i.left, n.clientY - i.top) <= 40, s = Math.hypot(n.clientX - a.right, n.clientY - a.bottom) <= 40; return o || s } onVirtualScroll = e => { if (typeof this.options.virtualScroll == `function` && this.options.virtualScroll(e) === !1) return; let { deltaX: t, deltaY: n, event: r } = e; if (this.emitter.emit(`virtual-scroll`, { deltaX: t, deltaY: n, event: r }), r.ctrlKey || r.lenisStopPropagation) return; let i = r.type.includes(`touch`), a = r.type.includes(`wheel`); if (i && this.isIos && (r.type === `touchstart` && (this._isDraggingSelection = this.isTouchOnSelectionHandle(r)), this._isDraggingSelection)) { r.type === `touchend` && (this._isDraggingSelection = !1); return } this.isTouching = r.type === `touchstart` || r.type === `touchmove`; let o = t === 0 && n === 0; if (this.options.syncTouch && i && r.type === `touchstart` && o && !this.isStopped && !this.isLocked) { this.reset(); return } let s = this.options.gestureOrientation === `vertical` && n === 0 || this.options.gestureOrientation === `horizontal` && t === 0; if (o || s) return; let c = r.composedPath(); c = c.slice(0, c.indexOf(this.rootElement)); let l = this.options.prevent, u = Math.abs(t) >= Math.abs(n) ? `horizontal` : `vertical`; if (c.find(e => e instanceof HTMLElement && (typeof l == `function` && l?.(e) || e.hasAttribute?.(`data-lenis-prevent`) || u === `vertical` && e.hasAttribute?.(`data-lenis-prevent-vertical`) || u === `horizontal` && e.hasAttribute?.(`data-lenis-prevent-horizontal`) || i && e.hasAttribute?.(`data-lenis-prevent-touch`) || a && e.hasAttribute?.(`data-lenis-prevent-wheel`) || this.options.allowNestedScroll && this.hasNestedScroll(e, { deltaX: t, deltaY: n })))) return; if (this.isStopped || this.isLocked) { r.cancelable && r.preventDefault(); return } if (!(this.options.syncTouch && i || this.options.smoothWheel && a)) { this.isScrolling = `native`, this.animate.stop(), r.lenisStopPropagation = !0; return } let d = n; this.options.gestureOrientation === `both` ? d = Math.abs(n) > Math.abs(t) ? n : t : this.options.gestureOrientation === `horizontal` && (d = t), (!this.options.overscroll || this.options.infinite || this.options.wrapper !== window && this.limit > 0 && (this.animatedScroll > 0 && this.animatedScroll < this.limit || this.animatedScroll === 0 && n > 0 || this.animatedScroll === this.limit && n < 0)) && (r.lenisStopPropagation = !0), r.cancelable && r.preventDefault(); let f = i && this.options.syncTouch, p = i && r.type === `touchend`; p && (d = Math.sign(d) * Math.abs(this.velocity) ** this.options.touchInertiaExponent), this.scrollTo(this.targetScroll + d, { programmatic: !1, ...f ? { lerp: p ? this.options.syncTouchLerp : 1 } : { lerp: this.options.lerp, duration: this.options.duration, easing: this.options.easing } }) }; resize() { this.dimensions.resize(), this.animatedScroll = this.targetScroll = this.actualScroll, this.emit() } emit() { this.emitter.emit(`scroll`, this) } onNativeScroll = () => { if (this._resetVelocityTimeout !== null && (clearTimeout(this._resetVelocityTimeout), this._resetVelocityTimeout = null), this._preventNextNativeScrollEvent) { this._preventNextNativeScrollEvent = !1; return } if (this.isScrolling === !1 || this.isScrolling === `native`) { let e = this.animatedScroll; this.animatedScroll = this.targetScroll = this.actualScroll, this.lastVelocity = this.velocity, this.velocity = this.animatedScroll - e, this.direction = Math.sign(this.animatedScroll - e), this.isStopped || (this.isScrolling = `native`), this.emit(), this.velocity !== 0 && (this._resetVelocityTimeout = setTimeout(() => { this.lastVelocity = this.velocity, this.velocity = 0, this.isScrolling = !1, this.emit() }, 400)) } }; reset() { this.isLocked = !1, this.isScrolling = !1, this.animatedScroll = this.targetScroll = this.actualScroll, this.lastVelocity = this.velocity = 0, this.animate.stop() } start() { if (this.isStopped) { if (this.options.autoToggle) { this.rootElement.style.removeProperty(`overflow`); return } this.internalStart() } } internalStart() { this.isStopped && (this.reset(), this.isStopped = !1, this.emit()) } stop() { if (!this.isStopped) { if (this.options.autoToggle) { this.rootElement.style.setProperty(`overflow`, `clip`); return } this.internalStop() } } internalStop() { this.isStopped || (this.reset(), this.isStopped = !0, this.emit()) } raf = e => { let t = e - (this.time || e); this.time = e, this.animate.advance(t * .001), this.options.autoRaf && (this._rafId = requestAnimationFrame(this.raf)) }; scrollTo(e, { offset: n = 0, immediate: r = !1, lock: i = !1, programmatic: a = !0, lerp: o = a ? this.options.lerp : void 0, duration: s = a ? this.options.duration : void 0, easing: c = a ? this.options.easing : void 0, onStart: l, onComplete: u, force: d = !1, userData: p } = {}) { if (this.prefersReducedMotion && (a ? r = !0 : (o = 1, s = void 0, c = void 0)), (this.isStopped || this.isLocked) && !d) return; let m = e, h = n; if (typeof m == `string` && [`top`, `left`, `start`, `#`].includes(m)) m = 0; else if (typeof m == `string` && [`bottom`, `right`, `end`].includes(m)) m = this.limit; else { let e = null; if (typeof m == `string` ? (e = m.startsWith(`#`) ? document.getElementById(m.slice(1)) : document.querySelector(m), e || (m === `#top` ? m = 0 : console.warn(`Lenis: Target not found`, m))) : m instanceof HTMLElement && m?.nodeType && (e = m), e) { if (this.options.wrapper !== window) { let e = this.rootElement.getBoundingClientRect(); h -= this.isHorizontal ? e.left : e.top } let t = e.getBoundingClientRect(), n = getComputedStyle(e), r = this.isHorizontal ? Number.parseFloat(n.scrollMarginLeft) : Number.parseFloat(n.scrollMarginTop), i = getComputedStyle(this.rootElement), a = this.isHorizontal ? Number.parseFloat(i.scrollPaddingLeft) : Number.parseFloat(i.scrollPaddingTop); m = (this.isHorizontal ? t.left : t.top) + this.animatedScroll - (Number.isNaN(r) ? 0 : r) - (Number.isNaN(a) ? 0 : a) } } if (typeof m == `number`) { if (m += h, this.options.infinite) { if (a) { this.targetScroll = this.animatedScroll = this.scroll; let e = m - this.animatedScroll; e > this.limit / 2 ? m -= this.limit : e < -this.limit / 2 && (m += this.limit) } } else m = t(0, m, this.limit); if (m === this.targetScroll) { l?.(this), u?.(this); return } if (this.userData = p ?? {}, r) { this.animatedScroll = this.targetScroll = m, this.setScroll(this.scroll), this.reset(), this.preventNextNativeScrollEvent(), this.emit(), u?.(this), this.userData = {}, requestAnimationFrame(() => { this.dispatchScrollendEvent() }); return } a || (this.targetScroll = m), typeof s == `number` && typeof c != `function` ? c = f : typeof c == `function` && typeof s != `number` && (s = 1), this.animate.fromTo(this.animatedScroll, m, { duration: s, easing: c, lerp: o, onStart: () => { i && (this.isLocked = !0), this.isScrolling = `smooth`, l?.(this) }, onUpdate: (e, t) => { this.isScrolling = `smooth`, this.lastVelocity = this.velocity, this.velocity = e - this.animatedScroll, this.direction = Math.sign(this.velocity), this.animatedScroll = e, this.setScroll(this.scroll), a && (this.targetScroll = e), t || this.emit(), t && (this.reset(), this.emit(), u?.(this), this.userData = {}, requestAnimationFrame(() => { this.dispatchScrollendEvent() }), this.preventNextNativeScrollEvent()) } }) } } preventNextNativeScrollEvent() { this._preventNextNativeScrollEvent = !0, requestAnimationFrame(() => { this._preventNextNativeScrollEvent = !1 }) } hasNestedScroll(e, { deltaX: t, deltaY: n }) { let r = Date.now(); e._lenis ||= {}; let i = e._lenis, a, o, s, c, l, u, d, f, p, m; if (r - (i.time ?? 0) > 2e3) { i.time = Date.now(); let t = window.getComputedStyle(e); if (i.computedStyle = t, a = [`auto`, `overlay`, `scroll`].includes(t.overflowX), o = [`auto`, `overlay`, `scroll`].includes(t.overflowY), l = [`auto`].includes(t.overscrollBehaviorX), u = [`auto`].includes(t.overscrollBehaviorY), i.hasOverflowX = a, i.hasOverflowY = o, !(a || o)) return !1; d = e.scrollWidth, f = e.scrollHeight, p = e.clientWidth, m = e.clientHeight, s = d > p, c = f > m, i.isScrollableX = s, i.isScrollableY = c, i.scrollWidth = d, i.scrollHeight = f, i.clientWidth = p, i.clientHeight = m, i.hasOverscrollBehaviorX = l, i.hasOverscrollBehaviorY = u } else s = i.isScrollableX, c = i.isScrollableY, a = i.hasOverflowX, o = i.hasOverflowY, d = i.scrollWidth, f = i.scrollHeight, p = i.clientWidth, m = i.clientHeight, l = i.hasOverscrollBehaviorX, u = i.hasOverscrollBehaviorY; if (!(a && s || o && c)) return !1; let h = Math.abs(t) >= Math.abs(n) ? `horizontal` : `vertical`, g, _, v, y, b, x; if (h === `horizontal`) g = Math.round(e.scrollLeft), _ = d - p, v = t, y = a, b = s, x = l; else if (h === `vertical`) g = Math.round(e.scrollTop), _ = f - m, v = n, y = o, b = c, x = u; else return !1; return !x && (g >= _ || g <= 0) ? !0 : (v > 0 ? g < _ : g > 0) && y && b } get rootElement() { return this.options.wrapper === window ? document.documentElement : this.options.wrapper } get limit() { return this.options.naiveDimensions ? this.isHorizontal ? this.rootElement.scrollWidth - this.rootElement.clientWidth : this.rootElement.scrollHeight - this.rootElement.clientHeight : this.dimensions.limit[this.isHorizontal ? `x` : `y`] } get isHorizontal() { return this.options.orientation === `horizontal` } get actualScroll() { let e = this.options.wrapper; return this.isHorizontal ? e.scrollX ?? e.scrollLeft : e.scrollY ?? e.scrollTop } get scroll() { return this.options.infinite ? i(this.animatedScroll, this.limit) : this.animatedScroll } get progress() { return this.limit === 0 ? 1 : this.scroll / this.limit } get isScrolling() { return this._isScrolling } set isScrolling(e) { this._isScrolling !== e && (this._isScrolling = e, this.updateClassName()) } get isStopped() { return this._isStopped } set isStopped(e) { this._isStopped !== e && (this._isStopped = e, this.updateClassName()) } get isLocked() { return this._isLocked } set isLocked(e) { this._isLocked !== e && (this._isLocked = e, this.updateClassName()) } get isSmooth() { return this.isScrolling === `smooth` } get prefersReducedMotion() { return this.options.respectReducedMotion && this.reducedMotionMediaQuery.matches } get className() { let e = `lenis`; return this.options.autoToggle && (e += ` lenis-autoToggle`), this.isStopped && (e += ` lenis-stopped`), this.isLocked && (e += ` lenis-locked`), this.isScrolling && (e += ` lenis-scrolling`), this.isScrolling === `smooth` && (e += ` lenis-smooth`), e } updateClassName() { this.cleanUpClassName(), this.className.split(` `).forEach(e => { this.rootElement.classList.add(e) }) } cleanUpClassName() { for (let e of Array.from(this.rootElement.classList)) (e === `lenis` || e.startsWith(`lenis-`)) && this.rootElement.classList.remove(e) } }; globalThis.Lenis = p, globalThis.Lenis.prototype = p.prototype })();
+    //# sourceMappingURL=lenis.min.js.map
   }
 
   // Inject instant global CSS to permanently hide Pterodactyl progress bar / cyan glowing line
@@ -155,12 +155,13 @@
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
     const isResourceTab = currentPath === '/resource' || currentPath === '/billing/resource' || window.location.hash === '#resource';
-    const isApparatusSettingsTab = !isResourceTab && (currentPath === '/apparatus-settings' || window.location.hash === '#apparatus-settings');
-    const isPanelSettingsTab = !isResourceTab && !isApparatusSettingsTab && (currentPath === '/panel-settings' || currentPath === '/settings' || window.location.hash === '#panel-settings' || window.location.hash === '#settings');
+    const isStoreTab = currentPath === '/store' || currentPath === '/billing/store' || window.location.hash === '#store';
+    const isApparatusSettingsTab = !isResourceTab && !isStoreTab && (currentPath === '/apparatus-settings' || window.location.hash === '#apparatus-settings');
+    const isPanelSettingsTab = !isResourceTab && !isStoreTab && !isApparatusSettingsTab && (currentPath === '/panel-settings' || currentPath === '/settings' || window.location.hash === '#panel-settings' || window.location.hash === '#settings');
     const isSettingsTab = isPanelSettingsTab || isApparatusSettingsTab;
-    const isVpsTab = !isResourceTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
-    const isServerTab = !isResourceTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
-    const isDashboardTab = !isResourceTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
+    const isVpsTab = !isResourceTab && !isStoreTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
+    const isServerTab = !isResourceTab && !isStoreTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
+    const isDashboardTab = !isResourceTab && !isStoreTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
 
     const links = document.querySelectorAll('.apparatus-nav-link[data-path], .apparatus-nav-link[data-tab]');
     links.forEach(function (link) {
@@ -172,6 +173,8 @@
 
       if (tab === 'resource' || p === '/resource' || p === '/billing/resource') {
         isActive = isResourceTab;
+      } else if (tab === 'store' || p === '/store' || p === '/billing/store') {
+        isActive = isStoreTab;
       } else if (tab === 'panel-settings' || p === '/panel-settings' || tab === 'settings' || p === '/settings') {
         isActive = isPanelSettingsTab;
       } else if (tab === 'apparatus-settings' || p === '/apparatus-settings') {
@@ -184,10 +187,10 @@
         isActive = isVpsTab;
       } else if (p === '/account') {
         // Account Credentials should ONLY be active on exact /account, NOT on /account/api, /account/ssh, etc.
-        isActive = currentPath === '/account' && !window.location.hash && !isResourceTab && !isSettingsTab;
+        isActive = currentPath === '/account' && !window.location.hash && !isResourceTab && !isStoreTab && !isSettingsTab;
       } else if (p) {
         // Sub-routes such as /account/api, /account/ssh, /account/activity, /admin
-        isActive = (currentPath === p || currentPath.startsWith(p + '/')) && !window.location.hash && !isResourceTab && !isSettingsTab;
+        isActive = (currentPath === p || currentPath.startsWith(p + '/')) && !window.location.hash && !isResourceTab && !isStoreTab && !isSettingsTab;
       }
 
       if (isActive) {
@@ -204,6 +207,8 @@
     // Normalize legacy hash slugs into clean, modern path slugs
     if (window.location.hash === '#resource') {
       history.replaceState(null, '', '/resource');
+    } else if (window.location.hash === '#store') {
+      history.replaceState(null, '', '/store');
     } else if (window.location.hash === '#panel-settings' || window.location.hash === '#settings') {
       history.replaceState(null, '', '/panel-settings');
     } else if (window.location.hash === '#apparatus-settings') {
@@ -214,21 +219,24 @@
     const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
 
     const isResourceTab = currentPath === '/resource' || currentPath === '/billing/resource' || window.location.hash === '#resource';
-    const isApparatusSettingsTab = !isResourceTab && (currentPath === '/apparatus-settings' || window.location.hash === '#apparatus-settings');
-    const isPanelSettingsTab = !isResourceTab && !isApparatusSettingsTab && (currentPath === '/panel-settings' || currentPath === '/settings' || window.location.hash === '#panel-settings' || window.location.hash === '#settings');
+    const isStoreTab = currentPath === '/store' || currentPath === '/billing/store' || window.location.hash === '#store';
+    const isApparatusSettingsTab = !isResourceTab && !isStoreTab && (currentPath === '/apparatus-settings' || window.location.hash === '#apparatus-settings');
+    const isPanelSettingsTab = !isResourceTab && !isStoreTab && !isApparatusSettingsTab && (currentPath === '/panel-settings' || currentPath === '/settings' || window.location.hash === '#panel-settings' || window.location.hash === '#settings');
     const isSettingsTab = isPanelSettingsTab || isApparatusSettingsTab;
-    const isVpsTab = !isResourceTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
-    const isServerTab = !isResourceTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
-    const isDashboardTab = !isResourceTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
+    const isVpsTab = !isResourceTab && !isStoreTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
+    const isServerTab = !isResourceTab && !isStoreTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
+    const isDashboardTab = !isResourceTab && !isStoreTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
     const isHomeRoute = isDashboardTab || isServerTab || isVpsTab;
 
     const hero = document.getElementById('apparatus-dashboard-view');
     const resView = document.getElementById('apparatus-resource-view');
+    const storeView = document.getElementById('apparatus-store-view');
     const setView = document.getElementById('apparatus-settings-view');
     const appSetView = document.getElementById('apparatus-admin-settings-view');
 
     if (isResourceTab) {
       if (hero) hero.style.display = 'none';
+      if (storeView) storeView.style.display = 'none';
       if (setView) setView.style.display = 'none';
       if (appSetView) appSetView.style.display = 'none';
       if (resView) {
@@ -240,7 +248,26 @@
         if (typeof renderResourcePage === 'function') renderResourcePage();
       }
       document.body.classList.add('apparatus-page-resource');
-      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-store', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
+
+      // Hide all account containers and native server messages
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
+        el.style.setProperty('display', 'none', 'important');
+      });
+    } else if (isStoreTab) {
+      if (hero) hero.style.display = 'none';
+      if (resView) resView.style.display = 'none';
+      if (setView) setView.style.display = 'none';
+      if (appSetView) appSetView.style.display = 'none';
+      if (storeView) {
+        const wasHidden = storeView.style.display === 'none';
+        storeView.style.display = 'block';
+        if (wasHidden && typeof gsap !== 'undefined') {
+          gsap.fromTo(storeView, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+        }
+      }
+      document.body.classList.add('apparatus-page-store');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
 
       // Hide all account containers and native server messages
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
@@ -249,6 +276,7 @@
     } else if (isPanelSettingsTab) {
       if (hero) hero.style.display = 'none';
       if (resView) resView.style.display = 'none';
+      if (storeView) storeView.style.display = 'none';
       if (appSetView) appSetView.style.display = 'none';
       if (setView) {
         const wasHidden = setView.style.display === 'none';
@@ -259,7 +287,7 @@
         if (typeof renderSettingsPage === 'function') renderSettingsPage();
       }
       document.body.classList.add('apparatus-page-settings');
-      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-apparatus-settings');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-store', 'apparatus-page-apparatus-settings');
 
       // Hide all account containers and native server messages
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
@@ -268,6 +296,7 @@
     } else if (isApparatusSettingsTab) {
       if (hero) hero.style.display = 'none';
       if (resView) resView.style.display = 'none';
+      if (storeView) storeView.style.display = 'none';
       if (setView) setView.style.display = 'none';
       if (appSetView) {
         const wasHidden = appSetView.style.display === 'none';
@@ -277,7 +306,7 @@
         }
       }
       document.body.classList.add('apparatus-page-apparatus-settings');
-      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-settings');
+      document.body.classList.remove('apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-page-resource', 'apparatus-page-store', 'apparatus-page-settings');
 
       // Hide all account containers and native server messages
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3, div.bg-gray-700, [class*="PageContentBlock"], [class*="NotFound"], div[class*="NotFoundContainer"]').forEach(function (el) {
@@ -285,10 +314,11 @@
       });
     } else if (isHomeRoute) {
       if (resView) resView.style.display = 'none';
+      if (storeView) storeView.style.display = 'none';
       if (setView) setView.style.display = 'none';
       if (appSetView) appSetView.style.display = 'none';
       if (hero) hero.style.display = 'block';
-      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
+      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-store', 'apparatus-page-settings', 'apparatus-page-apparatus-settings');
 
       const sPane = document.getElementById('apparatus-pane-servers');
       const vPane = document.getElementById('apparatus-pane-vps');
@@ -327,10 +357,11 @@
       });
     } else {
       if (resView) resView.style.display = 'none';
+      if (storeView) storeView.style.display = 'none';
       if (setView) setView.style.display = 'none';
       if (appSetView) appSetView.style.display = 'none';
       if (hero) hero.style.display = 'none';
-      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-settings', 'apparatus-page-apparatus-settings', 'apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-view-dashboard', 'apparatus-view-servers', 'apparatus-view-vps');
+      document.body.classList.remove('apparatus-page-resource', 'apparatus-page-store', 'apparatus-page-settings', 'apparatus-page-apparatus-settings', 'apparatus-page-dashboard', 'apparatus-page-servers', 'apparatus-page-vps', 'apparatus-view-dashboard', 'apparatus-view-servers', 'apparatus-view-vps');
 
       // Restore display for account containers when on account routes
       document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, div.bg-gray-700, [class*="PageContentBlock"]').forEach(function (el) {
@@ -980,13 +1011,8 @@
 
     const heroStoreBtn = document.getElementById('apparatus-hero-store-btn');
     if (heroStoreBtn) {
-      heroStoreBtn.addEventListener('click', function () {
-        const billing = document.getElementById('apparatus-area-billing');
-        if (billing) {
-          smoothScrollToElement(billing, true);
-        } else {
-          window.open('https://arixbyte.com', '_blank');
-        }
+      heroStoreBtn.addEventListener('click', function (e) {
+        navigateToStore(e);
       });
     }
 
@@ -1050,23 +1076,27 @@
     });
   }
 
+  function navigateToStore(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const rawP = window.location.pathname || '/';
+    const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard' || rawP === '/resource' || rawP === '/store' || rawP === '/panel-settings' || rawP === '/apparatus-settings';
+    if (!onHome) {
+      window.location.href = '/store';
+    } else {
+      if (window.location.pathname !== '/store' || window.location.hash) {
+        history.pushState(null, '', '/store');
+      }
+      applyViewMode();
+      smoothScrollToTop();
+    }
+  }
+
   function initBillingActions() {
     const topupBtn = document.getElementById('apparatus-wallet-topup-btn');
     const ribbonTopup = document.getElementById('apparatus-ribbon-topup');
 
-    function openTopupModal() {
-      const billing = document.getElementById('apparatus-area-billing');
-      if (billing) {
-        billing.scrollIntoView({ behavior: 'smooth' });
-        billing.style.transition = 'box-shadow 0.3s ease';
-        billing.style.boxShadow = '0 0 25px rgba(236, 72, 153, 0.45)';
-        setTimeout(function () { billing.style.boxShadow = ''; }, 1500);
-      } else {
-        showToast('info', 'INR Wallet Top-Up', 'Redirecting to Instant UPI / NetBanking Gateway...');
-        setTimeout(function () {
-          window.open('https://arixbyte.com', '_blank');
-        }, 800);
-      }
+    function openTopupModal(e) {
+      navigateToStore(e);
     }
 
     if (topupBtn) topupBtn.addEventListener('click', openTopupModal);
@@ -1074,13 +1104,8 @@
 
     const upgradePills = document.querySelectorAll('.apparatus-upgrade-pill');
     upgradePills.forEach(function (pill) {
-      pill.addEventListener('click', function () {
-        const item = pill.dataset.upgrade || 'Resource Addon';
-        const price = pill.dataset.price || '₹99';
-        showToast('success', 'Order Selected', 'Selected ' + item + ' for ' + price + '/mo. Redirecting to billing...');
-        setTimeout(function () {
-          window.open('https://arixbyte.com', '_blank');
-        }, 1200);
+      pill.addEventListener('click', function (e) {
+        navigateToStore(e);
       });
     });
   }
@@ -1504,20 +1529,20 @@
   function triggerDashboardEntrance() {
     if (typeof gsap === 'undefined') return;
     try {
-      gsap.fromTo('#apparatus-area-1', 
-        { autoAlpha: 0, y: 24, scale: 0.985 }, 
+      gsap.fromTo('#apparatus-area-1',
+        { autoAlpha: 0, y: 24, scale: 0.985 },
         { autoAlpha: 1, y: 0, scale: 1, duration: 0.65, ease: 'power3.out' }
       );
-      gsap.fromTo('.apparatus-metric-tile', 
-        { autoAlpha: 0, y: 20, scale: 0.96 }, 
+      gsap.fromTo('.apparatus-metric-tile',
+        { autoAlpha: 0, y: 20, scale: 0.96 },
         { autoAlpha: 1, y: 0, scale: 1, duration: 0.55, stagger: 0.07, ease: 'power3.out', delay: 0.09 }
       );
-      gsap.fromTo('.apparatus-dash-row-top .apparatus-card', 
-        { autoAlpha: 0, y: 22, scale: 0.98 }, 
+      gsap.fromTo('.apparatus-dash-row-top .apparatus-card',
+        { autoAlpha: 0, y: 22, scale: 0.98 },
         { autoAlpha: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.09, ease: 'power3.out', delay: 0.2 }
       );
-      gsap.fromTo('.apparatus-dash-row-bottom .apparatus-card', 
-        { autoAlpha: 0, y: 22, scale: 0.98 }, 
+      gsap.fromTo('.apparatus-dash-row-bottom .apparatus-card',
+        { autoAlpha: 0, y: 22, scale: 0.98 },
         { autoAlpha: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.09, ease: 'power3.out', delay: 0.3 }
       );
       const ramBar = document.getElementById('apparatus-gauge-ram-bar');
@@ -1526,7 +1551,7 @@
       if (ramBar) gsap.fromTo(ramBar, { width: '0%' }, { width: ramBar.style.width || '20%', duration: 1.2, ease: 'power2.out', delay: 0.45 });
       if (cpuBar) gsap.fromTo(cpuBar, { width: '0%' }, { width: cpuBar.style.width || '15%', duration: 1.2, ease: 'power2.out', delay: 0.5 });
       if (diskBar) gsap.fromTo(diskBar, { width: '0%' }, { width: diskBar.style.width || '25%', duration: 1.2, ease: 'power2.out', delay: 0.55 });
-    } catch (err) {}
+    } catch (err) { }
   }
 
   // Initialize the Transparent Futuristic Dashboard
@@ -2443,6 +2468,90 @@
     if (backBtn2) backBtn2.addEventListener('click', goBackToDash);
 
     renderResourcePage();
+  }
+
+  // Initialize the Dedicated Cloud Store View (/store)
+  function initStoreView() {
+    let storeView = document.getElementById('apparatus-store-view');
+    if (storeView) return;
+
+    storeView = document.createElement('div');
+    storeView.id = 'apparatus-store-view';
+    storeView.className = 'apparatus-store-view';
+    storeView.style.display = 'none';
+
+    storeView.innerHTML = `
+      <div class="apparatus-dashboard-container">
+        
+        <!-- Top Store Header -->
+        <div class="apparatus-card apparatus-resource-header-card">
+          <div class="apparatus-resource-header-left">
+            <div class="apparatus-resource-breadcrumbs">
+              <a href="/" class="apparatus-breadcrumb-link" id="apparatus-store-back-btn">
+                <i class="ri-arrow-left-s-line"></i> Dashboard
+              </a>
+              <span class="apparatus-breadcrumb-sep">/</span>
+              <span class="apparatus-breadcrumb-current">Store</span>
+            </div>
+            <h1 class="apparatus-resource-main-title">
+              <i class="ri-shopping-cart-2-line" style="color: #38bdf8;"></i> Cloud Store &amp; Top-Up
+            </h1>
+            <p class="apparatus-resource-subtitle">
+              Instant balance top-up, resource expansions, automated addons, and server upgrades.
+            </p>
+          </div>
+
+          <div class="apparatus-resource-header-right">
+            <a href="/" class="apparatus-btn apparatus-btn-glass" id="apparatus-store-back-btn-2">
+              <i class="ri-dashboard-line"></i> Back to Dashboard
+            </a>
+          </div>
+        </div>
+
+        <!-- Store Placeholder / Management Container -->
+        <div class="apparatus-card apparatus-store-card" style="text-align: center; padding: 4.5rem 2rem; border-radius: 20px; background: rgba(26, 16, 38, 0.45); border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(24px); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);">
+          <div style="width: 76px; height: 76px; margin: 0 auto 1.5rem auto; border-radius: 50%; background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(168, 85, 247, 0.15) 100%); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); box-shadow: 0 0 35px rgba(56, 189, 248, 0.3);">
+            <i class="ri-shopping-bag-3-line"></i>
+          </div>
+          <h2 style="font-size: 1.85rem; font-weight: 800; color: #ffffff; margin-bottom: 0.75rem; letter-spacing: -0.01em; font-family: var(--apparatus-font);">ArixByte Cloud Store</h2>
+          <p style="color: rgba(255, 255, 255, 0.72); max-width: 600px; margin: 0 auto 2.2rem auto; font-size: 1.05rem; line-height: 1.65;">
+            Our automated store &amp; instant balance top-up system is currently being set up. Stay tuned for seamless UPI payments, credit recharges, and instant server resource scaling!
+          </p>
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="/" class="apparatus-btn apparatus-btn-primary" id="apparatus-store-home-btn" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.6rem; border-radius: 12px; font-weight: 700;">
+              <i class="ri-dashboard-line"></i> Back to Dashboard
+            </a>
+            <a href="https://discord.gg/arixbyte" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.6rem; border-radius: 12px; font-weight: 700;">
+              <i class="ri-discord-line"></i> Contact Support / Discord
+            </a>
+          </div>
+        </div>
+
+      </div>
+    `;
+
+    const hero = document.getElementById('apparatus-dashboard-view');
+    if (hero && hero.parentNode) {
+      hero.parentNode.insertBefore(storeView, hero.nextSibling);
+    } else {
+      document.body.appendChild(storeView);
+    }
+
+    function returnHome(e) {
+      if (e) e.preventDefault();
+      if (window.location.pathname !== '/' || window.location.hash) {
+        history.pushState(null, '', '/');
+      }
+      applyViewMode();
+      smoothScrollToTop();
+    }
+
+    const backBtn1 = storeView.querySelector('#apparatus-store-back-btn');
+    const backBtn2 = storeView.querySelector('#apparatus-store-back-btn-2');
+    const homeBtn = storeView.querySelector('#apparatus-store-home-btn');
+    if (backBtn1) backBtn1.addEventListener('click', returnHome);
+    if (backBtn2) backBtn2.addEventListener('click', returnHome);
+    if (homeBtn) homeBtn.addEventListener('click', returnHome);
   }
 
   // Motion and Static Wallpaper Definitions
@@ -3756,7 +3865,7 @@
         }
         metaRobots.content = seo.robots;
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function initSettingsView() {
@@ -4431,7 +4540,7 @@
       copyrightEls.forEach(function (el) {
         el.textContent = b.footerText || '© 2026 ArixByte Cloud. All rights reserved.';
       });
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function applyCustomCode() {
@@ -4462,7 +4571,7 @@
       } else if (scriptContainer) {
         scriptContainer.remove();
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function applySystemBanner() {
@@ -4496,7 +4605,7 @@
       } else if (bannerEl) {
         bannerEl.style.display = 'none';
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function initApparatusSettingsView() {
@@ -4869,7 +4978,7 @@
       if (seoOgImgInp) seoOgImgInp.value = storedSeo.ogImage || '';
       if (seoFavInp) seoFavInp.value = storedSeo.favicon || '';
       if (seoRobotsInp && storedSeo.robots) seoRobotsInp.value = storedSeo.robots;
-    } catch (e) {}
+    } catch (e) { }
 
     if (seoSaveBtn) {
       seoSaveBtn.addEventListener('click', function () {
@@ -4916,7 +5025,7 @@
       if (wmTitleInp) wmTitleInp.value = storedBrand.watermarkTitle || 'ARIXBYTE';
       if (wmSubInp) wmSubInp.value = storedBrand.watermarkSubtitle || 'CLOUD & INFRASTRUCTURES';
       if (footerTextInp) footerTextInp.value = storedBrand.footerText || '© 2026 ArixByte Cloud. All rights reserved.';
-    } catch (e) {}
+    } catch (e) { }
 
     if (brandSaveBtn) {
       brandSaveBtn.addEventListener('click', function () {
@@ -4954,7 +5063,7 @@
       const storedCode = JSON.parse(localStorage.getItem('apparatus_custom_code') || '{}');
       if (codeHeadInp) codeHeadInp.value = storedCode.head || '';
       if (codeCssInp) codeCssInp.value = storedCode.css || '';
-    } catch (e) {}
+    } catch (e) { }
 
     if (codeSaveBtn) {
       codeSaveBtn.addEventListener('click', function () {
@@ -4991,7 +5100,7 @@
       if (bannerMsgInp) bannerMsgInp.value = storedBanner.message || 'Notice: Scheduled node upgrade tonight at 02:00 UTC.';
       if (bannerTypeInp && storedBanner.type) bannerTypeInp.value = storedBanner.type;
       if (bannerStatusInp) bannerStatusInp.value = storedBanner.statusUrl || '';
-    } catch (e) {}
+    } catch (e) { }
 
     if (bannerSaveBtn) {
       bannerSaveBtn.addEventListener('click', function () {
@@ -5025,9 +5134,9 @@
     // Locate the native account cards row or container
     const contentBox = document.querySelector('.sc-mjlt6f-2') || document.querySelector('[class*="ContentBox"]');
     const cardsRow = contentBox ? contentBox.parentElement : null;
-    const mainContainer = document.querySelector('div[class*="AccountOverviewContainer"]') || 
-                          (cardsRow ? cardsRow.parentElement : null) || 
-                          document.querySelector('div[class*="PageContentBlock"] > div');
+    const mainContainer = document.querySelector('div[class*="AccountOverviewContainer"]') ||
+      (cardsRow ? cardsRow.parentElement : null) ||
+      document.querySelector('div[class*="PageContentBlock"] > div');
 
     if (!mainContainer && !cardsRow) return;
 
@@ -5387,6 +5496,7 @@
     // Initialize 4-card transparent dashboard, resource view, and settings views
     initDashboardView();
     initResourceView();
+    initStoreView();
     initSettingsView();
     initApparatusSettingsView();
 
@@ -5443,10 +5553,9 @@
                 </a>
               </li>
               <li>
-                <a href="#store" class="apparatus-nav-link apparatus-store-link" data-path="/billing/store">
+                <a href="/store" class="apparatus-nav-link apparatus-store-link" data-tab="store" data-path="/store">
                   <i class="ri-shopping-cart-2-line apparatus-nav-icon"></i>
                   <span>Store</span>
-                  <span class="apparatus-tag-soon">Soon</span>
                 </a>
               </li>
               <li>
@@ -5620,17 +5729,7 @@
       const storeBtn = sidebar.querySelector('.apparatus-store-link');
       if (storeBtn) {
         storeBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          const billCard = document.getElementById('apparatus-area-billing');
-          if (billCard) {
-            billCard.scrollIntoView({ behavior: 'smooth' });
-            billCard.style.transition = 'box-shadow 0.3s ease';
-            billCard.style.boxShadow = '0 0 25px rgba(236, 72, 153, 0.45)';
-            setTimeout(function () { billCard.style.boxShadow = ''; }, 1500);
-          } else {
-            showToast('info', 'Cloud Store (INR)', 'Opening ArixByte Store...');
-            setTimeout(function () { window.open('https://arixbyte.com', '_blank'); }, 800);
-          }
+          navigateToStore(e);
         });
       }
 
@@ -5730,7 +5829,7 @@
           e.preventDefault();
 
           const rawP = window.location.pathname || '/';
-          const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard' || rawP === '/resource' || rawP === '/panel-settings' || rawP === '/apparatus-settings';
+          const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard' || rawP === '/resource' || rawP === '/store' || rawP === '/panel-settings' || rawP === '/apparatus-settings';
 
           if (!onHome) {
             // If navigating from an account subpage, navigate cleanly so React Router unmounts the account page!
@@ -6593,7 +6692,7 @@
 
     setTimeout(function () {
 
-      try { ripple.remove(); } catch (err) {}
+      try { ripple.remove(); } catch (err) { }
 
     }, 600);
 
