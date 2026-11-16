@@ -2639,7 +2639,7 @@
       <div class="apparatus-dashboard-container">
         
         <!-- Top Store Header -->
-        <div class="apparatus-card apparatus-resource-header-card">
+        <div class="apparatus-card apparatus-resource-header-card" style="margin-bottom: 1.5rem;">
           <div class="apparatus-resource-header-left">
             <div class="apparatus-resource-breadcrumbs">
               <a href="/" class="apparatus-breadcrumb-link" id="apparatus-store-back-btn">
@@ -2649,34 +2649,141 @@
               <span class="apparatus-breadcrumb-current">Store</span>
             </div>
             <h1 class="apparatus-resource-main-title">
-              <i class="ri-shopping-cart-2-line" style="color: #38bdf8;"></i> Cloud Store &amp; Top-Up
+              <i class="ri-store-2-line" style="color: #38bdf8;"></i> Cloud Store &amp; Server Addons
             </h1>
             <p class="apparatus-resource-subtitle">
-              Instant balance top-up, resource expansions, automated addons, and server upgrades.
+              Expand your server capacity with instant RAM, CPU, NVMe Storage, and Backup slots using Points or Direct Recharge.
             </p>
           </div>
 
           <div class="apparatus-resource-header-right">
-            <a href="/" class="apparatus-btn apparatus-btn-glass" id="apparatus-store-back-btn-2">
-              <i class="ri-dashboard-line"></i> Back to Dashboard
-            </a>
+            <span style="font-size: 0.8rem; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); padding: 0.4rem 0.85rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.45rem;">
+              <i class="ri-shield-flash-line"></i> Instant Provisioning Active
+            </span>
           </div>
         </div>
 
-        <!-- Store Placeholder / Management Container -->
-        <div class="apparatus-card apparatus-store-card" style="text-align: center; padding: 4.5rem 2rem; border-radius: 20px; background: rgba(26, 16, 38, 0.45); border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(24px); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);">
-          <div style="width: 76px; height: 76px; margin: 0 auto 1.5rem auto; border-radius: 50%; background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(168, 85, 247, 0.15) 100%); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); box-shadow: 0 0 35px rgba(56, 189, 248, 0.3);">
-            <i class="ri-shopping-bag-3-line"></i>
+        <!-- Store Catalog Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
+          
+          <!-- Card 1: RAM Expansion -->
+          <div class="apparatus-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px; background: rgba(22, 14, 34, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);">
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem;">
+                <div style="width: 44px; height: 44px; border-radius: 8px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; color: #38bdf8;">
+                  <i class="ri-cpu-line"></i>
+                </div>
+                <span style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.18); padding: 0.2rem 0.55rem; border-radius: 6px;">RAM BOOST</span>
+              </div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 0.45rem 0;">+2 GB DDR5 RAM</h3>
+              <p style="font-size: 0.86rem; color: rgba(255, 255, 255, 0.65); line-height: 1.5; margin: 0 0 1.2rem 0;">
+                High-frequency server memory boost for large modpacks, Paper/Purpur plugins, and proxy instances.
+              </p>
+            </div>
+            <div>
+              <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 0.85rem;">
+                <span style="font-size: 1.3rem; font-weight: 800; color: #fbbf24;">500 Pts</span>
+                <span style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.45);">or ₹149/mo</span>
+              </div>
+              <a href="https://discord.gg/arixbyte" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%; text-align: center; padding: 0.65rem 1rem; border-radius: 8px; background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.35); color: #f472b6; font-weight: 700; font-size: 0.88rem; text-decoration: none; box-sizing: border-box; transition: background 0.2s;">
+                <i class="ri-shopping-cart-line"></i> Order via Points / Support
+              </a>
+            </div>
           </div>
-          <h2 style="font-size: 1.85rem; font-weight: 800; color: #ffffff; margin-bottom: 0.75rem; letter-spacing: -0.01em; font-family: var(--apparatus-font);">ArixByte Cloud Store</h2>
-          <p style="color: rgba(255, 255, 255, 0.72); max-width: 600px; margin: 0 auto 2.2rem auto; font-size: 1.05rem; line-height: 1.65;">
-            Our automated store &amp; instant balance top-up system is currently being set up. Stay tuned for seamless UPI payments, credit recharges, and instant server resource scaling!
-          </p>
-          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-            <a href="/" class="apparatus-btn apparatus-btn-primary" id="apparatus-store-home-btn" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.6rem; border-radius: 12px; font-weight: 700;">
-              <i class="ri-dashboard-line"></i> Back to Dashboard
+
+          <!-- Card 2: vCPU Expansion -->
+          <div class="apparatus-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px; background: rgba(22, 14, 34, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);">
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem;">
+                <div style="width: 44px; height: 44px; border-radius: 8px; background: rgba(244, 114, 182, 0.08); border: 1px solid rgba(244, 114, 182, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; color: #f472b6;">
+                  <i class="ri-speed-line"></i>
+                </div>
+                <span style="font-size: 0.75rem; font-weight: 700; color: #f472b6; background: rgba(244, 114, 182, 0.08); border: 1px solid rgba(244, 114, 182, 0.18); padding: 0.2rem 0.55rem; border-radius: 6px;">COMPUTE</span>
+              </div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 0.45rem 0;">+100% vCPU Core</h3>
+              <p style="font-size: 0.86rem; color: rgba(255, 255, 255, 0.65); line-height: 1.5; margin: 0 0 1.2rem 0;">
+                Dedicated AMD Ryzen 9 7950X compute thread for zero tick-drop and high entity simulations.
+              </p>
+            </div>
+            <div>
+              <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 0.85rem;">
+                <span style="font-size: 1.3rem; font-weight: 800; color: #fbbf24;">800 Pts</span>
+                <span style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.45);">or ₹249/mo</span>
+              </div>
+              <a href="https://discord.gg/arixbyte" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%; text-align: center; padding: 0.65rem 1rem; border-radius: 8px; background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.35); color: #f472b6; font-weight: 700; font-size: 0.88rem; text-decoration: none; box-sizing: border-box; transition: background 0.2s;">
+                <i class="ri-shopping-cart-line"></i> Order via Points / Support
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 3: NVMe Storage -->
+          <div class="apparatus-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px; background: rgba(22, 14, 34, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);">
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem;">
+                <div style="width: 44px; height: 44px; border-radius: 8px; background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; color: #34d399;">
+                  <i class="ri-hard-drive-2-line"></i>
+                </div>
+                <span style="font-size: 0.75rem; font-weight: 700; color: #34d399; background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.18); padding: 0.2rem 0.55rem; border-radius: 6px;">STORAGE</span>
+              </div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 0.45rem 0;">+25 GB Gen4 NVMe</h3>
+              <p style="font-size: 0.86rem; color: rgba(255, 255, 255, 0.65); line-height: 1.5; margin: 0 0 1.2rem 0;">
+                Enterprise Gen4 NVMe SSD disk expansion with over 7,000 MB/s transfer speeds for world files.
+              </p>
+            </div>
+            <div>
+              <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 0.85rem;">
+                <span style="font-size: 1.3rem; font-weight: 800; color: #fbbf24;">300 Pts</span>
+                <span style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.45);">or ₹99/mo</span>
+              </div>
+              <a href="https://discord.gg/arixbyte" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%; text-align: center; padding: 0.65rem 1rem; border-radius: 8px; background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.35); color: #f472b6; font-weight: 700; font-size: 0.88rem; text-decoration: none; box-sizing: border-box; transition: background 0.2s;">
+                <i class="ri-shopping-cart-line"></i> Order via Points / Support
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 4: Backup Slots -->
+          <div class="apparatus-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: 12px; background: rgba(22, 14, 34, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);">
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem;">
+                <div style="width: 44px; height: 44px; border-radius: 8px; background: rgba(167, 139, 250, 0.08); border: 1px solid rgba(167, 139, 250, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; color: #a78bfa;">
+                  <i class="ri-shield-check-line"></i>
+                </div>
+                <span style="font-size: 0.75rem; font-weight: 700; color: #a78bfa; background: rgba(167, 139, 250, 0.08); border: 1px solid rgba(167, 139, 250, 0.18); padding: 0.2rem 0.55rem; border-radius: 6px;">SAFETY</span>
+              </div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 0.45rem 0;">+3 Backup Slots</h3>
+              <p style="font-size: 0.86rem; color: rgba(255, 255, 255, 0.65); line-height: 1.5; margin: 0 0 1.2rem 0;">
+                Off-site encrypted daily snapshot retention slots with one-click rollback and disaster recovery.
+              </p>
+            </div>
+            <div>
+              <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 0.85rem;">
+                <span style="font-size: 1.3rem; font-weight: 800; color: #fbbf24;">200 Pts</span>
+                <span style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.45);">or ₹69/mo</span>
+              </div>
+              <a href="https://discord.gg/arixbyte" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%; text-align: center; padding: 0.65rem 1rem; border-radius: 8px; background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.35); color: #f472b6; font-weight: 700; font-size: 0.88rem; text-decoration: none; box-sizing: border-box; transition: background 0.2s;">
+                <i class="ri-shopping-cart-line"></i> Order via Points / Support
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Bottom Actions & Support Bar -->
+        <div class="apparatus-card" style="padding: 1.5rem 2rem; border-radius: 12px; background: rgba(22, 14, 34, 0.45); border: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.85rem;">
+            <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #cbd5e1;">
+              <i class="ri-customer-service-2-line"></i>
+            </div>
+            <div>
+              <div style="font-weight: 700; color: #ffffff; font-size: 0.95rem;">Need Custom Server Specs or Dedicated Hardware?</div>
+              <div style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.55);">Contact our infrastructure team on Discord for tailored enterprise solutions.</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <a href="/" class="apparatus-btn" id="apparatus-store-home-btn" style="padding: 0.6rem 1.25rem; border-radius: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); color: #ffffff; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.45rem;">
+              <i class="ri-arrow-left-line"></i> Back to Dashboard
             </a>
-            <a href="https://discord.gg/arixbyte" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.6rem; border-radius: 12px; font-weight: 700;">
+            <a href="https://discord.gg/arixbyte" target="_blank" rel="noopener noreferrer" class="apparatus-btn" style="padding: 0.6rem 1.25rem; border-radius: 8px; background: rgba(88, 101, 242, 0.18); border: 1px solid rgba(88, 101, 242, 0.35); color: #c7d2fe; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.45rem;">
               <i class="ri-discord-line"></i> Contact Support / Discord
             </a>
           </div>
@@ -2834,26 +2941,102 @@
       `;
     }
 
-    // Community Leaderboard: Only Real Users from Database!
+    // Community Leaderboard: Only Real Client Users (Admin/Owner accounts excluded)
     const myUName = (user.username || 'client').toLowerCase();
-    let communityUsers = [
-      { rank: 1, username: 'Mudit', name: 'Mudit Kumar', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=MuditKumar', points: 1420, referrals: 42, role: 'Owner' }
-    ];
+    let communityUsers = [];
 
-    if (myUName !== 'mudit') {
+    if (!user.root_admin && (user.username || '').toLowerCase() !== 'mudit') {
       communityUsers.push({
-        rank: 2,
+        rank: 1,
         username: user.username || 'client',
         name: (user.name_first ? (user.name_first + ' ' + (user.name_last || '')) : (user.username || 'Client Account')),
         avatar: user.avatar || ('https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(user.username || 'client')),
         points: currentCoins,
         referrals: parseInt(localStorage.getItem('apparatus_my_referrals_count') || '0', 10),
-        role: user.root_admin ? 'Owner' : 'Client'
+        role: 'Client'
       });
     }
 
     communityUsers.sort(function(a, b) { return b.points - a.points; });
     communityUsers.forEach(function(u, i) { u.rank = i + 1; });
+
+    // Points & Reward History helper
+    function getPointsHistory() {
+      let hist = [];
+      try {
+        const raw = localStorage.getItem('apparatus_points_history');
+        if (raw) hist = JSON.parse(raw);
+      } catch (e) {
+        hist = [];
+      }
+
+      if (!Array.isArray(hist) || hist.length === 0) {
+        hist = [
+          {
+            id: 'tx_signup',
+            title: 'Welcome Signup Bonus',
+            category: 'Signup Bonus',
+            desc: 'New member account creation reward',
+            amount: '+100 Pts',
+            icon: 'ri-gift-line',
+            date: localStorage.getItem('apparatus_signup_date') || 'Today',
+            status: 'Credited'
+          }
+        ];
+
+        if (localStorage.getItem('apparatus_referral_claimed') === 'true' || localStorage.getItem('apparatus_claimed_referral_code')) {
+          const cCode = localStorage.getItem('apparatus_claimed_referral_code') || localStorage.getItem('apparatus_user_referral_input') || 'AB-MUDI-30DK';
+          hist.push({
+            id: 'tx_ref_claimed',
+            title: 'Referral Code Claimed: ' + cCode,
+            category: 'Referral Claimed',
+            desc: 'Welcome bonus for applying invite code',
+            amount: '+20 Pts',
+            icon: 'ri-user-shared-line',
+            date: localStorage.getItem('apparatus_signup_date') || 'Today',
+            status: 'Credited'
+          });
+        }
+
+        const myRefs = parseInt(localStorage.getItem('apparatus_my_referrals_count') || '0', 10);
+        if (myRefs > 0) {
+          hist.push({
+            id: 'tx_invites',
+            title: 'Invited Members Reward (' + myRefs + ' Users)',
+            category: 'User Invited',
+            desc: 'Direct referral commissions earned from friends',
+            amount: '+' + (myRefs * 10) + ' Pts',
+            icon: 'ri-user-add-line',
+            date: 'Recent',
+            status: 'Credited'
+          });
+        }
+
+        try {
+          const redCodes = JSON.parse(localStorage.getItem('apparatus_redeemed_codes') || '[]');
+          if (Array.isArray(redCodes) && redCodes.length > 0) {
+            redCodes.forEach(function(rc) {
+              hist.push({
+                id: 'tx_coupon_' + rc,
+                title: 'Coupon Voucher Redeemed: ' + rc,
+                category: 'Coupons Redeemed',
+                desc: 'Special event promotion code',
+                amount: '+50 Pts',
+                icon: 'ri-coupon-3-line',
+                date: 'Recent',
+                status: 'Credited'
+              });
+            });
+          }
+        } catch (e) {}
+
+        localStorage.setItem('apparatus_points_history', JSON.stringify(hist));
+      }
+
+      return hist;
+    }
+
+    const pointsHistory = getPointsHistory();
 
     container.innerHTML = `
       <!-- Top Telemetry & Balance Highlights -->
@@ -3022,38 +3205,106 @@
               </tr>
             </thead>
             <tbody id="apparatus-leaderboard-tbody">
-              ${communityUsers.map(function(u) { return buildLeaderboardRowHtml(u, myUName); }).join('')}
+              ${communityUsers.length > 0 ? communityUsers.map(function(u) { return buildLeaderboardRowHtml(u, myUName); }).join('') : '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.45);">Loading registered community users...</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Points & Reward History Section -->
+      <div class="apparatus-card apparatus-earn-card" style="padding: 1.75rem; margin-top: 1.25rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 1rem;">
+          <div>
+            <h2 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin: 0; display: flex; align-items: center; gap: 0.6rem;">
+              <i class="ri-history-line" style="color: #38bdf8;"></i> Points &amp; Reward History
+            </h2>
+            <span style="color: rgba(255, 255, 255, 0.55); font-size: 0.85rem;">
+              Audit trail of your points activity: Signup bonus, referral earnings, and redeemed coupons.
+            </span>
+          </div>
+          <div style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.6); display: flex; align-items: center; gap: 0.45rem; background: rgba(255, 255, 255, 0.04); padding: 0.35rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <i class="ri-shield-check-line" style="color: #10b981;"></i> Ledger Verified
+          </div>
+        </div>
+
+        <div class="apparatus-leaderboard-container">
+          <table class="apparatus-leaderboard-table">
+            <thead>
+              <tr>
+                <th>Activity / Event</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th style="text-align: center;">Status</th>
+                <th style="text-align: right;">Points Credited</th>
+              </tr>
+            </thead>
+            <tbody id="apparatus-points-history-tbody">
+              ${pointsHistory.map(function(item) {
+                return `
+                  <tr>
+                    <td>
+                      <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); display: flex; align-items: center; justify-content: center; color: #38bdf8; font-size: 1.1rem;">
+                          <i class="${item.icon || 'ri-coin-line'}"></i>
+                        </div>
+                        <div>
+                          <div style="font-weight: 700; color: #ffffff; font-size: 0.92rem;">${item.title}</div>
+                          <div style="font-size: 0.78rem; color: rgba(255, 255, 255, 0.45);">${item.desc}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span style="font-size: 0.78rem; padding: 0.2rem 0.55rem; border-radius: 6px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.85); font-weight: 600;">
+                        ${item.category}
+                      </span>
+                    </td>
+                    <td style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.65);">${item.date}</td>
+                    <td style="text-align: center;">
+                      <span style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; font-weight: 700; color: #34d399; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.25); padding: 0.2rem 0.55rem; border-radius: 6px;">
+                        <i class="ri-checkbox-circle-fill"></i> ${item.status || 'Credited'}
+                      </span>
+                    </td>
+                    <td style="text-align: right; font-weight: 800; color: #10b981; font-size: 1.05rem;">
+                      ${item.amount}
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
             </tbody>
           </table>
         </div>
       </div>
     `;
 
-    // Fetch live real users from the Pterodactyl database
+    // Fetch live real users from the Pterodactyl database (Excluding all admins/owners)
     fetch('/auth/leaderboard')
       .then(function(res) { return res.json(); })
       .then(function(data) {
-        if (data && data.success && Array.isArray(data.users) && data.users.length > 0) {
-          const liveUsers = data.users.map(function(u) {
+        if (data && data.success && Array.isArray(data.users)) {
+          const clientUsers = data.users.filter(function(u) {
+            return !u.root_admin && (u.role || '').toLowerCase() !== 'owner' && (u.username || '').toLowerCase() !== 'mudit';
+          });
+
+          let liveUsers = clientUsers.map(function(u) {
             const isMe = (u.username || '').toLowerCase() === myUName;
-            const pts = isMe ? currentCoins : (u.root_admin ? 1420 : 100);
+            const pts = isMe ? currentCoins : (u.points || 100);
             return {
               username: u.username,
               name: u.name || u.username,
               avatar: u.avatar || ('https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(u.username)),
-              role: u.role || (u.root_admin ? 'Owner' : 'Client'),
+              role: 'Client',
               points: pts,
-              referrals: isMe ? parseInt(localStorage.getItem('apparatus_my_referrals_count') || '0', 10) : (u.root_admin ? 42 : 0)
+              referrals: isMe ? parseInt(localStorage.getItem('apparatus_my_referrals_count') || '0', 10) : 0
             };
           });
 
-          // Ensure current user is in the list
-          if (!liveUsers.some(function(u) { return (u.username || '').toLowerCase() === myUName; })) {
+          // Ensure current user is in the list if client
+          if (!user.root_admin && (user.username || '').toLowerCase() !== 'mudit' && !liveUsers.some(function(u) { return (u.username || '').toLowerCase() === myUName; })) {
             liveUsers.push({
               username: user.username || 'client',
-              name: (user.name_first ? (user.name_first + ' ' + (user.name_last || '')) : user.username),
+              name: (user.name_first ? (user.name_first + ' ' + (user.name_last || '')) : (user.username || 'Client Account')),
               avatar: user.avatar || ('https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(user.username || 'client')),
-              role: user.root_admin ? 'Owner' : 'Client',
+              role: 'Client',
               points: currentCoins,
               referrals: parseInt(localStorage.getItem('apparatus_my_referrals_count') || '0', 10)
             });
@@ -3064,7 +3315,11 @@
 
           const tbody = container.querySelector('#apparatus-leaderboard-tbody');
           if (tbody) {
-            tbody.innerHTML = liveUsers.map(function(u) { return buildLeaderboardRowHtml(u, myUName); }).join('');
+            if (liveUsers.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.45);">No client accounts registered yet.</td></tr>';
+            } else {
+              tbody.innerHTML = liveUsers.map(function(u) { return buildLeaderboardRowHtml(u, myUName); }).join('');
+            }
           }
         }
       })
@@ -3128,6 +3383,21 @@
         setUserPoints(curPts + 20);
         localStorage.setItem('apparatus_referral_claimed', 'true');
         localStorage.setItem('apparatus_claimed_referral_code', val);
+
+        try {
+          const hist = getPointsHistory();
+          hist.unshift({
+            id: 'tx_' + Date.now(),
+            title: 'Referral Code Claimed: ' + val,
+            category: 'Referral Claimed',
+            desc: 'Applied community referral invite code',
+            amount: '+20 Pts',
+            icon: 'ri-user-shared-line',
+            date: 'Today',
+            status: 'Credited'
+          });
+          localStorage.setItem('apparatus_points_history', JSON.stringify(hist));
+        } catch (e) {}
 
         // Award 10 points to code owner
         creditReferralPointsToOwner(val, 10);
@@ -3198,6 +3468,21 @@
 
         const curPts = getUserPoints();
         setUserPoints(curPts + codeObj.points);
+
+        try {
+          const hist = getPointsHistory();
+          hist.unshift({
+            id: 'tx_' + Date.now(),
+            title: 'Coupon Redeemed: ' + codeObj.code,
+            category: 'Coupons Redeemed',
+            desc: 'Promo voucher points credited',
+            amount: '+' + codeObj.points + ' Pts',
+            icon: 'ri-coupon-3-line',
+            date: 'Today',
+            status: 'Credited'
+          });
+          localStorage.setItem('apparatus_points_history', JSON.stringify(hist));
+        } catch (e) {}
 
         showToast('success', 'Promo Code Redeemed!', '🎉 Successfully redeemed ' + codeObj.code + '! +' + codeObj.points + ' Points added to your balance.');
         renderEarnPage();

@@ -334,8 +334,8 @@ class RegisterController extends Controller
         try {
             $users = DB::table('users')
                 ->select('id', 'username', 'name_first', 'name_last', 'email', 'root_admin', 'created_at')
+                ->where('root_admin', 0)
                 ->whereNotIn('username', ['TestUserX', 'NewUser99'])
-                ->orderBy('root_admin', 'desc')
                 ->orderBy('id', 'asc')
                 ->get();
 
