@@ -339,6 +339,24 @@ body.fixed {
   border: 1px solid rgba(16, 185, 129, 0.3) !important;
 }
 
+.apparatus-admin-badge.purple {
+  background: rgba(168, 85, 247, 0.15) !important;
+  color: #c084fc !important;
+  border: 1px solid rgba(168, 85, 247, 0.3) !important;
+}
+
+.apparatus-admin-badge.indigo {
+  background: rgba(99, 102, 241, 0.15) !important;
+  color: #818cf8 !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+}
+
+.apparatus-admin-badge.yellow {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+}
+
 /* ==============================================================================
    3. CONTENT WRAPPER & PAGE HEADERS
    ============================================================================== */
@@ -929,4 +947,103 @@ table.table-hover > tbody > tr:hover > th {
 
 .apparatus-switch input:checked + .apparatus-slider:before {
   transform: translateX(20px);
+}
+
+/* ==============================================================================
+   10. PROGRESS BARS, STATUS PILLS & TELEMETRY GAUGES
+   ============================================================================== */
+.apparatus-progress {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.apparatus-progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.apparatus-progress-bar.cyan {
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+}
+
+.apparatus-progress-bar.emerald {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.apparatus-progress-bar.amber {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.apparatus-progress-bar.rose {
+  background: linear-gradient(90deg, #f43f5e, #fb7185);
+}
+
+.apparatus-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.apparatus-status-pill.online {
+  background: rgba(16, 185, 129, 0.14);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.apparatus-status-pill.warning {
+  background: rgba(245, 158, 11, 0.14);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.apparatus-status-pill.danger {
+  background: rgba(244, 63, 94, 0.14);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.apparatus-status-pill.info {
+  background: rgba(56, 189, 248, 0.14);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+/* Toast Container & Notification Toast */
+#apparatus-admin-toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.apparatus-admin-toast {
+  pointer-events: auto;
+  min-width: 290px;
+  max-width: 380px;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  animation: adminViewEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  color: #fff;
 }
