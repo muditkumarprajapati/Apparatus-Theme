@@ -45,8 +45,16 @@
   })();
 
   function isAuthPage() {
-    return window.location.pathname.startsWith('/auth') ||
-      window.location.pathname === '/login';
+    const p = window.location.pathname || '';
+    return p.startsWith('/auth') || p === '/login' || p === '/register';
+  }
+
+  // Pre-flag document immediately so CSS centering and layout apply with zero layout shift
+  if (isAuthPage() || isUnauthorizedAdminAttempt()) {
+    document.documentElement.classList.add('apparatus-auth-page');
+    if (document.body) {
+      document.body.classList.add('apparatus-auth');
+    }
   }
 
   function isUnauthorizedAdminAttempt() {
@@ -6082,13 +6090,17 @@
 
     if (isAuth) {
       if (cardSlot) cardSlot.style.display = 'block';
-      const path = window.location.pathname;
-      if (path.startsWith('/auth/password/reset')) {
-        renderResetMode();
-      } else if (path.startsWith('/auth/password')) {
-        renderForgotMode();
-      } else {
-        renderLoginMode();
+      if (!isAuthTransitioning) {
+        const path = window.location.pathname;
+        if (path.startsWith('/auth/password/reset')) {
+          renderResetMode();
+        } else if (path.startsWith('/auth/password')) {
+          renderForgotMode();
+        } else if (path.startsWith('/auth/register') || path === '/register') {
+          renderRegisterMode();
+        } else {
+          renderLoginMode();
+        }
       }
     } else {
       if (cardSlot) cardSlot.style.display = 'none';
@@ -6176,6 +6188,67 @@
   const lockSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
   const mailSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>';
 
+  let isAuthTransitioning = false;
+
+  function transitionAuthCard(renderFn) {
+    const card = document.getElementById('apparatus-card-slot');
+    if (!card) {
+      renderFn();
+      return;
+    }
+
+    playClickSound(true);
+    isAuthTransitioning = true;
+
+    if (typeof gsap !== 'undefined') {
+      gsap.killTweensOf(card);
+      gsap.to(card, {
+        opacity: 0,
+        scale: 0.93,
+        y: -14,
+        rotationY: -6,
+        filter: 'blur(8px)',
+        duration: 0.22,
+        ease: 'power2.in',
+        onComplete: function () {
+          renderFn();
+          isAuthTransitioning = false;
+          gsap.fromTo(card,
+            { opacity: 0, scale: 0.93, y: 14, rotationY: 6, filter: 'blur(8px)' },
+            {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              rotationY: 0,
+              filter: 'blur(0px)',
+              duration: 0.38,
+              ease: 'power3.out',
+              clearProps: 'transform,filter,rotationY'
+            }
+          );
+          const fields = card.querySelectorAll('.login-title, .login-subtitle, .input-group, .login-button, .apparatus-footer-links');
+          if (fields.length > 0) {
+            gsap.fromTo(fields,
+              { opacity: 0, y: 8 },
+              { opacity: 1, y: 0, duration: 0.3, stagger: 0.04, ease: 'power2.out', delay: 0.05, clearProps: 'opacity,transform' }
+            );
+          }
+        }
+      });
+    } else {
+      card.classList.add('apparatus-card-animating-out');
+      setTimeout(function () {
+        renderFn();
+        isAuthTransitioning = false;
+        card.classList.remove('apparatus-card-animating-out');
+        card.classList.add('apparatus-card-animating-in');
+        setTimeout(function () {
+          card.classList.remove('apparatus-card-animating-in');
+        }, 400);
+      }, 220);
+    }
+  }
+
   // ----------------------------------------------------------------------------
   // VIEW 1: LOGIN MODE
   // ----------------------------------------------------------------------------
@@ -6224,7 +6297,7 @@
       </form>
 
       <div class="apparatus-footer-links">
-        <p>Don’t have an account? <a href="/auth/register">Register</a></p>
+        <p>Don’t have an account? <a href="/auth/register" id="apparatus-to-register">Register</a></p>
         <p>Forgot Password? <a href="/auth/password" id="apparatus-to-forgot">Click Here</a></p>
       </div>
     `;
@@ -6234,13 +6307,23 @@
     if (icons[0]) icons[0].innerHTML = userSvg;
     if (icons[1]) icons[1].innerHTML = lockSvg;
 
-    // Handle Forgot Password link click smoothly
+    // Handle Register link click with smooth view transition animation
+    const registerLink = document.getElementById('apparatus-to-register');
+    if (registerLink) {
+      registerLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        history.pushState(null, '', '/auth/register');
+        transitionAuthCard(renderRegisterMode);
+      });
+    }
+
+    // Handle Forgot Password link click with smooth view transition animation
     const forgotLink = document.getElementById('apparatus-to-forgot');
     if (forgotLink) {
       forgotLink.addEventListener('click', function (e) {
         e.preventDefault();
         history.pushState(null, '', '/auth/password');
-        renderForgotMode();
+        transitionAuthCard(renderForgotMode);
       });
     }
 
@@ -6392,13 +6475,13 @@
     const icons = card.querySelectorAll('.input-icon');
     if (icons[0]) icons[0].innerHTML = userSvg;
 
-    // Handle Back to Login click
+    // Handle Back to Login click with smooth animation
     const loginLink = document.getElementById('apparatus-to-login');
     if (loginLink) {
       loginLink.addEventListener('click', function (e) {
         e.preventDefault();
         history.pushState(null, '', '/auth/login');
-        renderLoginMode();
+        transitionAuthCard(renderLoginMode);
       });
     }
 
@@ -6507,6 +6590,212 @@
   }
 
   // ----------------------------------------------------------------------------
+  // VIEW: REGISTER MODE
+  // ----------------------------------------------------------------------------
+  function renderRegisterMode() {
+    const card = document.getElementById('apparatus-card-slot');
+    if (!card) return;
+
+    card.style.display = 'block';
+    card.style.opacity = '1';
+    card.style.visibility = 'visible';
+
+    card.innerHTML = `
+      <h2 class="login-title">ArixByte Register</h2>
+      <p class="login-subtitle">Create Your Account</p>
+      
+      <form class="login-form" id="apparatus-register-form" autocomplete="on">
+        <div id="apparatus-register-msg" style="display: none;"></div>
+
+        <div class="input-group">
+          <span class="input-icon"><i class="ri-user-line"></i></span>
+          <input 
+            type="text" 
+            id="apparatus-reg-username"
+            required 
+            placeholder="Username" 
+            class="login-input" 
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="input-group">
+          <span class="input-icon"><i class="ri-mail-line"></i></span>
+          <input 
+            type="email" 
+            id="apparatus-reg-email"
+            required 
+            placeholder="Email Address" 
+            class="login-input" 
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="input-group">
+          <span class="input-icon"><i class="ri-lock-line"></i></span>
+          <input 
+            type="password" 
+            id="apparatus-reg-password"
+            required 
+            placeholder="Password" 
+            class="login-input" 
+            autocomplete="new-password"
+          />
+        </div>
+
+        <div class="input-group">
+          <span class="input-icon"><i class="ri-lock-check-line"></i></span>
+          <input 
+            type="password" 
+            id="apparatus-reg-confirm"
+            required 
+            placeholder="Confirm Password" 
+            class="login-input" 
+            autocomplete="new-password"
+          />
+        </div>
+
+        <button type="submit" id="apparatus-reg-btn" class="login-button">
+          Register
+        </button>
+      </form>
+
+      <div class="apparatus-footer-links">
+        <p>Already have an account? <a href="/auth/login" id="apparatus-to-login-from-reg">Sign In</a></p>
+      </div>
+    `;
+
+    // Fallback SVG icons
+    const icons = card.querySelectorAll('.input-icon');
+    if (icons[0]) icons[0].innerHTML = userSvg;
+    if (icons[1]) icons[1].innerHTML = mailSvg;
+    if (icons[2]) icons[2].innerHTML = lockSvg;
+    if (icons[3]) icons[3].innerHTML = lockSvg;
+
+    // Handle Back to Login click with smooth transition
+    const toLoginLink = document.getElementById('apparatus-to-login-from-reg');
+    if (toLoginLink) {
+      toLoginLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        history.pushState(null, '', '/auth/login');
+        transitionAuthCard(renderLoginMode);
+      });
+    }
+
+    // Handle Register Submit
+    const form = document.getElementById('apparatus-register-form');
+    if (form) {
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const userVal = document.getElementById('apparatus-reg-username').value.trim();
+        const emailVal = document.getElementById('apparatus-reg-email').value.trim();
+        const passVal = document.getElementById('apparatus-reg-password').value;
+        const confirmVal = document.getElementById('apparatus-reg-confirm').value;
+        const msgBox = document.getElementById('apparatus-register-msg');
+        const regBtn = document.getElementById('apparatus-reg-btn');
+
+        if (!userVal || !emailVal || !passVal || !confirmVal) {
+          showToast('error', 'Missing Information', 'Please fill in all registration fields.');
+          return;
+        }
+
+        if (passVal !== confirmVal) {
+          showToast('error', 'Password Mismatch', 'The passwords you entered do not match.');
+          if (msgBox) {
+            msgBox.className = 'login-error';
+            msgBox.textContent = 'Passwords do not match.';
+            msgBox.style.display = 'block';
+          }
+          return;
+        }
+
+        if (passVal.length < 8) {
+          showToast('error', 'Password Too Short', 'Password must be at least 8 characters.');
+          if (msgBox) {
+            msgBox.className = 'login-error';
+            msgBox.textContent = 'Password must be at least 8 characters.';
+            msgBox.style.display = 'block';
+          }
+          return;
+        }
+
+        regBtn.disabled = true;
+        regBtn.textContent = 'Creating Account...';
+        if (msgBox) {
+          msgBox.style.display = 'none';
+          msgBox.className = '';
+          msgBox.textContent = '';
+        }
+
+        try {
+          const token = getCsrfToken();
+          const resp = await fetch('/auth/register', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': token,
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              username: userVal,
+              email: emailVal,
+              password: passVal,
+              password_confirmation: confirmVal
+            })
+          });
+
+          const data = await resp.json().catch(function () { return {}; });
+
+          if (resp.ok) {
+            showToast('success', 'Registration Successful!', 'Your account has been created. Redirecting to login...');
+            if (msgBox) {
+              msgBox.className = 'login-success';
+              msgBox.textContent = 'Account created successfully! Redirecting to login...';
+              msgBox.style.display = 'block';
+            }
+            setTimeout(function () {
+              history.pushState(null, '', '/auth/login');
+              transitionAuthCard(renderLoginMode);
+            }, 1200);
+          } else {
+            regBtn.disabled = false;
+            regBtn.textContent = 'Register';
+
+            let errorDetail = 'Registration is managed by administrators. Please contact support for access.';
+            if (resp.status === 404) {
+              errorDetail = 'Registration is managed by administrators. Please contact support for access.';
+            } else if (data.errors && data.errors[0] && data.errors[0].detail) {
+              errorDetail = data.errors[0].detail;
+            } else if (data.message) {
+              errorDetail = data.message;
+            }
+
+            showToast('error', 'Registration Notice', errorDetail);
+            if (msgBox) {
+              msgBox.className = 'login-error';
+              msgBox.textContent = errorDetail;
+              msgBox.style.display = 'block';
+            }
+          }
+        } catch (err) {
+          regBtn.disabled = false;
+          regBtn.textContent = 'Register';
+          const netMsg = 'Registration is managed by administrators. Please contact support for access.';
+          showToast('error', 'Registration Notice', netMsg);
+          if (msgBox) {
+            msgBox.className = 'login-error';
+            msgBox.textContent = netMsg;
+            msgBox.style.display = 'block';
+          }
+        }
+      });
+    }
+  }
+
+  // ----------------------------------------------------------------------------
   // VIEW 3: SET NEW PASSWORD MODE (/auth/password/reset/{token})
   // ----------------------------------------------------------------------------
   function renderResetMode() {
@@ -6581,7 +6870,7 @@
       loginLink.addEventListener('click', function (e) {
         e.preventDefault();
         history.pushState(null, '', '/auth/login');
-        renderLoginMode();
+        transitionAuthCard(renderLoginMode);
       });
     }
 
@@ -6831,6 +7120,19 @@
   apparatusObserver.observe(document.body || document.documentElement, { childList: true, subtree: true });
 
   window.addEventListener('popstate', function () {
+    if (isAuthPage()) {
+      const path = window.location.pathname;
+      if (path.startsWith('/auth/password/reset')) {
+        transitionAuthCard(renderResetMode);
+      } else if (path.startsWith('/auth/password')) {
+        transitionAuthCard(renderForgotMode);
+      } else if (path.startsWith('/auth/register') || path === '/register') {
+        transitionAuthCard(renderRegisterMode);
+      } else {
+        transitionAuthCard(renderLoginMode);
+      }
+      return;
+    }
     initApparatus();
     applyViewMode();
   });
@@ -6840,10 +7142,12 @@
   if (origPushState) {
     history.pushState = function () {
       origPushState.apply(this, arguments);
-      setTimeout(function () {
-        initApparatus();
-        applyViewMode();
-      }, 20);
+      if (!isAuthPage()) {
+        setTimeout(function () {
+          initApparatus();
+          applyViewMode();
+        }, 20);
+      }
     };
   }
 
