@@ -1624,30 +1624,33 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 }
 
 .apparatus-ab-watermark {
-  height: 64px;
+  height: 58px;
   width: auto;
-  max-width: 280px;
-  opacity: 0.88;
-  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 16px rgba(139, 92, 246, 0.25));
+  max-width: 260px;
+  opacity: 0.38;
+  filter: none !important;
+  box-shadow: none !important;
   image-rendering: -webkit-optimize-contrast;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   display: block;
 }
 
 .apparatus-card-welcome:hover .apparatus-welcome-decor {
-  transform: translateY(-50%) scale(1.03);
+  transform: translateY(-50%) scale(1.02);
 }
 
 .apparatus-card-welcome:hover .apparatus-ab-watermark {
-  opacity: 1;
-  filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 24px rgba(236, 72, 153, 0.45));
+  opacity: 0.52;
+  filter: none !important;
+  box-shadow: none !important;
 }
 
 @media (max-width: 900px) {
   .apparatus-ab-watermark {
     height: 42px;
     max-width: 180px;
-    opacity: 0.18;
+    opacity: 0.28;
+    filter: none !important;
   }
 }
 
@@ -4951,8 +4954,9 @@ html.lenis body {
 }
 
 .apparatus-card-welcome:hover .apparatus-ab-watermark {
-  transform: translateY(-4px) scale(1.03);
-  opacity: 1;
+  transform: translateY(-2px) scale(1.02);
+  opacity: 0.52;
+  filter: none !important;
 }
 
 /* 5. Dual-Orbital Glowing Loader & Shimmer Skeletons */
