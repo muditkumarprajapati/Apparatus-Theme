@@ -1458,6 +1458,12 @@ ${formatMailBody(currentTpl.body)}
       }
     } catch (e) {}
 
+    // Only add defaults if they haven't been explicitly deleted
+    let deletedDefaults = [];
+    try {
+      deletedDefaults = JSON.parse(localStorage.getItem('apparatus_deleted_default_codes') || '[]');
+    } catch (e) {}
+
     const defaultCodes = [
       { id: 'pc_jee25', code: 'JEE25', points: 25, maxUses: 1000, usedCount: 0, active: true },
       { id: 'pc_arix100', code: 'ARIX100', points: 100, maxUses: 500, usedCount: 0, active: true },
@@ -1465,7 +1471,7 @@ ${formatMailBody(currentTpl.body)}
     ];
 
     defaultCodes.forEach(function (def) {
-      if (!list.some(function (c) { return (c.code || '').toUpperCase() === def.code; })) {
+      if (!deletedDefaults.includes(def.code) && !list.some(function (c) { return (c.code || '').toUpperCase() === def.code; })) {
         list.push(def);
       }
     });
@@ -1481,6 +1487,17 @@ ${formatMailBody(currentTpl.body)}
       localStorage.setItem('apparatus_promo_codes', JSON.stringify(codes));
     } catch (e) {
       console.error('Error saving promo codes:', e);
+    }
+  }
+
+  function markDefaultCodeDeleted(code) {
+    let deleted = [];
+    try {
+      deleted = JSON.parse(localStorage.getItem('apparatus_deleted_default_codes') || '[]');
+    } catch (e) {}
+    if (!deleted.includes(code)) {
+      deleted.push(code);
+      localStorage.setItem('apparatus_deleted_default_codes', JSON.stringify(deleted));
     }
   }
 
@@ -1807,6 +1824,7 @@ ${formatMailBody(currentTpl.body)}
         btn.addEventListener('click', function () {
           const cd = this.getAttribute('data-code');
           if (confirm('Are you sure you want to permanently delete promo code ' + cd + '?')) {
+            markDefaultCodeDeleted(cd);
             let all = getPromoCodesList();
             all = all.filter(function (c) { return c.code !== cd; });
             savePromoCodesList(all);

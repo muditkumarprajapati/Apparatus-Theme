@@ -113,6 +113,7 @@ install_theme() {
   curl -s -L "$RAW_BASE/public/themes/apparatus/ab-logo.png?v=$TS" -o "$ASSET_DIR/ab-logo.png"
   curl -s -L "$RAW_BASE/public/themes/apparatus/ab-logo-white.png?v=$TS" -o "$ASSET_DIR/ab-logo-white.png"
   curl -s -L "$RAW_BASE/public/themes/apparatus/arixbyte-logo.png?v=$TS" -o "$ASSET_DIR/arixbyte-logo.png"
+  curl -s -L "$RAW_BASE/public/themes/apparatus/arixbyte-logo.svg?v=$TS" -o "$ASSET_DIR/arixbyte-logo.svg"
   curl -s -L "$RAW_BASE/public/themes/apparatus/logo.png?v=$TS" -o "$ASSET_DIR/logo.png"
 
   chown -R www-data:www-data "$ASSET_DIR"

@@ -1228,6 +1228,12 @@
       }
     } catch (e) {}
 
+    // Only add defaults if they haven't been explicitly deleted
+    var deletedDefaults = [];
+    try {
+      deletedDefaults = JSON.parse(localStorage.getItem('apparatus_deleted_default_codes') || '[]');
+    } catch (e) {}
+
     const defaultCodes = [
       { id: 'pc_jee25', code: 'JEE25', points: 25, maxUses: 1000, usedCount: 0, active: true },
       { id: 'pc_arix100', code: 'ARIX100', points: 100, maxUses: 500, usedCount: 0, active: true },
@@ -1235,7 +1241,7 @@
     ];
 
     defaultCodes.forEach(function (def) {
-      if (!list.some(function (c) { return (c.code || '').toUpperCase() === def.code; })) {
+      if (!deletedDefaults.includes(def.code) && !list.some(function (c) { return (c.code || '').toUpperCase() === def.code; })) {
         list.push(def);
       }
     });
@@ -1251,6 +1257,17 @@
       localStorage.setItem('apparatus_promo_codes', JSON.stringify(codes));
     } catch (e) {
       console.error('Error saving promo codes:', e);
+    }
+  }
+
+  function markDefaultCodeDeleted(code) {
+    var deleted = [];
+    try {
+      deleted = JSON.parse(localStorage.getItem('apparatus_deleted_default_codes') || '[]');
+    } catch (e) {}
+    if (!deleted.includes(code)) {
+      deleted.push(code);
+      localStorage.setItem('apparatus_deleted_default_codes', JSON.stringify(deleted));
     }
   }
 
@@ -6619,111 +6636,102 @@
   // ==============================================================================
   function normalizeAccountCards() {
     try {
-      const rawPath = window.location.pathname || '';
+      var rawPath = window.location.pathname || '';
       if (rawPath !== '/account' && rawPath !== '/account/') return;
 
-      // 1. Remove horizontal padding and force 100% width on all account page ancestors
-      document.querySelectorAll('.apparatus-page-account .sc-12to0iy-1, .apparatus-page-account [class*="ContentContainer"], .apparatus-page-account .md\\:px-8, .apparatus-page-account .px-4, .apparatus-page-account div[class*="PageContentBlock"]').forEach(function (el) {
-        el.style.setProperty('padding-left', '0', 'important');
-        el.style.setProperty('padding-right', '0', 'important');
+      // Ensure body class is set
+      document.body.classList.add('apparatus-page-account');
+
+      var appEl = document.getElementById('app');
+      if (!appEl) return;
+
+      // 1. Walk ALL divs inside #app and force single-column layout for grids
+      appEl.querySelectorAll('div').forEach(function (div) {
+        var cls = div.className || '';
+        if (typeof cls !== 'string') cls = '';
+        var isGrid = cls.indexOf('grid') !== -1;
+        if (isGrid) {
+          div.style.setProperty('display', 'flex', 'important');
+          div.style.setProperty('flex-direction', 'column', 'important');
+          div.style.setProperty('grid-template-columns', '1fr', 'important');
+          div.style.setProperty('width', '100%', 'important');
+          div.style.setProperty('max-width', '100%', 'important');
+          div.style.setProperty('gap', '0', 'important');
+          div.style.setProperty('padding', '0', 'important');
+          div.style.setProperty('margin', '0', 'important');
+          div.style.setProperty('box-sizing', 'border-box', 'important');
+        }
+        // Remove horizontal padding from utility classes
+        var hasPadding = cls.indexOf('px-') !== -1;
+        if (hasPadding) {
+          div.style.setProperty('padding-left', '0', 'important');
+          div.style.setProperty('padding-right', '0', 'important');
+        }
+      });
+
+      // 2. Force all forms, card boxes, and ContentBox containers to 100% width
+      appEl.querySelectorAll('form, [class*="ContentBox"], [class*="sc-mjlt6f"]').forEach(function (el) {
         el.style.setProperty('width', '100%', 'important');
         el.style.setProperty('max-width', '100%', 'important');
+        el.style.setProperty('min-width', '100%', 'important');
         el.style.setProperty('margin-left', '0', 'important');
         el.style.setProperty('margin-right', '0', 'important');
         el.style.setProperty('box-sizing', 'border-box', 'important');
       });
 
-      // 2. Convert Pterodactyl's subgrid container (Card 2 & Card 3) into a single-column flex column
-      const gridContainers = document.querySelectorAll('div.grid-cols-2, div[class*="grid-cols-2"], div.md\\:grid, div[class*="md:grid"]');
-      gridContainers.forEach(function (grid) {
-        grid.style.setProperty('display', 'flex', 'important');
-        grid.style.setProperty('flex-direction', 'column', 'important');
-        grid.style.setProperty('grid-template-columns', '100%', 'important');
-        grid.style.setProperty('width', '100%', 'important');
-        grid.style.setProperty('max-width', '100%', 'important');
-        grid.style.setProperty('min-width', '100%', 'important');
-        grid.style.setProperty('margin-left', '0', 'important');
-        grid.style.setProperty('margin-right', '0', 'important');
-        grid.style.setProperty('margin-top', '0', 'important');
-        grid.style.setProperty('margin-bottom', '0', 'important');
-        grid.style.setProperty('padding', '0', 'important');
-        grid.style.setProperty('gap', '1.5rem', 'important');
-        grid.style.setProperty('column-gap', '0', 'important');
-        grid.style.setProperty('row-gap', '1.5rem', 'important');
-        grid.style.setProperty('box-sizing', 'border-box', 'important');
-        grid.style.setProperty('align-items', 'stretch', 'important');
-
-        // Style all children inside the subgrid
-        Array.from(grid.children).forEach(function (child) {
-          child.style.setProperty('display', 'flex', 'important');
-          child.style.setProperty('flex-direction', 'column', 'important');
-          child.style.setProperty('width', '100%', 'important');
-          child.style.setProperty('max-width', '100%', 'important');
-          child.style.setProperty('min-width', '100%', 'important');
-          child.style.setProperty('margin-left', '0', 'important');
-          child.style.setProperty('margin-right', '0', 'important');
-          child.style.setProperty('margin-top', '0', 'important');
-          child.style.setProperty('margin-bottom', '0', 'important');
-          child.style.setProperty('padding', '0', 'important');
-          child.style.setProperty('box-sizing', 'border-box', 'important');
-          child.style.setProperty('align-self', 'stretch', 'important');
-          child.style.setProperty('flex', '1 1 100%', 'important');
-        });
-      });
-
-      // 3. Find Card 1's wrapper (div.my-10 containing password form) and align it identically
-      const pwForm = document.querySelector('form:has(input[type="password"])');
+      // 3. Walk up from the first form to ensure all ancestors are 100% width
+      var pwForm = appEl.querySelector('form');
       if (pwForm) {
-        pwForm.style.setProperty('width', '100%', 'important');
-        pwForm.style.setProperty('max-width', '100%', 'important');
-        pwForm.style.setProperty('min-width', '100%', 'important');
-        pwForm.style.setProperty('margin-left', '0', 'important');
-        pwForm.style.setProperty('margin-right', '0', 'important');
-        pwForm.style.setProperty('margin-top', '0', 'important');
-        pwForm.style.setProperty('padding', '0', 'important');
-        pwForm.style.setProperty('box-sizing', 'border-box', 'important');
-
-        if (pwForm.parentElement && !pwForm.parentElement.classList.contains('sc-12to0iy-1') && pwForm.parentElement.id !== 'app') {
-          pwForm.parentElement.style.setProperty('width', '100%', 'important');
-          pwForm.parentElement.style.setProperty('max-width', '100%', 'important');
-          pwForm.parentElement.style.setProperty('min-width', '100%', 'important');
-          pwForm.parentElement.style.setProperty('margin-left', '0', 'important');
-          pwForm.parentElement.style.setProperty('margin-right', '0', 'important');
-          pwForm.parentElement.style.setProperty('margin-top', '0', 'important');
-          pwForm.parentElement.style.setProperty('margin-bottom', '0', 'important');
-          pwForm.parentElement.style.setProperty('padding', '0', 'important');
-          pwForm.parentElement.style.setProperty('box-sizing', 'border-box', 'important');
+        var el = pwForm;
+        while (el && el.id !== 'app' && el.tagName !== 'BODY') {
+          el.style.setProperty('width', '100%', 'important');
+          el.style.setProperty('max-width', '100%', 'important');
+          el.style.setProperty('margin-left', '0', 'important');
+          el.style.setProperty('margin-right', '0', 'important');
+          el.style.setProperty('box-sizing', 'border-box', 'important');
+          el = el.parentElement;
         }
       }
 
-      // 4. Force all ContentBox card boxes (.sc-mjlt6f-2) on the account page to 100% width with zero horizontal offsets
-      document.querySelectorAll('.apparatus-page-account .sc-mjlt6f-2, .apparatus-page-account [class*="ContentBox___StyledDiv"], .apparatus-page-account div.bg-neutral-700').forEach(function (box) {
+      // 4. Force card box containers consistent styling
+      appEl.querySelectorAll('[class*="sc-mjlt6f"], div.bg-neutral-700, [class*="ContentBox___StyledDiv"]').forEach(function (box) {
         box.style.setProperty('width', '100%', 'important');
         box.style.setProperty('max-width', '100%', 'important');
-        box.style.setProperty('min-width', '100%', 'important');
         box.style.setProperty('margin-left', '0', 'important');
         box.style.setProperty('margin-right', '0', 'important');
         box.style.setProperty('margin-top', '0', 'important');
-        box.style.setProperty('padding-top', '1.25rem', 'important');
-        box.style.setProperty('padding-bottom', '1.25rem', 'important');
+        box.style.setProperty('padding', '1.25rem', 'important');
         box.style.setProperty('box-sizing', 'border-box', 'important');
-        box.style.setProperty('align-self', 'stretch', 'important');
       });
 
-      // 5. Force all card headings (h2) on the account page to 100% width with matching left offset
-      document.querySelectorAll('.apparatus-page-account h2').forEach(function (h2) {
+      // 5. Force headings alignment
+      appEl.querySelectorAll('h2').forEach(function (h2) {
         h2.style.setProperty('width', '100%', 'important');
-        h2.style.setProperty('max-width', '100%', 'important');
         h2.style.setProperty('margin-left', '0', 'important');
         h2.style.setProperty('margin-right', '0', 'important');
         h2.style.setProperty('margin-bottom', '0.35rem', 'important');
         h2.style.setProperty('padding-left', '0.25rem', 'important');
         h2.style.setProperty('text-align', 'left', 'important');
-        h2.style.setProperty('box-sizing', 'border-box', 'important');
       });
 
-      // 6. Ensure PageContentBlock is clean and centered
-      const pageBlock = document.querySelector('div[class*="PageContentBlock"]') || document.querySelector('.sc-12to0iy-1');
+      // 6. Force all direct children of grid-like containers full width
+      appEl.querySelectorAll('div').forEach(function (div) {
+        var cls = div.className || '';
+        if (typeof cls !== 'string') cls = '';
+        if (cls.indexOf('grid') !== -1) {
+          Array.from(div.children).forEach(function (child) {
+            child.style.setProperty('width', '100%', 'important');
+            child.style.setProperty('max-width', '100%', 'important');
+            child.style.setProperty('min-width', '100%', 'important');
+            child.style.setProperty('margin', '0', 'important');
+            child.style.setProperty('box-sizing', 'border-box', 'important');
+            child.style.setProperty('flex', '1 1 100%', 'important');
+          });
+        }
+      });
+
+      // 7. Set the outer page wrapper
+      var pageBlock = appEl.querySelector('[class*="PageContentBlock"]') || appEl.querySelector('.sc-12to0iy-1');
       if (pageBlock) {
         pageBlock.style.setProperty('width', '90%', 'important');
         pageBlock.style.setProperty('max-width', '1380px', 'important');
@@ -6735,12 +6743,46 @@
         pageBlock.style.setProperty('align-items', 'stretch', 'important');
         pageBlock.style.setProperty('gap', '1.5rem', 'important');
       }
+
+      // 8. Strip ghost outlines from outer ContentBox wrappers
+      appEl.querySelectorAll('[class*="ContentBox"]').forEach(function (outer) {
+        var cls = outer.className || '';
+        if (typeof cls !== 'string') cls = '';
+        if (cls.indexOf('ContentBox___StyledDiv') === -1) {
+          outer.style.setProperty('background', 'transparent', 'important');
+          outer.style.setProperty('border', 'none', 'important');
+          outer.style.setProperty('box-shadow', 'none', 'important');
+          outer.style.setProperty('border-radius', '0', 'important');
+        }
+      });
+
     } catch (e) {
       console.warn('[Apparatus] normalizeAccountCards error:', e);
     }
   }
 
-  // ==============================================================================
+  // Re-run normalizeAccountCards with retries to handle React async rendering
+  (function setupAccountCardObserver() {
+    var rawPath = window.location.pathname || '';
+    if (rawPath !== '/account' && rawPath !== '/account/') return;
+    var delays = [100, 300, 600, 1000, 2000, 3000];
+    delays.forEach(function (ms) {
+      setTimeout(normalizeAccountCards, ms);
+    });
+    var appEl = document.getElementById('app');
+    if (appEl) {
+      var debounceTimer = null;
+      var observer = new MutationObserver(function () {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function () {
+          normalizeAccountCards();
+        }, 50);
+      });
+      observer.observe(appEl, { childList: true, subtree: true });
+      setTimeout(function () { observer.disconnect(); }, 10000);
+    }
+  })();
+// ==============================================================================
   // Account Verification & Referral Activation System (Code Dispatch & Verification)
   // ==============================================================================
   function generate6CharVerificationCode() {
