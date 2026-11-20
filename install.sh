@@ -420,8 +420,11 @@ if '</head>' in content:
     "token_secret": "323dc207-48c9-4aa1-86b3-6777821c06af",
     "enabled": 1,
     "cpu_cores": 12,
-    "ram_total_gb": 64,
-    "storage_total_gb": 150,
+    "cpu_usage_pct": 0.4,
+    "ram_total_gb": 62.8,
+    "ram_usage_gb": 2.8,
+    "storage_total_gb": 147.6,
+    "storage_used_gb": 8.0,
     "status": "online",
     "virtualization": "Proxmox VE 8.x (KVM/LXC)"
   }

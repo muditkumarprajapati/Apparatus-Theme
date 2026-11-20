@@ -1144,17 +1144,62 @@ class RegisterController extends Controller
 
     public function vpsPing(): JsonResponse
     {
-        $res = $this->callAlpm('/api/health');
+        @session_write_close();
+        $targetHost = '46.232.234.224';
+        $port = 8006;
+        $tokenId = 'root@pam!root-api';
+        $tokenSecret = '323dc207-48c9-4aa1-86b3-6777821c06af';
+
+        $cachePath = storage_path('app/apparatus_vps_nodes_cache.json');
+        if (file_exists($cachePath)) {
+            $cached = json_decode(@file_get_contents($cachePath), true);
+            if (!empty($cached[0]['host'])) {
+                $h = trim($cached[0]['host']);
+                if (strpos($h, 'ruby.arixbyte.com') === false) {
+                    $targetHost = $h;
+                }
+                $port = (int) ($cached[0]['port'] ?? 8006);
+                if (!empty($cached[0]['token_id'])) $tokenId = trim($cached[0]['token_id']);
+                if (!empty($cached[0]['token_secret'])) $tokenSecret = trim($cached[0]['token_secret']);
+            }
+        }
+
+        $t0 = microtime(true);
+        $ch = curl_init("https://{$targetHost}:{$port}/api2/json/version");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: PVEAPIToken={$tokenId}={$tokenSecret}",
+            'Accept: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+        $res = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $ms = round((microtime(true) - $t0) * 1000);
+        curl_close($ch);
+
+        if ($code >= 200 && $code < 300) {
+            return response()->json([
+                'success' => true,
+                'status' => 200,
+                'latency_ms' => $ms,
+                'message' => "Proxmox Cluster Online ({$ms}ms)"
+            ]);
+        }
+
         return response()->json([
-            'success' => $res['ok'],
-            'status' => $res['status'],
-            'response' => $res['data'] ?? null,
-            'error' => $res['error'] ?? null
+            'success' => false,
+            'status' => 503,
+            'error' => 'Proxmox Hypervisor unreachable'
         ]);
     }
 
     public function vpsList(Request $request): JsonResponse
     {
+        @session_write_close();
         $email = trim($request->input('email', ''));
         if (empty($email) && auth()->check()) {
             $email = auth()->user()->email;
@@ -1228,6 +1273,7 @@ class RegisterController extends Controller
 
     public function vpsAdminServers(Request $request): JsonResponse
     {
+        @session_write_close();
         $res = $this->callAlpm('/api/application/servers');
         if ($res['ok'] && isset($res['data']['data']) && is_array($res['data']['data']) && count($res['data']['data']) > 0) {
             return response()->json([
@@ -1475,7 +1521,8 @@ class RegisterController extends Controller
 
                     if ($pveData) {
                         $node['status'] = ($pveData['status'] ?? 'online') === 'online' ? 'online' : 'offline';
-                        $node['cpu_usage_pct'] = round(($pveData['cpu'] ?? 0) * 100, 1);
+                        $rawCpu = (float) ($pveData['cpu'] ?? 0);
+                        $node['cpu_usage_pct'] = $rawCpu > 0 ? max(0.2, round($rawCpu * 100, 1)) : 0.0;
                         if (!empty($pveData['maxcpu'])) {
                             $node['cpu_cores'] = (int) $pveData['maxcpu'];
                         }
@@ -1549,6 +1596,7 @@ class RegisterController extends Controller
 
     public function vpsAdminNodes(Request $request): JsonResponse
     {
+        @session_write_close();
         try {
             $cachePath = storage_path('app/apparatus_vps_nodes_cache.json');
             $nodes = [];
@@ -1558,20 +1606,6 @@ class RegisterController extends Controller
                 $cached = json_decode(@file_get_contents($cachePath), true);
                 if (is_array($cached)) {
                     $nodes = $cached;
-                }
-            }
-
-            // Also check ALPM if available
-            if (empty($nodes)) {
-                $res = $this->callAlpm('/api/admin/nodes');
-                if ($res['ok']) {
-                    if (isset($res['data']['nodes']) && is_array($res['data']['nodes'])) {
-                        $nodes = $res['data']['nodes'];
-                    } elseif (isset($res['data']['data']) && is_array($res['data']['data'])) {
-                        $nodes = $res['data']['data'];
-                    } elseif (is_array($res['data'])) {
-                        $nodes = $res['data'];
-                    }
                 }
             }
 
@@ -1587,17 +1621,24 @@ class RegisterController extends Controller
                         'token_secret' => '323dc207-48c9-4aa1-86b3-6777821c06af',
                         'enabled' => 1,
                         'cpu_cores' => 12,
-                        'cpu_usage_pct' => 2.2,
-                        'ram_total_gb' => 64,
-                        'ram_usage_gb' => 3.2,
-                        'storage_total_gb' => 150,
-                        'storage_used_gb' => 8.5,
+                        'cpu_usage_pct' => 0.4,
+                        'ram_total_gb' => 62.8,
+                        'ram_usage_gb' => 2.8,
+                        'storage_total_gb' => 147.6,
+                        'storage_used_gb' => 8.0,
                         'status' => 'online',
                         'virtualization' => 'Proxmox VE 8.x (KVM/LXC)'
                     ]
                 ];
-                @file_put_contents($cachePath, json_encode($nodes, JSON_PRETTY_PRINT));
             }
+
+            // Fetch live real-time metrics directly from Proxmox VE
+            foreach ($nodes as &$node) {
+                $this->fetchProxmoxNodeTelemetry($node);
+            }
+            unset($node);
+
+            @file_put_contents($cachePath, json_encode($nodes, JSON_PRETTY_PRINT));
 
             return response()->json([
                 'success' => true,
@@ -1616,11 +1657,11 @@ class RegisterController extends Controller
                         'token_id' => 'root@pam!root-api',
                         'enabled' => 1,
                         'cpu_cores' => 12,
-                        'cpu_usage_pct' => 2.2,
-                        'ram_total_gb' => 64,
-                        'ram_usage_gb' => 3.2,
-                        'storage_total_gb' => 150,
-                        'storage_used_gb' => 8.5,
+                        'cpu_usage_pct' => 0.4,
+                        'ram_total_gb' => 62.8,
+                        'ram_usage_gb' => 2.8,
+                        'storage_total_gb' => 147.6,
+                        'storage_used_gb' => 8.0,
                         'status' => 'online',
                         'virtualization' => 'Proxmox VE 8.x (KVM/LXC)'
                     ]
@@ -1632,6 +1673,7 @@ class RegisterController extends Controller
 
     public function vpsAdminNodeTest(Request $request, $id): JsonResponse
     {
+        @session_write_close();
         $cachePath = storage_path('app/apparatus_vps_nodes_cache.json');
         $node = null;
         if (file_exists($cachePath)) {
@@ -1666,8 +1708,8 @@ class RegisterController extends Controller
             $ch = curl_init("https://{$targetHost}:{$port}/api2/json/version");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 3);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -1692,11 +1734,9 @@ class RegisterController extends Controller
             }
         }
 
-        $res = $this->callAlpm("/api/admin/nodes/{$id}/test");
         return response()->json([
-            'success' => $res['ok'],
-            'data' => $res['data'] ?? null,
-            'error' => $res['error'] ?? 'Connection timed out or invalid API token'
+            'success' => false,
+            'error' => 'Connection timed out or invalid API token'
         ]);
     }
 
@@ -1937,6 +1977,7 @@ class RegisterController extends Controller
 
     public function vpsAdminNodeTelemetry(): JsonResponse
     {
+        @session_write_close();
         try {
             $nodes = DB::table('nodes')
                 ->leftJoin('locations', 'nodes.location_id', '=', 'locations.id')
@@ -2262,6 +2303,7 @@ class RegisterController extends Controller
      */
     public function vpsDetails($id): JsonResponse
     {
+        @session_write_close();
         $cachePath = storage_path('app/apparatus_vps_cache.json');
         $cached = file_exists($cachePath) ? json_decode(@file_get_contents($cachePath), true) : [];
         $server = null;
