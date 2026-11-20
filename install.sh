@@ -208,6 +208,13 @@ Route::get('/auth/vps/list', [\Pterodactyl\Http\Controllers\Auth\RegisterControl
 Route::get('/auth/vps/admin/servers', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminServers']);
 Route::post('/auth/vps/{id}/power', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsPower']);
 Route::get('/auth/vps/{id}/status', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsStatus']);
+Route::get('/auth/vps/{id}/details', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsDetails']);
+Route::post('/auth/vps/{id}/update', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsUpdate']);
+Route::post('/auth/vps/{id}/reinstall', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsReinstall']);
+Route::post('/auth/vps/{id}/snapshots/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsSnapshotCreate']);
+Route::post('/auth/vps/{id}/snapshots/{snapname}/rollback', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsSnapshotRollback']);
+Route::delete('/auth/vps/{id}/snapshots/{snapname}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsSnapshotDelete']);
+Route::post('/auth/vps/{id}/backups/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsBackupCreate']);
 Route::post('/auth/vps/{id}/termproxy', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsTermproxy']);
 Route::post('/auth/vps/admin/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminCreate']);
 Route::delete('/auth/vps/admin/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminDelete']);
@@ -282,6 +289,13 @@ Route::get('/auth/vps/list', [\Pterodactyl\Http\Controllers\Auth\RegisterControl
 Route::get('/auth/vps/admin/servers', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminServers']);
 Route::post('/auth/vps/{id}/power', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsPower']);
 Route::get('/auth/vps/{id}/status', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsStatus']);
+Route::get('/auth/vps/{id}/details', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsDetails']);
+Route::post('/auth/vps/{id}/update', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsUpdate']);
+Route::post('/auth/vps/{id}/reinstall', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsReinstall']);
+Route::post('/auth/vps/{id}/snapshots/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsSnapshotCreate']);
+Route::post('/auth/vps/{id}/snapshots/{snapname}/rollback', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsSnapshotRollback']);
+Route::delete('/auth/vps/{id}/snapshots/{snapname}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsSnapshotDelete']);
+Route::post('/auth/vps/{id}/backups/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsBackupCreate']);
 Route::post('/auth/vps/{id}/termproxy', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsTermproxy']);
 Route::post('/auth/vps/admin/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminCreate']);
 Route::delete('/auth/vps/admin/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminDelete']);

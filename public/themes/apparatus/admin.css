@@ -2122,4 +2122,628 @@ body.apparatus-admin-light .apparatus-vps-btn-action:hover {
   border-color: #ef4444 !important;
 }
 
+/* ==========================================================================
+   Dedicated VPS Management & Detail View (Atyro / Zendenta SaaS Style)
+   ========================================================================== */
+
+.apparatus-vps-detail-view {
+  animation: apparatusFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  width: 100%;
+}
+
+.apparatus-vps-detail-breadcrumbs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--admin-text-muted, #94a3b8);
+  padding: 0.2rem 0;
+}
+
+.apparatus-vps-detail-breadcrumbs a {
+  color: var(--admin-text-muted, #94a3b8);
+  text-decoration: none;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.apparatus-vps-detail-breadcrumbs a:hover {
+  color: #3b82f6;
+}
+
+.apparatus-vps-detail-breadcrumbs .crumb-sep {
+  opacity: 0.5;
+  margin: 0 0.4rem;
+}
+
+.apparatus-vps-detail-breadcrumbs .crumb-active {
+  color: var(--admin-text, #f1f5f9);
+  font-weight: 600;
+}
+
+.apparatus-vps-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #10b981;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.apparatus-vps-live-badge .pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  animation: apparatusPulseDot 1.8s infinite;
+}
+
+.apparatus-vps-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--admin-text-muted, #94a3b8);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: all 0.2s;
+  margin-bottom: -0.4rem;
+}
+
+.apparatus-vps-back-btn:hover {
+  color: var(--admin-text, #ffffff);
+  transform: translateX(-3px);
+}
+
+.apparatus-vps-detail-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.apparatus-vps-hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.apparatus-vps-hero-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.apparatus-vps-hero-title {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--admin-text, #ffffff);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.apparatus-vps-hero-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.apparatus-vps-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.apparatus-vps-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid var(--admin-card-border, rgba(255, 255, 255, 0.1));
+  background: var(--admin-card-bg, #10141e);
+  color: var(--admin-text, #f1f5f9);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.apparatus-vps-btn:hover {
+  background: var(--admin-input-bg, #161b26);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #ffffff;
+}
+
+.apparatus-vps-btn.primary {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.apparatus-vps-btn.primary:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+}
+
+.apparatus-vps-btn.stop {
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.apparatus-vps-btn.stop:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+}
+
+.apparatus-vps-btn.shutdown {
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #f59e0b;
+}
+
+.apparatus-vps-btn.shutdown:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: #f59e0b;
+}
+
+.apparatus-vps-btn.reset {
+  border-color: rgba(236, 72, 153, 0.3);
+  color: #ec4899;
+}
+
+.apparatus-vps-btn.reset:hover {
+  background: rgba(236, 72, 153, 0.15);
+  border-color: #ec4899;
+}
+
+/* KPI Cards 4-Column Grid */
+.apparatus-vps-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.1rem;
+}
+
+@media (max-width: 1100px) {
+  .apparatus-vps-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .apparatus-vps-kpis {
+    grid-template-columns: 1fr;
+  }
+}
+
+.apparatus-vps-kpi-card {
+  background: var(--admin-card-bg, #10141e);
+  border: 1px solid var(--admin-card-border, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  padding: 1.15rem 1.3rem;
+  box-shadow: var(--admin-card-shadow, 0 4px 18px rgba(0, 0, 0, 0.2));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.apparatus-vps-kpi-card:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-1px);
+}
+
+.apparatus-vps-kpi-card .kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.apparatus-vps-kpi-card .kpi-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--admin-text-muted, #94a3b8);
+}
+
+.apparatus-vps-kpi-card .kpi-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #3b82f6;
+  font-family: monospace;
+}
+
+.apparatus-vps-kpi-card .kpi-val {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--admin-text, #ffffff);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.apparatus-vps-kpi-card .kpi-sub {
+  font-size: 0.76rem;
+  color: var(--admin-text-muted, #94a3b8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.apparatus-vps-kpi-card .kpi-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.apparatus-vps-kpi-card .kpi-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.apparatus-vps-kpi-card.cpu .kpi-bar-fill {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+.apparatus-vps-kpi-card.ram .kpi-bar-fill {
+  background: linear-gradient(90deg, #ec4899, #f43f5e);
+}
+
+.apparatus-vps-kpi-card.disk .kpi-bar-fill {
+  background: linear-gradient(90deg, #06b6d4, #38bdf8);
+}
+
+.apparatus-vps-kpi-card.net .kpi-bar-fill {
+  background: linear-gradient(90deg, #8b5cf6, #a855f7);
+}
+
+/* Tabs Bar */
+.apparatus-vps-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-bottom: 1px solid var(--admin-card-border, rgba(255, 255, 255, 0.08));
+  overflow-x: auto;
+  padding-bottom: 0;
+  margin-top: 0.4rem;
+}
+
+.apparatus-vps-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--admin-text-muted, #94a3b8);
+  font-size: 0.86rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  border-radius: 6px 6px 0 0;
+}
+
+.apparatus-vps-tab-btn:hover {
+  color: var(--admin-text, #ffffff);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.apparatus-vps-tab-btn.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  font-weight: 600;
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.apparatus-vps-tab-pane {
+  display: none;
+  animation: apparatusFadeIn 0.2s ease-in-out;
+}
+
+.apparatus-vps-tab-pane.active {
+  display: block;
+}
+
+/* 2x2 Specs Grid */
+.apparatus-vps-specs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .apparatus-vps-specs-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.apparatus-vps-specs-card {
+  background: var(--admin-card-bg, #10141e);
+  border: 1px solid var(--admin-card-border, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  box-shadow: var(--admin-card-shadow, 0 4px 18px rgba(0, 0, 0, 0.2));
+  overflow: hidden;
+}
+
+.apparatus-vps-specs-card .specs-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 1rem 1.3rem;
+  border-bottom: 1px solid var(--admin-card-border, rgba(255, 255, 255, 0.06));
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--admin-text, #ffffff);
+}
+
+.apparatus-vps-specs-card .specs-head i {
+  color: #3b82f6;
+  font-size: 1.15rem;
+}
+
+.apparatus-vps-specs-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.apparatus-vps-prop-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.72rem 1.3rem;
+  border-bottom: 1px solid var(--admin-card-border, rgba(255, 255, 255, 0.04));
+  font-size: 0.83rem;
+}
+
+.apparatus-vps-prop-row:last-child {
+  border-bottom: none;
+}
+
+.apparatus-vps-prop-row .prop-label {
+  color: var(--admin-text-muted, #94a3b8);
+  font-weight: 400;
+}
+
+.apparatus-vps-prop-row .prop-value {
+  color: var(--admin-text, #f1f5f9);
+  font-weight: 600;
+  font-family: monospace;
+  text-align: right;
+  word-break: break-all;
+}
+
+/* Edit VPS & Forms */
+.apparatus-vps-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .apparatus-vps-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.apparatus-vps-form-card {
+  background: var(--admin-card-bg, #10141e);
+  border: 1px solid var(--admin-card-border, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.apparatus-vps-form-card h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--admin-text, #ffffff);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apparatus-vps-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.apparatus-vps-form-group label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--admin-text-muted, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.apparatus-vps-input {
+  background: var(--admin-input-bg, #161b26);
+  border: 1px solid var(--admin-input-border, rgba(255, 255, 255, 0.12));
+  color: var(--admin-text, #ffffff);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 0.86rem;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.apparatus-vps-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.apparatus-vps-danger-box {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  color: #f87171;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.apparatus-vps-danger-box i {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Charts Grid */
+.apparatus-vps-graphs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .apparatus-vps-graphs-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.apparatus-vps-graph-card {
+  background: var(--admin-card-bg, #10141e);
+  border: 1px solid var(--admin-card-border, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  padding: 1.15rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.apparatus-vps-graph-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.apparatus-vps-graph-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--admin-text, #ffffff);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apparatus-vps-canvas-box {
+  width: 100%;
+  height: 200px;
+  position: relative;
+}
+
+.apparatus-vps-canvas-box canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* Monospace Raw Config Viewer */
+.apparatus-vps-raw-viewer {
+  background: #0b0e14;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85rem;
+  color: #38bdf8;
+  line-height: 1.6;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* Light Theme (White Theme) Overrides */
+body.apparatus-admin-light .apparatus-vps-kpi-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04) !important;
+}
+
+body.apparatus-admin-light .apparatus-vps-kpi-card .kpi-val {
+  color: #0f172a !important;
+}
+
+body.apparatus-admin-light .apparatus-vps-kpi-card .kpi-bar {
+  background: #f1f5f9 !important;
+}
+
+body.apparatus-admin-light .apparatus-vps-specs-card,
+body.apparatus-admin-light .apparatus-vps-form-card,
+body.apparatus-admin-light .apparatus-vps-graph-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04) !important;
+}
+
+body.apparatus-admin-light .apparatus-vps-specs-card .specs-head,
+body.apparatus-admin-light .apparatus-vps-form-card h4,
+body.apparatus-admin-light .apparatus-vps-graph-title,
+body.apparatus-admin-light .apparatus-vps-hero-title {
+  color: #0f172a !important;
+}
+
+body.apparatus-admin-light .apparatus-vps-prop-row .prop-value {
+  color: #1e293b !important;
+}
+
+body.apparatus-admin-light .apparatus-vps-input {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+body.apparatus-admin-light .apparatus-vps-btn {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #1e293b !important;
+}
+
+body.apparatus-admin-light .apparatus-vps-btn:hover {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+body.apparatus-admin-light .apparatus-vps-raw-viewer {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #0369a1 !important;
+}
+
+
 

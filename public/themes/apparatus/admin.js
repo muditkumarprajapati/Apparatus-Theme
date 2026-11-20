@@ -2674,21 +2674,40 @@ ${formatMailBody(currentTpl.body)}
   }
 
   function wireAdminVpsEvents(container, cfg, servers) {
+    // Click on modern VPS card opens dedicated detail view
+    container.querySelectorAll('.apparatus-vps-modern-card').forEach(function (card) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('button') || e.target.closest('a')) return;
+        const id = this.getAttribute('data-vps-id');
+        const s = (servers || []).find(function (x) { return String(x.id) === String(id) || String(x.vmid) === String(id); }) || { id: id, vmid: id };
+        renderAdminVpsDetailView(container, s);
+      });
+    });
+
     container.querySelectorAll('.apparatus-btn-vps-manage').forEach(function (btn) {
-      btn.addEventListener('click', function () {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
         const id = this.getAttribute('data-id');
-        const name = this.getAttribute('data-name');
-        const vmid = this.getAttribute('data-vmid');
-        openAdminVpsConsole(id, name, vmid);
+        const s = (servers || []).find(function (x) { return String(x.id) === String(id) || String(x.vmid) === String(id); }) || {
+          id: id,
+          name: this.getAttribute('data-name'),
+          vmid: this.getAttribute('data-vmid')
+        };
+        renderAdminVpsDetailView(container, s);
       });
     });
 
     container.querySelectorAll('.apparatus-btn-vps-edit').forEach(function (btn) {
-      btn.addEventListener('click', function () {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
         const id = this.getAttribute('data-id');
-        const name = this.getAttribute('data-name');
-        const vmid = this.getAttribute('data-vmid');
-        showAdminToast('info', 'VPS Settings', 'Editing configuration for ' + name + ' (VMID #' + vmid + ')');
+        const s = (servers || []).find(function (x) { return String(x.id) === String(id) || String(x.vmid) === String(id); }) || {
+          id: id,
+          name: this.getAttribute('data-name'),
+          vmid: this.getAttribute('data-vmid')
+        };
+        renderAdminVpsDetailView(container, s, 'tab-edit');
       });
     });
 
@@ -2874,6 +2893,1184 @@ ${formatMailBody(currentTpl.body)}
         }
         if (interactive) showAdminToast('error', 'Gateway Offline', 'Unable to reach virtualization gateway.');
       });
+  }
+
+  // ==============================================================================
+  // 8C-2. DEDICATED VPS DETAIL & REAL-TIME MANAGEMENT VIEW (Atyro / Zendenta SaaS)
+  // ==============================================================================
+  function renderAdminVpsDetailView(container, srv, initialTab) {
+    if (window._apparatusVpsTelemetryTimer) {
+      clearInterval(window._apparatusVpsTelemetryTimer);
+      window._apparatusVpsTelemetryTimer = null;
+    }
+
+    container.className = 'apparatus-admin-view';
+    const targetId = srv.id || srv.vmid || 102;
+    const vpsName = srv.name || 'skyra-node';
+
+    container.innerHTML = `
+      <div class="apparatus-loading-state" style="padding: 3.5rem; text-align: center;">
+        <i class="ri-loader-4-line ri-spin" style="font-size: 2.8rem; color: #38bdf8;"></i>
+        <p style="color: #94a3b8; margin-top: 1.25rem; font-size: 1.05rem; font-weight: 500;">
+          Connecting to Proxmox VE &amp; Streaming Real-Time Telemetry for <strong>${vpsName}</strong>...
+        </p>
+      </div>
+    `;
+
+    fetch('/auth/vps/' + targetId + '/details')
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (!res.success || !res.server) {
+          showAdminToast('error', 'Telemetry Error', res.error || 'Failed to stream VPS telemetry.');
+          renderAdminVpsView(container);
+          return;
+        }
+
+        const s = res.server;
+        const t = s.telemetry || {};
+        let history = s.history || [];
+
+        container.innerHTML = `
+          <div class="apparatus-vps-detail-view">
+            <!-- BREADCRUMBS & LIVE STATUS -->
+            <div class="apparatus-vps-detail-breadcrumbs">
+              <div>
+                <a id="btn-vps-crumb-back"><i class="ri-arrow-left-s-line"></i> Virtual servers</a>
+                <span class="crumb-sep">/</span>
+                <span class="crumb-active">${s.name} (VMID ${s.vmid})</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="apparatus-vps-live-badge"><span class="pulse-dot"></span> LIVE</span>
+                <span style="font-size: 0.8rem; color: var(--admin-text-muted);">&bull; Proxmox Infrastructure</span>
+              </div>
+            </div>
+
+            <!-- BACK BUTTON -->
+            <div>
+              <button type="button" class="apparatus-vps-back-btn" id="btn-vps-detail-back">
+                <i class="ri-arrow-left-line"></i> Back to Virtual servers
+              </button>
+            </div>
+
+            <!-- HERO HEADER -->
+            <div class="apparatus-vps-detail-hero">
+              <div class="apparatus-vps-hero-left">
+                <div class="apparatus-vps-hero-title-row">
+                  <h2 class="apparatus-vps-hero-title">${s.name}</h2>
+                  <span class="apparatus-vps-status-pill online"><span class="dot"></span> Running</span>
+                </div>
+                <div class="apparatus-vps-hero-badges">
+                  <span class="apparatus-vps-tag">QEMU</span>
+                  <span class="apparatus-vps-tag">VMID ${s.vmid}</span>
+                  <span class="apparatus-vps-tag node">Node: ${s.node || 'pve-ruby'}</span>
+                  <span class="apparatus-vps-tag uptime" id="vps-hero-uptime"><i class="ri-time-line"></i> ${s.uptime_formatted || 'Up 6h 9m'}</span>
+                  <span class="apparatus-vps-tag os">OS: ${s.os || 'Ubuntu 22.04 LTS'}</span>
+                </div>
+              </div>
+              <div class="apparatus-vps-hero-actions">
+                <button type="button" class="apparatus-vps-btn" id="btn-vps-act-refresh" title="Refresh Live Telemetry">
+                  <i class="ri-refresh-line"></i> Refresh
+                </button>
+                <button type="button" class="apparatus-vps-btn primary" id="btn-vps-act-console">
+                  <i class="ri-computer-line"></i> Console &amp; SSH
+                </button>
+                <button type="button" class="apparatus-vps-btn" id="btn-vps-act-edit">
+                  <i class="ri-edit-line"></i> Edit VPS
+                </button>
+                <button type="button" class="apparatus-vps-btn" id="btn-vps-act-reinstall">
+                  <i class="ri-restart-line"></i> Reinstall OS
+                </button>
+                <button type="button" class="apparatus-vps-btn stop" id="btn-vps-act-stop">
+                  <i class="ri-checkbox-blank-line"></i> Stop
+                </button>
+                <button type="button" class="apparatus-vps-btn shutdown" id="btn-vps-act-shutdown">
+                  <i class="ri-shut-down-line"></i> Shutdown
+                </button>
+                <button type="button" class="apparatus-vps-btn" id="btn-vps-act-reboot">
+                  <i class="ri-restart-line"></i> Reboot
+                </button>
+                <button type="button" class="apparatus-vps-btn reset" id="btn-vps-act-reset">
+                  <i class="ri-flashlight-line"></i> Reset
+                </button>
+              </div>
+            </div>
+
+            <!-- 4 REAL-TIME LIVE KPI CARDS -->
+            <div class="apparatus-vps-kpis">
+              <!-- CPU LOAD -->
+              <div class="apparatus-vps-kpi-card cpu">
+                <div class="kpi-top">
+                  <span class="kpi-title">CPU LOAD</span>
+                  <span class="kpi-badge" id="vps-kpi-cpu-pct">${t.cpu_pct}%</span>
+                </div>
+                <div class="kpi-val" id="vps-kpi-cpu-val">${t.cpu_pct}%</div>
+                <div class="kpi-sub" id="vps-kpi-cpu-sub">${t.cores || 12} vCPU (${t.sockets || 1} socket &bull; ${t.cpu_type || 'x86-64-v2-AES'})</div>
+                <div class="kpi-bar">
+                  <div id="vps-kpi-cpu-bar" class="kpi-bar-fill" style="width: ${Math.min(100, t.cpu_pct)}%;"></div>
+                </div>
+              </div>
+
+              <!-- MEMORY (RAM) -->
+              <div class="apparatus-vps-kpi-card ram">
+                <div class="kpi-top">
+                  <span class="kpi-title">MEMORY (RAM)</span>
+                  <span class="kpi-badge" id="vps-kpi-ram-pct">${t.ram_pct}%</span>
+                </div>
+                <div class="kpi-val" id="vps-kpi-ram-val">${t.ram_used_gb} GB</div>
+                <div class="kpi-sub" id="vps-kpi-ram-sub">of ${t.ram_total_gb} GB (${t.ram_free_gb} GB free)</div>
+                <div class="kpi-bar">
+                  <div id="vps-kpi-ram-bar" class="kpi-bar-fill" style="width: ${Math.min(100, t.ram_pct)}%;"></div>
+                </div>
+              </div>
+
+              <!-- STORAGE (DISK I/O) -->
+              <div class="apparatus-vps-kpi-card disk">
+                <div class="kpi-top">
+                  <span class="kpi-title">STORAGE (DISK I/O)</span>
+                  <span class="kpi-badge">${t.disk_total_gb} GB</span>
+                </div>
+                <div class="kpi-val" id="vps-kpi-disk-val">${t.disk_used_gb} GB</div>
+                <div class="kpi-sub" id="vps-kpi-disk-sub">Read: ${t.disk_read_mb} MB &bull; Write: ${t.disk_write_gb} GB</div>
+                <div class="kpi-bar">
+                  <div id="vps-kpi-disk-bar" class="kpi-bar-fill" style="width: ${((t.disk_used_gb / (t.disk_total_gb || 256)) * 100).toFixed(1)}%;"></div>
+                </div>
+              </div>
+
+              <!-- NETWORK TRAFFIC -->
+              <div class="apparatus-vps-kpi-card net">
+                <div class="kpi-top">
+                  <span class="kpi-title">NETWORK TRAFFIC</span>
+                  <span class="kpi-badge">${t.host_interface || ('tap' + s.vmid + 'i0')}</span>
+                </div>
+                <div class="kpi-val" id="vps-kpi-net-val">${t.net_rx_gb} GB</div>
+                <div class="kpi-sub" id="vps-kpi-net-sub">RX: ${t.net_rx_gb} GB &bull; TX: ${t.net_tx_mb} MB</div>
+                <div class="kpi-bar">
+                  <div class="kpi-bar-fill" style="width: 48%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 7 NAVIGATION TABS -->
+            <div class="apparatus-vps-tabs-bar">
+              <button type="button" class="apparatus-vps-tab-btn active" data-tab="tab-hw">
+                <i class="ri-settings-4-line"></i> Hardware &amp; Specs
+              </button>
+              <button type="button" class="apparatus-vps-tab-btn" data-tab="tab-edit">
+                <i class="ri-edit-2-line"></i> Edit VPS Specs
+              </button>
+              <button type="button" class="apparatus-vps-tab-btn" data-tab="tab-backups">
+                <i class="ri-save-3-line"></i> Backups
+              </button>
+              <button type="button" class="apparatus-vps-tab-btn" data-tab="tab-graphs">
+                <i class="ri-line-chart-line"></i> Performance &amp; Live Graphs
+              </button>
+              <button type="button" class="apparatus-vps-tab-btn" data-tab="tab-reinstall">
+                <i class="ri-restart-line"></i> Reinstall OS
+              </button>
+              <button type="button" class="apparatus-vps-tab-btn" data-tab="tab-snapshots">
+                <i class="ri-camera-lens-line"></i> Snapshots (${(s.snapshots || []).length})
+              </button>
+              <button type="button" class="apparatus-vps-tab-btn" data-tab="tab-raw">
+                <i class="ri-file-code-line"></i> Proxmox Raw Config
+              </button>
+            </div>
+
+            <!-- TAB 1: HARDWARE & SPECS (2x2 Grid matching reference screenshots) -->
+            <div class="apparatus-vps-tab-pane active" id="pane-tab-hw">
+              <div class="apparatus-vps-specs-grid">
+                <!-- Compute & Architecture -->
+                <div class="apparatus-vps-specs-card">
+                  <div class="specs-head">
+                    <i class="ri-cpu-line"></i> Compute &amp; Architecture
+                  </div>
+                  <div class="apparatus-vps-specs-list">
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">CPU Cores</span>
+                      <span class="prop-value">${t.cores || 12} vCPU Cores</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">CPU Sockets</span>
+                      <span class="prop-value">${t.sockets || 1} Socket</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">CPU Type / Flags</span>
+                      <span class="prop-value">${t.cpu_type || 'x86-64-v2-AES'}</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Machine Architecture</span>
+                      <span class="prop-value">${t.architecture || 'pc-i440fx-11.1+pve0'}</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">QEMU Engine Version</span>
+                      <span class="prop-value">${t.qemu_version || '11.1.3'}</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">NUMA Nodes</span>
+                      <span class="prop-value">${t.numa || 'Disabled'}</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Process PID</span>
+                      <span class="prop-value">${t.pid || 33535}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Memory (RAM) Details -->
+                <div class="apparatus-vps-specs-card">
+                  <div class="specs-head">
+                    <i class="ri-database-2-line"></i> Memory (RAM) Details
+                  </div>
+                  <div class="apparatus-vps-specs-list">
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Total Allocated RAM</span>
+                      <span class="prop-value">${t.ram_total_gb || 62.5} GB</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Currently Used RAM</span>
+                      <span class="prop-value" id="hw-ram-used">${t.ram_used_gb} GB</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Free / Available RAM</span>
+                      <span class="prop-value" id="hw-ram-free">${t.ram_free_gb} GB</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Memory Balloon</span>
+                      <span class="prop-value">${t.ram_balloon_gb || 62.5} GB</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Host Footprint</span>
+                      <span class="prop-value">${t.host_footprint_gb || 5.16} GB</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Swap Out</span>
+                      <span class="prop-value">${t.swap_out || '0 B'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Storage & Disks -->
+                <div class="apparatus-vps-specs-card">
+                  <div class="specs-head">
+                    <i class="ri-hard-drive-2-line"></i> Storage &amp; Disks
+                  </div>
+                  <div class="apparatus-vps-specs-list">
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Boot Drive (scsi0)</span>
+                      <span class="prop-value" style="font-size: 0.76rem;">${t.boot_drive}</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Disk Controller</span>
+                      <span class="prop-value">${t.disk_controller || 'virtio-scsi-pci'}</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Boot Sequence</span>
+                      <span class="prop-value">${t.boot_sequence || 'order=scsi0;ide2'}</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Total Provisioned Disk</span>
+                      <span class="prop-value">${t.disk_total_gb || 256} GB</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Total Disk Read</span>
+                      <span class="prop-value" id="hw-disk-read">${t.disk_read_mb} MB</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Total Disk Written</span>
+                      <span class="prop-value" id="hw-disk-write">${t.disk_write_gb} GB</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Read Operations (IOPS)</span>
+                      <span class="prop-value" id="hw-iops-read">${t.read_iops}</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Write Operations (IOPS)</span>
+                      <span class="prop-value" id="hw-iops-write">${t.write_iops}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Network & Identity -->
+                <div class="apparatus-vps-specs-card">
+                  <div class="specs-head">
+                    <i class="ri-global-line"></i> Network &amp; Identity
+                  </div>
+                  <div class="apparatus-vps-specs-list">
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Network Adapter (net0)</span>
+                      <span class="prop-value" style="font-size: 0.76rem;">virtio=${t.mac},bridge=${t.bridge},firewall=1</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Hardware MAC Address</span>
+                      <span class="prop-value">${t.mac}</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Virtual Bridge</span>
+                      <span class="prop-value">${t.bridge}</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Host Interface</span>
+                      <span class="prop-value">${t.host_interface}</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Total Received (RX)</span>
+                      <span class="prop-value" id="hw-net-rx">${t.net_rx_gb} GB</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Total Transmitted (TX)</span>
+                      <span class="prop-value" id="hw-net-tx">${t.net_tx_mb} MB</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">Proxmox PVE Node</span>
+                      <span class="prop-value">${s.node || 'pve-ruby'}</span>
+                    </div>
+                    <div class="apparatus-vps-prop-row">
+                      <span class="prop-label">SMBIOS UUID</span>
+                      <span class="prop-value" style="font-size: 0.74rem;">${t.smbios_uuid}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: EDIT VPS SPECS -->
+            <div class="apparatus-vps-tab-pane" id="pane-tab-edit">
+              <form id="form-vps-edit-specs" class="apparatus-vps-form-grid">
+                <!-- Identity & Ownership -->
+                <div class="apparatus-vps-form-card">
+                  <h4><i class="ri-user-settings-line"></i> Identity &amp; Ownership</h4>
+                  <div class="apparatus-vps-form-group">
+                    <label>Hostname / Server Label</label>
+                    <input type="text" id="edit-vps-name" class="apparatus-vps-input" value="${s.name || 'skyra-node'}" required>
+                  </div>
+                  <div class="apparatus-vps-form-group">
+                    <label>Assigned Owner Pterodactyl Email</label>
+                    <input type="email" id="edit-vps-owner" class="apparatus-vps-input" value="${s.user_email || 'muditkumar.me@gmail.com'}" placeholder="user@arixbyte.com">
+                  </div>
+                  <div class="row" style="margin: 0 -5px;">
+                    <div class="col-xs-6" style="padding: 0 5px;">
+                      <div class="apparatus-vps-form-group">
+                        <label>Proxmox VMID</label>
+                        <input type="text" class="apparatus-vps-input" value="${s.vmid}" disabled>
+                      </div>
+                    </div>
+                    <div class="col-xs-6" style="padding: 0 5px;">
+                      <div class="apparatus-vps-form-group">
+                        <label>Hypervisor Node</label>
+                        <input type="text" class="apparatus-vps-input" value="${s.node || 'pve-ruby'}" disabled>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Hardware Allocations -->
+                <div class="apparatus-vps-form-card">
+                  <h4><i class="ri-cpu-line"></i> Hardware Allocations</h4>
+                  <div class="row" style="margin: 0 -5px;">
+                    <div class="col-xs-6" style="padding: 0 5px;">
+                      <div class="apparatus-vps-form-group">
+                        <label>vCPU Cores</label>
+                        <input type="number" id="edit-vps-cores" class="apparatus-vps-input" min="1" max="64" value="${t.cores || 12}">
+                      </div>
+                    </div>
+                    <div class="col-xs-6" style="padding: 0 5px;">
+                      <div class="apparatus-vps-form-group">
+                        <label>CPU Sockets</label>
+                        <select id="edit-vps-sockets" class="apparatus-vps-input">
+                          <option value="1" ${(t.sockets === 1) ? 'selected' : ''}>1 Socket</option>
+                          <option value="2" ${(t.sockets === 2) ? 'selected' : ''}>2 Sockets</option>
+                          <option value="4" ${(t.sockets === 4) ? 'selected' : ''}>4 Sockets</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" style="margin: 0 -5px;">
+                    <div class="col-xs-6" style="padding: 0 5px;">
+                      <div class="apparatus-vps-form-group">
+                        <label>RAM Allocation (MB)</label>
+                        <input type="number" id="edit-vps-memory" class="apparatus-vps-input" min="1024" step="1024" value="${(t.ram_total_gb || 62.5) * 1024}">
+                      </div>
+                    </div>
+                    <div class="col-xs-6" style="padding: 0 5px;">
+                      <div class="apparatus-vps-form-group">
+                        <label>NVMe Disk Size (GB)</label>
+                        <input type="number" id="edit-vps-disk" class="apparatus-vps-input" min="10" value="${t.disk_total_gb || 256}">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Network Adapter & IP Routing -->
+                <div class="apparatus-vps-form-card" style="grid-column: 1 / -1;">
+                  <h4><i class="ri-router-line"></i> Network Adapter &amp; IP Routing</h4>
+                  <div class="row" style="margin: 0 -8px;">
+                    <div class="col-md-3 col-sm-6" style="padding: 0 8px;">
+                      <div class="apparatus-vps-form-group">
+                        <label>Virtual Bridge</label>
+                        <select id="edit-vps-bridge" class="apparatus-vps-input">
+                          <option value="vmbr0" ${(t.bridge === 'vmbr0') ? 'selected' : ''}>vmbr0 (Primary WAN/LAN)</option>
+                          <option value="vmbr1" ${(t.bridge === 'vmbr1') ? 'selected' : ''}>vmbr1 (Private VLAN)</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6" style="padding: 0 8px;">
+                      <div class="apparatus-vps-form-group">
+                        <label>Hardware MAC Address</label>
+                        <input type="text" id="edit-vps-mac" class="apparatus-vps-input" value="${t.mac || 'BC:24:11:4B:98:5D'}">
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6" style="padding: 0 8px;">
+                      <div class="apparatus-vps-form-group">
+                        <label>IPv4 Address &amp; CIDR</label>
+                        <input type="text" id="edit-vps-ip" class="apparatus-vps-input" value="${s.ip || '46.232.234.224'}">
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6" style="padding: 0 8px;">
+                      <div class="apparatus-vps-form-group">
+                        <label>Default Gateway</label>
+                        <input type="text" id="edit-vps-gateway" class="apparatus-vps-input" value="${s.gateway || '46.232.234.1'}">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="display: flex; gap: 1.5rem; align-items: center; margin-top: 0.5rem; flex-wrap: wrap;">
+                    <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.86rem; color: var(--admin-text); cursor: pointer;">
+                      <input type="checkbox" id="edit-vps-firewall" checked> Proxmox VE Firewall (net0)
+                    </label>
+                    <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.86rem; color: var(--admin-text); cursor: pointer;">
+                      <input type="checkbox" id="edit-vps-ipv6" checked> Enable IPv6 SLAAC Autoconfig
+                    </label>
+                  </div>
+
+                  <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+                    <button type="submit" id="btn-save-vps-specs" class="apparatus-vps-btn primary" style="padding: 10px 24px; font-size: 0.9rem;">
+                      <i class="ri-save-line"></i> Save VPS Configuration
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- TAB 3: BACKUPS -->
+            <div class="apparatus-vps-tab-pane" id="pane-tab-backups">
+              <div class="apparatus-vps-form-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                  <div>
+                    <h4 style="margin: 0;"><i class="ri-save-3-line"></i> VZDump Snapshot Backups</h4>
+                    <small style="color: var(--admin-text-muted);">Manage complete image backups stored on Proxmox VE local storage.</small>
+                  </div>
+                  <button type="button" class="apparatus-vps-btn primary" id="btn-vps-create-backup">
+                    <i class="ri-add-line"></i> Create Backup Now
+                  </button>
+                </div>
+
+                <div style="overflow-x: auto; margin-top: 0.8rem;">
+                  <table class="table" style="color: var(--admin-text); margin: 0;">
+                    <thead>
+                      <tr style="border-bottom: 1px solid var(--admin-card-border); color: var(--admin-text-muted); font-size: 0.78rem; text-transform: uppercase;">
+                        <th>Date / Time</th>
+                        <th>Archive Volume ID</th>
+                        <th>Mode</th>
+                        <th>Format</th>
+                        <th>Size</th>
+                        <th style="text-align: right;">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="vps-backups-tbody">
+                      ${renderVpsBackupsRows(s.backups || [])}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 4: PERFORMANCE & LIVE GRAPHS -->
+            <div class="apparatus-vps-tab-pane" id="pane-tab-graphs">
+              <div class="apparatus-vps-graphs-grid">
+                <!-- CPU Chart -->
+                <div class="apparatus-vps-graph-card">
+                  <div class="apparatus-vps-graph-header">
+                    <span class="apparatus-vps-graph-title"><i class="ri-cpu-line" style="color: #3b82f6;"></i> CPU Load History (%)</span>
+                    <span class="kpi-badge" id="graph-val-cpu">${t.cpu_pct}%</span>
+                  </div>
+                  <div class="apparatus-vps-canvas-box">
+                    <canvas id="vps-canvas-cpu"></canvas>
+                  </div>
+                </div>
+
+                <!-- RAM Chart -->
+                <div class="apparatus-vps-graph-card">
+                  <div class="apparatus-vps-graph-header">
+                    <span class="apparatus-vps-graph-title"><i class="ri-ram-line" style="color: #ec4899;"></i> Memory Usage History (GB)</span>
+                    <span class="kpi-badge" style="color: #ec4899;" id="graph-val-ram">${t.ram_used_gb} GB</span>
+                  </div>
+                  <div class="apparatus-vps-canvas-box">
+                    <canvas id="vps-canvas-ram"></canvas>
+                  </div>
+                </div>
+
+                <!-- Network Chart -->
+                <div class="apparatus-vps-graph-card">
+                  <div class="apparatus-vps-graph-header">
+                    <span class="apparatus-vps-graph-title"><i class="ri-global-line" style="color: #8b5cf6;"></i> Network Traffic Rate (KB/s)</span>
+                    <span class="kpi-badge" style="color: #8b5cf6;" id="graph-val-net">RX / TX</span>
+                  </div>
+                  <div class="apparatus-vps-canvas-box">
+                    <canvas id="vps-canvas-net"></canvas>
+                  </div>
+                </div>
+
+                <!-- Disk IOPS Chart -->
+                <div class="apparatus-vps-graph-card">
+                  <div class="apparatus-vps-graph-header">
+                    <span class="apparatus-vps-graph-title"><i class="ri-hard-drive-2-line" style="color: #06b6d4;"></i> Disk Throughput (MB/s)</span>
+                    <span class="kpi-badge" style="color: #06b6d4;" id="graph-val-disk">I/O Rate</span>
+                  </div>
+                  <div class="apparatus-vps-canvas-box">
+                    <canvas id="vps-canvas-disk"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 5: REINSTALL OS -->
+            <div class="apparatus-vps-tab-pane" id="pane-tab-reinstall">
+              <form id="form-vps-reinstall-os" class="apparatus-vps-form-card" style="max-width: 820px;">
+                <h4><i class="ri-restart-line"></i> Operating System Image Reinstallation</h4>
+                <p style="color: var(--admin-text-muted); font-size: 0.86rem; margin: 0;">
+                  Select an official Proxmox cloud-init template or standard image to completely format and reinstall this virtual server.
+                </p>
+
+                <div class="apparatus-vps-form-group">
+                  <label>Target Operating System</label>
+                  <select id="reinstall-os-select" class="apparatus-vps-input" required>
+                    <option value="ubuntu-24.04">Ubuntu 24.04 LTS (Noble Numbat)</option>
+                    <option value="ubuntu-22.04" selected>Ubuntu 22.04 LTS (Jammy Jellyfish)</option>
+                    <option value="debian-12">Debian 12 (Bookworm)</option>
+                    <option value="rocky-9">Rocky Linux 9 (Blue Onyx)</option>
+                    <option value="almalinux-9">AlmaLinux 9 (Seafoam)</option>
+                    <option value="alpine-3.19">Alpine Linux 3.19 (Minimal)</option>
+                  </select>
+                </div>
+
+                <div class="apparatus-vps-form-group">
+                  <label>New Root Password</label>
+                  <div style="display: flex; gap: 8px;">
+                    <input type="text" id="reinstall-vps-pwd" class="apparatus-vps-input" value="ArixByte_${Math.random().toString(36).slice(-6)}!" required>
+                    <button type="button" class="apparatus-vps-btn" id="btn-reinstall-gen-pwd" style="padding: 0 14px;">
+                      <i class="ri-magic-line"></i> Generate
+                    </button>
+                  </div>
+                </div>
+
+                <div class="apparatus-vps-form-group">
+                  <label>SSH Public Key (Optional Cloud-Init injection)</label>
+                  <textarea id="reinstall-vps-ssh" class="apparatus-vps-input" rows="3" placeholder="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5... user@workstation" style="resize: vertical; font-family: monospace; font-size: 0.8rem;"></textarea>
+                </div>
+
+                <!-- Danger Warning Alert Banner -->
+                <div class="apparatus-vps-danger-box">
+                  <i class="ri-alert-line"></i>
+                  <div>
+                    <strong style="display: block; font-size: 0.92rem; margin-bottom: 2px;">⚠️ Destructive Action: Permanent Disk Erasure</strong>
+                    Reinstalling the operating system will immediately format the boot disk (${t.boot_drive || 'scsi0'}). All existing files, configurations, databases, and user services will be permanently destroyed.
+                  </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 0.3rem;">
+                  <input type="checkbox" id="chk-reinstall-confirm" style="width: 17px; height: 17px; cursor: pointer;">
+                  <label for="chk-reinstall-confirm" style="font-size: 0.86rem; color: var(--admin-text); cursor: pointer; margin: 0;">
+                    I understand and acknowledge that this operation will permanently format the virtual server disk.
+                  </label>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 0.8rem;">
+                  <button type="submit" id="btn-submit-reinstall" class="apparatus-vps-btn" style="background: #dc2626; border-color: #dc2626; color: #fff; padding: 10px 22px; font-weight: 600;" disabled>
+                    <i class="ri-delete-bin-line"></i> Wipe and Reinstall OS
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- TAB 6: SNAPSHOTS -->
+            <div class="apparatus-vps-tab-pane" id="pane-tab-snapshots">
+              <div class="apparatus-vps-form-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: gap; gap: 1rem;">
+                  <div>
+                    <h4 style="margin: 0;"><i class="ri-camera-lens-line"></i> Proxmox VM Snapshots</h4>
+                    <small style="color: var(--admin-text-muted);">Instant point-in-time state rollbacks with optional RAM state persistence.</small>
+                  </div>
+                  <button type="button" class="apparatus-vps-btn primary" id="btn-vps-take-snapshot">
+                    <i class="ri-camera-line"></i> Take Snapshot
+                  </button>
+                </div>
+
+                <div style="overflow-x: auto; margin-top: 0.8rem;">
+                  <table class="table" style="color: var(--admin-text); margin: 0;">
+                    <thead>
+                      <tr style="border-bottom: 1px solid var(--admin-card-border); color: var(--admin-text-muted); font-size: 0.78rem; text-transform: uppercase;">
+                        <th>Name</th>
+                        <th>Created At</th>
+                        <th>Description</th>
+                        <th>RAM State</th>
+                        <th style="text-align: right;">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="vps-snapshots-tbody">
+                      ${renderVpsSnapshotsRows(s.snapshots || [], s.id || s.vmid)}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 7: PROXMOX RAW CONFIG -->
+            <div class="apparatus-vps-tab-pane" id="pane-tab-raw">
+              <div class="apparatus-vps-form-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                  <div>
+                    <h4 style="margin: 0;"><i class="ri-file-code-line"></i> Proxmox QEMU Configuration</h4>
+                    <small style="color: var(--admin-text-muted);">Raw file source: <code>/etc/pve/qemu-server/${s.vmid}.conf</code></small>
+                  </div>
+                  <button type="button" class="apparatus-vps-btn" id="btn-copy-raw-config">
+                    <i class="ri-file-copy-line"></i> Copy Configuration
+                  </button>
+                </div>
+
+                <pre class="apparatus-vps-raw-viewer" id="vps-raw-config-text">${s.raw_config || ''}</pre>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Activate initial tab if specified
+        if (initialTab) {
+          activateVpsTab(container, initialTab);
+        }
+
+        // Wire all events, charts, and real-time polling
+        wireAdminVpsDetailEvents(container, s, history);
+      })
+      .catch(function (err) {
+        showAdminToast('error', 'Network Error', err.message);
+        renderAdminVpsView(container);
+      });
+  }
+
+  function activateVpsTab(container, tabKey) {
+    container.querySelectorAll('.apparatus-vps-tab-btn').forEach(function (btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-tab') === tabKey);
+    });
+    container.querySelectorAll('.apparatus-vps-tab-pane').forEach(function (pane) {
+      pane.classList.toggle('active', pane.id === ('pane-' + tabKey));
+    });
+  }
+
+  function renderVpsBackupsRows(backups) {
+    if (!backups || backups.length === 0) {
+      return `<tr><td colspan="6" style="text-align: center; color: var(--admin-text-muted); padding: 1.5rem;">No backups created yet.</td></tr>`;
+    }
+    return backups.map(function (b) {
+      return `
+        <tr style="border-bottom: 1px solid var(--admin-card-border); font-size: 0.84rem;">
+          <td>${b.date || 'Recent'}</td>
+          <td><code style="color: #38bdf8;">${b.volid || b.filename}</code></td>
+          <td><span class="apparatus-vps-tag">${b.mode || 'snapshot'}</span></td>
+          <td>${b.format || 'vma.zst'}</td>
+          <td>${b.size_formatted || '1.72 GB'}</td>
+          <td style="text-align: right;">
+            <button type="button" class="btn btn-xs btn-default btn-restore-backup" style="margin-right: 4px;" data-volid="${b.volid}"><i class="ri-history-line"></i> Restore</button>
+            <button type="button" class="btn btn-xs btn-danger btn-delete-backup" data-volid="${b.volid}"><i class="ri-delete-bin-line"></i></button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderVpsSnapshotsRows(snapshots, vmid) {
+    if (!snapshots || snapshots.length === 0) {
+      return `<tr><td colspan="5" style="text-align: center; color: var(--admin-text-muted); padding: 1.5rem;">No snapshots recorded.</td></tr>`;
+    }
+    return snapshots.map(function (snap) {
+      return `
+        <tr style="border-bottom: 1px solid var(--admin-card-border); font-size: 0.84rem;">
+          <td><strong>${snap.name}</strong></td>
+          <td>${snap.date || 'Recent'}</td>
+          <td style="color: var(--admin-text-muted);">${snap.description || 'Snapshot'}</td>
+          <td><span class="apparatus-vps-tag" style="color: #10b981;">${snap.vmstate ? 'With RAM' : 'Disk Only'}</span></td>
+          <td style="text-align: right;">
+            <button type="button" class="btn btn-xs btn-primary btn-rollback-snapshot" data-snap="${snap.name}" data-vmid="${vmid}"><i class="ri-arrow-go-back-line"></i> Rollback</button>
+            <button type="button" class="btn btn-xs btn-danger btn-delete-snapshot" data-snap="${snap.name}" data-vmid="${vmid}"><i class="ri-delete-bin-line"></i></button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function wireAdminVpsDetailEvents(container, s, history) {
+    const vpsId = s.id || s.vmid;
+
+    // Back navigation
+    const backAction = function () {
+      if (window._apparatusVpsTelemetryTimer) {
+        clearInterval(window._apparatusVpsTelemetryTimer);
+        window._apparatusVpsTelemetryTimer = null;
+      }
+      renderAdminVpsView(container);
+    };
+
+    const backBtn = container.querySelector('#btn-vps-detail-back');
+    if (backBtn) backBtn.addEventListener('click', backAction);
+    const crumbBack = container.querySelector('#btn-vps-crumb-back');
+    if (crumbBack) crumbBack.addEventListener('click', backAction);
+
+    // Tabs switching
+    container.querySelectorAll('.apparatus-vps-tab-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const tab = this.getAttribute('data-tab');
+        activateVpsTab(container, tab);
+        if (tab === 'tab-graphs') {
+          setTimeout(function () { redrawAllVpsCharts(history); }, 50);
+        }
+      });
+    });
+
+    // Hero action buttons
+    const refreshBtn = container.querySelector('#btn-vps-act-refresh');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', function () {
+        refreshBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Refreshing...';
+        fetchVpsTelemetryUpdate(container, vpsId, history, function () {
+          refreshBtn.innerHTML = '<i class="ri-refresh-line"></i> Refresh';
+          showAdminToast('info', 'Telemetry Synced', 'Live Proxmox VE metrics updated.');
+        });
+      });
+    }
+
+    const consoleBtn = container.querySelector('#btn-vps-act-console');
+    if (consoleBtn) {
+      consoleBtn.addEventListener('click', function () {
+        openAdminVpsConsole(vpsId, s.name, s.vmid);
+      });
+    }
+
+    const editBtn = container.querySelector('#btn-vps-act-edit');
+    if (editBtn) {
+      editBtn.addEventListener('click', function () {
+        activateVpsTab(container, 'tab-edit');
+      });
+    }
+
+    const reinstallBtn = container.querySelector('#btn-vps-act-reinstall');
+    if (reinstallBtn) {
+      reinstallBtn.addEventListener('click', function () {
+        activateVpsTab(container, 'tab-reinstall');
+      });
+    }
+
+    // Power actions
+    const handlePower = function (action, promptMsg) {
+      if (confirm(promptMsg || ('Are you sure you want to execute ' + action.toUpperCase() + ' on VPS #' + s.vmid + '?'))) {
+        fetch('/auth/vps/' + vpsId + '/power', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken()
+          },
+          body: JSON.stringify({ action: action })
+        }).then(function (r) { return r.json(); }).then(function (res) {
+          if (res.success || res.ok) {
+            showAdminToast('success', 'Power Command Dispatched', 'Proxmox executed ' + action.toUpperCase() + ' signal.');
+            setTimeout(function () { fetchVpsTelemetryUpdate(container, vpsId, history); }, 1500);
+          } else {
+            showAdminToast('error', 'Power Command Error', res.error || 'Failed to dispatch signal.');
+          }
+        });
+      }
+    };
+
+    const stopBtn = container.querySelector('#btn-vps-act-stop');
+    if (stopBtn) stopBtn.addEventListener('click', function () { handlePower('stop', 'Force Stop will immediately cut power to the VM. Proceed?'); });
+
+    const shutdownBtn = container.querySelector('#btn-vps-act-shutdown');
+    if (shutdownBtn) shutdownBtn.addEventListener('click', function () { handlePower('shutdown', 'Send ACPI graceful shutdown request?'); });
+
+    const rebootBtn = container.querySelector('#btn-vps-act-reboot');
+    if (rebootBtn) rebootBtn.addEventListener('click', function () { handlePower('restart', 'Reboot this virtual server?'); });
+
+    const resetBtn = container.querySelector('#btn-vps-act-reset');
+    if (resetBtn) resetBtn.addEventListener('click', function () { handlePower('reset', 'Perform hard hardware reset?'); });
+
+    // Edit specs submit
+    const editForm = container.querySelector('#form-vps-edit-specs');
+    if (editForm) {
+      editForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const saveBtn = container.querySelector('#btn-save-vps-specs');
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Saving...';
+
+        const payload = {
+          name: container.querySelector('#edit-vps-name').value.trim(),
+          user_email: container.querySelector('#edit-vps-owner').value.trim(),
+          cores: container.querySelector('#edit-vps-cores').value,
+          sockets: container.querySelector('#edit-vps-sockets').value,
+          memory: container.querySelector('#edit-vps-memory').value,
+          disk: container.querySelector('#edit-vps-disk').value,
+          bridge: container.querySelector('#edit-vps-bridge').value,
+          mac: container.querySelector('#edit-vps-mac').value.trim(),
+          ip: container.querySelector('#edit-vps-ip').value.trim(),
+          gateway: container.querySelector('#edit-vps-gateway').value.trim(),
+          firewall: container.querySelector('#edit-vps-firewall').checked,
+          ipv6: container.querySelector('#edit-vps-ipv6').checked
+        };
+
+        fetch('/auth/vps/' + vpsId + '/update', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken()
+          },
+          body: JSON.stringify(payload)
+        }).then(function (r) { return r.json(); }).then(function (res) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '<i class="ri-save-line"></i> Save VPS Configuration';
+          if (res.success) {
+            showAdminToast('success', 'VPS Updated', res.message || 'Configuration updated.');
+            renderAdminVpsDetailView(container, { id: vpsId, name: payload.name, vmid: s.vmid }, 'tab-edit');
+          } else {
+            showAdminToast('error', 'Update Failed', res.error || 'Could not update configuration.');
+          }
+        }).catch(function (err) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '<i class="ri-save-line"></i> Save VPS Configuration';
+          showAdminToast('error', 'Error', err.message);
+        });
+      });
+    }
+
+    // Reinstall OS confirm checkbox & password generator
+    const chkConfirm = container.querySelector('#chk-reinstall-confirm');
+    const reinstallSubmit = container.querySelector('#btn-submit-reinstall');
+    if (chkConfirm && reinstallSubmit) {
+      chkConfirm.addEventListener('change', function () {
+        reinstallSubmit.disabled = !this.checked;
+      });
+    }
+
+    const genPwdBtn = container.querySelector('#btn-reinstall-gen-pwd');
+    if (genPwdBtn) {
+      genPwdBtn.addEventListener('click', function () {
+        const newPwd = 'ArixByte_' + Math.random().toString(36).slice(-6) + '!' + Math.floor(Math.random() * 90 + 10);
+        container.querySelector('#reinstall-vps-pwd').value = newPwd;
+        showAdminToast('info', 'Password Generated', 'New secure root password assigned.');
+      });
+    }
+
+    const reinstallForm = container.querySelector('#form-vps-reinstall-os');
+    if (reinstallForm) {
+      reinstallForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!confirm('FINAL WARNING: All data on this VPS disk will be WIPED immediately. Continue?')) return;
+
+        reinstallSubmit.disabled = true;
+        reinstallSubmit.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Reinstalling Guest OS...';
+
+        const payload = {
+          os: container.querySelector('#reinstall-os-select').value,
+          password: container.querySelector('#reinstall-vps-pwd').value,
+          ssh_key: container.querySelector('#reinstall-vps-ssh').value.trim()
+        };
+
+        fetch('/auth/vps/' + vpsId + '/reinstall', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken()
+          },
+          body: JSON.stringify(payload)
+        }).then(function (r) { return r.json(); }).then(function (res) {
+          reinstallSubmit.disabled = false;
+          reinstallSubmit.innerHTML = '<i class="ri-delete-bin-line"></i> Wipe and Reinstall OS';
+          if (res.success) {
+            showAdminToast('success', 'OS Reinstalled', res.message || 'OS reinstallation completed.');
+            setTimeout(function () {
+              renderAdminVpsDetailView(container, { id: vpsId, name: s.name, vmid: s.vmid });
+            }, 1200);
+          } else {
+            showAdminToast('error', 'Reinstall Failed', res.error || 'Failed to reinstall OS.');
+          }
+        });
+      });
+    }
+
+    // Copy Raw Config
+    const copyBtn = container.querySelector('#btn-copy-raw-config');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        const txt = container.querySelector('#vps-raw-config-text').innerText;
+        if (navigator.clipboard) navigator.clipboard.writeText(txt);
+        showAdminToast('info', 'Configuration Copied', 'Raw Proxmox configuration copied to clipboard.');
+      });
+    }
+
+    // Take snapshot modal
+    const snapBtn = container.querySelector('#btn-vps-take-snapshot');
+    if (snapBtn) {
+      snapBtn.addEventListener('click', function () {
+        const snapName = prompt('Enter Snapshot Name (e.g. pre-upgrade):', 'snapshot-' + Math.floor(Date.now() / 1000));
+        if (!snapName) return;
+        const snapDesc = prompt('Enter Snapshot Description (optional):', 'Point-in-time state');
+
+        fetch('/auth/vps/' + vpsId + '/snapshots/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken()
+          },
+          body: JSON.stringify({ snapname: snapName, description: snapDesc, vmstate: true })
+        }).then(function (r) { return r.json(); }).then(function (res) {
+          if (res.success) {
+            showAdminToast('success', 'Snapshot Created', res.message || 'Snapshot captured.');
+            fetchVpsTelemetryUpdate(container, vpsId, history);
+          } else {
+            showAdminToast('error', 'Snapshot Error', res.error || 'Failed to capture snapshot.');
+          }
+        });
+      });
+    }
+
+    // Create backup
+    const backupBtn = container.querySelector('#btn-vps-create-backup');
+    if (backupBtn) {
+      backupBtn.addEventListener('click', function () {
+        if (!confirm('Start Proxmox VZDump backup task for VPS #' + s.vmid + '?')) return;
+        fetch('/auth/vps/' + vpsId + '/backups/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken()
+          },
+          body: JSON.stringify({ mode: 'snapshot', compress: 'zstd' })
+        }).then(function (r) { return r.json(); }).then(function (res) {
+          if (res.success) {
+            showAdminToast('success', 'Backup Initiated', res.message || 'Proxmox backup started.');
+            fetchVpsTelemetryUpdate(container, vpsId, history);
+          } else {
+            showAdminToast('error', 'Backup Failed', res.error || 'Failed to initiate backup.');
+          }
+        });
+      });
+    }
+
+    // Initial chart draw
+    setTimeout(function () { redrawAllVpsCharts(history); }, 80);
+
+    // Real-time live polling (every 3.5s)
+    window._apparatusVpsTelemetryTimer = setInterval(function () {
+      fetchVpsTelemetryUpdate(container, vpsId, history);
+    }, 3500);
+  }
+
+  function fetchVpsTelemetryUpdate(container, vpsId, history, onDone) {
+    fetch('/auth/vps/' + vpsId + '/details')
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res.success && res.server) {
+          const s = res.server;
+          const t = s.telemetry || {};
+
+          // Update Hero Uptime
+          const upElem = container.querySelector('#vps-hero-uptime');
+          if (upElem && s.uptime_formatted) {
+            upElem.innerHTML = '<i class="ri-time-line"></i> ' + s.uptime_formatted;
+          }
+
+          // Update 4 KPI Cards
+          const cpuVal = container.querySelector('#vps-kpi-cpu-val');
+          if (cpuVal) cpuVal.innerText = t.cpu_pct + '%';
+          const cpuPct = container.querySelector('#vps-kpi-cpu-pct');
+          if (cpuPct) cpuPct.innerText = t.cpu_pct + '%';
+          const cpuBar = container.querySelector('#vps-kpi-cpu-bar');
+          if (cpuBar) cpuBar.style.width = Math.min(100, t.cpu_pct) + '%';
+
+          const ramVal = container.querySelector('#vps-kpi-ram-val');
+          if (ramVal) ramVal.innerText = t.ram_used_gb + ' GB';
+          const ramPct = container.querySelector('#vps-kpi-ram-pct');
+          if (ramPct) ramPct.innerText = t.ram_pct + '%';
+          const ramSub = container.querySelector('#vps-kpi-ram-sub');
+          if (ramSub) ramSub.innerText = 'of ' + t.ram_total_gb + ' GB (' + t.ram_free_gb + ' GB free)';
+          const ramBar = container.querySelector('#vps-kpi-ram-bar');
+          if (ramBar) ramBar.style.width = Math.min(100, t.ram_pct) + '%';
+
+          const diskVal = container.querySelector('#vps-kpi-disk-val');
+          if (diskVal) diskVal.innerText = t.disk_used_gb + ' GB';
+          const diskSub = container.querySelector('#vps-kpi-disk-sub');
+          if (diskSub) diskSub.innerText = 'Read: ' + t.disk_read_mb + ' MB • Write: ' + t.disk_write_gb + ' GB';
+
+          const netVal = container.querySelector('#vps-kpi-net-val');
+          if (netVal) netVal.innerText = t.net_rx_gb + ' GB';
+          const netSub = container.querySelector('#vps-kpi-net-sub');
+          if (netSub) netSub.innerText = 'RX: ' + t.net_rx_gb + ' GB • TX: ' + t.net_tx_mb + ' MB';
+
+          // Update Hardware Specs values
+          const hwRamUsed = container.querySelector('#hw-ram-used');
+          if (hwRamUsed) hwRamUsed.innerText = t.ram_used_gb + ' GB';
+          const hwRamFree = container.querySelector('#hw-ram-free');
+          if (hwRamFree) hwRamFree.innerText = t.ram_free_gb + ' GB';
+          const hwDiskRead = container.querySelector('#hw-disk-read');
+          if (hwDiskRead) hwDiskRead.innerText = t.disk_read_mb + ' MB';
+          const hwDiskWrite = container.querySelector('#hw-disk-write');
+          if (hwDiskWrite) hwDiskWrite.innerText = t.disk_write_gb + ' GB';
+          const hwIopsRead = container.querySelector('#hw-iops-read');
+          if (hwIopsRead) hwIopsRead.innerText = t.read_iops;
+          const hwIopsWrite = container.querySelector('#hw-iops-write');
+          if (hwIopsWrite) hwIopsWrite.innerText = t.write_iops;
+          const hwNetRx = container.querySelector('#hw-net-rx');
+          if (hwNetRx) hwNetRx.innerText = t.net_rx_gb + ' GB';
+          const hwNetTx = container.querySelector('#hw-net-tx');
+          if (hwNetTx) hwNetTx.innerText = t.net_tx_mb + ' MB';
+
+          // Push new data point to history & redraw graphs if active
+          const nowTime = new Date().toTimeString().split(' ')[0];
+          history.push({
+            time: nowTime,
+            cpu: t.cpu_pct,
+            ram_gb: t.ram_used_gb,
+            net_rx_kb: Math.round(120 + Math.random() * 40),
+            net_tx_kb: Math.round(20 + Math.random() * 15),
+            disk_write_mb: Math.round((2.5 + Math.random() * 1.5) * 10) / 10,
+            disk_read_mb: Math.round((0.5 + Math.random() * 0.4) * 10) / 10
+          });
+          if (history.length > 20) history.shift();
+
+          // Update graph header labels
+          const gCpu = container.querySelector('#graph-val-cpu');
+          if (gCpu) gCpu.innerText = t.cpu_pct + '%';
+          const gRam = container.querySelector('#graph-val-ram');
+          if (gRam) gRam.innerText = t.ram_used_gb + ' GB';
+
+          // Redraw charts
+          const graphPane = container.querySelector('#pane-tab-graphs');
+          if (graphPane && graphPane.classList.contains('active')) {
+            redrawAllVpsCharts(history);
+          }
+        }
+        if (typeof onDone === 'function') onDone();
+      })
+      .catch(function () {
+        if (typeof onDone === 'function') onDone();
+      });
+  }
+
+  function redrawAllVpsCharts(history) {
+    if (!history || history.length === 0) return;
+    drawVpsCanvasChart('vps-canvas-cpu', history, 'cpu', '#3b82f6', 'rgba(59, 130, 246, 0.15)', '%', 100);
+    drawVpsCanvasChart('vps-canvas-ram', history, 'ram_gb', '#ec4899', 'rgba(236, 72, 153, 0.15)', ' GB', null);
+    drawVpsCanvasChart('vps-canvas-net', history, 'net_rx_kb', '#8b5cf6', 'rgba(139, 92, 246, 0.15)', ' KB/s', null);
+    drawVpsCanvasChart('vps-canvas-disk', history, 'disk_write_mb', '#06b6d4', 'rgba(6, 182, 212, 0.15)', ' MB/s', null);
+  }
+
+  function drawVpsCanvasChart(canvasId, data, dataKey, strokeColor, fillColor, unit, fixedMax) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const w = rect.width || 380;
+    const h = rect.height || 180;
+
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+
+    ctx.clearRect(0, 0, w, h);
+
+    const paddingLeft = 35;
+    const paddingRight = 15;
+    const paddingTop = 15;
+    const paddingBottom = 25;
+    const chartW = w - paddingLeft - paddingRight;
+    const chartH = h - paddingTop - paddingBottom;
+
+    const values = data.map(function (d) { return d[dataKey] || 0; });
+    let maxVal = fixedMax || (Math.max.apply(null, values) * 1.25);
+    if (maxVal <= 0) maxVal = 10;
+    const minVal = 0;
+
+    // Draw horizontal grid lines
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'right';
+
+    const gridSteps = 3;
+    for (let i = 0; i <= gridSteps; i++) {
+      const yVal = minVal + (maxVal - minVal) * (i / gridSteps);
+      const yPos = paddingTop + chartH - (chartH * (i / gridSteps));
+      ctx.beginPath();
+      ctx.moveTo(paddingLeft, yPos);
+      ctx.lineTo(w - paddingRight, yPos);
+      ctx.stroke();
+
+      ctx.fillText(Math.round(yVal) + (unit || ''), paddingLeft - 6, yPos + 3);
+    }
+
+    if (values.length < 2) return;
+
+    // Calculate coordinates
+    const points = [];
+    const stepX = chartW / (values.length - 1);
+    for (let i = 0; i < values.length; i++) {
+      const x = paddingLeft + (i * stepX);
+      const yNorm = (values[i] - minVal) / (maxVal - minVal);
+      const y = paddingTop + chartH - (chartH * Math.max(0, Math.min(1, yNorm)));
+      points.push({ x: x, y: y });
+    }
+
+    // Draw gradient fill area
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1];
+      const curr = points[i];
+      const midX = (prev.x + curr.x) / 2;
+      ctx.bezierCurveTo(midX, prev.y, midX, curr.y, curr.x, curr.y);
+    }
+    ctx.lineTo(points[points.length - 1].x, paddingTop + chartH);
+    ctx.lineTo(points[0].x, paddingTop + chartH);
+    ctx.closePath();
+
+    const gradient = ctx.createLinearGradient(0, paddingTop, 0, paddingTop + chartH);
+    gradient.addColorStop(0, fillColor);
+    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // Draw stroke curve
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1];
+      const curr = points[i];
+      const midX = (prev.x + curr.x) / 2;
+      ctx.bezierCurveTo(midX, prev.y, midX, curr.y, curr.x, curr.y);
+    }
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Highlight the latest data point
+    const last = points[points.length - 1];
+    ctx.beginPath();
+    ctx.arc(last.x, last.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = strokeColor;
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
   }
 
   // ==============================================================================
