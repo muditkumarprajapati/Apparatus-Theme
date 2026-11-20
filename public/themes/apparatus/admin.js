@@ -3216,13 +3216,13 @@ ${formatMailBody(currentTpl.body)}
             <div class="col-md-6 col-sm-12">
               <div class="form-group">
                 <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">Node Name</label>
-                <input type="text" id="node-name-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" placeholder="pve-node-01" required>
+                <input type="text" id="node-name-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" placeholder="pve-ruby" value="pve-ruby" required>
               </div>
             </div>
             <div class="col-md-6 col-sm-12">
               <div class="form-group">
                 <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">Host / IP Address</label>
-                <input type="text" id="node-host-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" placeholder="192.168.1.100" required>
+                <input type="text" id="node-host-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" placeholder="ruby.arixbyte.com" value="ruby.arixbyte.com" required>
               </div>
             </div>
           </div>
@@ -3252,7 +3252,7 @@ ${formatMailBody(currentTpl.body)}
             <div class="col-md-6 col-sm-12">
               <div class="form-group">
                 <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">API Token ID</label>
-                <input type="text" id="node-tokenid-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" placeholder="root@pam!tokenid" required>
+                <input type="text" id="node-tokenid-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" placeholder="root@pam!root-api" value="root@pam!root-api" required>
               </div>
             </div>
             <div class="col-md-6 col-sm-12">
@@ -3265,7 +3265,7 @@ ${formatMailBody(currentTpl.body)}
 
           <div class="form-group">
             <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">API Token Secret</label>
-            <input type="password" id="node-secret-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px; font-family: monospace;" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" required>
+            <input type="password" id="node-secret-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px; font-family: monospace;" placeholder="323dc207-48c9-4aa1-86b3-6777821c06af" value="323dc207-48c9-4aa1-86b3-6777821c06af" required>
           </div>
 
           <div style="background: var(--admin-accent-soft, #eff6ff); border: 1px solid var(--admin-accent-soft-border, #bfdbfe); border-radius: 8px; padding: 0.85rem 1rem; color: var(--admin-text-muted, #64748b); font-size: 0.82rem; line-height: 1.45; margin-bottom: 1.5rem;">
