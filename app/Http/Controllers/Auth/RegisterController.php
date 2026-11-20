@@ -1317,26 +1317,40 @@ class RegisterController extends Controller
 
     protected function fetchProxmoxNodeTelemetry(array &$node): void
     {
-        $host = $node['host'] ?? '';
+        $host = trim($node['host'] ?? '');
         $port = (int) ($node['port'] ?? 8006);
-        $tokenId = $node['token_id'] ?? '';
-        $tokenSecret = $node['token_secret'] ?? '';
+        $tokenId = trim($node['token_id'] ?? '');
+        $tokenSecret = trim($node['token_secret'] ?? '');
 
         // Fallback for default token secret if known
-        if (empty($tokenSecret) && $tokenId === 'root@pam!root-api') {
-            $tokenSecret = '323dc207-48c9-4aa1-86b3-6777821c06af';
-            $node['token_secret'] = $tokenSecret;
+        if (empty($tokenSecret)) {
+            if ($tokenId === 'root@pam!root-api' || strpos($host, 'ruby') !== false || strpos($host, '46.232.234.224') !== false) {
+                $tokenSecret = '323dc207-48c9-4aa1-86b3-6777821c06af';
+                $node['token_secret'] = $tokenSecret;
+            }
         }
 
         if (empty($host) || empty($tokenId) || empty($tokenSecret)) {
             return;
         }
 
+        // Resolve IPv4 to prevent IPv6 DNS timeout
+        $targetHost = $host;
+        if (strpos($host, 'ruby.arixbyte.com') !== false) {
+            $targetHost = '46.232.234.224';
+        } else {
+            $resolved = @gethostbyname($host);
+            if (!empty($resolved) && filter_var($resolved, FILTER_VALIDATE_IP)) {
+                $targetHost = $resolved;
+            }
+        }
+
         try {
-            $ch = curl_init("https://{$host}:{$port}/api2/json/nodes");
+            $ch = curl_init("https://{$targetHost}:{$port}/api2/json/nodes");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+            curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -1385,10 +1399,11 @@ class RegisterController extends Controller
                         $vmsCount = 0;
 
                         // Query real QEMU virtual machines count
-                        $chQ = curl_init("https://{$host}:{$port}/api2/json/nodes/{$actualNodeName}/qemu");
+                        $chQ = curl_init("https://{$targetHost}:{$port}/api2/json/nodes/{$actualNodeName}/qemu");
                         curl_setopt($chQ, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($chQ, CURLOPT_CONNECTTIMEOUT, 1);
-                        curl_setopt($chQ, CURLOPT_TIMEOUT, 2);
+                        curl_setopt($chQ, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+                        curl_setopt($chQ, CURLOPT_CONNECTTIMEOUT, 2);
+                        curl_setopt($chQ, CURLOPT_TIMEOUT, 3);
                         curl_setopt($chQ, CURLOPT_SSL_VERIFYPEER, false);
                         curl_setopt($chQ, CURLOPT_SSL_VERIFYHOST, false);
                         curl_setopt($chQ, CURLOPT_HTTPHEADER, [
@@ -1405,10 +1420,11 @@ class RegisterController extends Controller
                         }
 
                         // Query real LXC containers count
-                        $chL = curl_init("https://{$host}:{$port}/api2/json/nodes/{$actualNodeName}/lxc");
+                        $chL = curl_init("https://{$targetHost}:{$port}/api2/json/nodes/{$actualNodeName}/lxc");
                         curl_setopt($chL, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($chL, CURLOPT_CONNECTTIMEOUT, 1);
-                        curl_setopt($chL, CURLOPT_TIMEOUT, 2);
+                        curl_setopt($chL, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+                        curl_setopt($chL, CURLOPT_CONNECTTIMEOUT, 2);
+                        curl_setopt($chL, CURLOPT_TIMEOUT, 3);
                         curl_setopt($chL, CURLOPT_SSL_VERIFYPEER, false);
                         curl_setopt($chL, CURLOPT_SSL_VERIFYHOST, false);
                         curl_setopt($chL, CURLOPT_HTTPHEADER, [
@@ -1499,16 +1515,27 @@ class RegisterController extends Controller
         }
 
         if ($node && !empty($node['host']) && !empty($node['token_id'])) {
-            $host = $node['host'];
+            $host = trim($node['host']);
             $port = (int) ($node['port'] ?? 8006);
-            $tokenId = $node['token_id'];
-            $tokenSecret = $node['token_secret'] ?? ($tokenId === 'root@pam!root-api' ? '323dc207-48c9-4aa1-86b3-6777821c06af' : '');
+            $tokenId = trim($node['token_id']);
+            $tokenSecret = trim($node['token_secret'] ?? ($tokenId === 'root@pam!root-api' ? '323dc207-48c9-4aa1-86b3-6777821c06af' : ''));
+
+            $targetHost = $host;
+            if (strpos($host, 'ruby.arixbyte.com') !== false) {
+                $targetHost = '46.232.234.224';
+            } else {
+                $resolved = @gethostbyname($host);
+                if (!empty($resolved) && filter_var($resolved, FILTER_VALIDATE_IP)) {
+                    $targetHost = $resolved;
+                }
+            }
 
             $t1 = microtime(true);
-            $ch = curl_init("https://{$host}:{$port}/api2/json/version");
+            $ch = curl_init("https://{$targetHost}:{$port}/api2/json/version");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+            curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
             curl_setopt($ch, CURLOPT_HTTPHEADER, [

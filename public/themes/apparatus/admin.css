@@ -1849,3 +1849,43 @@ body.apparatus-admin-dark .table td a:not(.btn):hover {
   color: #93c5fd !important;
   text-decoration: underline !important;
 }
+
+/* Hypervisor & Minecraft Node Status Heartbeat Animations */
+@keyframes apparatusHeartbeat {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 3px rgba(16, 185, 129, 0.4));
+  }
+  14% {
+    transform: scale(1.22);
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.85));
+  }
+  28% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 3px rgba(16, 185, 129, 0.4));
+  }
+  42% {
+    transform: scale(1.18);
+    filter: drop-shadow(0 0 7px rgba(16, 185, 129, 0.75));
+  }
+  70% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 3px rgba(16, 185, 129, 0.4));
+  }
+}
+
+.vps-node-status-heart i.text-success,
+.vps-node-status-heart i.fa-heartbeat,
+.vps-node-status-heart i.ri-heart-pulse-fill {
+  display: inline-block;
+  animation: apparatusHeartbeat 1.8s infinite ease-in-out;
+  transform-origin: center;
+}
+
+.vps-node-status-heart i.text-danger,
+.vps-node-status-heart i.fa-heart-broken,
+.vps-node-status-heart i.ri-heart-crack-fill {
+  display: inline-block;
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));
+}
+
