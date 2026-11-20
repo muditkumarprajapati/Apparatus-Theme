@@ -762,8 +762,8 @@ body.apparatus-auth .apparatus-sidebar {
 
 .apparatus-sidebar-brand:hover .apparatus-sidebar-brand-img {
   opacity: 1 !important;
-  transform: translateY(-1px) scale(1.02) !important;
-  filter: drop-shadow(0 4px 14px rgba(139, 92, 246, 0.5)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.2)) !important;
+  transform: none !important;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.45)) !important;
 }
 
 .apparatus-sidebar-brand:active .apparatus-sidebar-brand-img {
@@ -1623,26 +1623,15 @@ body:not(.apparatus-auth) span.apparatus-user-name {
   justify-content: center;
 }
 
+.apparatus-welcome-decor,
+.apparatus-welcome-decor-ab,
 .apparatus-ab-watermark {
-  height: 58px;
-  width: auto;
-  max-width: 260px;
-  opacity: 0.38;
-  filter: none !important;
-  box-shadow: none !important;
-  image-rendering: -webkit-optimize-contrast;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  display: block;
-}
-
-.apparatus-card-welcome:hover .apparatus-welcome-decor {
-  transform: translateY(-50%) scale(1.02);
-}
-
-.apparatus-card-welcome:hover .apparatus-ab-watermark {
-  opacity: 0.52;
-  filter: none !important;
-  box-shadow: none !important;
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
 }
 
 @media (max-width: 900px) {
@@ -5044,14 +5033,15 @@ html.lenis body {
   }
 }
 
-.apparatus-welcome-decor-ab .apparatus-ab-watermark {
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-}
-
-.apparatus-card-welcome:hover .apparatus-ab-watermark {
-  transform: translateY(-2px) scale(1.02);
-  opacity: 0.52;
-  filter: none !important;
+.apparatus-welcome-decor,
+.apparatus-welcome-decor-ab,
+.apparatus-welcome-decor-ab .apparatus-ab-watermark,
+.apparatus-card-welcome:hover .apparatus-ab-watermark,
+.apparatus-card-welcome:hover .apparatus-welcome-decor {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* 5. Dual-Orbital Glowing Loader & Shimmer Skeletons */
@@ -5772,13 +5762,26 @@ div[class*="AccountOverviewContainer"] input:focus {
   box-shadow: 0 0 16px rgba(236, 72, 153, 0.3) !important;
 }
 
-/* Force generous padding on inputs with icons so text NEVER overlaps the icon */
-.apparatus-prof-input.with-icon,
-select.apparatus-prof-input.with-icon,
-input.apparatus-prof-input.with-icon,
-div[class*="AccountOverviewContainer"] input.apparatus-prof-input.with-icon,
-div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon {
-  padding-left: 2.85rem !important;
+/* Force generous padding on inputs with icons so text NEVER overlaps the icon across the whole site */
+body:not(.apparatus-auth) .with-icon,
+body:not(.apparatus-auth) input.with-icon,
+body:not(.apparatus-auth) select.with-icon,
+body:not(.apparatus-auth) input[class*="with-icon"],
+body:not(.apparatus-auth) select[class*="with-icon"],
+body:not(.apparatus-auth) .apparatus-prof-input.with-icon,
+body:not(.apparatus-auth) select.apparatus-prof-input.with-icon,
+body:not(.apparatus-auth) input.apparatus-prof-input.with-icon,
+body:not(.apparatus-auth) .apparatus-prof-input-wrap input,
+body:not(.apparatus-auth) .apparatus-prof-input-wrap select,
+body:not(.apparatus-auth) div[class*="AccountOverviewContainer"] input.apparatus-prof-input.with-icon,
+body:not(.apparatus-auth) div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon,
+body:not(.apparatus-auth) div[class*="AccountOverviewContainer"] .apparatus-prof-input-wrap input,
+body:not(.apparatus-auth) div[class*="AccountOverviewContainer"] .apparatus-prof-input-wrap select,
+body:not(.apparatus-auth) div:has(> .apparatus-prof-input-icon) input,
+body:not(.apparatus-auth) div:has(> .apparatus-prof-input-icon) select,
+body:not(.apparatus-auth) div:has(> span.apparatus-prof-input-icon) input,
+body:not(.apparatus-auth) div:has(> span.apparatus-prof-input-icon) select {
+  padding-left: 3rem !important;
 }
 
 .apparatus-prof-input:focus {

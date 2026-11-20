@@ -732,6 +732,11 @@
       inp.style.setProperty('color', '#ffffff', 'important');
     });
 
+    // Ensure all inputs with an icon have generous left padding so text never overlaps icon anywhere on the site
+    document.querySelectorAll('.apparatus-prof-input-wrap input, .apparatus-prof-input-wrap select, input.with-icon, select.with-icon, input[class*="with-icon"], select[class*="with-icon"]').forEach(function (inp) {
+      inp.style.setProperty('padding-left', '3rem', 'important');
+    });
+
     // 6. Ensure action buttons on account cards have Apparatus pink gradient
     document.querySelectorAll('.sc-mjlt6f-2 button:not([class*="secondary"]):not([class*="danger"]):not([class*="ghost"])').forEach(function (btn) {
       btn.style.setProperty('background', 'linear-gradient(135deg, #ec4899, #db2777)', 'important');
@@ -1949,9 +1954,6 @@
                 <i class="ri-whatsapp-line"></i> <span>WhatsApp</span>
               </a>
             </div>
-          </div>
-          <div class="apparatus-welcome-decor apparatus-welcome-decor-ab" aria-hidden="true">
-            <img src="/themes/apparatus/arixbyte-logo.png" class="apparatus-ab-watermark" alt="ArixByte" onerror="this.src='/themes/apparatus/ab-logo-white.png';">
           </div>
         </div>
 
@@ -6762,6 +6764,10 @@
     section.style.setProperty('max-width', '100%', 'important');
     section.style.setProperty('margin-bottom', '1.5rem', 'important');
     section.style.setProperty('box-sizing', 'border-box', 'important');
+
+    section.querySelectorAll('.apparatus-prof-input-wrap input, .apparatus-prof-input-wrap select, input.with-icon, select.with-icon').forEach(function (inp) {
+      inp.style.setProperty('padding-left', '3rem', 'important');
+    });
 
     normalizeAccountCards();
   }
