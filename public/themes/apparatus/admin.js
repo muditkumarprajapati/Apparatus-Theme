@@ -3493,17 +3493,26 @@ ${formatMailBody(currentTpl.body)}
 
         <form id="apparatus-deploy-vps-form" style="padding: 1.75rem;">
           <div class="row">
-            <div class="col-md-6 col-sm-12">
+            <div class="col-md-4 col-sm-12">
               <div class="form-group">
                 <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">Hostname / Name</label>
                 <input type="text" id="vps-name-input" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" placeholder="cloud-srv-01" required>
               </div>
             </div>
-            <div class="col-md-6 col-sm-12">
+            <div class="col-md-3 col-sm-12">
+              <div class="form-group">
+                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem; display: flex; justify-content: space-between; align-items: center;">
+                  <span>Proxmox VMID</span>
+                  <span style="font-size: 0.74rem; color: #a855f7; font-weight: 600;">PVE ID</span>
+                </label>
+                <input type="number" id="vps-vmid-input" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" placeholder="100 (Auto)" min="100" max="999999">
+              </div>
+            </div>
+            <div class="col-md-5 col-sm-12">
               <div class="form-group" style="position: relative;">
                 <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem; display: flex; justify-content: space-between; align-items: center;">
                   <span>Owner Pterodactyl Email</span>
-                  <span style="font-size: 0.76rem; color: #94a3b8; font-weight: 400;">Type 2+ letters to search users</span>
+                  <span style="font-size: 0.74rem; color: #94a3b8; font-weight: 400;">Type 2+ letters</span>
                 </label>
                 <div style="position: relative;">
                   <input type="text" id="vps-owner-email" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px; padding-right: 36px;" placeholder="Search user by email or username..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
@@ -3708,8 +3717,13 @@ ${formatMailBody(currentTpl.body)}
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Provisioning...';
 
+      const vmidField = modal.querySelector('#vps-vmid-input');
+      const vmidVal = vmidField ? parseInt(vmidField.value, 10) : null;
+
       const payload = {
         name: modal.querySelector('#vps-name-input').value.trim(),
+        vmid: (!isNaN(vmidVal) && vmidVal > 0) ? vmidVal : undefined,
+        vm_id: (!isNaN(vmidVal) && vmidVal > 0) ? vmidVal : undefined,
         user_email: modal.querySelector('#vps-owner-email').value.trim(),
         node: modal.querySelector('#vps-node-select').value,
         os: modal.querySelector('#vps-os-select').value,
