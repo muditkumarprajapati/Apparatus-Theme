@@ -1160,42 +1160,69 @@ class RegisterController extends Controller
             $email = auth()->user()->email;
         }
 
-        if (empty($email)) {
-            return response()->json(['success' => false, 'servers' => [], 'error' => 'No user email specified.']);
-        }
+        $servers = [];
 
-        // Query cluster engine by user email
-        $res = $this->callAlpm('/api/users/email/' . urlencode($email));
-        if ($res['ok']) {
-            $servers = [];
-            if (isset($res['data']['servers']) && is_array($res['data']['servers'])) {
-                $servers = $res['data']['servers'];
-            } elseif (isset($res['data']['data']) && is_array($res['data']['data'])) {
-                $servers = $res['data']['data'];
-            } elseif (is_array($res['data'])) {
-                $servers = $res['data'];
+        // Query cluster engine if email provided
+        if (!empty($email)) {
+            $res = $this->callAlpm('/api/users/email/' . urlencode($email));
+            if ($res['ok']) {
+                if (isset($res['data']['servers']) && is_array($res['data']['servers'])) {
+                    $servers = $res['data']['servers'];
+                } elseif (isset($res['data']['data']) && is_array($res['data']['data'])) {
+                    $servers = $res['data']['data'];
+                } elseif (is_array($res['data'])) {
+                    $servers = $res['data'];
+                }
             }
-            return response()->json([
-                'success' => true,
-                'servers' => $servers,
-                'total' => count($servers)
-            ]);
         }
 
-        // Fallback: check stored local cache if cluster engine is offline or not yet initialized
+        // Local cache lookup
         $cachePath = storage_path('app/apparatus_vps_cache.json');
         if (file_exists($cachePath)) {
             $cache = json_decode(@file_get_contents($cachePath), true);
-            $userServers = $cache[strtolower($email)] ?? [];
-            if (!empty($userServers)) {
-                return response()->json(['success' => true, 'servers' => $userServers, 'cached' => true]);
+            if (is_array($cache)) {
+                $isRootAdmin = auth()->check() && (bool) (auth()->user()->root_admin ?? false);
+                $normalizedEmail = strtolower($email);
+
+                foreach ($cache as $k => $items) {
+                    if (is_array($items)) {
+                        if (isset($items['id']) || isset($items['name'])) {
+                            $sEmail = strtolower($items['user_email'] ?? ($items['owner_email'] ?? ''));
+                            if (empty($normalizedEmail) || $isRootAdmin || $sEmail === $normalizedEmail || strtolower($k) === $normalizedEmail) {
+                                $servers[] = $items;
+                            }
+                        } else {
+                            foreach ($items as $v) {
+                                if (is_array($v) && (isset($v['id']) || isset($v['name']))) {
+                                    $sEmail = strtolower($v['user_email'] ?? ($v['owner_email'] ?? ''));
+                                    if (empty($normalizedEmail) || $isRootAdmin || $sEmail === $normalizedEmail || strtolower($k) === $normalizedEmail) {
+                                        $servers[] = $v;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Remove duplicates by id/vmid
+        $unique = [];
+        $final = [];
+        foreach ($servers as $s) {
+            $uid = $s['id'] ?? ($s['vmid'] ?? null);
+            if ($uid && !isset($unique[$uid])) {
+                $unique[$uid] = true;
+                $final[] = $s;
+            } elseif (!$uid) {
+                $final[] = $s;
             }
         }
 
         return response()->json([
             'success' => true,
-            'servers' => [],
-            'notice' => $res['error'] ?? 'No servers returned from virtualization cluster'
+            'servers' => $final,
+            'total' => count($final)
         ]);
     }
 
