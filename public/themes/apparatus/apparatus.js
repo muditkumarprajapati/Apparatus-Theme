@@ -612,12 +612,19 @@
     const isServerRoute = (window.location.pathname || '').startsWith('/server/');
     if (isServerRoute) {
       document.body.classList.add('apparatus-page-server');
-      const statBlocks = document.querySelectorAll('div[class*="ServerConsoleContainer"] div[class*="StatBlock"], div[class*="StatBlock"], div[class*="StatBlock___StyledDiv"]');
+      const statBlocks = document.querySelectorAll('div.bg-gray-700, div.bg-neutral-700, div[class*="StatBlock"], div[class*="ChartBlock"]');
       statBlocks.forEach(function (stat) {
+        stat.style.setProperty('background', 'rgba(255, 255, 255, 0.04)', 'important');
+        stat.style.setProperty('backdrop-filter', 'blur(14px) saturate(180%)', 'important');
+        stat.style.setProperty('-webkit-backdrop-filter', 'blur(14px) saturate(180%)', 'important');
+        stat.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.1)', 'important');
+        stat.style.setProperty('border-radius', '14px', 'important');
+        stat.style.setProperty('box-shadow', '0 4px 20px rgba(0, 0, 0, 0.22)', 'important');
+
         const titleEl = stat.querySelector('p');
         const titleText = (titleEl ? titleEl.textContent : '').toUpperCase();
         const iconWrapper = stat.querySelector('div:first-child');
-        if (iconWrapper && !iconWrapper.getAttribute('data-apparatus-tinted')) {
+        if (iconWrapper && iconWrapper !== stat && (iconWrapper.classList.contains('w-12') || iconWrapper.classList.contains('rounded') || iconWrapper.querySelector('svg'))) {
           iconWrapper.setAttribute('data-apparatus-tinted', 'true');
           iconWrapper.style.setProperty('border-radius', '12px', 'important');
           iconWrapper.style.setProperty('backdrop-filter', 'blur(8px)', 'important');

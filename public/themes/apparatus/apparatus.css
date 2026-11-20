@@ -6708,21 +6708,30 @@ body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] [role="navigation
 }
 
 /* ==============================================================================
-   SERVER CONSOLE & FILE MANAGER SAAS POLISH (ULTRA-TRANSPARENT FROSTED GLASS)
+   GLOBAL ULTRA-TRANSPARENT FROSTED GLASS FOR ALL GRAY CARDS (WHOLE SITE)
    ============================================================================== */
-/* Server Console Stats Grid (Address, Uptime, CPU, RAM, Disk, Network) */
+body:not(.apparatus-auth) div.bg-gray-700,
+body:not(.apparatus-auth) .bg-gray-700,
+body:not(.apparatus-auth) div.bg-neutral-700,
+body:not(.apparatus-auth) .bg-neutral-700,
+body:not(.apparatus-auth) div[class*="StatBlock"],
+body:not(.apparatus-auth) div[class*="StatBlock___StyledDiv"],
+body:not(.apparatus-auth) div[class*="ChartBlock"],
+body:not(.apparatus-auth) div[class*="ChartBlock___StyledDiv"],
+body:not(.apparatus-auth) div[class*="TitledGreyBox"],
+body:not(.apparatus-auth) div[class*="TitledGreyBox___StyledDiv"],
+body:not(.apparatus-auth) div[class*="GreyRowBox"],
+body:not(.apparatus-auth) div[class*="GreyRowBox___StyledDiv"],
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock"],
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock___StyledDiv"],
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700,
 body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="StatBlock"],
-body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="StatBlock___StyledDiv"],
-body:not(.apparatus-auth) div[class*="StatBlock"],
-body:not(.apparatus-auth) div[class*="StatBlock___StyledDiv"] {
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="StatBlock___StyledDiv"] {
   background: rgba(255, 255, 255, 0.04) !important;
   backdrop-filter: blur(14px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 16px !important;
+  border-radius: 14px !important;
   padding: 0.85rem 1.15rem !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22) !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
@@ -6730,13 +6739,23 @@ body:not(.apparatus-auth) div[class*="StatBlock___StyledDiv"] {
   overflow: hidden !important;
 }
 
+body:not(.apparatus-auth) div.bg-gray-700:hover,
+body:not(.apparatus-auth) .bg-gray-700:hover,
+body:not(.apparatus-auth) div.bg-neutral-700:hover,
+body:not(.apparatus-auth) .bg-neutral-700:hover,
+body:not(.apparatus-auth) div[class*="StatBlock"]:hover,
+body:not(.apparatus-auth) div[class*="StatBlock___StyledDiv"]:hover,
+body:not(.apparatus-auth) div[class*="ChartBlock"]:hover,
+body:not(.apparatus-auth) div[class*="ChartBlock___StyledDiv"]:hover,
+body:not(.apparatus-auth) div[class*="TitledGreyBox"]:hover,
+body:not(.apparatus-auth) div[class*="TitledGreyBox___StyledDiv"]:hover,
+body:not(.apparatus-auth) div[class*="GreyRowBox"]:hover,
+body:not(.apparatus-auth) div[class*="GreyRowBox___StyledDiv"]:hover,
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock"]:hover,
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock___StyledDiv"]:hover,
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700:hover,
 body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="StatBlock"]:hover,
-body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="StatBlock___StyledDiv"]:hover,
-body:not(.apparatus-auth) div[class*="StatBlock"]:hover,
-body:not(.apparatus-auth) div[class*="StatBlock___StyledDiv"]:hover {
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="StatBlock___StyledDiv"]:hover {
   background: rgba(255, 255, 255, 0.07) !important;
   border-color: rgba(236, 72, 153, 0.45) !important;
   transform: translateY(-2px) !important;
@@ -6760,11 +6779,11 @@ body:not(.apparatus-auth) div[class*="StatBlock"] > div:last-child > div {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
 }
 
-/* StatBlock Icon Badges (Translucent Glowing Glass Badges) */
+/* StatBlock Icon Badges (Translucent Glowing Glass Badges across whole site) */
+body:not(.apparatus-auth) div.bg-gray-700 > div:first-child,
+body:not(.apparatus-auth) div.bg-neutral-700 > div:first-child,
 body:not(.apparatus-auth) div[class*="StatBlock"] > div:first-child,
-body:not(.apparatus-auth) div[class*="StatBlock___StyledDiv"] > div:first-child,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock"] > div:first-child,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700 > div:first-child {
+body:not(.apparatus-auth) div[class*="StatBlock___StyledDiv"] > div:first-child {
   border-radius: 12px !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
@@ -6774,60 +6793,76 @@ body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700 >
 }
 
 /* Address / Connection Badge (Sky/Cyan) */
+body:not(.apparatus-auth) .bg-blue-500,
+body:not(.apparatus-auth) .bg-cyan-500,
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-blue-500,
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-cyan-500,
 body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-blue-500,
-body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-cyan-500,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-blue-500,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-cyan-500 {
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-cyan-500 {
   background: rgba(56, 189, 248, 0.15) !important;
   border-color: rgba(56, 189, 248, 0.35) !important;
 }
+body:not(.apparatus-auth) .bg-blue-500 svg,
+body:not(.apparatus-auth) .bg-cyan-500 svg,
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-blue-500 svg,
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-cyan-500 svg,
 body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-blue-500 svg,
-body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-cyan-500 svg,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-blue-500 svg,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-cyan-500 svg {
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-cyan-500 svg {
   color: #38bdf8 !important;
   filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5)) !important;
 }
 
 /* Uptime Badge (Amber / Gold) */
+body:not(.apparatus-auth) .bg-yellow-500,
+body:not(.apparatus-auth) .bg-amber-500,
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-yellow-500,
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-amber-500,
 body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-yellow-500,
-body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-amber-500,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-yellow-500,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-amber-500 {
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-amber-500 {
   background: rgba(245, 158, 11, 0.15) !important;
   border-color: rgba(245, 158, 11, 0.35) !important;
 }
+body:not(.apparatus-auth) .bg-yellow-500 svg,
+body:not(.apparatus-auth) .bg-amber-500 svg,
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-yellow-500 svg,
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-amber-500 svg,
 body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-yellow-500 svg,
-body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-amber-500 svg,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-yellow-500 svg,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-amber-500 svg {
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-amber-500 svg {
   color: #fbbf24 !important;
   filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.5)) !important;
 }
 
 /* CPU Load Badge (Rose / Coral) */
+body:not(.apparatus-auth) .bg-red-500,
+body:not(.apparatus-auth) .bg-rose-500,
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-red-500,
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-rose-500,
 body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-red-500,
-body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-rose-500,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-red-500,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-rose-500 {
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-rose-500 {
   background: rgba(244, 63, 94, 0.15) !important;
   border-color: rgba(244, 63, 94, 0.35) !important;
 }
+body:not(.apparatus-auth) .bg-red-500 svg,
+body:not(.apparatus-auth) .bg-rose-500 svg,
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-red-500 svg,
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-rose-500 svg,
 body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-red-500 svg,
-body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-rose-500 svg,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-red-500 svg,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-rose-500 svg {
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-rose-500 svg {
   color: #f43f5e !important;
   filter: drop-shadow(0 0 6px rgba(244, 63, 94, 0.5)) !important;
 }
 
 /* Neutral Gray-600 Icon Badges (Memory, Disk, Network) */
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-gray-600,
+body:not(.apparatus-auth) div.bg-neutral-700 > div.bg-gray-600,
 body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-gray-600,
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock"] > div.bg-gray-600,
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700 > div.bg-gray-600 {
   background: rgba(255, 255, 255, 0.08) !important;
   border-color: rgba(255, 255, 255, 0.14) !important;
 }
+body:not(.apparatus-auth) div.bg-gray-700 > div.bg-gray-600 svg,
+body:not(.apparatus-auth) div.bg-neutral-700 > div.bg-gray-600 svg,
 body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-gray-600 svg,
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock"] > div.bg-gray-600 svg,
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700 > div.bg-gray-600 svg {
