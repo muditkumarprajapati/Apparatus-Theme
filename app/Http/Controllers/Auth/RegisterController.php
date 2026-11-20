@@ -1385,20 +1385,54 @@ class RegisterController extends Controller
     public function vpsAdminUsersSearch(Request $request): JsonResponse
     {
         $q = trim($request->input('q', $request->input('search', '')));
-        if (strlen($q) < 1) {
-            return response()->json(['success' => true, 'data' => []]);
-        }
 
         try {
-            $users = User::query()
-                ->where('email', 'LIKE', "%{$q}%")
-                ->orWhere('username', 'LIKE', "%{$q}%")
-                ->limit(15)
-                ->get(['id', 'email', 'username', 'name_first', 'name_last']);
+            $query = User::query();
+            if (strlen($q) > 0) {
+                $query->where('email', 'LIKE', "%{$q}%")
+                      ->orWhere('username', 'LIKE', "%{$q}%")
+                      ->orWhere('name_first', 'LIKE', "%{$q}%")
+                      ->orWhere('name_last', 'LIKE', "%{$q}%");
+            }
+            $users = $query->orderBy('id', 'asc')->get();
+
+            $data = $users->map(function ($u) {
+                $serversCount = 0;
+                try {
+                    $serversCount = DB::table('servers')->where('owner_id', $u->id)->count();
+                } catch (\Throwable $e) {}
+
+                $fullName = trim(($u->name_first ?? '') . ' ' . ($u->name_last ?? ''));
+                if (empty($fullName)) {
+                    $fullName = $u->username;
+                }
+
+                $isRootAdmin = (bool) ($u->root_admin ?? false);
+
+                return [
+                    'id' => $u->id,
+                    'username' => $u->username,
+                    'email' => $u->email,
+                    'name' => $fullName,
+                    'root_admin' => $isRootAdmin,
+                    'twoFactor' => (bool) ($u->{"2fa"} ?? ($u->totp_authenticated ?? false)),
+                    'serversOwned' => $serversCount,
+                    'vpsOwned' => 0,
+                    'verified' => true,
+                    'balance' => '₹0.00',
+                    'canAccess' => $isRootAdmin ? 'Administrator (Full Access)' : 'Client Area + API',
+                    'lastLogin' => $u->updated_at ? $u->updated_at->diffForHumans() : 'Recently',
+                    'created' => $u->created_at ? $u->created_at->format('Y-m-d') : '2026-01-01',
+                    'referralCode' => 'AB-' . strtoupper(substr(md5($u->id . $u->email), 0, 6)),
+                    'totalReferrals' => 0,
+                    'avatar' => 'https://api.dicebear.com/7.x/thumbs/svg?seed=' . urlencode($u->username)
+                ];
+            });
 
             return response()->json([
                 'success' => true,
-                'data' => $users
+                'data' => $data,
+                'total' => count($data)
             ]);
         } catch (\Throwable $e) {
             return response()->json([

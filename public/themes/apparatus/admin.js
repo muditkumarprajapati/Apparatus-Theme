@@ -4009,6 +4009,9 @@ php artisan view:clear</pre>
   }
 
   function getAdminUsers() {
+    if (window._apparatusLoadedUsers && Array.isArray(window._apparatusLoadedUsers) && window._apparatusLoadedUsers.length > 0) {
+      return window._apparatusLoadedUsers;
+    }
     const storageKey = 'apparatus_admin_users_db_v2';
     let stored = null;
     try {
@@ -4151,6 +4154,37 @@ php artisan view:clear</pre>
 
   function renderUsersStudioView(container) {
     container.className = 'apparatus-admin-view';
+
+    if (!window._apparatusLoadedUsers) {
+      container.innerHTML = `
+        <div class="apparatus-loading-state" style="padding: 4rem; text-align: center;">
+          <i class="ri-loader-4-line ri-spin" style="font-size: 2.8rem; color: #a855f7;"></i>
+          <p style="color: #94a3b8; margin-top: 1.25rem; font-size: 1.05rem; font-weight: 500;">Loading registered panel client accounts directly from database...</p>
+        </div>
+      `;
+
+      fetch('/auth/vps/admin/users/search')
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+            window._apparatusLoadedUsers = res.data;
+            try {
+              localStorage.setItem('apparatus_admin_users_db_v2', JSON.stringify(res.data));
+            } catch (e) {}
+          }
+          buildUsersStudioContent(container);
+        })
+        .catch(function (err) {
+          console.warn('[Admin Users] Database query fallback:', err);
+          buildUsersStudioContent(container);
+        });
+      return;
+    }
+
+    buildUsersStudioContent(container);
+  }
+
+  function buildUsersStudioContent(container) {
     const users = getAdminUsers();
 
     const totalUsers = users.length;
