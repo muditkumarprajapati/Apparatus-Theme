@@ -1377,11 +1377,11 @@ class RegisterController extends Controller
             'name' => $payload['name'] ?? ('pve-node-' . $nodeId),
             'host' => $payload['host'] ?? '127.0.0.1',
             'port' => (int) ($payload['port'] ?? 8006),
-            'token_id' => $payload['token_id'] ?? '',
+            'token_id' => $payload['token_id'] ?? ($payload['tokenId'] ?? ''),
             'enabled' => 1,
-            'cpu_cores' => (int) ($payload['cpu_cores'] ?? 16),
-            'ram_total_gb' => (int) ($payload['ram_total_gb'] ?? 32),
-            'storage_total_gb' => (int) ($payload['storage_total_gb'] ?? 1000),
+            'cpu_cores' => (int) ($payload['cpu_cores'] ?? ($payload['cpuCores'] ?? 32)),
+            'ram_total_gb' => (int) ($payload['ram_total_gb'] ?? ($payload['ramGb'] ?? 64)),
+            'storage_total_gb' => (int) ($payload['storage_total_gb'] ?? ($payload['storageGb'] ?? 2000)),
             'status' => 'online',
             'virtualization' => 'Proxmox VE 8.x (KVM/LXC)'
         ];
@@ -1389,9 +1389,12 @@ class RegisterController extends Controller
         $cached[] = $newNode;
         @file_put_contents($cachePath, json_encode($cached, JSON_PRETTY_PRINT));
 
+        $this->logSentinelAudit('Connected Proxmox Hypervisor node ' . $newNode['name'] . ' (' . $newNode['host'] . ':' . $newNode['port'] . ')', 'Proxmox Hypervisor', 'ELEVATED', $request);
+
         return response()->json([
             'success' => true,
             'data' => $res['data'] ?? $newNode,
+            'node' => $newNode,
             'error' => $res['error'] ?? null
         ]);
     }

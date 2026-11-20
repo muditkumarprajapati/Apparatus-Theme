@@ -3192,21 +3192,21 @@ ${formatMailBody(currentTpl.body)}
     const modal = document.createElement('div');
     modal.id = 'apparatus-admin-add-node-modal';
     modal.className = 'apparatus-modal-overlay';
-    modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1.5rem;';
+    modal.style.cssText = 'position: fixed; inset: 0; background: var(--admin-modal-backdrop, rgba(0,0,0,0.7)); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1.5rem;';
 
     modal.innerHTML = `
-      <div style="background: #0f0b18; border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; width: 100%; max-width: 620px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.85);">
-        <div style="padding: 1.25rem 1.75rem; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
+      <div style="background: var(--admin-modal-bg, #ffffff); border: 1px solid var(--admin-modal-border, #e2e8f0); border-radius: 16px; width: 100%; max-width: 640px; overflow: hidden; box-shadow: var(--admin-card-shadow, 0 20px 50px rgba(0,0,0,0.25));">
+        <div style="padding: 1.25rem 1.75rem; background: var(--admin-pill-bg, #f8fafc); border-bottom: 1px solid var(--admin-table-border, #eef2f6); display: flex; justify-content: space-between; align-items: center;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1.35rem;">
+            <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--admin-accent-soft, #eff6ff); color: var(--admin-accent-primary, #2563eb); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
               <i class="ri-hard-drive-3-line"></i>
             </div>
             <div>
-              <h3 style="margin: 0; color: #fff; font-weight: 700; font-size: 1.1rem;">Connect Proxmox Hypervisor Node</h3>
-              <span style="color: #64748b; font-size: 0.82rem;">Link a Proxmox VE compute host to the cluster</span>
+              <h3 style="margin: 0; color: var(--admin-text-primary, #0f172a); font-weight: 700; font-size: 1.15rem;">Connect Proxmox Hypervisor Node</h3>
+              <span style="color: var(--admin-text-muted, #64748b); font-size: 0.82rem;">Link a Proxmox VE compute host to the cluster</span>
             </div>
           </div>
-          <button type="button" id="btn-close-add-node-modal" style="background: transparent; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer;">
+          <button type="button" id="btn-close-add-node-modal" style="background: transparent; border: none; color: var(--admin-text-muted, #94a3b8); font-size: 1.4rem; cursor: pointer;">
             <i class="ri-close-line"></i>
           </button>
         </div>
@@ -3215,14 +3215,35 @@ ${formatMailBody(currentTpl.body)}
           <div class="row">
             <div class="col-md-6 col-sm-12">
               <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">Node Name</label>
-                <input type="text" id="node-name-input" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" placeholder="pve-node-02" required>
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">Node Name</label>
+                <input type="text" id="node-name-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" placeholder="pve-node-01" required>
               </div>
             </div>
             <div class="col-md-6 col-sm-12">
               <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">Host / IP Address</label>
-                <input type="text" id="node-host-input" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" placeholder="192.168.1.100" required>
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">Host / IP Address</label>
+                <input type="text" id="node-host-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" placeholder="192.168.1.100" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 col-sm-12">
+              <div class="form-group">
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">Port</label>
+                <input type="number" id="node-port-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" value="8006" required>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-12">
+              <div class="form-group">
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">CPU Cores Pool</label>
+                <input type="number" id="node-cores-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" value="32" min="1" max="512" required>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-12">
+              <div class="form-group">
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">Total RAM (GB)</label>
+                <input type="number" id="node-ram-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" value="64" min="1" max="4096" required>
               </div>
             </div>
           </div>
@@ -3230,30 +3251,30 @@ ${formatMailBody(currentTpl.body)}
           <div class="row">
             <div class="col-md-6 col-sm-12">
               <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">Proxmox Port</label>
-                <input type="number" id="node-port-input" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" value="8006" required>
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">API Token ID</label>
+                <input type="text" id="node-tokenid-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" placeholder="root@pam!tokenid" required>
               </div>
             </div>
             <div class="col-md-6 col-sm-12">
               <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">API Token ID</label>
-                <input type="text" id="node-tokenid-input" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" placeholder="root@pam!apparatus" required>
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">Total Storage (GB)</label>
+                <input type="number" id="node-storage-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" value="2000" min="10" required>
               </div>
             </div>
           </div>
 
           <div class="form-group">
-            <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">API Token Secret</label>
-            <input type="password" id="node-secret-input" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" required>
+            <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">API Token Secret</label>
+            <input type="password" id="node-secret-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px; font-family: monospace;" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" required>
           </div>
 
-          <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 0.85rem 1rem; color: #94a3b8; font-size: 0.82rem; line-height: 1.45; margin-bottom: 1.5rem;">
-            <i class="ri-information-line" style="color: #38bdf8;"></i> Generate the API token in Proxmox VE under <code>Datacenter -> Permissions -> API Tokens</code> with <code>Administrator</code> or <code>PVEVMAdmin</code> privileges.
+          <div style="background: var(--admin-accent-soft, #eff6ff); border: 1px solid var(--admin-accent-soft-border, #bfdbfe); border-radius: 8px; padding: 0.85rem 1rem; color: var(--admin-text-muted, #64748b); font-size: 0.82rem; line-height: 1.45; margin-bottom: 1.5rem;">
+            <i class="ri-information-line" style="color: var(--admin-accent-primary, #2563eb);"></i> Generate the API token in Proxmox VE under <code>Datacenter -> Permissions -> API Tokens</code> with <code>Administrator</code> or <code>PVEVMAdmin</code> privileges.
           </div>
 
           <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
-            <button type="button" id="btn-cancel-add-node" class="btn btn-default" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #cbd5e1; height: 40px; border-radius: 8px;">Cancel</button>
-            <button type="submit" id="btn-submit-add-node" class="btn btn-primary" style="background: linear-gradient(135deg, #38bdf8, #0284c7); border: none; font-weight: 700; height: 40px; border-radius: 8px; padding: 0 1.5rem; box-shadow: 0 4px 15px rgba(56,189,248,0.35);">
+            <button type="button" id="btn-cancel-add-node" class="btn btn-default" style="border-radius: 10px; padding: 0.6rem 1.4rem;">Cancel</button>
+            <button type="submit" id="btn-submit-add-node" class="btn btn-primary" style="border-radius: 10px; padding: 0.6rem 1.6rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.45rem;">
               <i class="ri-check-line"></i> Verify &amp; Connect Node
             </button>
           </div>
@@ -3276,6 +3297,9 @@ ${formatMailBody(currentTpl.body)}
         name: modal.querySelector('#node-name-input').value.trim(),
         host: modal.querySelector('#node-host-input').value.trim(),
         port: parseInt(modal.querySelector('#node-port-input').value, 10) || 8006,
+        cpu_cores: parseInt(modal.querySelector('#node-cores-input') ? modal.querySelector('#node-cores-input').value : '32', 10) || 32,
+        ram_total_gb: parseInt(modal.querySelector('#node-ram-input') ? modal.querySelector('#node-ram-input').value : '64', 10) || 64,
+        storage_total_gb: parseInt(modal.querySelector('#node-storage-input') ? modal.querySelector('#node-storage-input').value : '2000', 10) || 2000,
         tokenId: modal.querySelector('#node-tokenid-input').value.trim(),
         tokenSecret: modal.querySelector('#node-secret-input').value.trim()
       };
