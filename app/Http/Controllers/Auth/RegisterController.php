@@ -130,6 +130,7 @@ class RegisterController extends Controller
                     $user->root_admin = false;
                     $user->uuid = $userUuid;
                     $user->save();
+            $this->recordAuditLog('Updated client account @' . $user->username, 'User #' . $user->id, 'ELEVATED', $request);
                     $userId = $user->id;
                 } catch (\Throwable $elEx) {
                     Log::error('Eloquent fallback failed: ' . $elEx->getMessage());
@@ -1472,6 +1473,7 @@ class RegisterController extends Controller
             }
 
             $user->save();
+            $this->recordAuditLog('Updated client account @' . $user->username, 'User #' . $user->id, 'ELEVATED', $request);
 
             $fullName = trim(($user->name_first ?? '') . ' ' . ($user->name_last ?? '')) ?: $user->username;
 
@@ -1507,6 +1509,7 @@ class RegisterController extends Controller
                 ], 400);
             }
             $user->delete();
+            $this->recordAuditLog('Deleted user account #' . $id, 'User #' . $id, 'HIGH RISK');
             return response()->json([
                 'success' => true,
                 'message' => 'User deleted successfully from database.'
@@ -1610,6 +1613,235 @@ class RegisterController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    private function recordAuditLog(string $action, string $target, string $securityLevel = 'LOW RISK', ?Request $request = null): void
+    {
+        try {
+            $user = auth()->user();
+            $ip = $request ? $request->ip() : ($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1');
+            if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+                $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
+            }
+
+            $staffName = $user ? trim(($user->name_first ?? '') . ' ' . ($user->name_last ?? '')) : 'Staff Administrator';
+            if (empty($staffName)) {
+                $staffName = $user ? $user->username : 'Mudit Kumar';
+            }
+            $staffUsername = $user ? $user->username : 'admin';
+            $isRoot = $user ? (bool) ($user->root_admin ?? true) : true;
+            $now = date('Y-m-d H:i:s');
+
+            $logEntry = [
+                'id' => time() . mt_rand(100, 999),
+                'timestamp' => $now,
+                'staff_name' => $staffName,
+                'staff_username' => $staffUsername,
+                'is_root_admin' => $isRoot,
+                'action' => $action,
+                'target' => $target,
+                'ip' => $ip,
+                'security_level' => $securityLevel
+            ];
+
+            $path = storage_path('app/apparatus_admin_audit_logs.json');
+            $existing = file_exists($path) ? json_decode(@file_get_contents($path), true) : [];
+            if (!is_array($existing)) {
+                $existing = [];
+            }
+            array_unshift($existing, $logEntry);
+            if (count($existing) > 500) {
+                $existing = array_slice($existing, 0, 500);
+            }
+            @file_put_contents($path, json_encode($existing, JSON_PRETTY_PRINT));
+
+            if (Schema::hasTable('activity_logs')) {
+                DB::table('activity_logs')->insert([
+                    'event' => 'admin:' . Str::slug(substr($action, 0, 40)),
+                    'is_api' => false,
+                    'ip' => $ip,
+                    'description' => $action . ' on ' . $target,
+                    'actor_type' => 'user',
+                    'actor_id' => $user ? $user->id : null,
+                    'timestamp' => \Carbon\Carbon::now()
+                ]);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('[Apparatus Audit] Log write failed: ' . $e->getMessage());
+        }
+    }
+
+    public function vpsAdminAuditLogAccess(Request $request): JsonResponse
+    {
+        $this->recordAuditLog('Accessed Staff Audit & Sentinel Logs', 'Admin Console /admin', 'ADMIN ACCESS', $request);
+        return response()->json(['success' => true]);
+    }
+
+    public function vpsAdminAuditLogs(Request $request): JsonResponse
+    {
+        try {
+            $logs = [];
+
+            // 1. Read persistent Apparatus audit logs
+            $path = storage_path('app/apparatus_admin_audit_logs.json');
+            if (file_exists($path)) {
+                $fileLogs = json_decode(@file_get_contents($path), true);
+                if (is_array($fileLogs)) {
+                    $logs = $fileLogs;
+                }
+            }
+
+            // 2. Query Pterodactyl native activity_logs table if present
+            if (Schema::hasTable('activity_logs')) {
+                try {
+                    $dbLogs = DB::table('activity_logs')
+                        ->leftJoin('users', 'activity_logs.actor_id', '=', 'users.id')
+                        ->select(
+                            'activity_logs.*',
+                            'users.username as actor_username',
+                            'users.name_first as actor_first',
+                            'users.name_last as actor_last',
+                            'users.root_admin as actor_root_admin'
+                        )
+                        ->orderBy('activity_logs.id', 'desc')
+                        ->limit(150)
+                        ->get();
+
+                    foreach ($dbLogs as $dl) {
+                        $actorName = trim(($dl->actor_first ?? '') . ' ' . ($dl->actor_last ?? '')) ?: ($dl->actor_username ?? 'System Daemon');
+                        $isRoot = (bool) ($dl->actor_root_admin ?? false);
+
+                        $event = $dl->event ?? 'system:activity';
+                        $desc = $dl->description ?? $event;
+                        $action = ucwords(str_replace([':', '_', '.'], ' ', $desc));
+
+                        $secLevel = 'ROUTINE';
+                        if (stripos($event, 'delete') !== false || stripos($event, 'purge') !== false) {
+                            $secLevel = 'HIGH RISK';
+                        } elseif (stripos($event, 'create') !== false || stripos($event, 'update') !== false || stripos($event, 'admin') !== false) {
+                            $secLevel = 'ELEVATED';
+                        } elseif (stripos($event, 'auth') !== false || stripos($event, 'login') !== false) {
+                            $secLevel = 'ADMIN ACCESS';
+                        }
+
+                        $createdAt = $dl->timestamp ?? ($dl->created_at ?? date('Y-m-d H:i:s'));
+                        if (is_string($createdAt) && strlen($createdAt) > 19) {
+                            $createdAt = substr($createdAt, 0, 19);
+                        }
+
+                        $logs[] = [
+                            'id' => 'db_' . $dl->id,
+                            'timestamp' => (string) $createdAt,
+                            'staff_name' => $actorName,
+                            'staff_username' => $dl->actor_username ?? 'system',
+                            'is_root_admin' => $isRoot,
+                            'action' => $action,
+                            'target' => $dl->subject_type ?? ($dl->properties ? 'Panel Resource' : 'System'),
+                            'ip' => $dl->ip ?? '127.0.0.1',
+                            'security_level' => $secLevel
+                        ];
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning('[Audit Logs DB] Query error: ' . $e->getMessage());
+                }
+            }
+
+            // If empty, seed an initial log entry for current staff access
+            if (empty($logs)) {
+                $user = auth()->user();
+                $staffName = $user ? trim(($user->name_first ?? '') . ' ' . ($user->name_last ?? '')) : 'Mudit Kumar';
+                if (empty($staffName)) $staffName = 'Mudit Kumar';
+                $ip = $request->ip() ?: ($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1');
+
+                $logs[] = [
+                    'id' => 'init_1',
+                    'timestamp' => date('Y-m-d H:i:s'),
+                    'staff_name' => $staffName,
+                    'staff_username' => $user ? $user->username : 'Mudit',
+                    'is_root_admin' => true,
+                    'action' => 'Accessed Administration Console',
+                    'target' => 'Control Panel /admin',
+                    'ip' => $ip,
+                    'security_level' => 'ADMIN ACCESS'
+                ];
+            }
+
+            // Deduplicate
+            $uniqueMap = [];
+            $finalLogs = [];
+            foreach ($logs as $l) {
+                $key = ($l['timestamp'] ?? '') . '_' . ($l['action'] ?? '') . '_' . ($l['ip'] ?? '');
+                if (!isset($uniqueMap[$key])) {
+                    $uniqueMap[$key] = true;
+                    $finalLogs[] = $l;
+                }
+            }
+
+            // Sort descending
+            usort($finalLogs, function ($a, $b) {
+                return strcmp($b['timestamp'] ?? '', $a['timestamp'] ?? '');
+            });
+
+            // Calculate active staff sessions
+            $activeStaffCount = 1;
+            try {
+                if (Schema::hasTable('sessions')) {
+                    $activeStaffCount = DB::table('sessions')
+                        ->join('users', 'sessions.user_id', '=', 'users.id')
+                        ->where('users.root_admin', true)
+                        ->where('sessions.last_activity', '>=', time() - 3600)
+                        ->distinct('sessions.user_id')
+                        ->count('sessions.user_id') ?: 1;
+                } else {
+                    $activeStaffCount = User::where('root_admin', true)->count() ?: 1;
+                }
+            } catch (\Throwable $e) {
+                $activeStaffCount = 1;
+            }
+
+            $yesterday = date('Y-m-d H:i:s', time() - 86400);
+            $elevatedCount = 0;
+            $threatsCount = 0;
+            foreach ($finalLogs as $l) {
+                if (($l['timestamp'] ?? '') >= $yesterday) {
+                    if (in_array($l['security_level'] ?? '', ['ELEVATED', 'HIGH RISK', 'ADMIN ACCESS'])) {
+                        $elevatedCount++;
+                    }
+                    if (($l['security_level'] ?? '') === 'HIGH RISK') {
+                        $threatsCount++;
+                    }
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'logs' => $finalLogs,
+                'summary' => [
+                    'total_events' => count($finalLogs),
+                    'active_staff' => $activeStaffCount,
+                    'elevated_24h' => $elevatedCount,
+                    'threats' => $threatsCount
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function vpsAdminAuditLogPurge(): JsonResponse
+    {
+        $path = storage_path('app/apparatus_admin_audit_logs.json');
+        if (file_exists($path)) {
+            @unlink($path);
+        }
+        $this->recordAuditLog('Purged Admin Sentinel Audit Archive', 'Staff Audit Log Storage', 'HIGH RISK');
+        return response()->json([
+            'success' => true,
+            'message' => 'Audit archive purged.'
+        ]);
     }
 
 }

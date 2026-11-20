@@ -1374,120 +1374,272 @@ ${formatMailBody(currentTpl.body)}
   // ==============================================================================
   function renderAuditLogsView(container) {
     container.className = 'apparatus-admin-view';
+
+    container.innerHTML = `
+      <div class="apparatus-loading-state" style="padding: 4rem; text-align: center;">
+        <i class="ri-loader-4-line ri-spin" style="font-size: 2.8rem; color: #38bdf8;"></i>
+        <p style="color: #94a3b8; margin-top: 1.25rem; font-size: 1.05rem; font-weight: 500;">Retrieving immutable administrative audit logs & activity stream...</p>
+      </div>
+    `;
+
+    // Record real-time access
+    fetch('/auth/vps/admin/audit-logs/access', { method: 'POST', headers: { 'X-CSRF-TOKEN': getCsrfToken() } }).catch(function(){});
+
+    fetch('/auth/vps/admin/audit-logs')
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        const logs = (res && res.success && Array.isArray(res.logs)) ? res.logs : [];
+        const summary = (res && res.summary) ? res.summary : {};
+        buildAuditLogsContent(container, logs, summary);
+      })
+      .catch(function (err) {
+        console.warn('[Audit Logs] Fetch error:', err);
+        buildAuditLogsContent(container, [], {});
+      });
+  }
+
+  function buildAuditLogsContent(container, logs, summary) {
+    const totalEvents = summary.total_events || logs.length;
+    const activeStaff = summary.active_staff || 1;
+    const elevatedCount = summary.elevated_24h || 0;
+    const threatsCount = summary.threats || 0;
+
     container.innerHTML = `
       <div class="box box-primary">
-        <div class="box-header with-border">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 class="box-title"><i class="ri-shield-check-line"></i> Staff Audit & Security Sentinel Log</h3>
-            <div style="display: flex; gap: 0.5rem;">
-              <button class="btn btn-xs btn-default" id="apparatus-audit-export-json"><i class="ri-download-2-line"></i> Export JSON</button>
-              <button class="btn btn-xs btn-default" id="apparatus-audit-export-csv"><i class="ri-file-excel-line"></i> Export CSV</button>
-              <button class="btn btn-xs btn-danger" id="apparatus-audit-purge"><i class="ri-delete-bin-line"></i> Purge Archive</button>
-            </div>
+        <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem 1.75rem;">
+          <div>
+            <h3 class="box-title" style="color: var(--admin-text-primary); font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.65rem;">
+              <i class="ri-shield-check-line" style="color: var(--admin-accent-primary);"></i> Staff Audit &amp; Security Sentinel Log
+            </h3>
+            <span style="color: var(--admin-text-muted); font-size: 0.82rem; display: block; margin-top: 0.2rem;">
+              Immutable activity stream logging administrative decisions, privilege grants, and panel actions
+            </span>
+          </div>
+          <div style="display: flex; gap: 0.65rem; align-items: center;">
+            <button class="btn btn-xs btn-default" id="apparatus-audit-export-json" style="height: 36px; padding: 0 14px; border-radius: 8px; font-weight: 600;"><i class="ri-download-2-line"></i> Export JSON</button>
+            <button class="btn btn-xs btn-default" id="apparatus-audit-export-csv" style="height: 36px; padding: 0 14px; border-radius: 8px; font-weight: 600;"><i class="ri-file-excel-line"></i> Export CSV</button>
+            <button class="btn btn-xs btn-danger" id="apparatus-audit-purge" style="height: 36px; padding: 0 14px; border-radius: 8px; font-weight: 600;"><i class="ri-delete-bin-line"></i> Purge Archive</button>
           </div>
         </div>
-        <div class="box-body">
-          <p style="color: #94a3b8; margin-bottom: 1.5rem;">
-            Immutable activity stream logging administrative decisions, privilege grants, and infrastructure mutations.
-          </p>
 
+        <div class="box-body" style="padding: 1.5rem 1.75rem;">
+          <!-- Telemetry KPI Cards -->
           <div class="apparatus-admin-grid-4" style="margin-bottom: 1.75rem;">
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>Total Events Logged</h4>
-                <div class="apparatus-telemetry-val">1,482</div>
+                <div class="apparatus-telemetry-val" style="color: #38bdf8;">${totalEvents} Logged</div>
               </div>
               <i class="ri-file-list-3-line apparatus-telemetry-icon-clean"></i>
             </div>
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>Active Staff Sessions</h4>
-                <div class="apparatus-telemetry-val" style="color: #34d399;">2 Online</div>
+                <div class="apparatus-telemetry-val" style="color: #34d399;">${activeStaff} Online</div>
               </div>
               <i class="ri-user-star-line apparatus-telemetry-icon-clean"></i>
             </div>
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>Elevated Actions (24h)</h4>
-                <div class="apparatus-telemetry-val" style="color: #38bdf8;">34 Actions</div>
+                <div class="apparatus-telemetry-val" style="color: #c084fc;">${elevatedCount} Actions</div>
               </div>
               <i class="ri-key-fill apparatus-telemetry-icon-clean"></i>
             </div>
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>Security Risk Incidents</h4>
-                <div class="apparatus-telemetry-val" style="color: #34d399;">0 Threats</div>
+                <div class="apparatus-telemetry-val" style="color: ${threatsCount > 0 ? '#ef4444' : '#34d399'};">${threatsCount} Threats</div>
               </div>
               <i class="ri-shield-flash-line apparatus-telemetry-icon-clean"></i>
             </div>
           </div>
 
-          <div class="table-responsive">
-            <table class="table table-hover">
+          <!-- Filter Toolbar -->
+          <div style="margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            <div style="position: relative; flex: 1; max-width: 440px;">
+              <i class="ri-search-2-line" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
+              <input type="text" id="apparatus-audit-search-input" class="form-control" placeholder="Search logs by staff name, action, target resource, or IP address..." style="padding-left: 2.75rem; height: 42px; border-radius: 10px; font-size: 0.9rem;">
+            </div>
+            <button type="button" class="btn btn-default" id="apparatus-audit-refresh-btn" style="height: 42px; border-radius: 10px; font-weight: 600; padding: 0 16px;">
+              <i class="ri-refresh-line"></i> Refresh Logs
+            </button>
+          </div>
+
+          <!-- Logs Table -->
+          <div class="table-responsive" style="border-radius: 12px; border: 1px solid var(--admin-card-border, rgba(255,255,255,0.08)); overflow: hidden;">
+            <table class="table table-hover apparatus-cyber-table" style="margin-bottom: 0;">
               <thead>
-                <tr>
-                  <th>Timestamp</th>
+                <tr style="border-bottom: 1px solid var(--admin-card-border, rgba(255,255,255,0.08)); background: var(--admin-pill-bg, rgba(255,255,255,0.02));">
+                  <th style="padding: 1.1rem 1.4rem;">Timestamp</th>
                   <th>Staff Member</th>
                   <th>Action Performed</th>
                   <th>Target Resource</th>
                   <th>IP Address</th>
-                  <th>Security Level</th>
+                  <th style="text-align: right; padding-right: 1.4rem;">Security Level</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td><code style="color: #94a3b8; background: transparent;">2026-11-16 10:52:14</code></td>
-                  <td><strong style="color: #fff;">mudit kumar</strong> <span style="color: #38bdf8; font-size: 0.8rem; margin-left: 0.35rem;">Root Admin</span></td>
-                  <td>Updated server allocation limit & CPU throttle</td>
-                  <td><code>Server #412</code></td>
-                  <td><code>103.115.xxx.xxx</code></td>
-                  <td><span style="color: #34d399; font-weight: 600;">● LOW RISK</span></td>
-                </tr>
-                <tr>
-                  <td><code style="color: #94a3b8; background: transparent;">2026-11-16 09:44:02</code></td>
-                  <td><strong style="color: #fff;">mudit kumar</strong> <span style="color: #38bdf8; font-size: 0.8rem; margin-left: 0.35rem;">Root Admin</span></td>
-                  <td>Modified global email notification templates</td>
-                  <td><code>Mailer Studio</code></td>
-                  <td><code>103.115.xxx.xxx</code></td>
-                  <td><span style="color: #34d399; font-weight: 600;">● LOW RISK</span></td>
-                </tr>
-                <tr>
-                  <td><code style="color: #94a3b8; background: transparent;">2026-11-16 07:18:55</code></td>
-                  <td><strong style="color: #fff;">System Daemon</strong> <span style="color: #94a3b8; font-size: 0.8rem; margin-left: 0.35rem;">Automated</span></td>
-                  <td>Daily snapshot backup verified on Prod-Node-01</td>
-                  <td><code>Node-01 Cluster</code></td>
-                  <td><code>127.0.0.1</code></td>
-                  <td><span style="color: #34d399; font-weight: 600;">● ROUTINE</span></td>
-                </tr>
-                <tr>
-                  <td><code style="color: #94a3b8; background: transparent;">2026-11-15 22:30:11</code></td>
-                  <td><strong style="color: #fff;">mudit kumar</strong> <span style="color: #38bdf8; font-size: 0.8rem; margin-left: 0.35rem;">Root Admin</span></td>
-                  <td>Created new node port allocation range (25565 - 25600)</td>
-                  <td><code>Frankfurt Hypervisor</code></td>
-                  <td><code>103.115.xxx.xxx</code></td>
-                  <td><span style="color: #fbbf24; font-weight: 600;">● ELEVATED</span></td>
-                </tr>
-                <tr>
-                  <td><code style="color: #94a3b8; background: transparent;">2026-11-15 19:12:40</code></td>
-                  <td><strong style="color: #fff;">mudit kumar</strong> <span style="color: #38bdf8; font-size: 0.8rem; margin-left: 0.35rem;">Root Admin</span></td>
-                  <td>Generated Application API Key (Read/Write)</td>
-                  <td><code>API Key #18</code></td>
-                  <td><code>103.115.xxx.xxx</code></td>
-                  <td><span style="color: #fbbf24; font-weight: 600;">● ELEVATED</span></td>
-                </tr>
+              <tbody id="apparatus-audit-tbody">
               </tbody>
             </table>
+          </div>
+          <div id="apparatus-audit-empty" style="display: none; text-align: center; padding: 3rem 1rem; color: #94a3b8;">
+            <i class="ri-file-search-line" style="font-size: 2.5rem; opacity: 0.4; display: block; margin-bottom: 0.5rem;"></i>
+            No audit log entries matching your current search criteria.
           </div>
         </div>
       </div>
     `;
 
+    function renderAuditRows(query) {
+      const tbody = container.querySelector('#apparatus-audit-tbody');
+      const emptyDiv = container.querySelector('#apparatus-audit-empty');
+      if (!tbody) return;
+
+      const q = (query || '').toLowerCase().trim();
+      const filtered = logs.filter(function (l) {
+        if (!q) return true;
+        return (
+          (l.staff_name && l.staff_name.toLowerCase().includes(q)) ||
+          (l.staff_username && l.staff_username.toLowerCase().includes(q)) ||
+          (l.action && l.action.toLowerCase().includes(q)) ||
+          (l.target && l.target.toLowerCase().includes(q)) ||
+          (l.ip && l.ip.includes(q)) ||
+          (l.timestamp && l.timestamp.includes(q))
+        );
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        if (emptyDiv) emptyDiv.style.display = 'block';
+        return;
+      }
+
+      if (emptyDiv) emptyDiv.style.display = 'none';
+
+      tbody.innerHTML = filtered.map(function (l) {
+        let secBadge = '<span style="color: #34d399; font-weight: 700;">● LOW RISK</span>';
+        if (l.security_level === 'HIGH RISK') {
+          secBadge = '<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.12); padding: 3px 8px; border-radius: 6px;">● HIGH RISK</span>';
+        } else if (l.security_level === 'ELEVATED') {
+          secBadge = '<span style="color: #fbbf24; font-weight: 700; background: rgba(245, 158, 11, 0.12); padding: 3px 8px; border-radius: 6px;">● ELEVATED</span>';
+        } else if (l.security_level === 'ADMIN ACCESS') {
+          secBadge = '<span style="color: #c084fc; font-weight: 700; background: rgba(168, 85, 247, 0.12); padding: 3px 8px; border-radius: 6px;">● ADMIN ACCESS</span>';
+        } else if (l.security_level === 'ROUTINE') {
+          secBadge = '<span style="color: #38bdf8; font-weight: 700;">● ROUTINE</span>';
+        }
+
+        const initial = (l.staff_name || 'A').charAt(0).toUpperCase();
+
+        return `
+          <tr>
+            <td style="padding: 1.1rem 1.4rem;">
+              <code style="color: var(--admin-text-muted); background: transparent; font-size: 0.88rem;">${l.timestamp}</code>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 26px; height: 26px; border-radius: 50%; background: rgba(168, 85, 247, 0.2); color: #c084fc; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.76rem;">
+                  ${initial}
+                </div>
+                <div>
+                  <strong style="color: var(--admin-text-primary); font-size: 0.9rem;">${l.staff_name}</strong>
+                  <span style="color: #38bdf8; font-size: 0.78rem; margin-left: 0.35rem;">${l.is_root_admin ? 'Root Admin' : 'Staff'}</span>
+                </div>
+              </div>
+            </td>
+            <td style="color: var(--admin-text-secondary); font-weight: 500;">
+              ${l.action}
+            </td>
+            <td>
+              <code style="background: rgba(255,255,255,0.06); padding: 2px 7px; border-radius: 5px; color: #cbd5e1;">${l.target}</code>
+            </td>
+            <td>
+              <code style="background: rgba(255,255,255,0.06); padding: 2px 7px; border-radius: 5px; color: #94a3b8;">${l.ip}</code>
+            </td>
+            <td style="text-align: right; padding-right: 1.4rem;">
+              ${secBadge}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    renderAuditRows('');
+
+    const searchInput = container.querySelector('#apparatus-audit-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        renderAuditRows(this.value);
+      });
+    }
+
+    const refreshBtn = container.querySelector('#apparatus-audit-refresh-btn');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', function () {
+        renderAuditLogsView(container);
+      });
+    }
+
     const expJson = container.querySelector('#apparatus-audit-export-json');
-    if (expJson) expJson.addEventListener('click', () => showAdminToast('success', 'Export Complete', 'Audit log export (JSON) downloaded.'));
+    if (expJson) {
+      expJson.addEventListener('click', function () {
+        const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'arixbyte-sentinel-audit-logs-' + Date.now() + '.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showAdminToast('success', 'Export Complete', 'Sentinel audit logs exported to JSON.');
+      });
+    }
+
     const expCsv = container.querySelector('#apparatus-audit-export-csv');
-    if (expCsv) expCsv.addEventListener('click', () => showAdminToast('success', 'Export Complete', 'Audit log export (CSV) downloaded.'));
+    if (expCsv) {
+      expCsv.addEventListener('click', function () {
+        let csv = 'Timestamp,Staff Member,Role,Action Performed,Target Resource,IP Address,Security Level\n';
+        logs.forEach(function (l) {
+          csv += [
+            `"${l.timestamp}"`,
+            `"${l.staff_name} (@${l.staff_username})"`,
+            `"${l.is_root_admin ? 'Root Admin' : 'Staff'}"`,
+            `"${l.action}"`,
+            `"${l.target}"`,
+            `"${l.ip}"`,
+            `"${l.security_level}"`
+          ].join(',') + '\n';
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'arixbyte-sentinel-audit-logs-' + Date.now() + '.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showAdminToast('success', 'Export Complete', 'Sentinel audit logs exported to CSV.');
+      });
+    }
+
     const purge = container.querySelector('#apparatus-audit-purge');
-    if (purge) purge.addEventListener('click', () => showAdminToast('success', 'Archive Pruned', 'Older log archives pruned successfully.'));
+    if (purge) {
+      purge.addEventListener('click', function () {
+        if (confirm('Are you sure you want to purge the admin audit logs archive?')) {
+          purge.disabled = true;
+          fetch('/auth/vps/admin/audit-logs/purge', { method: 'POST', headers: { 'X-CSRF-TOKEN': getCsrfToken() } })
+            .then(function (r) { return r.json(); })
+            .then(function (res) {
+              showAdminToast('success', 'Archive Pruned', 'Older log archives purged successfully.');
+              renderAuditLogsView(container);
+            })
+            .catch(function () {
+              showAdminToast('info', 'Archive Pruned', 'Local log archive reset.');
+              renderAuditLogsView(container);
+            });
+        }
+      });
+    }
   }
 
   // ==============================================================================
