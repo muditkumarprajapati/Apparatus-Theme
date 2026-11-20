@@ -1889,3 +1889,237 @@ body.apparatus-admin-dark .table td a:not(.btn):hover {
   filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));
 }
 
+/* ==============================================================================
+   MODERN CLOUD VPS FLEET CARDS (ARIXBYTE SAAS SPEC)
+   ============================================================================== */
+.apparatus-vps-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  margin-top: 0.5rem;
+}
+
+.apparatus-vps-modern-card {
+  background: var(--admin-card-bg, #10141e);
+  border: 1px solid var(--admin-card-border, rgba(255, 255, 255, 0.08));
+  border-radius: 14px;
+  padding: 1.4rem 1.65rem;
+  box-shadow: var(--admin-card-shadow, 0 4px 20px rgba(0, 0, 0, 0.2));
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.apparatus-vps-modern-card:hover {
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+body.apparatus-admin-light .apparatus-vps-modern-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04) !important;
+}
+
+body.apparatus-admin-light .apparatus-vps-modern-card:hover {
+  border-color: #6366f1 !important;
+  box-shadow: 0 10px 28px rgba(99, 102, 241, 0.1) !important;
+}
+
+.apparatus-vps-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.apparatus-vps-card-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--admin-text-primary, #ffffff);
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+
+.apparatus-vps-card-subline {
+  color: #6366f1;
+  font-size: 0.86rem;
+  font-weight: 600;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.apparatus-vps-card-subline .vmid-text {
+  color: var(--admin-text-primary, #ffffff);
+  font-weight: 700;
+}
+
+.apparatus-vps-card-subline .node-text {
+  color: var(--admin-text-muted, #94a3b8);
+  font-weight: 500;
+}
+
+/* Status Pill */
+.apparatus-vps-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.apparatus-vps-status-pill.online {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.apparatus-vps-status-pill.online .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.apparatus-vps-status-pill.offline {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.apparatus-vps-status-pill.offline .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+}
+
+/* Tags Row */
+.apparatus-vps-card-tags {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin: 0.95rem 0 1.2rem 0;
+}
+
+.apparatus-vps-tag {
+  background: var(--admin-pill-bg, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--admin-table-border, rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
+  padding: 5px 11px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--admin-text-secondary, #cbd5e1);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.apparatus-vps-tag.uptime {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.28);
+  color: #10b981;
+}
+
+.apparatus-vps-tag.specs {
+  color: var(--admin-text-muted, #94a3b8);
+}
+
+/* Actions Row */
+.apparatus-vps-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.apparatus-vps-btn-manage {
+  background: linear-gradient(135deg, #4f46e5, #4338ca) !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-weight: 700 !important;
+  font-size: 0.88rem !important;
+  padding: 8px 18px !important;
+  border-radius: 9px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4) !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.apparatus-vps-btn-manage:hover {
+  background: linear-gradient(135deg, #4338ca, #3730a3) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.5) !important;
+}
+
+.apparatus-vps-btn-action {
+  background: var(--admin-pill-bg, rgba(255, 255, 255, 0.06)) !important;
+  border: 1px solid var(--admin-table-border, rgba(255, 255, 255, 0.12)) !important;
+  color: var(--admin-text-primary, #ffffff) !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  padding: 8px 14px !important;
+  border-radius: 9px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.apparatus-vps-btn-action:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+body.apparatus-admin-light .apparatus-vps-btn-action {
+  color: #1e293b !important;
+}
+
+body.apparatus-admin-light .apparatus-vps-btn-action:hover {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.apparatus-vps-btn-action.stop {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.28) !important;
+  color: #ef4444 !important;
+}
+
+.apparatus-vps-btn-action.stop:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: #f87171 !important;
+}
+
+.apparatus-vps-btn-action.reboot:hover {
+  color: #38bdf8 !important;
+}
+
+.apparatus-vps-btn-action.delete {
+  margin-left: auto;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+  color: #ef4444 !important;
+  padding: 8px 12px !important;
+}
+
+.apparatus-vps-btn-action.delete:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border-color: #ef4444 !important;
+}
+
+

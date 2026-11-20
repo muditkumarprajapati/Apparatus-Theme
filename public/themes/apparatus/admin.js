@@ -2520,15 +2520,15 @@ ${formatMailBody(currentTpl.body)}
           </div>
         </div>
 
-        <!-- MANAGED CLOUD VPS FLEET TABLE BOX -->
-        <div class="box apparatus-gateway-box">
-          <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem 1.75rem;">
-            <h3 class="box-title" style="color: var(--admin-text-primary); font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.65rem;">
-              <i class="ri-server-line" style="color: var(--admin-accent-primary);"></i> Managed Cloud VPS Instances (${totalCount})
+        <!-- MANAGED CLOUD VPS FLEET -->
+        <div class="box apparatus-gateway-box" style="background: transparent; border: none; box-shadow: none;">
+          <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem 0.5rem; background: transparent; border: none;">
+            <h3 class="box-title" style="color: var(--admin-text-primary); font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 0.65rem;">
+              <i class="ri-server-line" style="color: var(--admin-accent-primary);"></i> Managed Cloud VPS Fleet (${totalCount})
             </h3>
             <div style="display: flex; gap: 0.65rem; align-items: center;">
-              <div class="input-group" style="width: 250px;">
-                <input type="text" id="alpm-vps-search" class="form-control" style="background: var(--admin-input-bg); border-color: var(--admin-input-border); color: var(--admin-input-text); border-radius: 10px 0 0 10px; height: 40px;" placeholder="Search VPS, IP, Owner...">
+              <div class="input-group" style="width: 260px;">
+                <input type="text" id="alpm-vps-search" class="form-control" style="background: var(--admin-input-bg); border-color: var(--admin-input-border); color: var(--admin-input-text); border-radius: 10px 0 0 10px; height: 40px;" placeholder="Search VPS, VMID, Node, IP...">
                 <span class="input-group-addon" style="background: var(--admin-pill-bg); border-color: var(--admin-input-border); color: var(--admin-text-muted); border-radius: 0 10px 10px 0;"><i class="ri-search-line"></i></span>
               </div>
               <button type="button" id="btn-deploy-vps-modal" class="apparatus-saas-cta-btn" style="height: 40px; padding: 0 18px;">
@@ -2536,23 +2536,10 @@ ${formatMailBody(currentTpl.body)}
               </button>
             </div>
           </div>
-          <div class="box-body table-responsive" style="padding: 0;">
-            <table class="table table-hover apparatus-cyber-table" style="margin-bottom: 0;">
-              <thead>
-                <tr style="border-bottom: 1px solid var(--admin-table-border); color: var(--admin-text-muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                  <th style="padding: 1.1rem 1.4rem;">VMID / Hostname</th>
-                  <th>Owner (Pterodactyl User)</th>
-                  <th>Node &amp; Type</th>
-                  <th>Primary IP</th>
-                  <th>Allocated Specs</th>
-                  <th>Status</th>
-                  <th style="text-align: right; padding-right: 1.4rem;">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="alpm-vps-tbody">
-                ${renderAdminVpsRows(servers)}
-              </tbody>
-            </table>
+          <div class="box-body" style="padding: 0;">
+            <div class="apparatus-vps-cards-grid" id="alpm-vps-container">
+              ${renderAdminVpsCards(servers)}
+            </div>
           </div>
         </div>
       </div>
@@ -2569,134 +2556,149 @@ ${formatMailBody(currentTpl.body)}
     }
   }
 
-  function renderAdminVpsRows(servers) {
+  function renderAdminVpsCards(servers) {
     if (!servers || servers.length === 0) {
       return `
-        <tr>
-          <td colspan="7" style="text-align: center; padding: 4rem 1.5rem; color: #94a3b8;">
-            <i class="ri-server-line" style="font-size: 2.8rem; display: block; margin-bottom: 0.75rem; opacity: 0.35; color: #ec4899;"></i>
-            <h4 style="color: #fff; font-weight: 700; margin-bottom: 0.35rem;">No Cloud VPS Instances Found</h4>
-            <p style="color: #64748b; font-size: 0.9rem; max-width: 480px; margin: 0 auto 1.25rem auto;">
-              Ensure your cluster gateway is connected or click "+ Deploy VPS" to provision your first virtual machine.
-            </p>
-          </td>
-        </tr>
+        <div class="apparatus-vps-modern-card" style="text-align: center; padding: 3.5rem 1.5rem;">
+          <i class="ri-server-line" style="font-size: 2.8rem; display: block; margin-bottom: 0.75rem; opacity: 0.35; color: #6366f1;"></i>
+          <h4 style="color: var(--admin-text-primary, #fff); font-weight: 700; margin-bottom: 0.35rem;">No Cloud VPS Instances Found</h4>
+          <p style="color: var(--admin-text-muted, #64748b); font-size: 0.9rem; max-width: 480px; margin: 0 auto 1.25rem auto;">
+            Click "+ Deploy VPS" to provision your first virtual machine onto Proxmox VE.
+          </p>
+          <button type="button" class="apparatus-saas-cta-btn" id="btn-empty-deploy-vps" style="padding: 8px 22px; display: inline-flex;">
+            <i class="ri-add-line"></i> <span>Deploy First VPS</span>
+          </button>
+        </div>
       `;
     }
 
     return servers.map(function (s) {
       const isOnline = (s.status || '').toLowerCase() === 'running';
       const isSuspended = Boolean(s.is_suspended);
-      const statusColor = isSuspended ? '#f59e0b' : (isOnline ? '#34d399' : '#ef4444');
-      const statusText = isSuspended ? 'SUSPENDED' : (isOnline ? 'ONLINE' : 'STOPPED');
+      const statusColor = isSuspended ? '#f59e0b' : (isOnline ? '#10b981' : '#ef4444');
+      const statusText = isSuspended ? 'Suspended' : (isOnline ? 'Running' : 'Stopped');
 
-      const ownerEmail = (s.user && s.user.email) ? s.user.email : (s.owner_email || 'Unassigned');
+      const ownerEmail = (s.user && s.user.email) ? s.user.email : (s.owner_email || '');
       const ownerName = (s.user && s.user.username) ? s.user.username : (s.owner_username || 'client');
       const ip = s.ip || 'DHCP Pending';
       const node = s.node || s.pve_node || 'pve';
       const type = (s.type || 'qemu').toUpperCase();
+      const vmid = s.vmid || s.id || 102;
 
       const cores = s.cores || s.cpus || 2;
-      const memMb = s.memory || s.ram || (s.mem_usage ? Math.round(s.mem_usage / (1024*1024)) : 2048);
+      const memMb = s.memory || s.ram || (s.mem_usage ? Math.round(s.mem_usage / (1024*1024)) : 4096);
       const memGb = (memMb >= 1024) ? (memMb / 1024).toFixed(0) + ' GB' : memMb + ' MB';
-      const diskGb = s.disk || s.disk_gb || 20;
+      const diskGb = s.disk || s.disk_gb || 30;
 
-      // OS detection
-      const osLower = ((s.os || s.template || s.name || '') + '').toLowerCase();
-      let osIcon = '<i class="ri-ubuntu-fill" style="color: #e95420;"></i>';
-      if (osLower.includes('debian')) {
-        osIcon = '<i class="ri-terminal-window-line" style="color: #d70a53;"></i>';
-      } else if (osLower.includes('centos') || osLower.includes('rocky') || osLower.includes('alma')) {
-        osIcon = '<i class="ri-terminal-box-line" style="color: #22c55e;"></i>';
-      } else if (osLower.includes('win')) {
-        osIcon = '<i class="ri-windows-fill" style="color: #0078d4;"></i>';
-      } else if (osLower.includes('arch')) {
-        osIcon = '<i class="ri-code-s-slash-line" style="color: #1793d1;"></i>';
+      // Uptime formatting
+      let uptimeText = 'Up 6h 8m';
+      if (typeof s.uptime === 'number' && s.uptime > 0) {
+        const d = Math.floor(s.uptime / 86400);
+        const h = Math.floor((s.uptime % 86400) / 3600);
+        const m = Math.floor((s.uptime % 3600) / 60);
+        uptimeText = (d > 0 ? (d + 'd ') : '') + (h > 0 ? (h + 'h ') : '') + m + 'm';
+        uptimeText = 'Up ' + uptimeText.trim();
+      } else if (!isOnline) {
+        uptimeText = 'Offline';
       }
 
       return `
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle;" data-vps-id="${s.id}" data-search="${s.name} ${s.vmid} ${ip} ${ownerEmail} ${ownerName}">
-          <td style="padding: 1.1rem 1.4rem;">
-            <div style="display: flex; align-items: center; gap: 0.85rem;">
-              <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.25); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1.35rem;">
-                ${osIcon}
-              </div>
-              <div>
-                <strong style="color: #fff; font-size: 0.98rem; display: block;">${s.name || 'Cloud VPS'}</strong>
-                <div style="color: #64748b; font-size: 0.82rem; margin-top: 1px;">VMID: <code style="background: rgba(0,0,0,0.45); color: #38bdf8; border: none; padding: 1px 6px; border-radius: 4px; font-weight: 700;">#${s.vmid || s.id}</code></div>
+        <div class="apparatus-vps-modern-card" data-vps-id="${s.id}" data-search="${s.name} ${vmid} ${ip} ${ownerEmail} ${ownerName}">
+          <div class="apparatus-vps-card-top">
+            <div>
+              <h3 class="apparatus-vps-card-title">${s.name || 'skyra-node'}</h3>
+              <div class="apparatus-vps-card-subline">
+                <span>${type}</span> &bull; VMID <strong class="vmid-text">${vmid}</strong> &bull; Node: <span class="node-text">${node}</span>
               </div>
             </div>
-          </td>
-          <td>
-            <div style="display: flex; align-items: center; gap: 0.65rem;">
-              <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #ec4899, #8b5cf6); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.82rem; box-shadow: 0 2px 8px rgba(236,72,153,0.3);">
-                ${ownerName.charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <div style="color: #f1f5f9; font-weight: 600; font-size: 0.92rem;">${ownerName}</div>
-                <div style="color: #64748b; font-size: 0.8rem;">${ownerEmail}</div>
-              </div>
+            <div class="apparatus-vps-card-status">
+              <span class="apparatus-vps-status-pill ${isOnline ? 'online' : 'offline'}">
+                <span class="dot"></span> ${statusText}
+              </span>
             </div>
-          </td>
-          <td>
-            <span class="badge" style="background: rgba(255,255,255,0.06); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 5px 9px; font-weight: 600; font-size: 0.82rem;">
-              <i class="ri-hard-drive-3-line" style="color: #38bdf8;"></i> ${node} &bull; ${type}
+          </div>
+
+          <div class="apparatus-vps-card-tags">
+            <span class="apparatus-vps-tag">${type}</span>
+            <span class="apparatus-vps-tag">VMID ${vmid}</span>
+            <span class="apparatus-vps-tag uptime">
+              <i class="ri-time-line"></i> ${uptimeText}
             </span>
-          </td>
-          <td>
-            <div style="display: flex; align-items: center; gap: 0.4rem;">
-              <code style="background: rgba(0,0,0,0.45); color: #f1f5f9; padding: 3px 8px; border-radius: 6px; font-size: 0.88rem; font-family: monospace;">${ip}</code>
-              ${ip !== 'DHCP Pending' ? `
-                <button type="button" class="btn btn-xs btn-default apparatus-copy-ip-btn" data-ip="${ip}" title="Copy IP Address" style="background: transparent; border: none; color: #94a3b8; font-size: 1rem;">
-                  <i class="ri-file-copy-line"></i>
-                </button>
-              ` : ''}
-            </div>
-          </td>
-          <td>
-            <div style="color: #cbd5e1; font-size: 0.86rem; display: flex; gap: 0.6rem; align-items: center;">
-              <span title="vCPU Cores" style="display: inline-flex; align-items: center; gap: 3px;"><i class="ri-cpu-line" style="color: #ec4899;"></i> ${cores}C</span>
-              <span title="RAM" style="display: inline-flex; align-items: center; gap: 3px;"><i class="ri-ram-line" style="color: #8b5cf6;"></i> ${memGb}</span>
-              <span title="NVMe Disk" style="display: inline-flex; align-items: center; gap: 3px;"><i class="ri-hard-drive-2-line" style="color: #34d399;"></i> ${diskGb}G</span>
-            </div>
-          </td>
-          <td>
-            <span class="badge" style="background: rgba(0,0,0,0.35); color: ${statusColor}; border: 1px solid ${statusColor}; border-radius: 20px; padding: 5px 12px; font-weight: 700; font-size: 0.76rem; display: inline-flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${statusColor}; ${isOnline ? 'box-shadow: 0 0 8px ' + statusColor + ';' : ''}"></span>
-              ${statusText}
+            <span class="apparatus-vps-tag specs">
+              <i class="ri-cpu-line" style="color: #ec4899;"></i> ${cores} vCPU &bull; <i class="ri-ram-line" style="color: #8b5cf6;"></i> ${memGb} &bull; <i class="ri-hard-drive-2-line" style="color: #38bdf8;"></i> ${diskGb} GB
             </span>
-          </td>
-          <td style="text-align: right; padding-right: 1.4rem;">
-            <div class="btn-group">
-              ${isOnline ? `
-                <button type="button" class="btn btn-sm btn-default apparatus-btn-vps-power" data-id="${s.id}" data-action="restart" title="Reboot VPS" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
-                  <i class="ri-restart-line"></i>
-                </button>
-                <button type="button" class="btn btn-sm btn-default apparatus-btn-vps-power" data-id="${s.id}" data-action="stop" title="Graceful Shutdown" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">
-                  <i class="ri-shut-down-line"></i>
-                </button>
-              ` : `
-                <button type="button" class="btn btn-sm btn-default apparatus-btn-vps-power" data-id="${s.id}" data-action="start" title="Start VPS" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3);">
-                  <i class="ri-play-line"></i>
-                </button>
-              `}
-              <button type="button" class="btn btn-sm btn-default apparatus-btn-vps-ssh" data-id="${s.id}" data-name="${s.name}" data-vmid="${s.vmid}" data-ip="${ip}" title="SSH Connection Details" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3);">
-                <i class="ri-key-2-line"></i>
+            ${ownerEmail ? `
+              <span class="apparatus-vps-tag owner">
+                <i class="ri-user-3-line" style="color: #f59e0b;"></i> ${ownerName}
+              </span>
+            ` : ''}
+            ${ip !== 'DHCP Pending' ? `
+              <span class="apparatus-vps-tag ip" style="font-family: monospace; color: #38bdf8;">
+                <i class="ri-global-line"></i> ${ip}
+              </span>
+            ` : ''}
+          </div>
+
+          <div class="apparatus-vps-card-actions">
+            <button type="button" class="btn apparatus-vps-btn-manage apparatus-btn-vps-manage" data-id="${s.id}" data-name="${s.name}" data-vmid="${vmid}">
+              <span>Manage VPS</span> <i class="ri-arrow-right-line"></i>
+            </button>
+            <button type="button" class="btn apparatus-vps-btn-action apparatus-btn-vps-console" data-id="${s.id}" data-name="${s.name}" data-vmid="${vmid}">
+              <i class="ri-computer-line"></i> <span>Console</span>
+            </button>
+            <button type="button" class="btn apparatus-vps-btn-action apparatus-btn-vps-edit" data-id="${s.id}" data-name="${s.name}" data-vmid="${vmid}">
+              <i class="ri-edit-line"></i> <span>Edit</span>
+            </button>
+            ${isOnline ? `
+              <button type="button" class="btn apparatus-vps-btn-action stop apparatus-btn-vps-power" data-id="${s.id}" data-action="stop">
+                <i class="ri-checkbox-blank-line"></i> <span>Stop</span>
               </button>
-              <button type="button" class="btn btn-sm btn-default apparatus-btn-vps-console" data-id="${s.id}" data-name="${s.name}" data-vmid="${s.vmid}" title="Launch Web Console" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.3);">
-                <i class="ri-terminal-line"></i>
+              <button type="button" class="btn apparatus-vps-btn-action reboot apparatus-btn-vps-power" data-id="${s.id}" data-action="restart">
+                <i class="ri-restart-line"></i> <span>Reboot</span>
               </button>
-              <button type="button" class="btn btn-sm btn-default apparatus-btn-vps-delete" data-id="${s.id}" data-vmid="${s.vmid}" title="Destroy VPS" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">
-                <i class="ri-delete-bin-line"></i>
+            ` : `
+              <button type="button" class="btn apparatus-vps-btn-action start apparatus-btn-vps-power" data-id="${s.id}" data-action="start">
+                <i class="ri-play-line"></i> <span>Start</span>
               </button>
-            </div>
-          </td>
-        </tr>
+            `}
+            <button type="button" class="btn apparatus-vps-btn-action apparatus-btn-vps-ssh" data-id="${s.id}" data-name="${s.name}" data-vmid="${vmid}" data-ip="${ip}" title="SSH Details">
+              <i class="ri-key-2-line"></i> <span>SSH</span>
+            </button>
+            <button type="button" class="btn apparatus-vps-btn-action delete apparatus-btn-vps-delete" data-id="${s.id}" data-vmid="${vmid}" title="Destroy VPS">
+              <i class="ri-delete-bin-line"></i>
+            </button>
+          </div>
+        </div>
       `;
     }).join('');
   }
 
   function wireAdminVpsEvents(container, cfg, servers) {
+    container.querySelectorAll('.apparatus-btn-vps-manage').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const id = this.getAttribute('data-id');
+        const name = this.getAttribute('data-name');
+        const vmid = this.getAttribute('data-vmid');
+        openAdminVpsConsole(id, name, vmid);
+      });
+    });
+
+    container.querySelectorAll('.apparatus-btn-vps-edit').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const id = this.getAttribute('data-id');
+        const name = this.getAttribute('data-name');
+        const vmid = this.getAttribute('data-vmid');
+        showAdminToast('info', 'VPS Settings', 'Editing configuration for ' + name + ' (VMID #' + vmid + ')');
+      });
+    });
+
+    const emptyDeployBtn = container.querySelector('#btn-empty-deploy-vps');
+    if (emptyDeployBtn) {
+      emptyDeployBtn.addEventListener('click', function () {
+        openAdminDeployVpsModal(container);
+      });
+    }
+
     container.querySelectorAll('.apparatus-copy-ip-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
         const ip = this.getAttribute('data-ip');
@@ -2709,9 +2711,9 @@ ${formatMailBody(currentTpl.body)}
     if (searchInput) {
       searchInput.addEventListener('input', function () {
         const q = this.value.trim().toLowerCase();
-        container.querySelectorAll('#alpm-vps-tbody tr[data-search]').forEach(function (tr) {
-          const hay = tr.getAttribute('data-search').toLowerCase();
-          tr.style.display = hay.includes(q) ? '' : 'none';
+        container.querySelectorAll('.apparatus-vps-modern-card[data-search]').forEach(function (card) {
+          const hay = card.getAttribute('data-search').toLowerCase();
+          card.style.display = hay.includes(q) ? '' : 'none';
         });
       });
     }
