@@ -308,9 +308,20 @@ body.fixed .content-wrapper,
 }
 
 .apparatus-admin-logo-img {
-  height: 28px;
-  width: auto;
-  object-fit: contain;
+  height: 28px !important;
+  max-width: 180px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+  transition: filter 0.2s ease !important;
+}
+
+body.apparatus-admin-light .apparatus-admin-logo-img {
+  filter: brightness(0) !important;
+}
+
+body.apparatus-admin-dark .apparatus-admin-logo-img {
+  filter: none !important;
 }
 
 /* Sidebar Toggle (Hamburger) */
@@ -1729,4 +1740,112 @@ p.text-muted,
   background: var(--admin-pill-bg) !important;
   color: var(--admin-text-secondary) !important;
   cursor: pointer !important;
+}
+
+
+/* ==============================================================================
+   CODE, UUID, MONOSPACE, & ALLOCATION BADGES (FIXES SQUISHED/DARK LABELS)
+   ============================================================================== */
+code,
+kbd,
+pre,
+samp,
+.table td code,
+.table th code,
+.box-body code,
+td > a > code,
+td > code {
+  font-family: var(--admin-mono, 'JetBrains Mono', monospace) !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  padding: 0.24rem 0.65rem !important;
+  border-radius: 6px !important;
+  letter-spacing: -0.01em !important;
+  display: inline-block !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  line-height: 1.4 !important;
+  max-width: 100% !important;
+  word-break: break-all !important;
+}
+
+body.apparatus-admin-light code,
+body.apparatus-admin-light kbd,
+body.apparatus-admin-light pre,
+body.apparatus-admin-light samp,
+body.apparatus-admin-light .table td code,
+body.apparatus-admin-light .table th code,
+body.apparatus-admin-light .box-body code,
+body.apparatus-admin-light td > a > code,
+body.apparatus-admin-light td > code {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+body.apparatus-admin-light a > code,
+body.apparatus-admin-light a code {
+  color: #2563eb !important;
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  text-decoration: none !important;
+}
+
+body.apparatus-admin-light a:hover > code,
+body.apparatus-admin-light a:hover code {
+  background: #dbeafe !important;
+  border-color: #93c5fd !important;
+  color: #1d4ed8 !important;
+}
+
+body.apparatus-admin-dark code,
+body.apparatus-admin-dark kbd,
+body.apparatus-admin-dark pre,
+body.apparatus-admin-dark samp,
+body.apparatus-admin-dark .table td code,
+body.apparatus-admin-dark .table th code,
+body.apparatus-admin-dark .box-body code,
+body.apparatus-admin-dark td > a > code,
+body.apparatus-admin-dark td > code {
+  background: #171b28 !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+body.apparatus-admin-dark a > code,
+body.apparatus-admin-dark a code {
+  color: #60a5fa !important;
+  background: rgba(59, 130, 246, 0.14) !important;
+  border-color: rgba(59, 130, 246, 0.35) !important;
+  text-decoration: none !important;
+}
+
+body.apparatus-admin-dark a:hover > code,
+body.apparatus-admin-dark a:hover code {
+  background: rgba(59, 130, 246, 0.24) !important;
+  border-color: rgba(59, 130, 246, 0.5) !important;
+  color: #93c5fd !important;
+}
+
+/* Native Pterodactyl Table Links Contrast */
+body.apparatus-admin-light .table td a:not(.btn) {
+  color: #2563eb !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+body.apparatus-admin-light .table td a:not(.btn):hover {
+  color: #1d4ed8 !important;
+  text-decoration: underline !important;
+}
+
+body.apparatus-admin-dark .table td a:not(.btn) {
+  color: #60a5fa !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+body.apparatus-admin-dark .table td a:not(.btn):hover {
+  color: #93c5fd !important;
+  text-decoration: underline !important;
 }

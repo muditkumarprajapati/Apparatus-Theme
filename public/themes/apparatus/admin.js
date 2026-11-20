@@ -419,12 +419,15 @@
     const navbar = document.querySelector('.main-header .navbar');
     if (!navbar) return;
 
-    // Clean Logo (Only image, zero duplicate text, zero capsule badge!)
+    // Clean Logo with automatic theme contrast and text fallback
     const logo = document.querySelector('.main-header .logo');
     if (logo && !logo.getAttribute('data-apparatus-logo')) {
       logo.setAttribute('data-apparatus-logo', 'true');
       logo.innerHTML = `
-        <img src="/themes/apparatus/arixbyte-logo.png" alt="ArixByte" class="apparatus-admin-logo-img" onerror="this.style.display='none';">
+        <a href="/admin" class="apparatus-admin-brand-link" style="display: flex; align-items: center; gap: 0.65rem; text-decoration: none; height: 100%; width: 100%;">
+          <img src="/themes/apparatus/arixbyte-logo.png" alt="ArixByte" class="apparatus-admin-logo-img" onerror="this.style.display='none'; const fb = document.getElementById('apparatus-brand-fallback-text'); if(fb) fb.style.display='inline-block';">
+          <span id="apparatus-brand-fallback-text" style="display: none; font-size: 1.25rem; font-weight: 800; color: var(--admin-text-primary); letter-spacing: -0.02em;">ArixByte</span>
+        </a>
       `;
     }
 
@@ -432,12 +435,12 @@
     if (!document.getElementById('apparatus-admin-header-center')) {
       const centerBox = document.createElement('div');
       centerBox.id = 'apparatus-admin-header-center';
-      centerBox.style.cssText = 'display: flex; align-items: center; gap: 0.65rem; margin-left: 1rem; color: #cbd5e1; font-size: 0.92rem; font-weight: 500;';
+      centerBox.style.cssText = 'display: flex; align-items: center; gap: 0.65rem; margin-left: 1rem; color: var(--admin-text-muted); font-size: 0.92rem; font-weight: 500;';
       centerBox.innerHTML = `
-        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);"></span>
-        <span style="color: rgba(255,255,255,0.9); font-weight: 600;">ArixByte Infrastructure</span>
-        <span style="color: rgba(255,255,255,0.3);">&bull;</span>
-        <span style="color: #94a3b8; font-size: 0.85rem;">Administration Console</span>
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);"></span>
+        <span style="color: var(--admin-text-primary); font-weight: 600;">ArixByte Infrastructure</span>
+        <span style="color: var(--admin-text-muted);">&bull;</span>
+        <span style="color: var(--admin-text-muted); font-size: 0.85rem;">Administration Console</span>
       `;
       const toggle = navbar.querySelector('.sidebar-toggle');
       if (toggle && toggle.nextSibling) {
