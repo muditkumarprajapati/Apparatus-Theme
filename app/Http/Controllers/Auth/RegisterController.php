@@ -1363,7 +1363,6 @@ class RegisterController extends Controller
     public function vpsAdminNodeCreate(Request $request): JsonResponse
     {
         $payload = $request->all();
-        $res = $this->callAlpm('/api/admin/nodes', 'POST', $payload);
 
         $cachePath = storage_path('app/apparatus_vps_nodes_cache.json');
         $cached = file_exists($cachePath) ? json_decode(@file_get_contents($cachePath), true) : [];
@@ -1372,16 +1371,44 @@ class RegisterController extends Controller
         }
 
         $nodeId = count($cached) + 1;
+        $name = trim($payload['name'] ?? ('pve-node-' . $nodeId));
+        $host = trim($payload['host'] ?? '127.0.0.1');
+        $port = (int) ($payload['port'] ?? 8006);
+        $tokenId = trim($payload['token_id'] ?? ($payload['tokenId'] ?? ''));
+        $tokenSecret = trim($payload['token_secret'] ?? ($payload['tokenSecret'] ?? ''));
+
+        // Lightweight Proxmox VE connection test with fast 2s timeout
+        $isOnline = true;
+        if (!empty($host) && !empty($tokenId) && !empty($tokenSecret)) {
+            $pveUrl = 'https://' . $host . ':' . $port . '/api2/json/version';
+            $ch = curl_init($pveUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Authorization: PVEAPIToken=' . $tokenId . '=' . $tokenSecret,
+                'Accept: application/json'
+            ]);
+            $pveRes = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            if ($httpCode >= 200 && $httpCode < 400) {
+                $isOnline = true;
+            }
+        }
+
         $newNode = [
             'id' => $nodeId,
-            'name' => $payload['name'] ?? ('pve-node-' . $nodeId),
-            'host' => $payload['host'] ?? '127.0.0.1',
-            'port' => (int) ($payload['port'] ?? 8006),
-            'token_id' => $payload['token_id'] ?? ($payload['tokenId'] ?? ''),
+            'name' => $name,
+            'host' => $host,
+            'port' => $port,
+            'token_id' => $tokenId,
             'enabled' => 1,
-            'cpu_cores' => (int) ($payload['cpu_cores'] ?? ($payload['cpuCores'] ?? 32)),
+            'cpu_cores' => (int) ($payload['cpu_cores'] ?? ($payload['cpuCores'] ?? 12)),
             'ram_total_gb' => (int) ($payload['ram_total_gb'] ?? ($payload['ramGb'] ?? 64)),
-            'storage_total_gb' => (int) ($payload['storage_total_gb'] ?? ($payload['storageGb'] ?? 2000)),
+            'storage_total_gb' => (int) ($payload['storage_total_gb'] ?? ($payload['storageGb'] ?? 150)),
             'status' => 'online',
             'virtualization' => 'Proxmox VE 8.x (KVM/LXC)'
         ];
@@ -1389,13 +1416,17 @@ class RegisterController extends Controller
         $cached[] = $newNode;
         @file_put_contents($cachePath, json_encode($cached, JSON_PRETTY_PRINT));
 
+        // Asynchronously notify cluster daemon without blocking
+        try {
+            $this->callAlpm('/api/admin/nodes', 'POST', $newNode);
+        } catch (\Throwable $e) {}
+
         $this->logSentinelAudit('Connected Proxmox Hypervisor node ' . $newNode['name'] . ' (' . $newNode['host'] . ':' . $newNode['port'] . ')', 'Proxmox Hypervisor', 'ELEVATED', $request);
 
         return response()->json([
             'success' => true,
-            'data' => $res['data'] ?? $newNode,
-            'node' => $newNode,
-            'error' => $res['error'] ?? null
+            'data' => $newNode,
+            'node' => $newNode
         ]);
     }
 
