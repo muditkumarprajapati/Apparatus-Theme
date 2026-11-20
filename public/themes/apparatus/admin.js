@@ -3475,18 +3475,18 @@ ${formatMailBody(currentTpl.body)}
     modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1.5rem;';
 
     modal.innerHTML = `
-      <div style="background: #0f0b18; border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; width: 100%; max-width: 680px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.85);">
-        <div style="padding: 1.25rem 1.75rem; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
+      <div style="background: var(--admin-modal-bg, #ffffff); border: 1px solid var(--admin-modal-border, #e2e8f0); border-radius: 16px; width: 100%; max-width: 680px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.25);">
+        <div style="padding: 1.25rem 1.75rem; background: var(--admin-pill-bg, #f8fafc); border-bottom: 1px solid var(--admin-table-border, #eef2f6); display: flex; justify-content: space-between; align-items: center;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.35rem;">
+            <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--admin-accent-soft, #eff6ff); color: var(--admin-accent-primary, #2563eb); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
               <i class="ri-server-line"></i>
             </div>
             <div>
-              <h3 style="margin: 0; color: #fff; font-weight: 700; font-size: 1.15rem;">Provision New Cloud VPS</h3>
-              <span style="color: #64748b; font-size: 0.82rem;">Deploy KVM instance onto Proxmox hypervisor cluster</span>
+              <h3 style="margin: 0; color: var(--admin-text-primary, #0f172a); font-weight: 700; font-size: 1.15rem;">Provision New Cloud VPS</h3>
+              <span style="color: var(--admin-text-muted, #64748b); font-size: 0.82rem;">Deploy KVM instance onto Proxmox hypervisor cluster</span>
             </div>
           </div>
-          <button type="button" id="btn-close-deploy-modal" style="background: transparent; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer;">
+          <button type="button" id="btn-close-deploy-modal" style="background: transparent; border: none; color: var(--admin-text-muted, #94a3b8); font-size: 1.4rem; cursor: pointer;">
             <i class="ri-close-line"></i>
           </button>
         </div>
@@ -3495,17 +3495,17 @@ ${formatMailBody(currentTpl.body)}
           <div class="row">
             <div class="col-md-4 col-sm-12">
               <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">Hostname / Name</label>
-                <input type="text" id="vps-name-input" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" placeholder="cloud-srv-01" required>
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">Hostname / Name</label>
+                <input type="text" id="vps-name-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" placeholder="cloud-srv-01" required>
               </div>
             </div>
             <div class="col-md-3 col-sm-12">
               <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem; display: flex; justify-content: space-between; align-items: center;">
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem; display: flex; justify-content: space-between; align-items: center;">
                   <span>Proxmox VMID</span>
-                  <span style="font-size: 0.74rem; color: #a855f7; font-weight: 600;">PVE ID</span>
+                  <span style="font-size: 0.74rem; color: var(--admin-accent-primary, #2563eb); font-weight: 600;">PVE ID</span>
                 </label>
-                <input type="number" id="vps-vmid-input" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" placeholder="100 (Auto)" min="100" max="999999">
+                <input type="number" id="vps-vmid-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" placeholder="100 (Auto)" min="100" max="999999">
               </div>
             </div>
             <div class="col-md-5 col-sm-12">
