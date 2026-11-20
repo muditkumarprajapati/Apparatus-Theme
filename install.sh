@@ -427,6 +427,13 @@ if '</head>' in content:
   }
 ]
 EOF
+
+  # Purge pre-seeded fake VPS cache so no dummy instances remain
+  VPS_CACHE="$PTERO_DIR/storage/app/apparatus_vps_cache.json"
+  if [ -f "$VPS_CACHE" ]; then
+    rm -f "$VPS_CACHE"
+  fi
+
   chown -R www-data:www-data "$PTERO_DIR/storage"
   chmod -R 775 "$PTERO_DIR/storage"
 
