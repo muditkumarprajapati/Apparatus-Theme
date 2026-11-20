@@ -575,21 +575,24 @@
     });
 
     // 4. Proper Transparency & Styling for ContentBox cards (.sc-mjlt6f-2) across /account, /account/api, /account/ssh
-    const contentCards = document.querySelectorAll('.sc-mjlt6f-2, [class*="sc-mjlt6f-2"], div[class*="ContentBox___StyledDiv"]');
-    const defaultOp = (parseInt(localStorage.getItem('apparatus_card_opacity') || '50', 10) / 100).toFixed(2);
-    contentCards.forEach(function (card) {
-      card.style.setProperty('background', 'radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.12), transparent 55%), rgba(18, 12, 28, ' + defaultOp + ')', 'important');
-      card.style.setProperty('backdrop-filter', 'blur(24px) saturate(180%)', 'important');
-      card.style.setProperty('-webkit-backdrop-filter', 'blur(20px) saturate(180%)', 'important');
-      card.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.18)', 'important');
-      card.style.setProperty('border-radius', '16px', 'important');
-      card.style.setProperty('box-shadow', '0 16px 40px 0 rgba(0, 0, 0, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.2)', 'important');
-      if (card.parentElement && !card.parentElement.style.height) {
-        card.parentElement.style.display = 'flex';
-        card.parentElement.style.flexDirection = 'column';
-        card.style.flex = '1 1 auto';
-      }
-    });
+    const isAccountRoute = (window.location.pathname || '').startsWith('/account');
+    if (isAccountRoute) {
+      const contentCards = document.querySelectorAll('.sc-mjlt6f-2, [class*="sc-mjlt6f-2"], div[class*="ContentBox___StyledDiv"]');
+      const defaultOp = (parseInt(localStorage.getItem('apparatus_card_opacity') || '50', 10) / 100).toFixed(2);
+      contentCards.forEach(function (card) {
+        card.style.setProperty('background', 'radial-gradient(ellipse at 88% 25%, rgba(236, 72, 153, 0.12), transparent 55%), rgba(18, 12, 28, ' + defaultOp + ')', 'important');
+        card.style.setProperty('backdrop-filter', 'blur(24px) saturate(180%)', 'important');
+        card.style.setProperty('-webkit-backdrop-filter', 'blur(20px) saturate(180%)', 'important');
+        card.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.18)', 'important');
+        card.style.setProperty('border-radius', '16px', 'important');
+        card.style.setProperty('box-shadow', '0 16px 40px 0 rgba(0, 0, 0, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.2)', 'important');
+        if (card.parentElement && !card.parentElement.style.height) {
+          card.parentElement.style.display = 'flex';
+          card.parentElement.style.flexDirection = 'column';
+          card.style.flex = '1 1 auto';
+        }
+      });
+    }
 
     // Strip borders, backgrounds and shadows from any transition/fade wrappers inside cards ONLY
     document.querySelectorAll('.sc-mjlt6f-2 [class*="Fade"], .sc-mjlt6f-2 [class*="sc-1p0gm8n"], .sc-mjlt6f-2 div[class*="Fade__Container"]').forEach(function (fade) {

@@ -3247,8 +3247,7 @@ body:not(.apparatus-auth) div[class*="ModalMask"]>div {
 /* Ensure parent container is left-aligned and has exact 90% dashboard margin */
 div[class*="ActivityLogContainer"],
 body.apparatus-page-activity div[class*="PageContentBlock"],
-body:not(.apparatus-auth) div[class*="PageContentBlock"]:has(.bg-gray-700),
-body:not(.apparatus-auth) div[class*="PageContentBlock"]:has(#apparatus-activity-header) {
+body.apparatus-page-activity div[class*="PageContentBlock"]:has(#apparatus-activity-header) {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
@@ -5327,8 +5326,7 @@ body:not(.apparatus-auth) div[class*="PageContentBlock"] {
 div[class*="AccountOverviewContainer"],
 body.apparatus-page-account div[class*="PageContentBlock"],
 body.apparatus-page-account div[class*="PageContentBlock"] > div,
-body.apparatus-page-account .sc-12to0iy-1,
-div[class*="PageContentBlock"]>div:not([class*="ActivityLogContainer"]) {
+body.apparatus-page-account .sc-12to0iy-1 {
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
@@ -5377,9 +5375,7 @@ body.apparatus-page-account div.md\:grid,
 body.apparatus-page-account div[class*="md:grid"],
 body.apparatus-page-account div[class*="grid-cols-2"],
 body.apparatus-page-account .sc-12to0iy-1,
-body.apparatus-page-account div[class*="PageContentBlock"] > div,
-div[class*="PageContentBlock"] div.md\:grid,
-div[class*="PageContentBlock"] div[class*="grid-cols-2"] {
+body.apparatus-page-account div[class*="PageContentBlock"] > div {
   display: flex !important;
   flex-direction: column !important;
   grid-template-columns: 100% !important;
@@ -5396,46 +5392,30 @@ div[class*="PageContentBlock"] div[class*="grid-cols-2"] {
 }
 
 /* Ensure every security card (Update Password, Update Email Address, Two-Step) has 100% matching width & zero horizontal offsets */
-div.grid-cols-2 > *,
-div.grid-cols-2 > form,
-div.grid-cols-2 > div,
-div[class*="grid-cols-2"] > *,
-div[class*="grid-cols-2"] > form,
-div[class*="grid-cols-2"] > div,
-div.md\:grid > *,
-div.md\:grid > form,
-div.md\:grid > div,
-div[class*="md:grid"] > *,
-div[class*="md:grid"] > form,
-div[class*="md:grid"] > div,
-div:has(> form input[type="password"]) > *,
-.sc-12to0iy-1>div,
-.sc-12to0iy-1>form,
-.sc-12to0iy-1>*,
-body:not(.apparatus-auth) .sc-12to0iy-1>div,
-body:not(.apparatus-auth) .sc-12to0iy-1>form,
-body:not(.apparatus-auth) .sc-12to0iy-1>*,
-div[class*="AccountOverviewContainer"]>div>div,
-div[class*="AccountOverviewContainer"] div.md\:grid>div,
-div[class*="AccountOverviewContainer"] div.md\:grid>form,
-div[class*="AccountOverviewContainer"] div.md\:grid>*,
-div[class*="AccountOverviewContainer"] div[class*="md:grid"]>div,
-div[class*="AccountOverviewContainer"] div[class*="md:grid"]>form,
-div[class*="AccountOverviewContainer"] div[class*="md:grid"]>*,
-div[class*="AccountOverviewContainer"] div[class*="grid-cols-2"]>*,
-body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="grid"]>div,
-body.apparatus-page-account div.md\:grid>div,
-body.apparatus-page-account div.md\:grid>form,
-body.apparatus-page-account div[class*="md:grid"]>*,
-body.apparatus-page-account div.md\:grid>*,
-body.apparatus-page-account div[class*="grid-cols-2"]>*,
+body.apparatus-page-account div.grid-cols-2 > *,
+body.apparatus-page-account div.grid-cols-2 > form,
+body.apparatus-page-account div.grid-cols-2 > div,
+body.apparatus-page-account div[class*="grid-cols-2"] > *,
+body.apparatus-page-account div[class*="grid-cols-2"] > form,
+body.apparatus-page-account div[class*="grid-cols-2"] > div,
+body.apparatus-page-account div.md\:grid > *,
+body.apparatus-page-account div.md\:grid > form,
+body.apparatus-page-account div.md\:grid > div,
+body.apparatus-page-account div[class*="md:grid"] > *,
+body.apparatus-page-account div[class*="md:grid"] > form,
+body.apparatus-page-account div[class*="md:grid"] > div,
+body.apparatus-page-account div:has(> form input[type="password"]) > *,
 body.apparatus-page-account .sc-12to0iy-1>div,
 body.apparatus-page-account .sc-12to0iy-1>form,
 body.apparatus-page-account .sc-12to0iy-1>*,
-div[class*="PageContentBlock"] div.md\:grid>div,
-div[class*="PageContentBlock"] div.md\:grid>form,
-div[class*="PageContentBlock"] div.md\:grid>*,
-div[class*="PageContentBlock"] div[class*="grid-cols-2"]>* {
+body.apparatus-page-account div[class*="AccountOverviewContainer"]>div>div,
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div.md\:grid>div,
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div.md\:grid>form,
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div.md\:grid>*,
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="md:grid"]>div,
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="md:grid"]>form,
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="md:grid"]>*,
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="grid-cols-2"]>* {
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
@@ -5453,26 +5433,26 @@ div[class*="PageContentBlock"] div[class*="grid-cols-2"]>* {
 }
 
 /* Ensure inner forms, ContentBox, and background containers span 100% with no margin/offset */
-div.grid-cols-2 form,
-div.grid-cols-2 .sc-mjlt6f-2,
-div.grid-cols-2 [class*="ContentBox"],
-div.grid-cols-2 div[class*="ContentBox___StyledDiv"],
-div.grid-cols-2 div.bg-neutral-700,
-div[class*="grid-cols-2"] form,
-div[class*="grid-cols-2"] .sc-mjlt6f-2,
-div[class*="grid-cols-2"] [class*="ContentBox"],
-div[class*="grid-cols-2"] div[class*="ContentBox___StyledDiv"],
-div[class*="grid-cols-2"] div.bg-neutral-700,
-div.md\:grid form,
-div.md\:grid .sc-mjlt6f-2,
-div.md\:grid [class*="ContentBox"],
-div.md\:grid div[class*="ContentBox___StyledDiv"],
-div.md\:grid div.bg-neutral-700,
-div:has(> form input[type="password"]) form,
-div:has(> form input[type="password"]) .sc-mjlt6f-2,
-div:has(> form input[type="password"]) [class*="ContentBox"],
-div:has(> form input[type="password"]) div[class*="ContentBox___StyledDiv"],
-div:has(> form input[type="password"]) div.bg-neutral-700 {
+body.apparatus-page-account div.grid-cols-2 form,
+body.apparatus-page-account div.grid-cols-2 .sc-mjlt6f-2,
+body.apparatus-page-account div.grid-cols-2 [class*="ContentBox"],
+body.apparatus-page-account div.grid-cols-2 div[class*="ContentBox___StyledDiv"],
+body.apparatus-page-account div.grid-cols-2 div.bg-neutral-700,
+body.apparatus-page-account div[class*="grid-cols-2"] form,
+body.apparatus-page-account div[class*="grid-cols-2"] .sc-mjlt6f-2,
+body.apparatus-page-account div[class*="grid-cols-2"] [class*="ContentBox"],
+body.apparatus-page-account div[class*="grid-cols-2"] div[class*="ContentBox___StyledDiv"],
+body.apparatus-page-account div[class*="grid-cols-2"] div.bg-neutral-700,
+body.apparatus-page-account div.md\:grid form,
+body.apparatus-page-account div.md\:grid .sc-mjlt6f-2,
+body.apparatus-page-account div.md\:grid [class*="ContentBox"],
+body.apparatus-page-account div.md\:grid div[class*="ContentBox___StyledDiv"],
+body.apparatus-page-account div.md\:grid div.bg-neutral-700,
+body.apparatus-page-account div:has(> form input[type="password"]) form,
+body.apparatus-page-account div:has(> form input[type="password"]) .sc-mjlt6f-2,
+body.apparatus-page-account div:has(> form input[type="password"]) [class*="ContentBox"],
+body.apparatus-page-account div:has(> form input[type="password"]) div[class*="ContentBox___StyledDiv"],
+body.apparatus-page-account div:has(> form input[type="password"]) div.bg-neutral-700 {
   width: 100% !important;
   max-width: 100% !important;
   min-width: 100% !important;
@@ -6731,4 +6711,48 @@ body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] [role="navigation
   overflow: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+/* ==============================================================================
+   SERVER CONSOLE & FILE MANAGER SAAS POLISH
+   ============================================================================== */
+/* Server Console Stats Grid (Address, Uptime, CPU, RAM) */
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock"],
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock___StyledDiv"],
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700 {
+  background: rgba(18, 12, 28, 0.45) !important;
+  backdrop-filter: blur(16px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock"]:hover,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700:hover {
+  border-color: rgba(236, 72, 153, 0.35) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* File Manager Rows */
+body:not(.apparatus-auth) div[class*="FileManagerContainer"] div[class*="FileObjectRow"],
+body:not(.apparatus-auth) div[class*="FileManagerContainer"] div.bg-gray-700,
+body:not(.apparatus-auth) [class*="FileManager"] div[class*="FileObjectRow"],
+body:not(.apparatus-auth) [class*="FileManager"] div.bg-gray-700 {
+  background: rgba(18, 12, 28, 0.4) !important;
+  backdrop-filter: blur(14px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 10px !important;
+  margin-bottom: 0.35rem !important;
+  transition: all 0.2s ease !important;
+}
+
+body:not(.apparatus-auth) div[class*="FileManagerContainer"] div[class*="FileObjectRow"]:hover,
+body:not(.apparatus-auth) div[class*="FileManagerContainer"] div.bg-gray-700:hover,
+body:not(.apparatus-auth) [class*="FileManager"] div[class*="FileObjectRow"]:hover,
+body:not(.apparatus-auth) [class*="FileManager"] div.bg-gray-700:hover {
+  background: rgba(236, 72, 153, 0.1) !important;
+  border-color: rgba(236, 72, 153, 0.35) !important;
+  transform: translateX(2px);
 }
