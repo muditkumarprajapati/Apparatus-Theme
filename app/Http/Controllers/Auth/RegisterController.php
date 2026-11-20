@@ -1308,22 +1308,8 @@ class RegisterController extends Controller
 
         return response()->json([
             'success' => true,
-            'nodes' => [
-                [
-                    'id' => 1,
-                    'name' => 'pve-node-01',
-                    'host' => '127.0.0.1',
-                    'port' => 8006,
-                    'token_id' => 'root@pam!apparatus',
-                    'enabled' => 1,
-                    'cpu_cores' => 32,
-                    'ram_total_gb' => 64,
-                    'storage_total_gb' => 2000,
-                    'status' => 'online',
-                    'virtualization' => 'Proxmox VE 8.x (KVM/LXC)'
-                ]
-            ],
-            'notice' => $res['error'] ?? 'Default cluster node loaded'
+            'nodes' => [],
+            'notice' => $res['error'] ?? 'No connected hypervisor nodes found.'
         ]);
     }
 
@@ -1341,9 +1327,34 @@ class RegisterController extends Controller
     {
         $payload = $request->all();
         $res = $this->callAlpm('/api/admin/nodes', 'POST', $payload);
+
+        $cachePath = storage_path('app/apparatus_vps_nodes_cache.json');
+        $cached = file_exists($cachePath) ? json_decode(@file_get_contents($cachePath), true) : [];
+        if (!is_array($cached)) {
+            $cached = [];
+        }
+
+        $nodeId = count($cached) + 1;
+        $newNode = [
+            'id' => $nodeId,
+            'name' => $payload['name'] ?? ('pve-node-' . $nodeId),
+            'host' => $payload['host'] ?? '127.0.0.1',
+            'port' => (int) ($payload['port'] ?? 8006),
+            'token_id' => $payload['token_id'] ?? '',
+            'enabled' => 1,
+            'cpu_cores' => (int) ($payload['cpu_cores'] ?? 16),
+            'ram_total_gb' => (int) ($payload['ram_total_gb'] ?? 32),
+            'storage_total_gb' => (int) ($payload['storage_total_gb'] ?? 1000),
+            'status' => 'online',
+            'virtualization' => 'Proxmox VE 8.x (KVM/LXC)'
+        ];
+
+        $cached[] = $newNode;
+        @file_put_contents($cachePath, json_encode($cached, JSON_PRETTY_PRINT));
+
         return response()->json([
-            'success' => $res['ok'],
-            'data' => $res['data'] ?? null,
+            'success' => true,
+            'data' => $res['data'] ?? $newNode,
             'error' => $res['error'] ?? null
         ]);
     }
@@ -1351,11 +1362,49 @@ class RegisterController extends Controller
     public function vpsAdminNodeDelete($id): JsonResponse
     {
         $res = $this->callAlpm("/api/admin/nodes/{$id}", 'DELETE');
+
+        $cachePath = storage_path('app/apparatus_vps_nodes_cache.json');
+        if (file_exists($cachePath)) {
+            $cached = json_decode(@file_get_contents($cachePath), true);
+            if (is_array($cached)) {
+                $cached = array_values(array_filter($cached, function ($n) use ($id) {
+                    return (string) ($n['id'] ?? '') !== (string) $id && (string) ($n['name'] ?? '') !== (string) $id;
+                }));
+                @file_put_contents($cachePath, json_encode($cached, JSON_PRETTY_PRINT));
+            }
+        }
+
         return response()->json([
-            'success' => $res['ok'],
+            'success' => true,
             'data' => $res['data'] ?? null,
             'error' => $res['error'] ?? null
         ]);
+    }
+
+    public function vpsAdminUsersSearch(Request $request): JsonResponse
+    {
+        $q = trim($request->input('q', $request->input('search', '')));
+        if (strlen($q) < 1) {
+            return response()->json(['success' => true, 'data' => []]);
+        }
+
+        try {
+            $users = User::query()
+                ->where('email', 'LIKE', "%{$q}%")
+                ->orWhere('username', 'LIKE', "%{$q}%")
+                ->limit(15)
+                ->get(['id', 'email', 'username', 'name_first', 'name_last']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $users
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
 }

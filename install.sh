@@ -211,6 +211,7 @@ Route::get('/auth/vps/{id}/status', [\Pterodactyl\Http\Controllers\Auth\Register
 Route::post('/auth/vps/{id}/termproxy', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsTermproxy']);
 Route::post('/auth/vps/admin/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminCreate']);
 Route::delete('/auth/vps/admin/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminDelete']);
+Route::get('/auth/vps/admin/users/search', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUsersSearch']);
 Route::get('/auth/vps/admin/nodes', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodes']);
 Route::get('/auth/vps/admin/nodes/test/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeTest']);
 Route::post('/auth/vps/admin/nodes/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeCreate']);
@@ -276,6 +277,7 @@ Route::get('/auth/vps/{id}/status', [\Pterodactyl\Http\Controllers\Auth\Register
 Route::post('/auth/vps/{id}/termproxy', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsTermproxy']);
 Route::post('/auth/vps/admin/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminCreate']);
 Route::delete('/auth/vps/admin/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminDelete']);
+Route::get('/auth/vps/admin/users/search', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUsersSearch']);
 Route::get('/auth/vps/admin/nodes', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodes']);
 Route::get('/auth/vps/admin/nodes/test/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeTest']);
 Route::post('/auth/vps/admin/nodes/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeCreate']);

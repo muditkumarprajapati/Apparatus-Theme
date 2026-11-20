@@ -2340,10 +2340,10 @@ ${formatMailBody(currentTpl.body)}
           </div>
           <div class="apparatus-saas-kpi-col">
             <div class="apparatus-saas-kpi-card">
-              <span class="apparatus-saas-kpi-label">Hypervisor Nodes</span>
-              <div class="apparatus-saas-kpi-value">1 <span class="unit">Node</span></div>
-              <div class="apparatus-saas-kpi-trend positive">
-                <i class="ri-shield-check-line"></i> Proxmox VE 8.x Active
+              <span class="apparatus-saas-kpi-label">Hypervisor Cluster</span>
+              <div class="apparatus-saas-kpi-value">${servers.length > 0 ? 'Active' : 'Standby'}</div>
+              <div class="apparatus-saas-kpi-trend ${servers.length > 0 ? 'positive' : 'neutral'}">
+                <i class="${servers.length > 0 ? 'ri-shield-check-line' : 'ri-time-line'}"></i> ${servers.length > 0 ? 'Proxmox VE Cluster Connected' : 'No VMs provisioned'}
               </div>
             </div>
           </div>
@@ -2774,23 +2774,7 @@ ${formatMailBody(currentTpl.body)}
       })
       .catch(function (err) {
         console.warn('[Admin VPS Nodes] Load error:', err);
-        renderAdminVpsNodesContent(container, [
-          {
-            id: 1,
-            name: 'pve-node-01',
-            host: '127.0.0.1',
-            port: 8006,
-            enabled: 1,
-            status: 'online',
-            cpu_cores: 32,
-            ram_total_gb: 64,
-            storage_total_gb: 2000,
-            cpu_usage_pct: 12,
-            ram_usage_gb: 14.2,
-            storage_used_gb: 420,
-            vms_count: 3
-          }
-        ]);
+        renderAdminVpsNodesContent(container, []);
       });
   }
 
@@ -2803,12 +2787,13 @@ ${formatMailBody(currentTpl.body)}
     let clusterStorageGb = 0;
 
     nodes.forEach(function (n) {
-      clusterCores += (n.cpu_cores || 32);
-      clusterRamGb += (n.ram_total_gb || 64);
-      clusterStorageGb += (n.storage_total_gb || 2000);
+      clusterCores += (n.cpu_cores || 0);
+      clusterRamGb += (n.ram_total_gb || 0);
+      clusterStorageGb += (n.storage_total_gb || 0);
     });
 
-    const clusterStorageTb = (clusterStorageGb / 1024).toFixed(1);
+    const clusterStorageTb = clusterStorageGb > 0 ? (clusterStorageGb / 1024).toFixed(1) : '0.0';
+    const clusterStatusPct = totalNodes > 0 ? (onlineNodes > 0 ? Math.round((onlineNodes / totalNodes) * 100) : 0) : 0;
 
     container.innerHTML = `
       <div class="apparatus-saas-dashboard-canvas">
@@ -2820,8 +2805,8 @@ ${formatMailBody(currentTpl.body)}
           </div>
           <div class="apparatus-saas-header-controls">
             <div class="apparatus-saas-filter-pill">
-              <i class="ri-shield-check-line" style="color: var(--admin-accent-green);"></i>
-              <span>Cluster Active &bull; Proxmox VE</span>
+              <i class="${totalNodes > 0 ? 'ri-shield-check-line' : 'ri-time-line'}" style="color: ${totalNodes > 0 ? 'var(--admin-accent-green)' : 'var(--admin-text-muted)'};"></i>
+              <span>${totalNodes > 0 ? 'Cluster Active &bull; Proxmox VE' : 'Cluster Idle &bull; No Nodes'}</span>
             </div>
             <button type="button" class="apparatus-saas-round-btn" id="btn-refresh-vps-nodes" title="Refresh Nodes">
               <i class="ri-refresh-line"></i>
@@ -2838,17 +2823,17 @@ ${formatMailBody(currentTpl.body)}
             <div class="apparatus-saas-kpi-card">
               <span class="apparatus-saas-kpi-label">Hypervisor Nodes</span>
               <div class="apparatus-saas-kpi-value">${totalNodes}</div>
-              <div class="apparatus-saas-kpi-trend positive">
-                <i class="ri-arrow-right-up-line"></i> ${onlineNodes} Active Proxmox VE nodes
+              <div class="apparatus-saas-kpi-trend ${totalNodes > 0 ? 'positive' : 'neutral'}">
+                <i class="${totalNodes > 0 ? 'ri-arrow-right-up-line' : 'ri-information-line'}"></i> ${totalNodes > 0 ? (onlineNodes + ' Active Proxmox VE nodes') : 'No nodes connected'}
               </div>
             </div>
           </div>
           <div class="apparatus-saas-kpi-col">
             <div class="apparatus-saas-kpi-card">
               <span class="apparatus-saas-kpi-label">Cluster Status</span>
-              <div class="apparatus-saas-kpi-value" style="color: var(--admin-accent-green);">100%</div>
-              <div class="apparatus-saas-kpi-trend positive">
-                <i class="ri-checkbox-circle-fill"></i> All virtualization daemons online
+              <div class="apparatus-saas-kpi-value" style="color: ${totalNodes > 0 && onlineNodes > 0 ? 'var(--admin-accent-green)' : 'var(--admin-text-muted)'};">${totalNodes > 0 ? (clusterStatusPct + '%') : '0%'}</div>
+              <div class="apparatus-saas-kpi-trend ${totalNodes > 0 && onlineNodes > 0 ? 'positive' : 'neutral'}">
+                <i class="${totalNodes > 0 && onlineNodes > 0 ? 'ri-checkbox-circle-fill' : 'ri-time-line'}"></i> ${totalNodes > 0 && onlineNodes > 0 ? 'All virtualization daemons online' : 'Standby / Waiting for nodes'}
               </div>
             </div>
           </div>
@@ -2857,7 +2842,7 @@ ${formatMailBody(currentTpl.body)}
               <span class="apparatus-saas-kpi-label">Cluster CPU Pool</span>
               <div class="apparatus-saas-kpi-value">${clusterCores} <span class="unit">Cores</span></div>
               <div class="apparatus-saas-kpi-trend neutral">
-                <i class="ri-cpu-line"></i> Compute cores for KVM VMs
+                <i class="ri-cpu-line"></i> ${totalNodes > 0 ? 'Compute cores for KVM VMs' : '0 compute cores pooled'}
               </div>
             </div>
           </div>
@@ -2866,7 +2851,7 @@ ${formatMailBody(currentTpl.body)}
               <span class="apparatus-saas-kpi-label">Cluster Memory Pool</span>
               <div class="apparatus-saas-kpi-value">${clusterRamGb} <span class="unit">GB</span></div>
               <div class="apparatus-saas-kpi-trend neutral">
-                <i class="ri-ram-line"></i> Total cluster RAM capacity
+                <i class="ri-ram-line"></i> ${totalNodes > 0 ? 'Total cluster RAM capacity' : '0 GB memory pooled'}
               </div>
             </div>
           </div>
@@ -2874,8 +2859,8 @@ ${formatMailBody(currentTpl.body)}
             <div class="apparatus-saas-kpi-card">
               <span class="apparatus-saas-kpi-label">NVMe Storage Pool</span>
               <div class="apparatus-saas-kpi-value">${clusterStorageTb} <span class="unit">TB</span></div>
-              <div class="apparatus-saas-kpi-trend positive">
-                <i class="ri-hard-drive-2-line"></i> ZFS mirrored storage pool
+              <div class="apparatus-saas-kpi-trend ${totalNodes > 0 ? 'positive' : 'neutral'}">
+                <i class="ri-hard-drive-2-line"></i> ${totalNodes > 0 ? 'ZFS mirrored storage pool' : '0 TB storage pooled'}
               </div>
             </div>
           </div>
@@ -3391,9 +3376,21 @@ ${formatMailBody(currentTpl.body)}
               </div>
             </div>
             <div class="col-md-6 col-sm-12">
-              <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">Owner Pterodactyl Email</label>
-                <input type="email" id="vps-owner-email" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" placeholder="client@arixbyte.com" required>
+              <div class="form-group" style="position: relative;">
+                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem; display: flex; justify-content: space-between; align-items: center;">
+                  <span>Owner Pterodactyl Email</span>
+                  <span style="font-size: 0.76rem; color: #94a3b8; font-weight: 400;">Type 2+ letters to search users</span>
+                </label>
+                <div style="position: relative;">
+                  <input type="text" id="vps-owner-email" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px; padding-right: 36px;" placeholder="Search user by email or username..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                  <div id="vps-email-search-indicator" style="position: absolute; right: 12px; top: 11px; display: none; color: #a855f7; font-size: 1.1rem;">
+                    <i class="ri-loader-4-line ri-spin"></i>
+                  </div>
+                </div>
+                <div id="vps-user-autocomplete-dropdown" style="display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--admin-card-bg, #141724); border: 1px solid var(--admin-card-border, rgba(255,255,255,0.16)); border-radius: 12px; box-shadow: 0 12px 35px rgba(0,0,0,0.7); max-height: 230px; overflow-y: auto; z-index: 10005;"></div>
+                <div id="vps-selected-user-badge" style="display: none; margin-top: 6px; font-size: 0.8rem; color: #34d399; align-items: center; gap: 5px;">
+                  <i class="ri-checkbox-circle-fill"></i> <span id="vps-selected-user-text"></span>
+                </div>
               </div>
             </div>
           </div>
@@ -3403,8 +3400,7 @@ ${formatMailBody(currentTpl.body)}
               <div class="form-group">
                 <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">Hypervisor Node</label>
                 <select id="vps-node-select" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;">
-                  <option value="pve-node-01">pve-node-01 (KVM Default)</option>
-                  <option value="pve">pve (Cluster Master)</option>
+                  <option value="">Loading available nodes...</option>
                 </select>
               </div>
             </div>
@@ -3464,6 +3460,123 @@ ${formatMailBody(currentTpl.body)}
 
     modal.querySelector('#btn-close-deploy-modal').addEventListener('click', function () { modal.remove(); });
     modal.querySelector('#btn-cancel-deploy').addEventListener('click', function () { modal.remove(); });
+
+    // Dynamically fetch connected hypervisor nodes
+    const nodeSelect = modal.querySelector('#vps-node-select');
+    if (nodeSelect) {
+      fetch('/auth/vps/admin/nodes')
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          const nodes = res.nodes || [];
+          if (nodes.length > 0) {
+            nodeSelect.innerHTML = nodes.map(function (n) {
+              return '<option value="' + (n.name || n.id) + '">' + (n.name || ('Node ' + n.id)) + ' (' + (n.host || '127.0.0.1') + ')</option>';
+            }).join('');
+          } else {
+            nodeSelect.innerHTML = '<option value="">No Hypervisor Nodes Connected (Add a Node first)</option>';
+          }
+        })
+        .catch(function () {
+          nodeSelect.innerHTML = '<option value="">No Hypervisor Nodes Connected</option>';
+        });
+    }
+
+    // Interactive user email search dropdown (triggers on typing >= 2 characters)
+    const emailInput = modal.querySelector('#vps-owner-email');
+    const dropdown = modal.querySelector('#vps-user-autocomplete-dropdown');
+    const indicator = modal.querySelector('#vps-email-search-indicator');
+    const badge = modal.querySelector('#vps-selected-user-badge');
+    const badgeText = modal.querySelector('#vps-selected-user-text');
+    let searchDebounce = null;
+
+    if (emailInput && dropdown) {
+      emailInput.addEventListener('input', function () {
+        const query = emailInput.value.trim();
+        if (badge) badge.style.display = 'none';
+
+        if (searchDebounce) clearTimeout(searchDebounce);
+
+        if (query.length < 2) {
+          dropdown.style.display = 'none';
+          dropdown.innerHTML = '';
+          if (indicator) indicator.style.display = 'none';
+          return;
+        }
+
+        if (indicator) indicator.style.display = 'block';
+
+        searchDebounce = setTimeout(function () {
+          fetch('/auth/vps/admin/users/search?q=' + encodeURIComponent(query))
+            .then(function (r) { return r.json(); })
+            .then(function (res) {
+              if (indicator) indicator.style.display = 'none';
+              const users = (res && res.data) ? res.data : [];
+
+              if (users.length === 0) {
+                dropdown.innerHTML = `
+                  <div style="padding: 14px 16px; text-align: center; color: var(--admin-text-muted, #94a3b8); font-size: 0.85rem;">
+                    <i class="ri-user-unfollow-line" style="font-size: 1.4rem; display: block; margin-bottom: 4px; opacity: 0.5;"></i>
+                    No panel users matching "<strong>${query}</strong>"
+                  </div>
+                `;
+                dropdown.style.display = 'block';
+                return;
+              }
+
+              dropdown.innerHTML = users.map(function (u) {
+                const initial = (u.username || 'U').charAt(0).toUpperCase();
+                const fullName = ((u.name_first || '') + ' ' + (u.name_last || '')).trim();
+                return `
+                  <div class="vps-user-item" data-email="${u.email}" data-username="${u.username}" style="padding: 10px 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--admin-card-border, rgba(255,255,255,0.06)); transition: background 0.15s ease;">
+                    <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                      <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(168, 85, 247, 0.2); color: #c084fc; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.82rem; flex-shrink: 0;">
+                        ${initial}
+                      </div>
+                      <div style="min-width: 0;">
+                        <div style="font-weight: 600; color: var(--admin-text-primary, #fff); font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                          ${u.username} ${fullName ? '<span style="color: var(--admin-text-muted, #94a3b8); font-weight: 400; font-size: 0.78rem;">(' + fullName + ')</span>' : ''}
+                        </div>
+                        <div style="font-size: 0.78rem; color: #38bdf8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${u.email}</div>
+                      </div>
+                    </div>
+                    <span style="font-size: 0.74rem; background: var(--admin-pill-bg, rgba(255,255,255,0.08)); padding: 3px 9px; border-radius: 6px; color: var(--admin-text-secondary, #cbd5e1); flex-shrink: 0; margin-left: 10px;">Select</span>
+                  </div>
+                `;
+              }).join('');
+
+              dropdown.style.display = 'block';
+
+              dropdown.querySelectorAll('.vps-user-item').forEach(function (row) {
+                row.addEventListener('mouseover', function () {
+                  row.style.background = 'rgba(168, 85, 247, 0.18)';
+                });
+                row.addEventListener('mouseout', function () {
+                  row.style.background = 'transparent';
+                });
+                row.addEventListener('click', function () {
+                  const selEmail = row.getAttribute('data-email');
+                  const selUser = row.getAttribute('data-username');
+                  emailInput.value = selEmail;
+                  dropdown.style.display = 'none';
+                  if (badge && badgeText) {
+                    badgeText.textContent = 'Linked to Pterodactyl user: ' + selUser + ' (' + selEmail + ')';
+                    badge.style.display = 'inline-flex';
+                  }
+                });
+              });
+            })
+            .catch(function () {
+              if (indicator) indicator.style.display = 'none';
+            });
+        }, 220);
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!dropdown.contains(e.target) && e.target !== emailInput) {
+          dropdown.style.display = 'none';
+        }
+      });
+    }
 
     modal.querySelector('#apparatus-deploy-vps-form').addEventListener('submit', function (e) {
       e.preventDefault();
