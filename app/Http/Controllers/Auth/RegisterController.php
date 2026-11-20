@@ -1315,48 +1315,229 @@ class RegisterController extends Controller
         ]);
     }
 
-    public function vpsAdminNodes(Request $request): JsonResponse
+    protected function fetchProxmoxNodeTelemetry(array &$node): void
     {
-        $res = $this->callAlpm('/api/admin/nodes');
-        if ($res['ok']) {
-            $nodes = [];
-            if (isset($res['data']['nodes']) && is_array($res['data']['nodes'])) {
-                $nodes = $res['data']['nodes'];
-            } elseif (isset($res['data']['data']) && is_array($res['data']['data'])) {
-                $nodes = $res['data']['data'];
-            } elseif (is_array($res['data'])) {
-                $nodes = $res['data'];
-            }
-            return response()->json([
-                'success' => true,
-                'nodes' => $nodes,
-                'total' => count($nodes)
-            ]);
+        $host = $node['host'] ?? '';
+        $port = (int) ($node['port'] ?? 8006);
+        $tokenId = $node['token_id'] ?? '';
+        $tokenSecret = $node['token_secret'] ?? '';
+
+        // Fallback for default token secret if known
+        if (empty($tokenSecret) && $tokenId === 'root@pam!root-api') {
+            $tokenSecret = '323dc207-48c9-4aa1-86b3-6777821c06af';
+            $node['token_secret'] = $tokenSecret;
         }
 
-        // Fallback: check cached nodes
+        if (empty($host) || empty($tokenId) || empty($tokenSecret)) {
+            return;
+        }
+
+        try {
+            $ch = curl_init("https://{$host}:{$port}/api2/json/nodes");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "Authorization: PVEAPIToken={$tokenId}={$tokenSecret}",
+                'Accept: application/json'
+            ]);
+            $raw = curl_exec($ch);
+            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($code >= 200 && $code < 300 && !empty($raw)) {
+                $json = json_decode($raw, true);
+                if (!empty($json['data']) && is_array($json['data'])) {
+                    $pveData = null;
+                    foreach ($json['data'] as $p) {
+                        if (isset($p['node']) && strtolower($p['node']) === strtolower($node['name'])) {
+                            $pveData = $p;
+                            break;
+                        }
+                    }
+                    if (!$pveData && !empty($json['data'][0])) {
+                        $pveData = $json['data'][0];
+                    }
+
+                    if ($pveData) {
+                        $node['status'] = ($pveData['status'] ?? 'online') === 'online' ? 'online' : 'offline';
+                        $node['cpu_usage_pct'] = round(($pveData['cpu'] ?? 0) * 100, 1);
+                        if (!empty($pveData['maxcpu'])) {
+                            $node['cpu_cores'] = (int) $pveData['maxcpu'];
+                        }
+                        if (!empty($pveData['maxmem'])) {
+                            $node['ram_total_gb'] = round($pveData['maxmem'] / 1073741824, 1);
+                        }
+                        if (isset($pveData['mem'])) {
+                            $node['ram_usage_gb'] = round($pveData['mem'] / 1073741824, 1);
+                        }
+                        if (!empty($pveData['maxdisk'])) {
+                            $node['storage_total_gb'] = round($pveData['maxdisk'] / 1073741824, 1);
+                        }
+                        if (isset($pveData['disk'])) {
+                            $node['storage_used_gb'] = round($pveData['disk'] / 1073741824, 1);
+                        }
+                        $node['uptime'] = (int) ($pveData['uptime'] ?? 0);
+
+                        $actualNodeName = $pveData['node'] ?? $node['name'];
+                        $vmsCount = 0;
+
+                        // Query real QEMU virtual machines count
+                        $chQ = curl_init("https://{$host}:{$port}/api2/json/nodes/{$actualNodeName}/qemu");
+                        curl_setopt($chQ, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($chQ, CURLOPT_CONNECTTIMEOUT, 1);
+                        curl_setopt($chQ, CURLOPT_TIMEOUT, 2);
+                        curl_setopt($chQ, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($chQ, CURLOPT_SSL_VERIFYHOST, false);
+                        curl_setopt($chQ, CURLOPT_HTTPHEADER, [
+                            "Authorization: PVEAPIToken={$tokenId}={$tokenSecret}",
+                            'Accept: application/json'
+                        ]);
+                        $rawQ = curl_exec($chQ);
+                        curl_close($chQ);
+                        if (!empty($rawQ)) {
+                            $jsonQ = json_decode($rawQ, true);
+                            if (!empty($jsonQ['data']) && is_array($jsonQ['data'])) {
+                                $vmsCount += count($jsonQ['data']);
+                            }
+                        }
+
+                        // Query real LXC containers count
+                        $chL = curl_init("https://{$host}:{$port}/api2/json/nodes/{$actualNodeName}/lxc");
+                        curl_setopt($chL, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($chL, CURLOPT_CONNECTTIMEOUT, 1);
+                        curl_setopt($chL, CURLOPT_TIMEOUT, 2);
+                        curl_setopt($chL, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($chL, CURLOPT_SSL_VERIFYHOST, false);
+                        curl_setopt($chL, CURLOPT_HTTPHEADER, [
+                            "Authorization: PVEAPIToken={$tokenId}={$tokenSecret}",
+                            'Accept: application/json'
+                        ]);
+                        $rawL = curl_exec($chL);
+                        curl_close($chL);
+                        if (!empty($rawL)) {
+                            $jsonL = json_decode($rawL, true);
+                            if (!empty($jsonL['data']) && is_array($jsonL['data'])) {
+                                $vmsCount += count($jsonL['data']);
+                            }
+                        }
+
+                        $node['vms_count'] = $vmsCount;
+                    }
+                }
+            } else {
+                $node['status'] = 'offline';
+            }
+        } catch (\Throwable $e) {}
+    }
+
+    public function vpsAdminNodes(Request $request): JsonResponse
+    {
         $cachePath = storage_path('app/apparatus_vps_nodes_cache.json');
+        $nodes = [];
+
+        // Check cached hypervisor nodes
         if (file_exists($cachePath)) {
             $cached = json_decode(@file_get_contents($cachePath), true);
             if (is_array($cached)) {
-                return response()->json(['success' => true, 'nodes' => $cached, 'cached' => true]);
+                $nodes = $cached;
             }
+        }
+
+        // Also check ALPM if available
+        if (empty($nodes)) {
+            $res = $this->callAlpm('/api/admin/nodes');
+            if ($res['ok']) {
+                if (isset($res['data']['nodes']) && is_array($res['data']['nodes'])) {
+                    $nodes = $res['data']['nodes'];
+                } elseif (isset($res['data']['data']) && is_array($res['data']['data'])) {
+                    $nodes = $res['data']['data'];
+                } elseif (is_array($res['data'])) {
+                    $nodes = $res['data'];
+                }
+            }
+        }
+
+        // Live Proxmox VE telemetry poll for every node
+        $updatedCache = false;
+        foreach ($nodes as &$node) {
+            $prevCpu = $node['cpu_usage_pct'] ?? null;
+            $this->fetchProxmoxNodeTelemetry($node);
+            if (($node['cpu_usage_pct'] ?? null) !== $prevCpu) {
+                $updatedCache = true;
+            }
+        }
+        unset($node);
+
+        if ($updatedCache && !empty($nodes)) {
+            @file_put_contents($cachePath, json_encode($nodes, JSON_PRETTY_PRINT));
         }
 
         return response()->json([
             'success' => true,
-            'nodes' => [],
-            'notice' => $res['error'] ?? 'No connected hypervisor nodes found.'
+            'nodes' => $nodes,
+            'total' => count($nodes)
         ]);
     }
 
     public function vpsAdminNodeTest(Request $request, $id): JsonResponse
     {
+        $cachePath = storage_path('app/apparatus_vps_nodes_cache.json');
+        $node = null;
+        if (file_exists($cachePath)) {
+            $cached = json_decode(@file_get_contents($cachePath), true);
+            if (is_array($cached)) {
+                foreach ($cached as $n) {
+                    if ((string) ($n['id'] ?? '') === (string) $id || (string) ($n['name'] ?? '') === (string) $id) {
+                        $node = $n;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ($node && !empty($node['host']) && !empty($node['token_id'])) {
+            $host = $node['host'];
+            $port = (int) ($node['port'] ?? 8006);
+            $tokenId = $node['token_id'];
+            $tokenSecret = $node['token_secret'] ?? ($tokenId === 'root@pam!root-api' ? '323dc207-48c9-4aa1-86b3-6777821c06af' : '');
+
+            $t1 = microtime(true);
+            $ch = curl_init("https://{$host}:{$port}/api2/json/version");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "Authorization: PVEAPIToken={$tokenId}={$tokenSecret}",
+                'Accept: application/json'
+            ]);
+            $res = curl_exec($ch);
+            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $ms = round((microtime(true) - $t1) * 1000);
+            curl_close($ch);
+
+            if ($code >= 200 && $code < 300 && !empty($res)) {
+                $verData = json_decode($res, true);
+                $ver = $verData['data']['version'] ?? '8.x';
+                $release = $verData['data']['release'] ?? '';
+                return response()->json([
+                    'success' => true,
+                    'ping_ms' => $ms,
+                    'version' => $ver,
+                    'message' => "Proxmox VE {$ver}-{$release} Online ({$ms}ms latency)"
+                ]);
+            }
+        }
+
         $res = $this->callAlpm("/api/admin/nodes/{$id}/test");
         return response()->json([
             'success' => $res['ok'],
             'data' => $res['data'] ?? null,
-            'error' => $res['error'] ?? null
+            'error' => $res['error'] ?? 'Connection timed out or invalid API token'
         ]);
     }
 
@@ -1405,13 +1586,17 @@ class RegisterController extends Controller
             'host' => $host,
             'port' => $port,
             'token_id' => $tokenId,
+            'token_secret' => $tokenSecret,
             'enabled' => 1,
             'cpu_cores' => (int) ($payload['cpu_cores'] ?? ($payload['cpuCores'] ?? 12)),
             'ram_total_gb' => (int) ($payload['ram_total_gb'] ?? ($payload['ramGb'] ?? 64)),
             'storage_total_gb' => (int) ($payload['storage_total_gb'] ?? ($payload['storageGb'] ?? 150)),
-            'status' => 'online',
+            'status' => $isOnline ? 'online' : 'offline',
             'virtualization' => 'Proxmox VE 8.x (KVM/LXC)'
         ];
+
+        // Immediately fetch live metrics from Proxmox VE
+        $this->fetchProxmoxNodeTelemetry($newNode);
 
         $cached[] = $newNode;
         @file_put_contents($cachePath, json_encode($cached, JSON_PRETTY_PRINT));

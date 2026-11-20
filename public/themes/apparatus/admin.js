@@ -3068,74 +3068,75 @@ ${formatMailBody(currentTpl.body)}
 
     return nodes.map(function (n) {
       const isOnline = (n.status || 'online').toLowerCase() === 'online';
-      const statusColor = isOnline ? '#34d399' : '#ef4444';
+      const statusColor = isOnline ? '#10b981' : '#ef4444';
       const statusText = isOnline ? 'ONLINE' : 'OFFLINE';
 
       const host = n.host || '127.0.0.1';
       const port = n.port || 8006;
       const vtype = n.virtualization || 'Proxmox VE (KVM/LXC)';
 
-      const cpuPct = n.cpu_usage_pct || Math.floor(Math.random() * 20) + 8;
+      // Real live telemetry directly from Proxmox VE API
+      const cpuPct = typeof n.cpu_usage_pct === 'number' ? n.cpu_usage_pct : (parseFloat(n.cpu_usage_pct) || 0);
       const ramTotal = n.ram_total_gb || 64;
-      const ramUsed = (n.ram_usage_gb || (ramTotal * 0.22)).toFixed(1);
-      const ramPct = Math.round((ramUsed / ramTotal) * 100);
+      const ramUsed = typeof n.ram_usage_gb === 'number' ? n.ram_usage_gb : (parseFloat(n.ram_usage_gb) || 0);
+      const ramPct = ramTotal > 0 ? Math.min(100, Math.round((ramUsed / ramTotal) * 100)) : 0;
 
-      const diskTotal = n.storage_total_gb || 2000;
-      const diskUsed = n.storage_used_gb || Math.round(diskTotal * 0.21);
-      const diskPct = Math.round((diskUsed / diskTotal) * 100);
+      const diskTotal = n.storage_total_gb || 150;
+      const diskUsed = typeof n.storage_used_gb === 'number' ? n.storage_used_gb : (parseFloat(n.storage_used_gb) || 0);
+      const diskPct = diskTotal > 0 ? Math.min(100, Math.round((diskUsed / diskTotal) * 100)) : 0;
 
-      const vms = n.vms_count || (n.servers ? n.servers.length : 3);
+      const vms = typeof n.vms_count === 'number' ? n.vms_count : (n.servers ? n.servers.length : 0);
 
       return `
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle;">
+        <tr style="border-bottom: 1px solid var(--admin-table-border, rgba(255,255,255,0.06)); vertical-align: middle;">
           <td style="padding: 1.1rem 1.4rem;">
             <div style="display: flex; align-items: center; gap: 0.85rem;">
               <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.25); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1.35rem;">
                 <i class="ri-hard-drive-3-line"></i>
               </div>
               <div>
-                <strong style="color: #fff; font-size: 0.98rem; display: block;">${n.name || 'pve-node'}</strong>
-                <span style="color: #64748b; font-size: 0.82rem;">${vms} Active Virtual Machines</span>
+                <strong style="color: var(--admin-text-primary, #fff); font-size: 0.98rem; display: block;">${n.name || 'pve-node'}</strong>
+                <span style="color: var(--admin-text-muted, #64748b); font-size: 0.82rem;">${vms} Active Virtual Machines</span>
               </div>
             </div>
           </td>
           <td>
-            <code style="background: rgba(0,0,0,0.45); color: #f1f5f9; padding: 3px 8px; border-radius: 6px; font-size: 0.88rem; font-family: monospace;">${host}:${port}</code>
+            <code style="background: var(--admin-pill-bg, rgba(0,0,0,0.45)); color: var(--admin-text-primary, #f1f5f9); padding: 3px 8px; border-radius: 6px; font-size: 0.88rem; font-family: monospace; border: 1px solid var(--admin-table-border, rgba(255,255,255,0.1));">${host}:${port}</code>
           </td>
           <td>
-            <span class="badge" style="background: rgba(255,255,255,0.06); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 5px 9px; font-weight: 600; font-size: 0.82rem;">
+            <span class="badge" style="background: var(--admin-pill-bg, rgba(255,255,255,0.06)); color: var(--admin-text-secondary, #cbd5e1); border: 1px solid var(--admin-table-border, rgba(255,255,255,0.1)); border-radius: 6px; padding: 5px 9px; font-weight: 600; font-size: 0.82rem;">
               ${vtype}
             </span>
           </td>
           <td style="min-width: 140px;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1; margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--admin-text-secondary, #cbd5e1); margin-bottom: 4px;">
               <span>Load:</span>
               <strong style="color: #38bdf8;">${cpuPct}%</strong>
             </div>
-            <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
-              <div style="width: ${cpuPct}%; height: 100%; background: linear-gradient(90deg, #38bdf8, #818cf8); border-radius: 4px;"></div>
+            <div style="height: 6px; background: var(--admin-pill-bg, rgba(255,255,255,0.1)); border-radius: 4px; overflow: hidden;">
+              <div style="width: ${Math.max(2, Math.min(100, cpuPct))}%; height: 100%; background: linear-gradient(90deg, #38bdf8, #818cf8); border-radius: 4px;"></div>
             </div>
           </td>
           <td style="min-width: 160px;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1; margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--admin-text-secondary, #cbd5e1); margin-bottom: 4px;">
               <span>${ramUsed} / ${ramTotal} GB</span>
               <strong style="color: #ec4899;">${ramPct}%</strong>
             </div>
-            <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
-              <div style="width: ${ramPct}%; height: 100%; background: linear-gradient(90deg, #ec4899, #db2777); border-radius: 4px;"></div>
+            <div style="height: 6px; background: var(--admin-pill-bg, rgba(255,255,255,0.1)); border-radius: 4px; overflow: hidden;">
+              <div style="width: ${Math.max(2, Math.min(100, ramPct))}%; height: 100%; background: linear-gradient(90deg, #ec4899, #db2777); border-radius: 4px;"></div>
             </div>
           </td>
           <td style="min-width: 160px;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1; margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--admin-text-secondary, #cbd5e1); margin-bottom: 4px;">
               <span>${diskUsed} / ${diskTotal} GB</span>
-              <strong style="color: #34d399;">${diskPct}%</strong>
+              <strong style="color: #10b981;">${diskPct}%</strong>
             </div>
-            <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
-              <div style="width: ${diskPct}%; height: 100%; background: linear-gradient(90deg, #34d399, #059669); border-radius: 4px;"></div>
+            <div style="height: 6px; background: var(--admin-pill-bg, rgba(255,255,255,0.1)); border-radius: 4px; overflow: hidden;">
+              <div style="width: ${Math.max(2, Math.min(100, diskPct))}%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); border-radius: 4px;"></div>
             </div>
           </td>
           <td>
-            <span class="badge" style="background: rgba(0,0,0,0.35); color: ${statusColor}; border: 1px solid ${statusColor}; border-radius: 20px; padding: 5px 12px; font-weight: 700; font-size: 0.76rem; display: inline-flex; align-items: center; gap: 6px;">
+            <span class="badge" style="background: ${isOnline ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)'}; color: ${statusColor}; border: 1px solid ${statusColor}; border-radius: 20px; padding: 5px 12px; font-weight: 700; font-size: 0.76rem; display: inline-flex; align-items: center; gap: 6px;">
               <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${statusColor}; ${isOnline ? 'box-shadow: 0 0 8px ' + statusColor + ';' : ''}"></span>
               ${statusText}
             </span>
@@ -3183,7 +3184,8 @@ ${formatMailBody(currentTpl.body)}
             btn.disabled = false;
             btn.innerHTML = '<i class="ri-wifi-line"></i> Test';
             if (res.success || res.ok) {
-              showAdminToast('success', 'Node Online', 'Proxmox node ' + name + ' is reachable and responding.');
+              const msg = res.message || ('Proxmox node ' + name + ' is reachable and responding.');
+              showAdminToast('success', 'Node Online', msg);
             } else {
               showAdminToast('info', 'Node Verified', 'Ping sent to node ' + name + ' (Status: OK).');
             }
