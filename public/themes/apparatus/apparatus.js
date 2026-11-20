@@ -188,12 +188,13 @@
 
     const isResourceTab = currentPath === '/resource' || currentPath === '/billing/resource' || window.location.hash === '#resource';
     const isStoreTab = currentPath === '/store' || currentPath === '/billing/store' || window.location.hash === '#store';
-    const isApparatusSettingsTab = !isResourceTab && !isStoreTab && (currentPath === '/apparatus-settings' || window.location.hash === '#apparatus-settings');
-    const isPanelSettingsTab = !isResourceTab && !isStoreTab && !isApparatusSettingsTab && (currentPath === '/panel-settings' || currentPath === '/settings' || window.location.hash === '#panel-settings' || window.location.hash === '#settings');
+    const isEarnTab = !isResourceTab && !isStoreTab && (currentPath === '/earn' || currentPath === '/billing/earn' || window.location.hash === '#earn');
+    const isApparatusSettingsTab = !isResourceTab && !isStoreTab && !isEarnTab && (currentPath === '/apparatus-settings' || window.location.hash === '#apparatus-settings');
+    const isPanelSettingsTab = !isResourceTab && !isStoreTab && !isEarnTab && !isApparatusSettingsTab && (currentPath === '/panel-settings' || currentPath === '/settings' || window.location.hash === '#panel-settings' || window.location.hash === '#settings');
     const isSettingsTab = isPanelSettingsTab || isApparatusSettingsTab;
-    const isVpsTab = !isResourceTab && !isStoreTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
-    const isServerTab = !isResourceTab && !isStoreTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
-    const isDashboardTab = !isResourceTab && !isStoreTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
+    const isVpsTab = !isResourceTab && !isStoreTab && !isEarnTab && !isSettingsTab && (currentPath === '/vps' || currentPath.startsWith('/vps/') || window.location.hash === '#vps');
+    const isServerTab = !isResourceTab && !isStoreTab && !isEarnTab && !isSettingsTab && !isVpsTab && (currentPath === '/servers' || currentPath.startsWith('/servers/') || window.location.hash === '#servers');
+    const isDashboardTab = !isResourceTab && !isStoreTab && !isEarnTab && !isSettingsTab && !isVpsTab && !isServerTab && (currentPath === '/' || currentPath === '/dashboard');
 
     const links = document.querySelectorAll('.apparatus-nav-link[data-path], .apparatus-nav-link[data-tab]');
     links.forEach(function (link) {
@@ -417,7 +418,7 @@
       }
 
       // Hide all account containers and native server messages if user transitioned to home
-      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, p[class*="DashboardContainer"], .sc-1topkxf-3').forEach(function (el) {
+      document.querySelectorAll('div[class*="AccountOverviewContainer"], div[class*="AccountApiContainer"], div[class*="AccountSSHContainer"], div[class*="ActivityLogContainer"], div[class*="DashboardContainer"], p[class*="DashboardContainer"], .sc-12to0iy-1, .sc-1c4s3nm-0, .sc-yksipt-0, .sc-1topkxf-3').forEach(function (el) {
         el.style.setProperty('display', 'none', 'important');
       });
     } else {
@@ -436,8 +437,16 @@
       });
     }
 
-    updateSidebarMode();
-    cleanPterodactylElements();
+    try {
+      updateSidebarMode();
+    } catch (e) {
+      console.warn('[Apparatus] updateSidebarMode error:', e);
+    }
+    try {
+      cleanPterodactylElements();
+    } catch (e) {
+      console.warn('[Apparatus] cleanPterodactylElements error:', e);
+    }
   }
 
   function cleanPterodactylElements() {
@@ -7849,8 +7858,16 @@
       if (toggle) toggle.style.display = '';
     }
 
-    updateSidebarMode();
-    applyViewMode();
+    try {
+      applyViewMode();
+    } catch (e) {
+      console.warn('[Apparatus] applyViewMode error:', e);
+    }
+    try {
+      updateSidebarMode();
+    } catch (e) {
+      console.warn('[Apparatus] updateSidebarMode error:', e);
+    }
   }
 
   function initApparatus() {
