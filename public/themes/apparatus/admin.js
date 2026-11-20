@@ -69,17 +69,18 @@
     let subnav = document.getElementById('apparatus-saas-subnav');
     const path = window.location.pathname || '';
     const hash = window.location.hash || '';
+    const hasHash = Boolean(hash && hash !== '#');
 
-    const isOverview = (path === '/admin' || path === '/admin/' || hash === '#overview') && !hash;
-    const isNodes = path.startsWith('/admin/nodes');
+    const isOverview = (path === '/admin' || path === '/admin/') && !hasHash;
+    const isNodes = path.startsWith('/admin/nodes') && !hasHash;
     const isVpsNodes = hash === '#vps-nodes';
-    const isServers = path.startsWith('/admin/servers');
+    const isServers = path.startsWith('/admin/servers') && !hasHash;
     const isVps = hash === '#vps';
-    const isDatabases = path.startsWith('/admin/databases');
-    const isUsers = hash === '#users' || path.startsWith('/admin/users');
-    const isStorePricing = hash === '#store-pricing' || path.startsWith('/admin/store-pricing');
+    const isDatabases = path.startsWith('/admin/databases') && !hasHash;
+    const isUsers = hash === '#users' || (path.startsWith('/admin/users') && !hasHash);
+    const isStorePricing = hash === '#store-pricing';
     const isEarn = hash === '#earn';
-    const isAuditLogs = hash === '#audit-logs' || path.startsWith('/admin/audit-logs');
+    const isAuditLogs = hash === '#audit-logs';
 
     if (!subnav) {
       subnav = document.createElement('div');
@@ -231,31 +232,33 @@
 
     const path = window.location.pathname || '';
     const hash = window.location.hash || '';
+    const hasHash = Boolean(hash && hash !== '#');
 
-    const isOverview = path === '/admin' && !hash;
-    const isSettings = path.startsWith('/admin/settings');
-    const isApi = path.startsWith('/admin/api');
-    const isMailEditor = path === '/admin/mail-editor' || hash === '#mail-editor';
-    const isAnnouncements = path === '/admin/announcements' || hash === '#announcements';
+    // Mutually exclusive: if hash subview is active, path matches are inactive
+    const isOverview = (path === '/admin' || path === '/admin/') && !hasHash;
+    const isSettings = path.startsWith('/admin/settings') && !hasHash;
+    const isApi = path.startsWith('/admin/api') && !hasHash;
+    const isMailEditor = hash === '#mail-editor';
+    const isAnnouncements = hash === '#announcements';
 
-    const isDatabases = path.startsWith('/admin/databases');
-    const isLocations = path.startsWith('/admin/locations');
-    const isNodes = path.startsWith('/admin/nodes');
-    const isVpsNodes = path === '/admin/vps-nodes' || hash === '#vps-nodes';
-    const isServers = path.startsWith('/admin/servers');
-    const isVps = path === '/admin/vps' || hash === '#vps';
-    const isUsers = path.startsWith('/admin/users') || hash === '#users';
-    const isNodeHealth = path === '/admin/node-health' || hash === '#node-health';
-    const isAuditLogs = path === '/admin/audit-logs' || hash === '#audit-logs';
+    const isDatabases = path.startsWith('/admin/databases') && !hasHash;
+    const isLocations = path.startsWith('/admin/locations') && !hasHash;
+    const isNodes = path.startsWith('/admin/nodes') && !hasHash;
+    const isVpsNodes = hash === '#vps-nodes';
+    const isServers = path.startsWith('/admin/servers') && !hasHash;
+    const isVps = hash === '#vps';
+    const isUsers = hash === '#users' || (path.startsWith('/admin/users') && !hasHash);
+    const isNodeHealth = hash === '#node-health';
+    const isAuditLogs = hash === '#audit-logs';
 
-    const isMounts = path.startsWith('/admin/mounts');
-    const isNests = path.startsWith('/admin/nests');
-    const isStorePricing = path === '/admin/store-pricing' || hash === '#store-pricing';
-    const isEarn = path === '/admin/earn' || hash === '#earn';
+    const isMounts = path.startsWith('/admin/mounts') && !hasHash;
+    const isNests = path.startsWith('/admin/nests') && !hasHash;
+    const isStorePricing = hash === '#store-pricing';
+    const isEarn = hash === '#earn';
 
-    const isWebhooks = path === '/admin/webhooks' || hash === '#webhooks';
-    const isInbuiltAddons = path === '/admin/inbuilt-addons' || hash === '#inbuilt-addons';
-    const isBlueprint = path === '/admin/extensions' || hash === '#blueprint-extensions';
+    const isWebhooks = hash === '#webhooks';
+    const isInbuiltAddons = hash === '#inbuilt-addons';
+    const isBlueprint = hash === '#blueprint-extensions';
 
     menu.innerHTML = `
       <!-- BASIC ADMINISTRATION -->
@@ -647,7 +650,7 @@
 
   function isolateStudioView(content, studioView, renderFn) {
     Array.from(content.children).forEach(function (c) {
-      if (c.id !== 'apparatus-admin-studio-view') c.style.display = 'none';
+      if (c.id !== 'apparatus-admin-studio-view' && c.id !== 'apparatus-saas-subnav') c.style.display = 'none';
     });
 
     if (!studioView) {
