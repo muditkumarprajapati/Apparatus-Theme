@@ -410,6 +410,7 @@
         if (deployBtn) {
           deployBtn.innerHTML = '<i class="ri-add-line"></i> Deploy Cloud VPS';
         }
+        loadClientVpsFleet();
       } else {
         document.body.classList.add('apparatus-page-dashboard');
         document.body.classList.remove('apparatus-page-servers', 'apparatus-page-vps');
@@ -1080,6 +1081,7 @@
           deployBtn.innerHTML = '<i class="ri-add-line"></i> Deploy Cloud VPS';
           deployBtn.onclick = function () { window.open('https://arixbyte.com', '_blank'); };
         }
+        loadClientVpsFleet();
       } else {
         if (tabServers) tabServers.classList.add('active');
         if (tabVps) tabVps.classList.remove('active');
@@ -1216,32 +1218,36 @@
 
   function getPromoCodesList() {
     let list = [];
+    var deletedDefaults = [];
+    try {
+      deletedDefaults = (JSON.parse(localStorage.getItem('apparatus_deleted_default_codes') || '[]')).map(function (c) { return String(c).toUpperCase(); });
+    } catch (e) {}
+
     try {
       const raw = localStorage.getItem('apparatus_promo_codes');
       if (raw) {
         let parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
           list = parsed.filter(function (c) {
-            return c && c.code !== 'WELCOME20' && c.code !== 'ARIX50' && c.id !== 'pc_welcome' && c.id !== 'pc_community';
+            if (!c || !c.code) return false;
+            const codeUpper = String(c.code).toUpperCase();
+            if (codeUpper === 'WELCOME20' || codeUpper === 'ARIX50' || c.id === 'pc_welcome' || c.id === 'pc_community') return false;
+            if (deletedDefaults.includes(codeUpper)) return false;
+            return true;
           });
         }
       }
     } catch (e) {}
 
-    // Only add defaults if they haven't been explicitly deleted
-    var deletedDefaults = [];
-    try {
-      deletedDefaults = JSON.parse(localStorage.getItem('apparatus_deleted_default_codes') || '[]');
-    } catch (e) {}
-
     const defaultCodes = [
-      { id: 'pc_jee25', code: 'JEE25', points: 25, maxUses: 1000, usedCount: 0, active: true },
+      { id: 'pc_jee25', code: 'JEE25', points: 100, maxUses: 25, usedCount: 0, active: true, createdAt: '2026-11-16T00:00:00Z', expiresAt: '2026-11-23T00:00:00Z' },
       { id: 'pc_arix100', code: 'ARIX100', points: 100, maxUses: 500, usedCount: 0, active: true },
       { id: 'pc_launch2026', code: 'LAUNCH2026', points: 50, maxUses: 1000, usedCount: 0, active: true }
     ];
 
     defaultCodes.forEach(function (def) {
-      if (!deletedDefaults.includes(def.code) && !list.some(function (c) { return (c.code || '').toUpperCase() === def.code; })) {
+      const defUpper = def.code.toUpperCase();
+      if (!deletedDefaults.includes(defUpper) && !list.some(function (c) { return (c.code || '').toUpperCase() === defUpper; })) {
         list.push(def);
       }
     });
@@ -6257,16 +6263,26 @@
     };
   }
 
-  // Profile Manager deferred per user instruction ("we will later fix that profile one")
   function injectUserProfileSection() {
-    const existing = document.getElementById('apparatus-user-profile-section');
-    if (existing) existing.remove();
-    return;
-  }
-  function _disabled_injectUserProfileSection() {
+    var rawPath = window.location.pathname || '';
+    if (rawPath !== '/account' && rawPath !== '/account/') return;
 
-    let section = document.getElementById('apparatus-user-profile-section');
-    const isNew = !section;
+    var els = getAccountPageElements();
+    if (!els) return;
+
+    var existing = document.getElementById('apparatus-user-profile-section');
+    if (existing) {
+      var exTargetRef = els.card1 || els.gridContainer;
+      if (exTargetRef && exTargetRef.parentNode && existing.nextSibling !== exTargetRef) {
+        exTargetRef.parentNode.insertBefore(existing, exTargetRef);
+      }
+      existing.style.setProperty('display', 'block', 'important');
+      return;
+    }
+
+    var section = document.createElement('div');
+    section.id = 'apparatus-user-profile-section';
+    section.className = 'apparatus-user-profile-section';
 
     const user = window.PterodactylUser || {};
     const username = localStorage.getItem('apparatus_profile_username') || user.username || 'mudit';
@@ -6282,7 +6298,7 @@
     const isVerified = localStorage.getItem('apparatus_user_verified') === 'true';
     const memberYear = user.created_at ? new Date(user.created_at).getFullYear() : '2026';
 
-    if (isNew) {
+    
       section = document.createElement('div');
       section.id = 'apparatus-user-profile-section';
       section.className = 'apparatus-user-profile-section';
@@ -6607,29 +6623,28 @@
         openEnterCodeModal();
       });
     }
-  }
 
-  // Mount section right above card1 or gridContainer in its real DOM parent (guaranteed on every route sync)
-  const targetRef = els.card1 || els.gridContainer;
-  if (targetRef && targetRef.parentNode) {
-    if (section.parentElement !== targetRef.parentNode || section.nextSibling !== targetRef) {
-      targetRef.parentNode.insertBefore(section, targetRef);
+    // Mount section right above card1 or gridContainer in its real DOM parent (guaranteed on every route sync)
+    const targetRef = els.card1 || els.gridContainer;
+    if (targetRef && targetRef.parentNode) {
+      if (section.parentElement !== targetRef.parentNode || section.nextSibling !== targetRef) {
+        targetRef.parentNode.insertBefore(section, targetRef);
+      }
+    } else if (els.pageContainer) {
+      if (section.parentElement !== els.pageContainer) {
+        els.pageContainer.prepend(section);
+      }
     }
-  } else if (els.pageContainer) {
-    if (section.parentElement !== els.pageContainer) {
-      els.pageContainer.prepend(section);
-    }
-  }
-  section.style.setProperty('display', 'block', 'important');
-  section.style.setProperty('visibility', 'visible', 'important');
-  section.style.setProperty('opacity', '1', 'important');
-  section.style.setProperty('width', '100%', 'important');
-  section.style.setProperty('max-width', '100%', 'important');
-  section.style.setProperty('margin-bottom', '1.5rem', 'important');
-  section.style.setProperty('box-sizing', 'border-box', 'important');
+    section.style.setProperty('display', 'block', 'important');
+    section.style.setProperty('visibility', 'visible', 'important');
+    section.style.setProperty('opacity', '1', 'important');
+    section.style.setProperty('width', '100%', 'important');
+    section.style.setProperty('max-width', '100%', 'important');
+    section.style.setProperty('margin-bottom', '1.5rem', 'important');
+    section.style.setProperty('box-sizing', 'border-box', 'important');
 
-  normalizeAccountCards();
-}
+    normalizeAccountCards();
+  }
 
   // ==============================================================================
   // Account Overview Cards Alignment & Flush 100% Width Normalization
@@ -8786,3 +8801,488 @@
     };
   }
 })();
+
+
+  // ==============================================================================
+  // 12. CLOUD VPS (ALPM PROXMOX) CLIENT FLEET MANAGEMENT & SSH/CONSOLE
+  // ==============================================================================
+  let clientVpsLoadedOnce = false;
+
+  function loadClientVpsFleet(forceRefresh) {
+    const pane = document.getElementById('apparatus-pane-vps');
+    if (!pane) return;
+
+    if (!forceRefresh && clientVpsLoadedOnce && pane.querySelector('.apparatus-vps-grid')) {
+      return;
+    }
+
+    pane.innerHTML = `
+      <div class="apparatus-vps-loading-state" style="padding: 3rem 1.5rem; text-align: center;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 14px; background: rgba(236,72,153,0.12); color: #ec4899; font-size: 1.8rem; margin-bottom: 1rem;">
+          <i class="ri-server-line ri-spin"></i>
+        </div>
+        <h4 style="color: #fff; font-size: 1.15rem; font-weight: 700; margin-bottom: 0.35rem;">Connecting to Cloud VPS Cluster...</h4>
+        <p style="color: #94a3b8; font-size: 0.88rem;">Fetching your virtual machines and network configurations</p>
+      </div>
+    `;
+
+    const user = window.PterodactylUser || {};
+    const email = user.email || '';
+
+    fetch('/auth/vps/list' + (email ? ('?email=' + encodeURIComponent(email)) : ''))
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        clientVpsLoadedOnce = true;
+        let servers = [];
+        if (res.success && Array.isArray(res.servers)) {
+          servers = res.servers;
+        } else if (res.servers && Array.isArray(res.servers)) {
+          servers = res.servers;
+        }
+
+        if (servers.length > 0) {
+          try { localStorage.setItem('apparatus_client_vps_cache', JSON.stringify(servers)); } catch (e) {}
+        } else {
+          try {
+            const cached = localStorage.getItem('apparatus_client_vps_cache');
+            if (cached) servers = JSON.parse(cached);
+          } catch (e) {}
+        }
+
+        renderClientVpsFleet(pane, servers, email);
+      })
+      .catch(function (err) {
+        console.warn('[Apparatus VPS] Query error:', err);
+        clientVpsLoadedOnce = true;
+        let servers = [];
+        try {
+          const cached = localStorage.getItem('apparatus_client_vps_cache');
+          if (cached) servers = JSON.parse(cached);
+        } catch (e) {}
+        renderClientVpsFleet(pane, servers, email);
+      });
+  }
+
+  function renderClientVpsFleet(container, servers, userEmail) {
+    if (!servers || servers.length === 0) {
+      container.innerHTML = `
+        <div class="apparatus-vps-empty">
+          <div class="apparatus-vps-empty-icon">
+            <i class="ri-server-line"></i>
+          </div>
+          <h4 class="apparatus-vps-empty-title">No Cloud VPS Found</h4>
+          <p class="apparatus-vps-empty-desc">
+            You don't have any active Cloud VPS instances associated with your account (${userEmail || 'registered email'}).
+            When provisioned by an administrator or ordered via our store, your instances will appear here automatically.
+          </p>
+          <div class="apparatus-vps-empty-actions">
+            <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-primary">
+              <i class="ri-add-line"></i> Deploy Cloud VPS
+            </a>
+            <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-btn-refresh-client-vps">
+              <i class="ri-refresh-line"></i> Check Again
+            </button>
+          </div>
+        </div>
+      `;
+      const refBtn = container.querySelector('#apparatus-btn-refresh-client-vps');
+      if (refBtn) {
+        refBtn.addEventListener('click', function () {
+          loadClientVpsFleet(true);
+        });
+      }
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="apparatus-vps-fleet-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <span style="font-size: 1.05rem; font-weight: 700; color: #fff;">Your Virtual Machines</span>
+          <span class="apparatus-badge apparatus-badge-pink" style="font-size: 0.78rem; padding: 0.2rem 0.6rem; border-radius: 20px;">${servers.length} VPS</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <div class="apparatus-search-wrap" style="position: relative;">
+            <input type="text" id="apparatus-vps-search-input" placeholder="Search VPS name, VMID, IP..." class="apparatus-input" style="height: 36px; font-size: 0.85rem; padding-left: 2rem; width: 220px; border-radius: 8px;" />
+            <i class="ri-search-line" style="position: absolute; left: 0.65rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 0.95rem;"></i>
+          </div>
+          <button type="button" class="apparatus-btn apparatus-btn-glass" id="apparatus-btn-refresh-client-vps" style="height: 36px; padding: 0 0.85rem; border-radius: 8px;" title="Refresh Fleet">
+            <i class="ri-refresh-line"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="apparatus-vps-grid" id="apparatus-vps-cards-grid">
+        ${renderClientVpsCards(servers)}
+      </div>
+    `;
+
+    wireClientVpsEvents(container, servers);
+  }
+
+  function renderClientVpsCards(servers) {
+    return servers.map(function (s) {
+      const isOnline = (s.status || '').toLowerCase() === 'running';
+      const isSuspended = Boolean(s.is_suspended);
+      const statusColor = isSuspended ? '#f59e0b' : (isOnline ? '#34d399' : '#ef4444');
+      const statusText = isSuspended ? 'SUSPENDED' : (isOnline ? 'ONLINE' : 'STOPPED');
+
+      const ip = s.ip || 'DHCP Pending';
+      const node = s.node || s.pve_node || 'pve';
+      const type = (s.type || 'qemu').toUpperCase();
+      const cores = s.cores || s.cpus || 2;
+      const memMb = s.memory || s.ram || (s.mem_usage ? Math.round(s.mem_usage / (1024*1024)) : 2048);
+      const memGb = (memMb >= 1024) ? (memMb / 1024).toFixed(0) + ' GB' : memMb + ' MB';
+      const diskGb = s.disk || s.disk_gb || 20;
+
+      // OS detection
+      const osLower = ((s.os || s.template || s.name || '') + '').toLowerCase();
+      let osIcon = '<i class="ri-ubuntu-fill" style="color: #e95420;"></i>';
+      if (osLower.includes('debian')) {
+        osIcon = '<i class="ri-terminal-window-line" style="color: #d70a53;"></i>';
+      } else if (osLower.includes('centos') || osLower.includes('rocky') || osLower.includes('alma')) {
+        osIcon = '<i class="ri-terminal-box-line" style="color: #22c55e;"></i>';
+      } else if (osLower.includes('win')) {
+        osIcon = '<i class="ri-windows-fill" style="color: #0078d4;"></i>';
+      } else if (osLower.includes('arch')) {
+        osIcon = '<i class="ri-code-s-slash-line" style="color: #1793d1;"></i>';
+      }
+
+      return `
+        <div class="apparatus-vps-card" data-vps-id="${s.id}" data-search="${(s.name || '')} ${(s.vmid || '')} ${ip}">
+          <div class="apparatus-vps-card-header">
+            <div class="apparatus-vps-card-identity">
+              <div class="apparatus-vps-os-badge">
+                ${osIcon}
+              </div>
+              <div class="apparatus-vps-title-wrap">
+                <h3 class="apparatus-vps-name">${s.name || 'Cloud VPS'}</h3>
+                <div class="apparatus-vps-submeta">
+                  <span class="apparatus-vps-vmid">VMID #${s.vmid || s.id}</span>
+                  <span class="apparatus-vps-sep">&bull;</span>
+                  <span class="apparatus-vps-node">${node} (${type})</span>
+                </div>
+              </div>
+            </div>
+            <div class="apparatus-vps-status-pill" style="border-color: ${statusColor}; color: ${statusColor};">
+              <span class="apparatus-vps-pulse-dot" style="background: ${statusColor}; ${isOnline ? 'box-shadow: 0 0 10px ' + statusColor + ';' : ''}"></span>
+              ${statusText}
+            </div>
+          </div>
+
+          <div class="apparatus-vps-card-body">
+            <!-- IP Box -->
+            <div class="apparatus-vps-ip-row">
+              <span class="apparatus-vps-ip-label"><i class="ri-global-line"></i> Primary IP:</span>
+              <div class="apparatus-vps-ip-copy-group">
+                <code class="apparatus-vps-ip-code">${ip}</code>
+                ${ip !== 'DHCP Pending' ? `
+                  <button type="button" class="apparatus-btn-icon-xs apparatus-copy-vps-ip" data-ip="${ip}" title="Copy IP">
+                    <i class="ri-file-copy-line"></i>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+
+            <!-- Resource Specs -->
+            <div class="apparatus-vps-specs-grid">
+              <div class="apparatus-vps-spec-item" title="vCPU Cores">
+                <i class="ri-cpu-line" style="color: #ec4899;"></i>
+                <span>${cores} vCPU</span>
+              </div>
+              <div class="apparatus-vps-spec-item" title="RAM Allocation">
+                <i class="ri-ram-line" style="color: #8b5cf6;"></i>
+                <span>${memGb} RAM</span>
+              </div>
+              <div class="apparatus-vps-spec-item" title="Storage Allocation">
+                <i class="ri-hard-drive-2-line" style="color: #34d399;"></i>
+                <span>${diskGb} GB NVMe</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Actions Footer -->
+          <div class="apparatus-vps-card-footer">
+            <div class="apparatus-vps-power-btns">
+              ${isOnline ? `
+                <button type="button" class="apparatus-vps-btn-power" data-vps-id="${s.id}" data-action="restart" title="Reboot Virtual Machine" style="color: #38bdf8; background: rgba(56,189,248,0.12); border-color: rgba(56,189,248,0.25);">
+                  <i class="ri-restart-line"></i> Restart
+                </button>
+                <button type="button" class="apparatus-vps-btn-power" data-vps-id="${s.id}" data-action="stop" title="Graceful Shutdown" style="color: #f59e0b; background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.25);">
+                  <i class="ri-shut-down-line"></i> Stop
+                </button>
+              ` : `
+                <button type="button" class="apparatus-vps-btn-power" data-vps-id="${s.id}" data-action="start" title="Start Virtual Machine" style="color: #34d399; background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.25);">
+                  <i class="ri-play-line"></i> Start
+                </button>
+              `}
+            </div>
+
+            <div class="apparatus-vps-tool-btns">
+              <button type="button" class="apparatus-btn apparatus-btn-glass apparatus-vps-btn-ssh" data-vps-id="${s.id}" title="SSH Credentials &amp; Quick Connect">
+                <i class="ri-key-2-line" style="color: #34d399;"></i> SSH
+              </button>
+              <button type="button" class="apparatus-btn apparatus-btn-glass apparatus-vps-btn-console" data-vps-id="${s.id}" title="Web Console Terminal">
+                <i class="ri-terminal-line" style="color: #a855f7;"></i> Console
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function wireClientVpsEvents(container, servers) {
+    // 1. Refresh fleet
+    const refBtn = container.querySelector('#apparatus-btn-refresh-client-vps');
+    if (refBtn) {
+      refBtn.addEventListener('click', function () {
+        refBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i>';
+        loadClientVpsFleet(true);
+      });
+    }
+
+    // 2. Search filter
+    const searchInput = container.querySelector('#apparatus-vps-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        const q = this.value.trim().toLowerCase();
+        container.querySelectorAll('.apparatus-vps-card[data-search]').forEach(function (card) {
+          const hay = card.getAttribute('data-search').toLowerCase();
+          card.style.display = hay.includes(q) ? '' : 'none';
+        });
+      });
+    }
+
+    // 3. Copy IP
+    container.querySelectorAll('.apparatus-copy-vps-ip').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const ip = this.getAttribute('data-ip');
+        if (navigator.clipboard) navigator.clipboard.writeText(ip);
+        showToast('info', 'IP Copied', 'IP address ' + ip + ' copied to clipboard.');
+      });
+    });
+
+    // 4. Power actions
+    container.querySelectorAll('.apparatus-vps-btn-power').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const id = this.getAttribute('data-vps-id');
+        const action = this.getAttribute('data-action');
+        const origHtml = this.innerHTML;
+        this.disabled = true;
+        this.innerHTML = '<i class="ri-loader-4-line ri-spin"></i>';
+
+        fetch('/auth/vps/' + id + '/power', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken()
+          },
+          body: JSON.stringify({ action: action })
+        }).then(function (r) { return r.json(); }).then(function (res) {
+          if (res.success || res.ok) {
+            showToast('success', 'Power Signal Dispatched', 'Server received ' + action.toUpperCase() + ' instruction.');
+            setTimeout(function () { loadClientVpsFleet(true); }, 2500);
+          } else {
+            showToast('error', 'Power Command Failed', res.error || 'Failed to dispatch power instruction.');
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
+          }
+        }).catch(function (err) {
+          showToast('error', 'Network Error', 'Could not dispatch power command.');
+          btn.disabled = false;
+          btn.innerHTML = origHtml;
+        });
+      });
+    });
+
+    // 5. SSH Modal
+    container.querySelectorAll('.apparatus-vps-btn-ssh').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const id = this.getAttribute('data-vps-id');
+        const s = servers.find(function (x) { return String(x.id) === String(id); }) || { id: id };
+        openClientVpsSshModal(s);
+      });
+    });
+
+    // 6. Web Console Modal
+    container.querySelectorAll('.apparatus-vps-btn-console').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const id = this.getAttribute('data-vps-id');
+        const s = servers.find(function (x) { return String(x.id) === String(id); }) || { id: id };
+        openClientVpsConsoleModal(s);
+      });
+    });
+  }
+
+  function openClientVpsSshModal(server) {
+    const existing = document.getElementById('apparatus-client-ssh-modal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'apparatus-client-ssh-modal';
+    modal.className = 'apparatus-modal-overlay';
+    modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1.5rem;';
+
+    const ip = server.ip || '127.0.0.1';
+    const port = server.ssh_port || 22;
+    const user = server.ssh_user || 'root';
+    const name = server.name || 'Cloud VPS';
+    const vmid = server.vmid || server.id;
+
+    modal.innerHTML = `
+      <div style="background: #0f0b18; border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; width: 100%; max-width: 580px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+        <div style="padding: 1.25rem 1.5rem; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(52, 211, 153, 0.15); color: #34d399; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+              <i class="ri-key-2-line"></i>
+            </div>
+            <div>
+              <h4 style="margin: 0; color: #fff; font-weight: 700; font-size: 1.05rem;">SSH Access &bull; ${name}</h4>
+              <span style="color: #64748b; font-size: 0.8rem;">VMID #${vmid} &bull; Proxmox KVM Node</span>
+            </div>
+          </div>
+          <button type="button" id="btn-close-client-vps-ssh" style="background: transparent; border: none; color: #94a3b8; font-size: 1.3rem; cursor: pointer;">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+        <div style="padding: 1.5rem;">
+          <div style="margin-bottom: 1.25rem;">
+            <label style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.4rem; display: block;">Terminal Quick Connect</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="text" id="client-ssh-cmd-input" readonly value="ssh ${user}@${ip}${port != 22 ? ' -p ' + port : ''}" style="flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #38bdf8; font-family: monospace; font-size: 0.92rem; padding: 0.6rem 0.85rem;" />
+              <button type="button" id="btn-copy-client-ssh-cmd" class="apparatus-btn apparatus-btn-primary" style="padding: 0 1.25rem; display: flex; align-items: center; gap: 0.4rem;">
+                <i class="ri-file-copy-line"></i> Copy
+              </button>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 0.85rem 1rem;">
+              <span style="color: #64748b; font-size: 0.78rem; display: block; text-transform: uppercase;">Host / IP</span>
+              <strong style="color: #fff; font-size: 0.95rem; font-family: monospace;">${ip}</strong>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 0.85rem 1rem;">
+              <span style="color: #64748b; font-size: 0.78rem; display: block; text-transform: uppercase;">Port</span>
+              <strong style="color: #fff; font-size: 0.95rem; font-family: monospace;">${port}</strong>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 0.85rem 1rem;">
+              <span style="color: #64748b; font-size: 0.78rem; display: block; text-transform: uppercase;">Default User</span>
+              <strong style="color: #fff; font-size: 0.95rem; font-family: monospace;">${user}</strong>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 0.85rem 1rem;">
+              <span style="color: #64748b; font-size: 0.78rem; display: block; text-transform: uppercase;">Authentication</span>
+              <strong style="color: #34d399; font-size: 0.95rem;">SSH Key / Password</strong>
+            </div>
+          </div>
+
+          <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 0.75rem 1rem; color: #94a3b8; font-size: 0.82rem; line-height: 1.45; margin-bottom: 1.25rem;">
+            <i class="ri-information-line" style="color: #38bdf8;"></i> Authenticate with your root password or configure your public SSH key in Pterodactyl for passwordless access.
+          </div>
+
+          <div style="text-align: right;">
+            <a href="/account/ssh" class="apparatus-btn apparatus-btn-glass" style="font-size: 0.88rem; padding: 0.5rem 1rem;">
+              <i class="ri-key-line"></i> Manage SSH Keys
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.querySelector('#btn-close-client-vps-ssh').addEventListener('click', function () {
+      modal.remove();
+    });
+
+    modal.querySelector('#btn-copy-client-ssh-cmd').addEventListener('click', function () {
+      const input = modal.querySelector('#client-ssh-cmd-input');
+      if (input && navigator.clipboard) {
+        navigator.clipboard.writeText(input.value);
+        showToast('info', 'Command Copied', 'SSH command copied to clipboard.');
+      }
+    });
+  }
+
+  function openClientVpsConsoleModal(server) {
+    const existing = document.getElementById('apparatus-client-console-modal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'apparatus-client-console-modal';
+    modal.className = 'apparatus-modal-overlay';
+    modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1.5rem;';
+
+    const name = server.name || 'Cloud VPS';
+    const vmid = server.vmid || server.id;
+
+    modal.innerHTML = `
+      <div style="background: #0f0b18; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; width: 100%; max-width: 950px; height: 600px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+        <div style="padding: 1rem 1.25rem; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <i class="ri-terminal-box-line" style="color: #ec4899; font-size: 1.3rem;"></i>
+            <span style="color: #fff; font-weight: 700; font-size: 1rem;">Web Console &bull; ${name} (#${vmid})</span>
+          </div>
+          <button type="button" id="btn-close-client-console" style="background: transparent; border: none; color: #94a3b8; font-size: 1.3rem; cursor: pointer;">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+        <div id="client-vps-console-body" style="flex: 1; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #34d399; font-family: monospace;">
+          <i class="ri-loader-4-line ri-spin" style="font-size: 2rem;"></i>
+          <p style="margin-top: 1rem; color: #94a3b8;">Connecting to Proxmox termproxy session...</p>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.querySelector('#btn-close-client-console').addEventListener('click', function () {
+      modal.remove();
+    });
+
+    fetch('/auth/vps/' + server.id + '/termproxy', {
+      method: 'POST',
+      headers: { 'X-CSRF-TOKEN': getCsrfToken() }
+    }).then(function (r) { return r.json(); }).then(function (res) {
+      const body = modal.querySelector('#client-vps-console-body');
+      if (res.success && res.data && res.data.sessionId) {
+        const alpmUrl = (res.alpm_url || 'http://127.0.0.1:3000').replace(/\/+$/, '');
+        const consoleUrl = alpmUrl + '/novnc?sessionId=' + encodeURIComponent(res.data.sessionId) + '&vmid=' + encodeURIComponent(vmid);
+
+        body.innerHTML = `
+          <div style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+            <div style="padding: 0.4rem 1rem; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: #34d399; font-size: 0.82rem;"><i class="ri-checkbox-circle-fill"></i> Live Session Connected</span>
+              <a href="${consoleUrl}" target="_blank" rel="noopener noreferrer" class="apparatus-btn apparatus-btn-glass" style="font-size: 0.78rem; padding: 0.2rem 0.6rem;">
+                <i class="ri-external-link-line"></i> Open in New Window
+              </a>
+            </div>
+            <iframe src="${consoleUrl}" style="width: 100%; flex: 1; border: none; background: #000;"></iframe>
+          </div>
+        `;
+      } else {
+        body.innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: #94a3b8;">
+            <i class="ri-error-warning-line" style="font-size: 2.5rem; color: #f59e0b; display: block; margin-bottom: 0.75rem;"></i>
+            <h4 style="color: #fff; margin-bottom: 0.5rem;">Console Session Unavailable</h4>
+            <p style="font-size: 0.88rem; max-width: 450px; margin: 0 auto 1.5rem auto;">${res.error || 'The VM is either offline or the ALPM proxy was unable to establish a ticket with the Proxmox node.'}</p>
+            <div style="display: flex; gap: 0.5rem; justify-content: center;">
+              <button type="button" class="apparatus-btn apparatus-btn-glass" onclick="document.getElementById('apparatus-client-console-modal').remove(); openClientVpsSshModal(${JSON.stringify(server).replace(/"/g, '&quot;')});">
+                <i class="ri-key-2-line"></i> Use SSH Instead
+              </button>
+            </div>
+          </div>
+        `;
+      }
+    }).catch(function (err) {
+      const body = modal.querySelector('#client-vps-console-body');
+      if (body) {
+        body.innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: #94a3b8;">
+            <i class="ri-wifi-off-line" style="font-size: 2.5rem; color: #ef4444; display: block; margin-bottom: 0.75rem;"></i>
+            <h4 style="color: #fff; margin-bottom: 0.5rem;">Gateway Unreachable</h4>
+            <p style="font-size: 0.88rem;">Unable to contact the VPS management proxy server.</p>
+          </div>
+        `;
+      }
+    });
+  }

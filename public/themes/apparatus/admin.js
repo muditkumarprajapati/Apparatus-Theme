@@ -93,6 +93,7 @@
     const isLocations = path.startsWith('/admin/locations');
     const isNodes = path.startsWith('/admin/nodes');
     const isServers = path.startsWith('/admin/servers');
+    const isVps = path === '/admin/vps' || hash === '#vps';
     const isUsers = path.startsWith('/admin/users') || hash === '#users';
     const isNodeHealth = path === '/admin/node-health' || hash === '#node-health';
     const isAuditLogs = path === '/admin/audit-logs' || hash === '#audit-logs';
@@ -164,6 +165,12 @@
         <a href="/admin/servers">
           <i class="ri-hard-drive-2-line"></i>
           <span>Servers</span>
+        </a>
+      </li>
+      <li class="${isVps ? 'active' : ''}">
+        <a href="#vps" class="apparatus-admin-tab" data-tab="vps">
+          <i class="ri-server-line"></i>
+          <span>VPS (ALPM)</span>
         </a>
       </li>
       <li class="${isUsers ? 'active' : ''}">
@@ -376,6 +383,17 @@
       }
       isolateStudioView(content, studioView, renderStorePricingView);
 
+    } else if (hash === '#vps') {
+      if (header) {
+        header.innerHTML = `
+          <h1>Cloud VPS Fleet (ALPM) <small>Proxmox VE hypervisor management, KVM virtual machines & real-time telemetry</small></h1>
+          <ol class="breadcrumb">
+            <li><a href="/admin"><i class="ri-home-4-line"></i> Admin</a></li>
+            <li class="active">VPS Fleet (ALPM)</li>
+          </ol>
+        `;
+      }
+      isolateStudioView(content, studioView, renderAdminVpsView);
     } else if (hash === '#earn') {
       if (header) {
         header.innerHTML = `
@@ -1446,32 +1464,36 @@ ${formatMailBody(currentTpl.body)}
   // ==============================================================================
   function getPromoCodesList() {
     let list = [];
+    let deletedDefaults = [];
+    try {
+      deletedDefaults = (JSON.parse(localStorage.getItem('apparatus_deleted_default_codes') || '[]')).map(function (c) { return String(c).toUpperCase(); });
+    } catch (e) {}
+
     try {
       const raw = localStorage.getItem('apparatus_promo_codes');
       if (raw) {
         let parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
           list = parsed.filter(function (c) {
-            return c && c.code !== 'WELCOME20' && c.code !== 'ARIX50' && c.id !== 'pc_welcome' && c.id !== 'pc_community';
+            if (!c || !c.code) return false;
+            const codeUpper = String(c.code).toUpperCase();
+            if (codeUpper === 'WELCOME20' || codeUpper === 'ARIX50' || c.id === 'pc_welcome' || c.id === 'pc_community') return false;
+            if (deletedDefaults.includes(codeUpper)) return false;
+            return true;
           });
         }
       }
     } catch (e) {}
 
-    // Only add defaults if they haven't been explicitly deleted
-    let deletedDefaults = [];
-    try {
-      deletedDefaults = JSON.parse(localStorage.getItem('apparatus_deleted_default_codes') || '[]');
-    } catch (e) {}
-
     const defaultCodes = [
-      { id: 'pc_jee25', code: 'JEE25', points: 25, maxUses: 1000, usedCount: 0, active: true },
+      { id: 'pc_jee25', code: 'JEE25', points: 100, maxUses: 25, usedCount: 0, active: true, createdAt: '2026-11-16T00:00:00Z', expiresAt: '2026-11-23T00:00:00Z' },
       { id: 'pc_arix100', code: 'ARIX100', points: 100, maxUses: 500, usedCount: 0, active: true },
       { id: 'pc_launch2026', code: 'LAUNCH2026', points: 50, maxUses: 1000, usedCount: 0, active: true }
     ];
 
     defaultCodes.forEach(function (def) {
-      if (!deletedDefaults.includes(def.code) && !list.some(function (c) { return (c.code || '').toUpperCase() === def.code; })) {
+      const defUpper = def.code.toUpperCase();
+      if (!deletedDefaults.includes(defUpper) && !list.some(function (c) { return (c.code || '').toUpperCase() === defUpper; })) {
         list.push(def);
       }
     });
@@ -1495,8 +1517,9 @@ ${formatMailBody(currentTpl.body)}
     try {
       deleted = JSON.parse(localStorage.getItem('apparatus_deleted_default_codes') || '[]');
     } catch (e) {}
-    if (!deleted.includes(code)) {
-      deleted.push(code);
+    const upper = String(code).toUpperCase();
+    if (!deleted.map(function(c){ return String(c).toUpperCase(); }).includes(upper)) {
+      deleted.push(upper);
       localStorage.setItem('apparatus_deleted_default_codes', JSON.stringify(deleted));
     }
   }
@@ -1822,13 +1845,25 @@ ${formatMailBody(currentTpl.body)}
       // Delete code buttons
       container.querySelectorAll('.apparatus-btn-delete-code').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          const cd = this.getAttribute('data-code');
+          const cd = (this.getAttribute('data-code') || '').trim();
+          if (!cd) return;
           if (confirm('Are you sure you want to permanently delete promo code ' + cd + '?')) {
             markDefaultCodeDeleted(cd);
             let all = getPromoCodesList();
-            all = all.filter(function (c) { return c.code !== cd; });
+            all = all.filter(function (c) { return (c.code || '').toUpperCase() !== cd.toUpperCase(); });
             savePromoCodesList(all);
-            showAdminToast('success', 'Code Deleted', 'Promo code ' + cd + ' removed.');
+
+            // Also call backend to delete from server ledger
+            fetch('/auth/promo/delete', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': getCsrfToken()
+              },
+              body: JSON.stringify({ code: cd })
+            }).catch(function (e) { console.warn('Server promo delete notice:', e); });
+
+            showAdminToast('success', 'Code Deleted', 'Promo code ' + cd + ' permanently removed.');
             renderAdminEarnView(container);
           }
         });
@@ -2010,6 +2045,781 @@ ${formatMailBody(currentTpl.body)}
         showAdminToast('info', 'Code Copied', 'Promo code ' + codeObj.code + ' copied to clipboard.');
       });
     }
+  }
+
+
+  // ==============================================================================
+  // 8C. CLOUD VPS FLEET & ALPM PROXMOX MANAGEMENT CONSOLE
+  // ==============================================================================
+  function renderAdminVpsView(container) {
+    container.className = 'apparatus-admin-view';
+
+    // Initial loading skeleton
+    container.innerHTML = `
+      <div class="apparatus-loading-state" style="padding: 3rem; text-align: center;">
+        <i class="ri-loader-4-line ri-spin" style="font-size: 2.5rem; color: #ec4899;"></i>
+        <p style="color: #94a3b8; margin-top: 1rem; font-size: 1rem;">Connecting to ALPM Proxmox Management Engine...</p>
+      </div>
+    `;
+
+    // Fetch config and fleet data in parallel
+    Promise.all([
+      fetch('/auth/vps/config').then(function (r) { return r.json(); }).catch(function () { return { url: 'http://127.0.0.1:3000', has_key: false }; }),
+      fetch('/auth/vps/admin/servers').then(function (r) { return r.json(); }).catch(function () { return { success: false, servers: [] }; })
+    ]).then(function (results) {
+      const cfg = results[0] || {};
+      const srvData = results[1] || {};
+      let servers = Array.isArray(srvData.servers) ? srvData.servers : [];
+
+      // Fallback sample data if no servers yet returned
+      if (servers.length === 0) {
+        const cached = localStorage.getItem('apparatus_admin_vps_cache');
+        if (cached) {
+          try { servers = JSON.parse(cached); } catch (e) {}
+        }
+      }
+
+      renderAdminVpsContent(container, cfg, servers);
+    }).catch(function (err) {
+      console.warn('[Admin VPS] Load error:', err);
+      renderAdminVpsContent(container, { url: 'http://127.0.0.1:3000', has_key: false }, []);
+    });
+  }
+
+  function renderAdminVpsContent(container, cfg, servers) {
+    const totalCount = servers.length;
+    const runningCount = servers.filter(function (s) { return (s.status || '').toLowerCase() === 'running'; }).length;
+    const stoppedCount = totalCount - runningCount;
+
+    let totalCores = 0;
+    let totalMemMb = 0;
+    servers.forEach(function (s) {
+      totalCores += (s.cores || s.cpus || 2);
+      totalMemMb += (s.memory || s.ram || (s.mem_usage ? Math.round(s.mem_usage / (1024*1024)) : 2048));
+    });
+    const totalRamGb = (totalMemMb / 1024).toFixed(1);
+
+    container.innerHTML = `
+      <!-- TOP ANALYTICS TILES -->
+      <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-dark" style="background: rgba(14, 10, 22, 0.65); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;">
+            <span class="info-box-icon" style="background: rgba(236, 72, 153, 0.15); color: #ec4899; border-radius: 10px;"><i class="ri-server-line"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text" style="color: #94a3b8; font-weight: 600;">Total Cloud VPS</span>
+              <span class="info-box-number" style="color: #fff; font-size: 1.6rem;">${totalCount}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-dark" style="background: rgba(14, 10, 22, 0.65); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;">
+            <span class="info-box-icon" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border-radius: 10px;"><i class="ri-checkbox-circle-line"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text" style="color: #94a3b8; font-weight: 600;">Running Instances</span>
+              <span class="info-box-number" style="color: #34d399; font-size: 1.6rem;">${runningCount}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-dark" style="background: rgba(14, 10, 22, 0.65); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;">
+            <span class="info-box-icon" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border-radius: 10px;"><i class="ri-stop-circle-line"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text" style="color: #94a3b8; font-weight: 600;">Stopped / Inactive</span>
+              <span class="info-box-number" style="color: #ef4444; font-size: 1.6rem;">${stoppedCount}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-dark" style="background: rgba(14, 10, 22, 0.65); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;">
+            <span class="info-box-icon" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6; border-radius: 10px;"><i class="ri-cpu-line"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text" style="color: #94a3b8; font-weight: 600;">Total Allocated RAM</span>
+              <span class="info-box-number" style="color: #fff; font-size: 1.6rem;">${totalRamGb} <small style="color:#94a3b8;font-size:0.9rem;">GB</small></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALPM CONNECTION SETTINGS CARD -->
+      <div class="box box-primary" style="background: rgba(14, 10, 22, 0.65); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; margin-bottom: 2rem;">
+        <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 class="box-title" style="color: #fff; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="ri-link-m" style="color: #ec4899;"></i> ALPM Proxmox Integration Gateway
+          </h3>
+          <span id="apparatus-alpm-status-pill" class="badge" style="background: rgba(148, 163, 184, 0.2); color: #cbd5e1; font-size: 0.82rem; padding: 0.35rem 0.75rem; border-radius: 20px;">
+            <i class="ri-radar-line"></i> Status Unknown
+          </span>
+        </div>
+        <div class="box-body" style="padding: 1.5rem;">
+          <div class="row">
+            <div class="col-md-5 col-sm-12">
+              <div class="form-group">
+                <label style="color: #cbd5e1;">ALPM Panel URL</label>
+                <div class="input-group">
+                  <span class="input-group-addon" style="background: rgba(255,255,255,0.05); color: #94a3b8; border-color: rgba(255,255,255,0.12);"><i class="ri-global-line"></i></span>
+                  <input type="text" id="alpm-cfg-url" class="form-control" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.12); color: #fff;" value="${cfg.url || 'http://127.0.0.1:3000'}" placeholder="http://127.0.0.1:3000">
+                </div>
+                <small style="color: #64748b;">The internal or public URL of your ALPM instance (e.g. http://127.0.0.1:3000 or https://vps.domain.com)</small>
+              </div>
+            </div>
+            <div class="col-md-5 col-sm-12">
+              <div class="form-group">
+                <label style="color: #cbd5e1;">ALPM Admin API Token</label>
+                <div class="input-group">
+                  <span class="input-group-addon" style="background: rgba(255,255,255,0.05); color: #94a3b8; border-color: rgba(255,255,255,0.12);"><i class="ri-key-2-line"></i></span>
+                  <input type="password" id="alpm-cfg-key" class="form-control" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.12); color: #fff;" value="${cfg.has_key ? '••••••••••••••••' : ''}" placeholder="Generated in ALPM Admin -> API Keys">
+                </div>
+                <small style="color: #64748b;">API Key with administrator scopes from ALPM</small>
+              </div>
+            </div>
+            <div class="col-md-2 col-sm-12" style="display: flex; gap: 0.5rem; align-items: flex-end; padding-bottom: 15px;">
+              <button type="button" id="btn-save-alpm-cfg" class="btn btn-primary" style="flex: 1; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 600; border-radius: 8px;">
+                <i class="ri-save-line"></i> Save
+              </button>
+              <button type="button" id="btn-test-alpm-ping" class="btn btn-default" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff; border-radius: 8px;">
+                <i class="ri-wifi-line"></i> Ping
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLOUD VPS FLEET TABLE BOX -->
+      <div class="box box-info" style="background: rgba(14, 10, 22, 0.65); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;">
+        <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <h3 class="box-title" style="color: #fff; font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="ri-server-line" style="color: #38bdf8;"></i> Managed Cloud VPS Instances (${totalCount})
+          </h3>
+          <div style="display: flex; gap: 0.65rem; align-items: center;">
+            <div class="input-group" style="width: 240px;">
+              <input type="text" id="alpm-vps-search" class="form-control" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.12); color: #fff; border-radius: 8px 0 0 8px;" placeholder="Search VPS, IP, User...">
+              <span class="input-group-addon" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); color: #94a3b8; border-radius: 0 8px 8px 0;"><i class="ri-search-line"></i></span>
+            </div>
+            <button type="button" id="btn-deploy-vps-modal" class="btn btn-success" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 600; border-radius: 8px; padding: 6px 14px;">
+              <i class="ri-add-line"></i> Deploy VPS
+            </button>
+            <button type="button" id="btn-refresh-vps-fleet" class="btn btn-default" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff; border-radius: 8px;">
+              <i class="ri-refresh-line"></i>
+            </button>
+          </div>
+        </div>
+        <div class="box-body table-responsive" style="padding: 0;">
+          <table class="table table-hover" style="margin-bottom: 0;">
+            <thead>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); color: #94a3b8; font-size: 0.85rem; text-transform: uppercase;">
+                <th style="padding: 1rem 1.25rem;">VMID / Hostname</th>
+                <th>Owner (Pterodactyl User)</th>
+                <th>Node & Type</th>
+                <th>IP Address</th>
+                <th>Specs (vCPU / RAM / Disk)</th>
+                <th>Status</th>
+                <th style="text-align: right; padding-right: 1.25rem;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="alpm-vps-tbody">
+              ${renderAdminVpsRows(servers)}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    // Wire up actions
+    wireAdminVpsEvents(container, cfg, servers);
+    testAlpmPing(false);
+  }
+
+  function renderAdminVpsRows(servers) {
+    if (!servers || servers.length === 0) {
+      return `
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 3rem; color: #94a3b8;">
+            <i class="ri-server-line" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem; opacity: 0.4;"></i>
+            No Cloud VPS instances found in the ALPM cluster.<br>
+            <small style="color: #64748b;">Ensure your ALPM backend is connected or click "+ Deploy VPS" to provision one.</small>
+          </td>
+        </tr>
+      `;
+    }
+
+    return servers.map(function (s) {
+      const isOnline = (s.status || '').toLowerCase() === 'running';
+      const isSuspended = Boolean(s.is_suspended);
+      const statusColor = isSuspended ? '#f59e0b' : (isOnline ? '#34d399' : '#ef4444');
+      const statusText = isSuspended ? 'SUSPENDED' : (isOnline ? 'ONLINE' : 'OFFLINE');
+
+      const ownerEmail = (s.user && s.user.email) ? s.user.email : (s.owner_email || 'Unassigned');
+      const ownerName = (s.user && s.user.username) ? s.user.username : (s.owner_username || 'client');
+      const ip = s.ip || 'DHCP Pending';
+      const node = s.node || s.pve_node || 'pve';
+      const type = (s.type || 'qemu').toUpperCase();
+
+      const cores = s.cores || s.cpus || 2;
+      const memMb = s.memory || s.ram || (s.mem_usage ? Math.round(s.mem_usage / (1024*1024)) : 2048);
+      const memGb = (memMb >= 1024) ? (memMb / 1024).toFixed(0) + ' GB' : memMb + ' MB';
+      const diskGb = s.disk || s.disk_gb || 20;
+
+      return `
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle;" data-vps-id="${s.id}" data-search="${s.name} ${s.vmid} ${ip} ${ownerEmail} ${ownerName}">
+          <td style="padding: 1rem 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(56, 189, 248, 0.12); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                <i class="ri-terminal-box-line"></i>
+              </div>
+              <div>
+                <strong style="color: #fff; font-size: 0.95rem;">${s.name || 'Cloud VPS'}</strong>
+                <div style="color: #64748b; font-size: 0.8rem;">VMID: <code style="background: rgba(0,0,0,0.4); color: #38bdf8; border: none; padding: 1px 5px; border-radius: 4px;">#${s.vmid || s.id}</code></div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #ec4899, #8b5cf6); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem;">
+                ${ownerName.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div style="color: #f1f5f9; font-weight: 500; font-size: 0.9rem;">${ownerName}</div>
+                <div style="color: #64748b; font-size: 0.78rem;">${ownerEmail}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="badge" style="background: rgba(255,255,255,0.06); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 4px 8px;">
+              ${node} &bull; ${type}
+            </span>
+          </td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <code style="background: rgba(0,0,0,0.35); color: #cbd5e1; padding: 2px 6px; border-radius: 4px; font-size: 0.88rem;">${ip}</code>
+              ${ip !== 'DHCP Pending' ? `
+                <button type="button" class="btn btn-xs btn-default apparatus-copy-ip-btn" data-ip="${ip}" title="Copy IP Address" style="background: transparent; border: none; color: #94a3b8;">
+                  <i class="ri-file-copy-line"></i>
+                </button>
+              ` : ''}
+            </div>
+          </td>
+          <td>
+            <div style="color: #cbd5e1; font-size: 0.88rem;">
+              <span title="vCPU Cores"><i class="ri-cpu-line" style="color: #ec4899;"></i> ${cores}C</span> &bull; 
+              <span title="RAM"><i class="ri-ram-line" style="color: #8b5cf6;"></i> ${memGb}</span> &bull; 
+              <span title="NVMe Disk"><i class="ri-hard-drive-2-line" style="color: #34d399;"></i> ${diskGb}G</span>
+            </div>
+          </td>
+          <td>
+            <span class="badge" style="background: rgba(0,0,0,0.3); color: ${statusColor}; border: 1px solid ${statusColor}; border-radius: 20px; padding: 4px 10px; font-weight: 700; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 5px;">
+              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${statusColor};"></span>
+              ${statusText}
+            </span>
+          </td>
+          <td style="text-align: right; padding-right: 1.25rem;">
+            <div class="btn-group">
+              ${isOnline ? `
+                <button type="button" class="btn btn-sm btn-default apparatus-btn-vps-power" data-id="${s.id}" data-action="restart" title="Reboot VPS" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
+                  <i class="ri-restart-line"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-default apparatus-btn-vps-power" data-id="${s.id}" data-action="stop" title="Graceful Shutdown" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">
+                  <i class="ri-shut-down-line"></i>
+                </button>
+              ` : `
+                <button type="button" class="btn btn-sm btn-default apparatus-btn-vps-power" data-id="${s.id}" data-action="start" title="Start VPS" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3);">
+                  <i class="ri-play-line"></i>
+                </button>
+              `}
+              <button type="button" class="btn btn-sm btn-default apparatus-btn-vps-ssh" data-id="${s.id}" data-name="${s.name}" data-vmid="${s.vmid}" data-ip="${ip}" title="SSH Credentials &amp; Command" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3);">
+                <i class="ri-key-2-line"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-default apparatus-btn-vps-console" data-id="${s.id}" data-name="${s.name}" data-vmid="${s.vmid}" title="Launch Web Console" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.3);">
+                <i class="ri-terminal-line"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-default apparatus-btn-vps-delete" data-id="${s.id}" data-vmid="${s.vmid}" title="Destroy VPS" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">
+                <i class="ri-delete-bin-line"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function wireAdminVpsEvents(container, cfg, servers) {
+    // 1. Copy IP buttons
+    container.querySelectorAll('.apparatus-copy-ip-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const ip = this.getAttribute('data-ip');
+        if (navigator.clipboard) navigator.clipboard.writeText(ip);
+        showAdminToast('info', 'IP Copied', 'IP address ' + ip + ' copied to clipboard.');
+      });
+    });
+
+    // 2. Search filter
+    const searchInput = container.querySelector('#alpm-vps-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        const q = this.value.trim().toLowerCase();
+        container.querySelectorAll('#alpm-vps-tbody tr[data-search]').forEach(function (tr) {
+          const hay = tr.getAttribute('data-search').toLowerCase();
+          tr.style.display = hay.includes(q) ? '' : 'none';
+        });
+      });
+    }
+
+    // 3. Save ALPM Settings
+    const saveBtn = container.querySelector('#btn-save-alpm-cfg');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function () {
+        const url = container.querySelector('#alpm-cfg-url').value.trim();
+        const key = container.querySelector('#alpm-cfg-key').value.trim();
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Saving...';
+
+        fetch('/auth/vps/config', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken()
+          },
+          body: JSON.stringify({ url: url, api_key: key })
+        }).then(function (r) { return r.json(); }).then(function (res) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '<i class="ri-save-line"></i> Save';
+          if (res.success) {
+            showAdminToast('success', 'ALPM Settings Saved', 'Integration settings updated successfully.');
+            testAlpmPing(true);
+          } else {
+            showAdminToast('error', 'Save Failed', res.message || 'Could not save ALPM configuration.');
+          }
+        }).catch(function (e) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '<i class="ri-save-line"></i> Save';
+          showAdminToast('error', 'Error', e.message);
+        });
+      });
+    }
+
+    // 4. Test ALPM Ping
+    const pingBtn = container.querySelector('#btn-test-alpm-ping');
+    if (pingBtn) {
+      pingBtn.addEventListener('click', function () { testAlpmPing(true); });
+    }
+
+    // 5. Refresh fleet
+    const refreshBtn = container.querySelector('#btn-refresh-vps-fleet');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', function () {
+        renderAdminVpsView(container);
+      });
+    }
+
+    // 6. Power actions
+    container.querySelectorAll('.apparatus-btn-vps-power').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const id = this.getAttribute('data-id');
+        const act = this.getAttribute('data-action');
+        btn.disabled = true;
+
+        fetch('/auth/vps/' + id + '/power', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken()
+          },
+          body: JSON.stringify({ action: act })
+        }).then(function (r) { return r.json(); }).then(function (res) {
+          btn.disabled = false;
+          if (res.success || res.ok) {
+            showAdminToast('success', 'Power Signal Sent', 'Issued ' + act.toUpperCase() + ' to VPS #' + id);
+            setTimeout(function () { renderAdminVpsView(container); }, 1500);
+          } else {
+            showAdminToast('error', 'Operation Failed', res.error || res.message || 'Could not execute power action.');
+          }
+        }).catch(function (e) {
+          btn.disabled = false;
+          showAdminToast('error', 'Error', e.message);
+        });
+      });
+    });
+
+    // 7. Console modal
+    container.querySelectorAll('.apparatus-btn-vps-console').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const id = this.getAttribute('data-id');
+        const name = this.getAttribute('data-name');
+        const vmid = this.getAttribute('data-vmid');
+        openAdminVpsConsole(id, name, vmid);
+      });
+    });
+
+    // 8. Delete VPS
+    container.querySelectorAll('.apparatus-btn-vps-delete').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const id = this.getAttribute('data-id');
+        const vmid = this.getAttribute('data-vmid');
+        if (confirm('Are you sure you want to PERMANENTLY DESTROY VPS #' + vmid + '? This will wipe all disks and data!')) {
+          fetch('/auth/vps/admin/' + id, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': getCsrfToken() }
+          }).then(function (r) { return r.json(); }).then(function (res) {
+            if (res.success || res.ok) {
+              showAdminToast('success', 'VPS Destroyed', 'Virtual server #' + vmid + ' destroyed.');
+              renderAdminVpsView(container);
+            } else {
+              showAdminToast('error', 'Destroy Failed', res.error || 'Failed to destroy VPS.');
+            }
+          });
+        }
+      });
+    });
+
+    // 9. Deploy VPS Modal trigger
+    const deployBtn = container.querySelector('#btn-deploy-vps-modal');
+    if (deployBtn) {
+      deployBtn.addEventListener('click', function () {
+        openAdminDeployVpsModal(container);
+      });
+    }
+  }
+
+  function testAlpmPing(showToastMsg) {
+    const statusPill = document.getElementById('apparatus-alpm-status-pill');
+    if (statusPill) {
+      statusPill.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Testing...';
+    }
+
+    fetch('/auth/vps/ping').then(function (r) { return r.json(); }).then(function (res) {
+      if (!statusPill) return;
+      if (res.success) {
+        statusPill.style.background = 'rgba(52, 211, 153, 0.2)';
+        statusPill.style.color = '#34d399';
+        statusPill.innerHTML = '<i class="ri-checkbox-circle-fill"></i> ALPM Connected (Healthy)';
+        if (showToastMsg) showAdminToast('success', 'ALPM Connected', 'Successfully communicated with ALPM Proxmox API.');
+      } else {
+        statusPill.style.background = 'rgba(239, 68, 68, 0.2)';
+        statusPill.style.color = '#ef4444';
+        statusPill.innerHTML = '<i class="ri-close-circle-line"></i> Offline / Unreachable';
+        if (showToastMsg) showAdminToast('warning', 'ALPM Unreachable', res.error || 'Could not reach ALPM API.');
+      }
+    }).catch(function (e) {
+      if (statusPill) {
+        statusPill.style.background = 'rgba(239, 68, 68, 0.2)';
+        statusPill.style.color = '#ef4444';
+        statusPill.innerHTML = '<i class="ri-close-circle-line"></i> Offline (' + e.message + ')';
+      }
+    });
+  }
+
+  function openAdminVpsSshModal(server) {
+    const existing = document.getElementById('apparatus-admin-ssh-modal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'apparatus-admin-ssh-modal';
+    modal.className = 'apparatus-modal-overlay';
+    modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1.5rem;';
+
+    const ip = server.ip || '127.0.0.1';
+    const port = server.ssh_port || 22;
+    const user = server.ssh_user || 'root';
+    const name = server.name || 'Cloud VPS';
+    const vmid = server.vmid || server.id;
+
+    modal.innerHTML = `
+      <div style="background: #0f0b18; border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; width: 100%; max-width: 580px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+        <div style="padding: 1.25rem 1.5rem; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(52, 211, 153, 0.15); color: #34d399; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+              <i class="ri-key-2-line"></i>
+            </div>
+            <div>
+              <h4 style="margin: 0; color: #fff; font-weight: 700; font-size: 1.05rem;">SSH Access &bull; ${name}</h4>
+              <span style="color: #64748b; font-size: 0.8rem;">VMID #${vmid} &bull; Proxmox Cluster</span>
+            </div>
+          </div>
+          <button type="button" id="btn-close-vps-ssh" style="background: transparent; border: none; color: #94a3b8; font-size: 1.3rem; cursor: pointer;">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+        <div style="padding: 1.5rem;">
+          <div style="margin-bottom: 1.25rem;">
+            <label style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.4rem; display: block;">Terminal Quick Connect</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="text" id="admin-ssh-cmd-input" readonly value="ssh ${user}@${ip}${port != 22 ? ' -p ' + port : ''}" style="flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #38bdf8; font-family: monospace; font-size: 0.92rem; padding: 0.6rem 0.85rem;" />
+              <button type="button" id="btn-copy-admin-ssh-cmd" class="btn btn-primary" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 600; border-radius: 8px; padding: 0 1.25rem; display: flex; align-items: center; gap: 0.4rem;">
+                <i class="ri-file-copy-line"></i> Copy
+              </button>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 0.85rem 1rem;">
+              <span style="color: #64748b; font-size: 0.78rem; display: block; text-transform: uppercase;">Host / IP</span>
+              <strong style="color: #fff; font-size: 0.95rem; font-family: monospace;">${ip}</strong>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 0.85rem 1rem;">
+              <span style="color: #64748b; font-size: 0.78rem; display: block; text-transform: uppercase;">Port</span>
+              <strong style="color: #fff; font-size: 0.95rem; font-family: monospace;">${port}</strong>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 0.85rem 1rem;">
+              <span style="color: #64748b; font-size: 0.78rem; display: block; text-transform: uppercase;">Username</span>
+              <strong style="color: #fff; font-size: 0.95rem; font-family: monospace;">${user}</strong>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 0.85rem 1rem;">
+              <span style="color: #64748b; font-size: 0.78rem; display: block; text-transform: uppercase;">Authentication</span>
+              <strong style="color: #34d399; font-size: 0.95rem;">SSH Key / Password</strong>
+            </div>
+          </div>
+
+          <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 0.75rem 1rem; color: #94a3b8; font-size: 0.82rem; line-height: 1.45;">
+            <i class="ri-information-line" style="color: #38bdf8;"></i> Authenticate using the administrator password configured upon provisioning or the user's public SSH key registered in Pterodactyl.
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.querySelector('#btn-close-vps-ssh').addEventListener('click', function () {
+      modal.remove();
+    });
+
+    modal.querySelector('#btn-copy-admin-ssh-cmd').addEventListener('click', function () {
+      const input = modal.querySelector('#admin-ssh-cmd-input');
+      if (input && navigator.clipboard) {
+        navigator.clipboard.writeText(input.value);
+        showAdminToast('info', 'Command Copied', 'SSH command copied to clipboard.');
+      }
+    });
+  }
+
+  function openAdminVpsConsole(id, name, vmid) {
+    const existing = document.getElementById('apparatus-admin-console-modal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'apparatus-admin-console-modal';
+    modal.className = 'apparatus-modal-overlay';
+    modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1.5rem;';
+
+    modal.innerHTML = `
+      <div style="background: #0f0b18; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; width: 100%; max-width: 950px; height: 600px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+        <div style="padding: 1rem 1.25rem; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <i class="ri-terminal-box-line" style="color: #ec4899; font-size: 1.3rem;"></i>
+            <span style="color: #fff; font-weight: 700; font-size: 1rem;">Web Console &bull; ${name || 'VPS'} (#${vmid})</span>
+          </div>
+          <button type="button" id="btn-close-vps-console" style="background: transparent; border: none; color: #94a3b8; font-size: 1.3rem; cursor: pointer;">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+        <div id="vps-console-body" style="flex: 1; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #34d399; font-family: monospace;">
+          <i class="ri-loader-4-line ri-spin" style="font-size: 2rem;"></i>
+          <p style="margin-top: 1rem; color: #94a3b8;">Requesting secure Proxmox termproxy ticket...</p>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.querySelector('#btn-close-vps-console').addEventListener('click', function () {
+      modal.remove();
+    });
+
+    fetch('/auth/vps/' + id + '/termproxy', {
+      method: 'POST',
+      headers: { 'X-CSRF-TOKEN': getCsrfToken() }
+    }).then(function (r) { return r.json(); }).then(function (res) {
+      const body = modal.querySelector('#vps-console-body');
+      if (res.success && res.data && res.data.sessionId) {
+        const alpmUrl = rtrim(res.alpm_url || 'http://127.0.0.1:3000', '/');
+        const wsUrl = alpmUrl.replace(/^http/, 'ws') + '/ws/console?sessionId=' + res.data.sessionId;
+        body.innerHTML = `
+          <div style="padding: 1.5rem; text-align: center; color: #fff;">
+            <h4 style="color: #34d399; margin-bottom: 1rem;"><i class="ri-checkbox-circle-line"></i> Console Ticket Generated</h4>
+            <p style="color: #cbd5e1; max-width: 600px; margin: 0 auto 1.5rem auto;">
+              Direct terminal session ready. Connect via the ALPM interactive terminal window below:
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+              <a href="${alpmUrl}/#servers" target="_blank" class="btn btn-primary" style="background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 600;">
+                <i class="ri-external-link-line"></i> Open Interactive ALPM Console
+              </a>
+            </div>
+            <div style="margin-top: 2rem; font-size: 0.82rem; color: #64748b; font-family: monospace; background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+              WebSocket Target: ${wsUrl}<br>
+              Session ID: ${res.data.sessionId}
+            </div>
+          </div>
+        `;
+      } else {
+        body.innerHTML = `
+          <div style="padding: 2rem; text-align: center; color: #ef4444;">
+            <i class="ri-error-warning-line" style="font-size: 2.5rem;"></i>
+            <p style="margin-top: 1rem; font-size: 1rem;">Failed to establish console session: ${res.error || 'Server is offline or termproxy ticket rejected.'}</p>
+          </div>
+        `;
+      }
+    }).catch(function (e) {
+      const body = modal.querySelector('#vps-console-body');
+      if (body) body.innerHTML = '<div style="color: #ef4444; padding: 2rem;">Error: ' + e.message + '</div>';
+    });
+  }
+
+  function openAdminDeployVpsModal(parentContainer) {
+    const existing = document.getElementById('apparatus-admin-deploy-vps-modal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'apparatus-admin-deploy-vps-modal';
+    modal.className = 'apparatus-modal-overlay';
+    modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1.5rem;';
+
+    modal.innerHTML = `
+      <div style="background: #0f0b18; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.8); padding: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1rem;">
+          <h3 style="margin: 0; color: #fff; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="ri-add-circle-line" style="color: #10b981;"></i> Deploy New Cloud VPS (Proxmox KVM)
+          </h3>
+          <button type="button" id="btn-close-deploy-modal" style="background: transparent; border: none; color: #94a3b8; font-size: 1.3rem; cursor: pointer;">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+
+        <form id="apparatus-deploy-vps-form">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label style="color: #cbd5e1;">Instance Name / Hostname</label>
+                <input type="text" id="deploy-vps-name" class="form-control" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.12); color: #fff;" placeholder="e.g. cloud-vps-01" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label style="color: #cbd5e1;">Assign to Pterodactyl User Email</label>
+                <input type="email" id="deploy-vps-user-email" class="form-control" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.12); color: #fff;" placeholder="client@arixbyte.com" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label style="color: #cbd5e1;">OS Distribution</label>
+                <select id="deploy-vps-os" class="form-control" style="background: #1c152a; border-color: rgba(255,255,255,0.12); color: #fff;">
+                  <option value="ubuntu-22.04">Ubuntu 22.04 LTS (Jammy)</option>
+                  <option value="ubuntu-24.04">Ubuntu 24.04 LTS (Noble)</option>
+                  <option value="debian-12">Debian 12 (Bookworm)</option>
+                  <option value="almalinux-9">AlmaLinux 9</option>
+                  <option value="rocky-9">Rocky Linux 9</option>
+                  <option value="alpine-3.19">Alpine Linux 3.19</option>
+                  <option value="windows-2022">Windows Server 2022</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label style="color: #cbd5e1;">Proxmox Node</label>
+                <input type="text" id="deploy-vps-node" class="form-control" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.12); color: #fff;" value="pve" placeholder="pve">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label style="color: #cbd5e1;">vCPU Cores</label>
+                <input type="number" id="deploy-vps-cores" class="form-control" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.12); color: #fff;" value="2" min="1" max="64">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label style="color: #cbd5e1;">RAM (MB)</label>
+                <input type="number" id="deploy-vps-memory" class="form-control" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.12); color: #fff;" value="4096" min="512" step="512">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label style="color: #cbd5e1;">NVMe Disk (GB)</label>
+                <input type="number" id="deploy-vps-disk" class="form-control" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.12); color: #fff;" value="25" min="10">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label style="color: #cbd5e1;">Root Password</label>
+            <div class="input-group">
+              <input type="text" id="deploy-vps-password" class="form-control" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.12); color: #fff;" value="ArixByte#${Math.floor(100000 + Math.random() * 900000)}">
+              <span class="input-group-btn">
+                <button type="button" id="btn-gen-root-pw" class="btn btn-default" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff;">
+                  <i class="ri-refresh-line"></i>
+                </button>
+              </span>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+            <button type="button" id="btn-cancel-deploy" class="btn btn-default" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff;">
+              Cancel
+            </button>
+            <button type="submit" id="btn-submit-deploy" class="btn btn-success" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 600; padding: 6px 18px;">
+              <i class="ri-check-line"></i> Deploy Virtual Machine
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.querySelector('#btn-close-deploy-modal').onclick = function () { modal.remove(); };
+    modal.querySelector('#btn-cancel-deploy').onclick = function () { modal.remove(); };
+    modal.querySelector('#btn-gen-root-pw').onclick = function () {
+      modal.querySelector('#deploy-vps-password').value = 'ArixByte#' + Math.floor(100000 + Math.random() * 900000);
+    };
+
+    modal.querySelector('#apparatus-deploy-vps-form').onsubmit = function (e) {
+      e.preventDefault();
+      const submitBtn = modal.querySelector('#btn-submit-deploy');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Provisioning on Proxmox...';
+
+      const payload = {
+        name: modal.querySelector('#deploy-vps-name').value.trim(),
+        user_email: modal.querySelector('#deploy-vps-user-email').value.trim(),
+        os: modal.querySelector('#deploy-vps-os').value,
+        node: modal.querySelector('#deploy-vps-node').value.trim(),
+        cores: parseInt(modal.querySelector('#deploy-vps-cores').value, 10),
+        memory: parseInt(modal.querySelector('#deploy-vps-memory').value, 10),
+        disk: parseInt(modal.querySelector('#deploy-vps-disk').value, 10),
+        password: modal.querySelector('#deploy-vps-password').value.trim()
+      };
+
+      fetch('/auth/vps/admin/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': getCsrfToken()
+        },
+        body: JSON.stringify(payload)
+      }).then(function (r) { return r.json(); }).then(function (res) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="ri-check-line"></i> Deploy Virtual Machine';
+        if (res.success || res.ok) {
+          showAdminToast('success', 'VPS Provisioned', 'Virtual machine created and assigned to ' + payload.user_email);
+          modal.remove();
+          renderAdminVpsView(parentContainer);
+        } else {
+          showAdminToast('error', 'Deployment Failed', res.error || res.message || 'Provisioning failed.');
+        }
+      }).catch(function (err) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="ri-check-line"></i> Deploy Virtual Machine';
+        showAdminToast('error', 'Error', err.message);
+      });
+    };
+  }
+
+  function rtrim(str, chr) {
+    let s = str || '';
+    while (s.endsWith(chr)) s = s.slice(0, -1);
+    return s;
   }
 
   // ==============================================================================

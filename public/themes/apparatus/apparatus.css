@@ -6384,3 +6384,211 @@ div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon {
   background: rgba(255, 255, 255, 0.08) !important;
   color: rgba(255, 255, 255, 0.75) !important;
 }
+
+/* ==============================================================================
+ * CLOUD VPS (ALPM PROXMOX) FLEET & CARD STYLES
+ * ============================================================================== */
+.apparatus-vps-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)) !important;
+  gap: 1.25rem !important;
+  width: 100% !important;
+}
+
+@media (max-width: 768px) {
+  .apparatus-vps-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.apparatus-vps-card {
+  background: rgba(14, 10, 22, 0.72) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+  padding: 1.25rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1rem !important;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.apparatus-vps-card:hover {
+  border-color: rgba(236, 72, 153, 0.35) !important;
+  box-shadow: 0 8px 30px rgba(236, 72, 153, 0.12) !important;
+  transform: translateY(-2px) !important;
+}
+
+.apparatus-vps-card-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 0.75rem !important;
+}
+
+.apparatus-vps-card-identity {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+.apparatus-vps-os-badge {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.45rem !important;
+  flex-shrink: 0 !important;
+}
+
+.apparatus-vps-name {
+  margin: 0 !important;
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  line-height: 1.2 !important;
+}
+
+.apparatus-vps-submeta {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  font-size: 0.8rem !important;
+  color: #64748b !important;
+  margin-top: 0.25rem !important;
+}
+
+.apparatus-vps-vmid {
+  font-family: monospace !important;
+  color: #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.1) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+.apparatus-vps-status-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  padding: 0.25rem 0.65rem !important;
+  border-radius: 20px !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  border: 1px solid !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+}
+
+.apparatus-vps-pulse-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  display: inline-block !important;
+}
+
+.apparatus-vps-card-body {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.75rem !important;
+}
+
+.apparatus-vps-ip-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+  padding: 0.45rem 0.75rem !important;
+}
+
+.apparatus-vps-ip-label {
+  font-size: 0.82rem !important;
+  color: #94a3b8 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+}
+
+.apparatus-vps-ip-copy-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+}
+
+.apparatus-vps-ip-code {
+  font-family: monospace !important;
+  color: #f1f5f9 !important;
+  font-size: 0.88rem !important;
+}
+
+.apparatus-btn-icon-xs {
+  background: transparent !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  cursor: pointer !important;
+  padding: 2px !important;
+  border-radius: 4px !important;
+  font-size: 0.9rem !important;
+  transition: color 0.15s ease !important;
+}
+
+.apparatus-btn-icon-xs:hover {
+  color: #ec4899 !important;
+}
+
+.apparatus-vps-specs-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  gap: 0.5rem !important;
+}
+
+.apparatus-vps-spec-item {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 8px !important;
+  padding: 0.5rem 0.6rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  font-size: 0.8rem !important;
+  color: #cbd5e1 !important;
+}
+
+.apparatus-vps-card-footer {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding-top: 0.75rem !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  gap: 0.5rem !important;
+}
+
+.apparatus-vps-power-btns,
+.apparatus-vps-tool-btns {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+}
+
+.apparatus-vps-btn-power {
+  border: 1px solid !important;
+  border-radius: 8px !important;
+  padding: 0.35rem 0.75rem !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  transition: all 0.15s ease !important;
+}
+
+.apparatus-vps-btn-power:hover {
+  filter: brightness(1.2) !important;
+  transform: translateY(-1px) !important;
+}

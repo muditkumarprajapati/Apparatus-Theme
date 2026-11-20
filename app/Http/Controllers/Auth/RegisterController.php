@@ -932,6 +932,50 @@ class RegisterController extends Controller
     }
 
     /**
+     * Admin delete promo code.
+     */
+    public function deletePromoCode(Request $request, $code = null): JsonResponse
+    {
+        try {
+            $user = auth()->user();
+            if (!$user || !$user->root_admin) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized. Admin permissions required.'], 403);
+            }
+
+            $codeToDelete = strtoupper(trim($code ?? $request->input('code', '')));
+            if (empty($codeToDelete)) {
+                return response()->json(['success' => false, 'message' => 'Please provide a valid code.'], 422);
+            }
+
+            $rewards = $this->getRewardsData();
+            if (isset($rewards['promo_codes']) && is_array($rewards['promo_codes'])) {
+                foreach ($rewards['promo_codes'] as $k => $v) {
+                    if (strtoupper((string)$k) === $codeToDelete || (isset($v['code']) && strtoupper((string)$v['code']) === $codeToDelete)) {
+                        unset($rewards['promo_codes'][$k]);
+                    }
+                }
+            }
+
+            if (!isset($rewards['deleted_codes']) || !is_array($rewards['deleted_codes'])) {
+                $rewards['deleted_codes'] = [];
+            }
+            if (!in_array($codeToDelete, $rewards['deleted_codes'])) {
+                $rewards['deleted_codes'][] = $codeToDelete;
+            }
+
+            $this->saveRewardsData($rewards);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Promo code {$codeToDelete} deleted successfully."
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+
+    /**
      * Get real community leaderboard data from the database and rewards ledger.
      */
     public function leaderboard(): JsonResponse
@@ -990,5 +1034,247 @@ class RegisterController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * ==============================================================================
+     * ALPM (AtyroLabs Proxmox Manager) VPS Integration Methods
+     * ==============================================================================
+     */
+    private function getAlpmConfig(): array
+    {
+        $path = storage_path('app/apparatus_alpm_config.json');
+        if (file_exists($path)) {
+            $data = json_decode(@file_get_contents($path), true);
+            if (is_array($data)) return $data;
+        }
+        return [
+            'url' => 'http://127.0.0.1:3000',
+            'api_key' => '',
+            'enabled' => true
+        ];
+    }
+
+    private function saveAlpmConfig(array $cfg): bool
+    {
+        $dir = storage_path('app');
+        if (!is_dir($dir)) @mkdir($dir, 0755, true);
+        return (bool) @file_put_contents(storage_path('app/apparatus_alpm_config.json'), json_encode($cfg, JSON_PRETTY_PRINT));
+    }
+
+    private function callAlpm(string $endpoint, string $method = 'GET', array $payload = [])
+    {
+        $cfg = $this->getAlpmConfig();
+        $baseUrl = rtrim($cfg['url'] ?? 'http://127.0.0.1:3000', '/');
+        $apiKey = $cfg['api_key'] ?? '';
+
+        $url = $baseUrl . '/' . ltrim($endpoint, '/');
+        
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
+        $headers = [
+            'Accept: application/json',
+            'Content-Type: application/json'
+        ];
+        if (!empty($apiKey)) {
+            $headers[] = 'Authorization: Bearer ' . $apiKey;
+            $headers[] = 'X-API-Key: ' . $apiKey;
+        }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        if ($method === 'POST') {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        } elseif ($method === 'DELETE') {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        } elseif ($method === 'PUT') {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        }
+
+        $res = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+        if ($err) {
+            return ['status' => 500, 'error' => 'Connection to ALPM failed: ' . $err, 'ok' => false];
+        }
+
+        $json = json_decode($res, true);
+        if ($json === null && $status >= 400) {
+            return ['status' => $status, 'error' => 'ALPM returned status ' . $status, 'raw' => $res, 'ok' => false];
+        }
+
+        return ['status' => $status, 'data' => $json ?? $res, 'ok' => ($status >= 200 && $status < 300)];
+    }
+
+    public function vpsGetConfig(): JsonResponse
+    {
+        $cfg = $this->getAlpmConfig();
+        return response()->json([
+            'success' => true,
+            'url' => $cfg['url'] ?? 'http://127.0.0.1:3000',
+            'has_key' => !empty($cfg['api_key']),
+            'enabled' => $cfg['enabled'] ?? true
+        ]);
+    }
+
+    public function vpsSaveConfig(Request $request): JsonResponse
+    {
+        $url = trim($request->input('url', 'http://127.0.0.1:3000'));
+        $apiKey = trim($request->input('api_key', ''));
+
+        $cfg = $this->getAlpmConfig();
+        $cfg['url'] = $url;
+        if (!empty($apiKey)) {
+            $cfg['api_key'] = $apiKey;
+        }
+        $cfg['enabled'] = (bool) $request->input('enabled', true);
+
+        $this->saveAlpmConfig($cfg);
+        return response()->json(['success' => true, 'message' => 'ALPM VPS Configuration saved.']);
+    }
+
+    public function vpsPing(): JsonResponse
+    {
+        $res = $this->callAlpm('/api/health');
+        return response()->json([
+            'success' => $res['ok'],
+            'status' => $res['status'],
+            'response' => $res['data'] ?? null,
+            'error' => $res['error'] ?? null
+        ]);
+    }
+
+    public function vpsList(Request $request): JsonResponse
+    {
+        $email = trim($request->input('email', ''));
+        if (empty($email) && auth()->check()) {
+            $email = auth()->user()->email;
+        }
+
+        if (empty($email)) {
+            return response()->json(['success' => false, 'servers' => [], 'error' => 'No user email specified.']);
+        }
+
+        // Query ALPM by user email
+        $res = $this->callAlpm('/api/users/email/' . urlencode($email));
+        if ($res['ok']) {
+            $servers = [];
+            if (isset($res['data']['servers']) && is_array($res['data']['servers'])) {
+                $servers = $res['data']['servers'];
+            } elseif (isset($res['data']['data']) && is_array($res['data']['data'])) {
+                $servers = $res['data']['data'];
+            } elseif (is_array($res['data'])) {
+                $servers = $res['data'];
+            }
+            return response()->json([
+                'success' => true,
+                'servers' => $servers,
+                'total' => count($servers)
+            ]);
+        }
+
+        // Fallback: check stored local cache if ALPM is offline or not yet initialized
+        $cachePath = storage_path('app/apparatus_vps_cache.json');
+        if (file_exists($cachePath)) {
+            $cache = json_decode(@file_get_contents($cachePath), true);
+            $userServers = $cache[strtolower($email)] ?? [];
+            if (!empty($userServers)) {
+                return response()->json(['success' => true, 'servers' => $userServers, 'cached' => true]);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'servers' => [],
+            'notice' => $res['error'] ?? 'No servers returned from ALPM'
+        ]);
+    }
+
+    public function vpsAdminServers(Request $request): JsonResponse
+    {
+        $res = $this->callAlpm('/api/application/servers');
+        if ($res['ok'] && isset($res['data']['data'])) {
+            return response()->json([
+                'success' => true,
+                'servers' => $res['data']['data'],
+                'total' => $res['data']['total'] ?? count($res['data']['data'])
+            ]);
+        }
+
+        $res2 = $this->callAlpm('/api/admin/overview');
+        if ($res2['ok'] && isset($res2['data']['servers'])) {
+            return response()->json([
+                'success' => true,
+                'servers' => $res2['data']['servers'],
+                'total' => count($res2['data']['servers'])
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'servers' => [],
+            'error' => $res['error'] ?? 'Could not fetch servers from ALPM'
+        ]);
+    }
+
+    public function vpsPower(Request $request, $id): JsonResponse
+    {
+        $action = strtolower(trim($request->input('action', 'start')));
+        $res = $this->callAlpm("/api/servers/{$id}/power", 'POST', ['action' => $action]);
+        return response()->json([
+            'success' => $res['ok'],
+            'data' => $res['data'] ?? null,
+            'error' => $res['error'] ?? null
+        ], $res['status'] >= 400 ? $res['status'] : 200);
+    }
+
+    public function vpsStatus($id): JsonResponse
+    {
+        $res = $this->callAlpm("/api/servers/{$id}/status");
+        return response()->json([
+            'success' => $res['ok'],
+            'data' => $res['data'] ?? null,
+            'error' => $res['error'] ?? null
+        ]);
+    }
+
+    public function vpsTermproxy(Request $request, $id): JsonResponse
+    {
+        $res = $this->callAlpm("/api/servers/{$id}/termproxy", 'POST');
+        $cfg = $this->getAlpmConfig();
+        return response()->json([
+            'success' => $res['ok'],
+            'data' => $res['data'] ?? null,
+            'alpm_url' => $cfg['url'] ?? 'http://127.0.0.1:3000',
+            'error' => $res['error'] ?? null
+        ]);
+    }
+
+    public function vpsAdminCreate(Request $request): JsonResponse
+    {
+        $payload = $request->all();
+        $res = $this->callAlpm('/api/admin/servers/create', 'POST', $payload);
+        return response()->json([
+            'success' => $res['ok'],
+            'data' => $res['data'] ?? null,
+            'error' => $res['error'] ?? null
+        ]);
+    }
+
+    public function vpsAdminDelete($id): JsonResponse
+    {
+        $res = $this->callAlpm("/api/admin/servers/{$id}", 'DELETE');
+        return response()->json([
+            'success' => $res['ok'],
+            'data' => $res['data'] ?? null,
+            'error' => $res['error'] ?? null
+        ]);
     }
 }

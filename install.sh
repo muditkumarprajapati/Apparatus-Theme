@@ -151,7 +151,7 @@ try:
         c = fp.read()
     if "auth/register" not in c:
         pattern = r"protected\s+\$except\s*=\s*\["
-        replacement = "protected $except = [\n        '\''register\'',\n        '\''auth/register\'',\n        '\''auth/mail/*\'',\n        '\''auth/referral/*\'',\n        '\''auth/promo/*\'',\n        '\''auth/user-points\'',"
+        replacement = "protected $except = [\n        '\''register\'',\n        '\''auth/register\'',\n        '\''auth/mail/*\'',\n        '\''auth/referral/*\'',\n        '\''auth/promo/*\'',\n        '\''auth/user-points\'',\n        '\''auth/vps/*\'',"
         c = re.sub(pattern, replacement, c, count=1)
         with open(target_file, "w") as fp:
             fp.write(c)
@@ -197,7 +197,20 @@ Route::post('/auth/referral/claim', [\Pterodactyl\Http\Controllers\Auth\Register
 Route::get('/auth/user-points', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'getUserPoints']);
 Route::post('/auth/promo/redeem', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'redeemPromoCode']);
 Route::get('/auth/promo/codes', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'getPromoCodes']);
-Route::post('/auth/promo/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'createPromoCode']);'''
+Route::post('/auth/promo/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'createPromoCode']);
+Route::post('/auth/promo/delete', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'deletePromoCode']);
+Route::delete('/auth/promo/{code}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'deletePromoCode']);
+// ALPM VPS Management Integration Routes
+Route::get('/auth/vps/config', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsGetConfig']);
+Route::post('/auth/vps/config', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsSaveConfig']);
+Route::get('/auth/vps/ping', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsPing']);
+Route::get('/auth/vps/list', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsList']);
+Route::get('/auth/vps/admin/servers', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminServers']);
+Route::post('/auth/vps/{id}/power', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsPower']);
+Route::get('/auth/vps/{id}/status', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsStatus']);
+Route::post('/auth/vps/{id}/termproxy', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsTermproxy']);
+Route::post('/auth/vps/admin/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminCreate']);
+Route::delete('/auth/vps/admin/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminDelete']);'''
 
 if '<?php' in c:
     c = c.replace('<?php', '<?php\n\n' + snippet, 1)
@@ -245,7 +258,20 @@ Route::post('/auth/referral/claim', [\Pterodactyl\Http\Controllers\Auth\Register
 Route::get('/auth/user-points', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'getUserPoints']);
 Route::post('/auth/promo/redeem', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'redeemPromoCode']);
 Route::get('/auth/promo/codes', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'getPromoCodes']);
-Route::post('/auth/promo/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'createPromoCode']);'''
+Route::post('/auth/promo/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'createPromoCode']);
+Route::post('/auth/promo/delete', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'deletePromoCode']);
+Route::delete('/auth/promo/{code}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'deletePromoCode']);
+// ALPM VPS Management Integration Routes (Base Web)
+Route::get('/auth/vps/config', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsGetConfig']);
+Route::post('/auth/vps/config', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsSaveConfig']);
+Route::get('/auth/vps/ping', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsPing']);
+Route::get('/auth/vps/list', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsList']);
+Route::get('/auth/vps/admin/servers', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminServers']);
+Route::post('/auth/vps/{id}/power', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsPower']);
+Route::get('/auth/vps/{id}/status', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsStatus']);
+Route::post('/auth/vps/{id}/termproxy', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsTermproxy']);
+Route::post('/auth/vps/admin/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminCreate']);
+Route::delete('/auth/vps/admin/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminDelete']);'''
 
 if '<?php' in c:
     c = c.replace('<?php', '<?php\n\n' + snippet, 1)
