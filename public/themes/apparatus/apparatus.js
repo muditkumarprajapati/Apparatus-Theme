@@ -608,6 +608,76 @@
       }
     });
 
+    // 4c. Ultra-transparent styling & glowing glass icon badges for Server Console stats
+    const isServerRoute = (window.location.pathname || '').startsWith('/server/');
+    if (isServerRoute) {
+      document.body.classList.add('apparatus-page-server');
+      const statBlocks = document.querySelectorAll('div[class*="ServerConsoleContainer"] div[class*="StatBlock"], div[class*="StatBlock"], div[class*="StatBlock___StyledDiv"]');
+      statBlocks.forEach(function (stat) {
+        const titleEl = stat.querySelector('p');
+        const titleText = (titleEl ? titleEl.textContent : '').toUpperCase();
+        const iconWrapper = stat.querySelector('div:first-child');
+        if (iconWrapper && !iconWrapper.getAttribute('data-apparatus-tinted')) {
+          iconWrapper.setAttribute('data-apparatus-tinted', 'true');
+          iconWrapper.style.setProperty('border-radius', '12px', 'important');
+          iconWrapper.style.setProperty('backdrop-filter', 'blur(8px)', 'important');
+          iconWrapper.style.setProperty('-webkit-backdrop-filter', 'blur(8px)', 'important');
+
+          const svg = iconWrapper.querySelector('svg');
+          if (titleText.includes('ADDRESS')) {
+            iconWrapper.style.setProperty('background', 'rgba(56, 189, 248, 0.15)', 'important');
+            iconWrapper.style.setProperty('border', '1px solid rgba(56, 189, 248, 0.35)', 'important');
+            if (svg) {
+              svg.style.setProperty('color', '#38bdf8', 'important');
+              svg.style.setProperty('filter', 'drop-shadow(0 0 6px rgba(56, 189, 248, 0.5))', 'important');
+            }
+          } else if (titleText.includes('UPTIME')) {
+            iconWrapper.style.setProperty('background', 'rgba(245, 158, 11, 0.15)', 'important');
+            iconWrapper.style.setProperty('border', '1px solid rgba(245, 158, 11, 0.35)', 'important');
+            if (svg) {
+              svg.style.setProperty('color', '#fbbf24', 'important');
+              svg.style.setProperty('filter', 'drop-shadow(0 0 6px rgba(245, 158, 11, 0.5))', 'important');
+            }
+          } else if (titleText.includes('CPU')) {
+            iconWrapper.style.setProperty('background', 'rgba(244, 63, 94, 0.15)', 'important');
+            iconWrapper.style.setProperty('border', '1px solid rgba(244, 63, 94, 0.35)', 'important');
+            if (svg) {
+              svg.style.setProperty('color', '#f43f5e', 'important');
+              svg.style.setProperty('filter', 'drop-shadow(0 0 6px rgba(244, 63, 94, 0.5))', 'important');
+            }
+          } else if (titleText.includes('MEMORY') || titleText.includes('RAM')) {
+            iconWrapper.style.setProperty('background', 'rgba(236, 72, 153, 0.15)', 'important');
+            iconWrapper.style.setProperty('border', '1px solid rgba(236, 72, 153, 0.35)', 'important');
+            if (svg) {
+              svg.style.setProperty('color', '#ec4899', 'important');
+              svg.style.setProperty('filter', 'drop-shadow(0 0 6px rgba(236, 72, 153, 0.5))', 'important');
+            }
+          } else if (titleText.includes('DISK')) {
+            iconWrapper.style.setProperty('background', 'rgba(16, 185, 129, 0.15)', 'important');
+            iconWrapper.style.setProperty('border', '1px solid rgba(16, 185, 129, 0.35)', 'important');
+            if (svg) {
+              svg.style.setProperty('color', '#10b981', 'important');
+              svg.style.setProperty('filter', 'drop-shadow(0 0 6px rgba(16, 185, 129, 0.5))', 'important');
+            }
+          } else if (titleText.includes('INBOUND')) {
+            iconWrapper.style.setProperty('background', 'rgba(99, 102, 241, 0.15)', 'important');
+            iconWrapper.style.setProperty('border', '1px solid rgba(99, 102, 241, 0.35)', 'important');
+            if (svg) {
+              svg.style.setProperty('color', '#818cf8', 'important');
+              svg.style.setProperty('filter', 'drop-shadow(0 0 6px rgba(99, 102, 241, 0.5))', 'important');
+            }
+          } else if (titleText.includes('OUTBOUND')) {
+            iconWrapper.style.setProperty('background', 'rgba(168, 85, 247, 0.15)', 'important');
+            iconWrapper.style.setProperty('border', '1px solid rgba(168, 85, 247, 0.35)', 'important');
+            if (svg) {
+              svg.style.setProperty('color', '#c084fc', 'important');
+              svg.style.setProperty('filter', 'drop-shadow(0 0 6px rgba(168, 85, 247, 0.5))', 'important');
+            }
+          }
+        }
+      });
+    }
+
     // 4b. Hide native Pterodactyl empty server messages and dashboard leaks on Dashboard and custom tabs
     const rawP = window.location.pathname || '/';
     const curP = (rawP.length > 1 && rawP.endsWith('/')) ? rawP.slice(0, -1) : rawP;

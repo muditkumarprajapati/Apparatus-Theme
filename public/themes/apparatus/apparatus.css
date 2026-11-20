@@ -6714,24 +6714,173 @@ body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] [role="navigation
 }
 
 /* ==============================================================================
-   SERVER CONSOLE & FILE MANAGER SAAS POLISH
+   SERVER CONSOLE & FILE MANAGER SAAS POLISH (ULTRA-TRANSPARENT FROSTED GLASS)
    ============================================================================== */
-/* Server Console Stats Grid (Address, Uptime, CPU, RAM) */
+/* Server Console Stats Grid (Address, Uptime, CPU, RAM, Disk, Network) */
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock"],
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock___StyledDiv"],
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700 {
-  background: rgba(18, 12, 28, 0.45) !important;
-  backdrop-filter: blur(16px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700,
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="StatBlock"],
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="StatBlock___StyledDiv"],
+body:not(.apparatus-auth) div[class*="StatBlock"],
+body:not(.apparatus-auth) div[class*="StatBlock___StyledDiv"] {
+  background: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(14px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 12px !important;
-  transition: all 0.2s ease !important;
+  border-radius: 16px !important;
+  padding: 0.85rem 1.15rem !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
 }
 
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock"]:hover,
-body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700:hover {
-  border-color: rgba(236, 72, 153, 0.35) !important;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35) !important;
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock___StyledDiv"]:hover,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700:hover,
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="StatBlock"]:hover,
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="StatBlock___StyledDiv"]:hover,
+body:not(.apparatus-auth) div[class*="StatBlock"]:hover,
+body:not(.apparatus-auth) div[class*="StatBlock___StyledDiv"]:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border-color: rgba(236, 72, 153, 0.45) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 30px rgba(236, 72, 153, 0.18), 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* StatBlock Content Typography */
+body:not(.apparatus-auth) div[class*="StatBlock"] p,
+body:not(.apparatus-auth) div[class*="StatBlock___StyledDiv"] p {
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  margin-bottom: 0.15rem !important;
+}
+
+body:not(.apparatus-auth) div[class*="StatBlock"] div.text-gray-50,
+body:not(.apparatus-auth) div[class*="StatBlock"] > div:last-child > div {
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* StatBlock Icon Badges (Translucent Glowing Glass Badges) */
+body:not(.apparatus-auth) div[class*="StatBlock"] > div:first-child,
+body:not(.apparatus-auth) div[class*="StatBlock___StyledDiv"] > div:first-child,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock"] > div:first-child,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700 > div:first-child {
+  border-radius: 12px !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.25s ease !important;
+}
+
+/* Address / Connection Badge (Sky/Cyan) */
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-blue-500,
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-cyan-500,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-blue-500,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-cyan-500 {
+  background: rgba(56, 189, 248, 0.15) !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+}
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-blue-500 svg,
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-cyan-500 svg,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-blue-500 svg,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-cyan-500 svg {
+  color: #38bdf8 !important;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5)) !important;
+}
+
+/* Uptime Badge (Amber / Gold) */
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-yellow-500,
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-amber-500,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-yellow-500,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-amber-500 {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-yellow-500 svg,
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-amber-500 svg,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-yellow-500 svg,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-amber-500 svg {
+  color: #fbbf24 !important;
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.5)) !important;
+}
+
+/* CPU Load Badge (Rose / Coral) */
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-red-500,
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-rose-500,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-red-500,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-rose-500 {
+  background: rgba(244, 63, 94, 0.15) !important;
+  border-color: rgba(244, 63, 94, 0.35) !important;
+}
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-red-500 svg,
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-rose-500 svg,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-red-500 svg,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] .bg-rose-500 svg {
+  color: #f43f5e !important;
+  filter: drop-shadow(0 0 6px rgba(244, 63, 94, 0.5)) !important;
+}
+
+/* Neutral Gray-600 Icon Badges (Memory, Disk, Network) */
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-gray-600,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock"] > div.bg-gray-600,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700 > div.bg-gray-600 {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+body:not(.apparatus-auth) div[class*="StatBlock"] > div.bg-gray-600 svg,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="StatBlock"] > div.bg-gray-600 svg,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700 > div.bg-gray-600 svg {
+  color: #f8fafc !important;
+}
+
+/* Server Console Charts */
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="ChartBlock"],
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="ChartBlock___StyledDiv"],
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="ChartBlock"],
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="ChartBlock___StyledDiv"] {
+  background: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(14px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="ChartBlock"]:hover,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="ChartBlock___StyledDiv"]:hover,
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="ChartBlock"]:hover,
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="ChartBlock___StyledDiv"]:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border-color: rgba(236, 72, 153, 0.45) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 30px rgba(236, 72, 153, 0.18), 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Server Console Terminal */
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="Console"] {
+  background: rgba(12, 8, 20, 0.72) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  overflow: hidden !important;
+}
+
+/* Terminal Command Input */
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="Console"] input,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] input[class*="CommandInput"] {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
 }
 
 /* File Manager Rows */
@@ -6739,20 +6888,47 @@ body:not(.apparatus-auth) div[class*="FileManagerContainer"] div[class*="FileObj
 body:not(.apparatus-auth) div[class*="FileManagerContainer"] div.bg-gray-700,
 body:not(.apparatus-auth) [class*="FileManager"] div[class*="FileObjectRow"],
 body:not(.apparatus-auth) [class*="FileManager"] div.bg-gray-700 {
-  background: rgba(18, 12, 28, 0.4) !important;
-  backdrop-filter: blur(14px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(14px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 10px !important;
+  border-radius: 12px !important;
   margin-bottom: 0.35rem !important;
-  transition: all 0.2s ease !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
 }
 
 body:not(.apparatus-auth) div[class*="FileManagerContainer"] div[class*="FileObjectRow"]:hover,
 body:not(.apparatus-auth) div[class*="FileManagerContainer"] div.bg-gray-700:hover,
 body:not(.apparatus-auth) [class*="FileManager"] div[class*="FileObjectRow"]:hover,
 body:not(.apparatus-auth) [class*="FileManager"] div.bg-gray-700:hover {
-  background: rgba(236, 72, 153, 0.1) !important;
-  border-color: rgba(236, 72, 153, 0.35) !important;
-  transform: translateX(2px);
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(236, 72, 153, 0.45) !important;
+  transform: translateX(3px) !important;
+  box-shadow: 0 4px 18px rgba(236, 72, 153, 0.15), 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* All Server Subpage Cards & Containers (Databases, Schedules, Users, Backups, Network, Startup, Settings) */
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="TitledGreyBox"],
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="TitledGreyBox___StyledDiv"],
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="GreyRowBox"],
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="GreyRowBox___StyledDiv"],
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div.bg-gray-700,
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div.bg-gray-800 {
+  background: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(14px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="TitledGreyBox"]:hover,
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="GreyRowBox"]:hover,
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div.bg-gray-700:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border-color: rgba(236, 72, 153, 0.45) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.15) !important;
 }
