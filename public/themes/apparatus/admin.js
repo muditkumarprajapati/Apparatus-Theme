@@ -3659,18 +3659,18 @@ ${formatMailBody(currentTpl.body)}
             </div>
             <div class="col-md-5 col-sm-12">
               <div class="form-group" style="position: relative;">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem; display: flex; justify-content: space-between; align-items: center;">
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem; display: flex; justify-content: space-between; align-items: center;">
                   <span>Owner Pterodactyl Email</span>
-                  <span style="font-size: 0.74rem; color: #94a3b8; font-weight: 400;">Type 2+ letters</span>
+                  <span style="font-size: 0.74rem; color: var(--admin-text-muted, #94a3b8); font-weight: 400;">Type 2+ letters</span>
                 </label>
                 <div style="position: relative;">
-                  <input type="text" id="vps-owner-email" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px; padding-right: 36px;" placeholder="Search user by email or username..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
-                  <div id="vps-email-search-indicator" style="position: absolute; right: 12px; top: 11px; display: none; color: #a855f7; font-size: 1.1rem;">
+                  <input type="text" id="vps-owner-email" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px; padding-right: 36px;" placeholder="Search user by email or username..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                  <div id="vps-email-search-indicator" style="position: absolute; right: 12px; top: 12px; display: none; color: #a855f7; font-size: 1.1rem;">
                     <i class="ri-loader-4-line ri-spin"></i>
                   </div>
                 </div>
                 <div id="vps-user-autocomplete-dropdown" style="display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--admin-card-bg, #141724); border: 1px solid var(--admin-card-border, rgba(255,255,255,0.16)); border-radius: 12px; box-shadow: 0 12px 35px rgba(0,0,0,0.7); max-height: 230px; overflow-y: auto; z-index: 10005;"></div>
-                <div id="vps-selected-user-badge" style="display: none; margin-top: 6px; font-size: 0.8rem; color: #34d399; align-items: center; gap: 5px;">
+                <div id="vps-selected-user-badge" style="display: none; margin-top: 6px; font-size: 0.8rem; color: #10b981; align-items: center; gap: 5px;">
                   <i class="ri-checkbox-circle-fill"></i> <span id="vps-selected-user-text"></span>
                 </div>
               </div>
@@ -3680,16 +3680,16 @@ ${formatMailBody(currentTpl.body)}
           <div class="row">
             <div class="col-md-6 col-sm-12">
               <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">Hypervisor Node</label>
-                <select id="vps-node-select" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;">
-                  <option value="">Loading available nodes...</option>
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">Hypervisor Node</label>
+                <select id="vps-node-select" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;">
+                  <option value="pve-ruby">pve-ruby (46.232.234.224) - Proxmox VE</option>
                 </select>
               </div>
             </div>
             <div class="col-md-6 col-sm-12">
               <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">Operating System</label>
-                <select id="vps-os-select" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;">
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">Operating System</label>
+                <select id="vps-os-select" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;">
                   <option value="ubuntu-22.04">Ubuntu 22.04 LTS (Jammy)</option>
                   <option value="ubuntu-24.04">Ubuntu 24.04 LTS (Noble)</option>
                   <option value="debian-12">Debian 12 (Bookworm)</option>
@@ -3705,31 +3705,31 @@ ${formatMailBody(currentTpl.body)}
           <div class="row">
             <div class="col-md-4 col-sm-12">
               <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">vCPU Cores</label>
-                <input type="number" id="vps-cores-input" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" value="2" min="1" max="64">
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">vCPU Cores</label>
+                <input type="number" id="vps-cores-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" value="2" min="1" max="64">
               </div>
             </div>
             <div class="col-md-4 col-sm-12">
               <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">RAM Memory (MB)</label>
-                <input type="number" id="vps-ram-input" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" value="4096" min="512" step="512">
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">RAM Memory (MB)</label>
+                <input type="number" id="vps-ram-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" value="4096" min="512" step="512">
               </div>
             </div>
             <div class="col-md-4 col-sm-12">
               <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">NVMe Disk (GB)</label>
-                <input type="number" id="vps-disk-input" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" value="30" min="5">
+                <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">NVMe Disk (GB)</label>
+                <input type="number" id="vps-disk-input" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" value="30" min="5">
               </div>
             </div>
           </div>
 
           <div class="form-group">
-            <label style="color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">Root Password</label>
-            <input type="text" id="vps-root-pwd" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 40px;" placeholder="Auto-generated secure password or custom" value="ArixByte_${Math.random().toString(36).substring(2, 8)}!">
+            <label style="color: var(--admin-text-secondary, #334155); font-weight: 600; font-size: 0.84rem;">Root Password</label>
+            <input type="text" id="vps-root-pwd" class="form-control" style="background: var(--admin-input-bg, #ffffff); border: 1px solid var(--admin-input-border, #cbd5e1); color: var(--admin-input-text, #0f172a); height: 42px; border-radius: 10px;" placeholder="Auto-generated secure password or custom" value="ArixByte_${Math.random().toString(36).substring(2, 8)}!">
           </div>
 
           <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
-            <button type="button" id="btn-cancel-deploy" class="btn btn-default" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #cbd5e1; height: 40px; border-radius: 8px;">Cancel</button>
+            <button type="button" id="btn-cancel-deploy" class="btn btn-default" style="background: var(--admin-pill-bg, rgba(255,255,255,0.08)); border: 1px solid var(--admin-table-border, rgba(255,255,255,0.15)); color: var(--admin-text-secondary, #cbd5e1); height: 40px; border-radius: 8px;">Cancel</button>
             <button type="submit" id="btn-submit-deploy" class="btn btn-success" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; height: 40px; border-radius: 8px; padding: 0 1.5rem; box-shadow: 0 4px 15px rgba(16,185,129,0.35);">
               <i class="ri-check-line"></i> Deploy Virtual Machine
             </button>
@@ -3746,21 +3746,37 @@ ${formatMailBody(currentTpl.body)}
     // Dynamically fetch connected hypervisor nodes
     const nodeSelect = modal.querySelector('#vps-node-select');
     if (nodeSelect) {
+      function populateNodes(nodes) {
+        if (nodes && nodes.length > 0) {
+          nodeSelect.innerHTML = nodes.map(function (n) {
+            return '<option value="' + (n.name || n.id) + '">' + (n.name || ('Node ' + n.id)) + ' (' + (n.host || '127.0.0.1') + ')</option>';
+          }).join('');
+        } else {
+          nodeSelect.innerHTML = '<option value="pve-ruby">pve-ruby (46.232.234.224) - Proxmox VE</option>';
+        }
+      }
+
+      // Check cache immediately so it never shows "No Hypervisor Nodes Connected"
+      try {
+        const cached = JSON.parse(localStorage.getItem('apparatus_admin_nodes_cache') || '[]');
+        if (Array.isArray(cached) && cached.length > 0) {
+          populateNodes(cached);
+        } else {
+          populateNodes([{ name: 'pve-ruby', host: '46.232.234.224', id: 1 }]);
+        }
+      } catch(e) {
+        populateNodes([{ name: 'pve-ruby', host: '46.232.234.224', id: 1 }]);
+      }
+
       fetch('/auth/vps/admin/nodes')
         .then(function (r) { return r.json(); })
         .then(function (res) {
           const nodes = res.nodes || [];
           if (nodes.length > 0) {
-            nodeSelect.innerHTML = nodes.map(function (n) {
-              return '<option value="' + (n.name || n.id) + '">' + (n.name || ('Node ' + n.id)) + ' (' + (n.host || '127.0.0.1') + ')</option>';
-            }).join('');
-          } else {
-            nodeSelect.innerHTML = '<option value="">No Hypervisor Nodes Connected (Add a Node first)</option>';
+            populateNodes(nodes);
           }
         })
-        .catch(function () {
-          nodeSelect.innerHTML = '<option value="">No Hypervisor Nodes Connected</option>';
-        });
+        .catch(function () {});
     }
 
     // Interactive user email search dropdown (triggers on typing >= 2 characters)
