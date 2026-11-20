@@ -6386,7 +6386,7 @@ div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon {
 }
 
 /* ==============================================================================
- * CLOUD VPS (ALPM PROXMOX) FLEET & CARD STYLES
+ * CLOUD VPS PROXMOX FLEET & CARD STYLES
  * ============================================================================== */
 .apparatus-vps-grid {
   display: grid !important;

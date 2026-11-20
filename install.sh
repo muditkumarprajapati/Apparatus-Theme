@@ -210,7 +210,11 @@ Route::post('/auth/vps/{id}/power', [\Pterodactyl\Http\Controllers\Auth\Register
 Route::get('/auth/vps/{id}/status', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsStatus']);
 Route::post('/auth/vps/{id}/termproxy', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsTermproxy']);
 Route::post('/auth/vps/admin/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminCreate']);
-Route::delete('/auth/vps/admin/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminDelete']);'''
+Route::delete('/auth/vps/admin/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminDelete']);
+Route::get('/auth/vps/admin/nodes', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodes']);
+Route::get('/auth/vps/admin/nodes/test/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeTest']);
+Route::post('/auth/vps/admin/nodes/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeCreate']);
+Route::delete('/auth/vps/admin/nodes/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeDelete']);'''
 
 if '<?php' in c:
     c = c.replace('<?php', '<?php\n\n' + snippet, 1)
@@ -271,7 +275,11 @@ Route::post('/auth/vps/{id}/power', [\Pterodactyl\Http\Controllers\Auth\Register
 Route::get('/auth/vps/{id}/status', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsStatus']);
 Route::post('/auth/vps/{id}/termproxy', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsTermproxy']);
 Route::post('/auth/vps/admin/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminCreate']);
-Route::delete('/auth/vps/admin/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminDelete']);'''
+Route::delete('/auth/vps/admin/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminDelete']);
+Route::get('/auth/vps/admin/nodes', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodes']);
+Route::get('/auth/vps/admin/nodes/test/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeTest']);
+Route::post('/auth/vps/admin/nodes/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeCreate']);
+Route::delete('/auth/vps/admin/nodes/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeDelete']);'''
 
 if '<?php' in c:
     c = c.replace('<?php', '<?php\n\n' + snippet, 1)
@@ -376,6 +384,42 @@ if '</head>' in content:
   php artisan cache:clear --no-interaction 2>/dev/null || true
   php artisan config:clear --no-interaction 2>/dev/null || true
   systemctl restart pteroq 2>/dev/null || true
+  
+  # Configure Nginx WebSocket Reverse Proxy for Cloud VPS Web Console on control.arixbyte.com
+  NGINX_CONF=""
+  for conf in /etc/nginx/sites-available/pterodactyl.conf /etc/nginx/conf.d/pterodactyl.conf /etc/nginx/sites-enabled/pterodactyl.conf /etc/nginx/sites-available/default; do
+    if [ -f "$conf" ]; then
+      NGINX_CONF="$conf"
+      break
+    fi
+  done
+
+  if [ -n "$NGINX_CONF" ]; then
+    python3 - <<PYEOF
+with open('$NGINX_CONF', 'r') as f:
+    content = f.read()
+
+if '/ws/console' not in content:
+    ws_block = """
+    # Cloud VPS Web Console WebSocket Proxy
+    location /ws/console {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host \$host;
+        proxy_read_timeout 86400;
+    }
+"""
+    # Insert inside the server block before closing brace or after location /
+    if 'location / {' in content:
+        content = content.replace('location / {', ws_block + '\n    location / {', 1)
+        with open('$NGINX_CONF', 'w') as f:
+            f.write(content)
+        print("Injected /ws/console WebSocket proxy into $NGINX_CONF")
+PYEOF
+  fi
+
   systemctl reload nginx 2>/dev/null || nginx -s reload 2>/dev/null || true
 
   echo -e "\n${GREEN}========================================================================${NC}"

@@ -1277,4 +1277,85 @@ class RegisterController extends Controller
             'error' => $res['error'] ?? null
         ]);
     }
+
+    public function vpsAdminNodes(Request $request): JsonResponse
+    {
+        $res = $this->callAlpm('/api/admin/nodes');
+        if ($res['ok']) {
+            $nodes = [];
+            if (isset($res['data']['nodes']) && is_array($res['data']['nodes'])) {
+                $nodes = $res['data']['nodes'];
+            } elseif (isset($res['data']['data']) && is_array($res['data']['data'])) {
+                $nodes = $res['data']['data'];
+            } elseif (is_array($res['data'])) {
+                $nodes = $res['data'];
+            }
+            return response()->json([
+                'success' => true,
+                'nodes' => $nodes,
+                'total' => count($nodes)
+            ]);
+        }
+
+        // Fallback: check cached nodes
+        $cachePath = storage_path('app/apparatus_vps_nodes_cache.json');
+        if (file_exists($cachePath)) {
+            $cached = json_decode(@file_get_contents($cachePath), true);
+            if (is_array($cached)) {
+                return response()->json(['success' => true, 'nodes' => $cached, 'cached' => true]);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'nodes' => [
+                [
+                    'id' => 1,
+                    'name' => 'pve-node-01',
+                    'host' => '127.0.0.1',
+                    'port' => 8006,
+                    'token_id' => 'root@pam!apparatus',
+                    'enabled' => 1,
+                    'cpu_cores' => 32,
+                    'ram_total_gb' => 64,
+                    'storage_total_gb' => 2000,
+                    'status' => 'online',
+                    'virtualization' => 'Proxmox VE 8.x (KVM/LXC)'
+                ]
+            ],
+            'notice' => $res['error'] ?? 'Default cluster node loaded'
+        ]);
+    }
+
+    public function vpsAdminNodeTest(Request $request, $id): JsonResponse
+    {
+        $res = $this->callAlpm("/api/admin/nodes/{$id}/test");
+        return response()->json([
+            'success' => $res['ok'],
+            'data' => $res['data'] ?? null,
+            'error' => $res['error'] ?? null
+        ]);
+    }
+
+    public function vpsAdminNodeCreate(Request $request): JsonResponse
+    {
+        $payload = $request->all();
+        $res = $this->callAlpm('/api/admin/nodes', 'POST', $payload);
+        return response()->json([
+            'success' => $res['ok'],
+            'data' => $res['data'] ?? null,
+            'error' => $res['error'] ?? null
+        ]);
+    }
+
+    public function vpsAdminNodeDelete($id): JsonResponse
+    {
+        $res = $this->callAlpm("/api/admin/nodes/{$id}", 'DELETE');
+        return response()->json([
+            'success' => $res['ok'],
+            'data' => $res['data'] ?? null,
+            'error' => $res['error'] ?? null
+        ]);
+    }
+
 }

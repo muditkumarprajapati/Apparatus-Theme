@@ -8804,7 +8804,7 @@
 
 
   // ==============================================================================
-  // 12. CLOUD VPS (ALPM PROXMOX) CLIENT FLEET MANAGEMENT & SSH/CONSOLE
+  // 12. CLOUD VPS PROXMOX CLIENT FLEET MANAGEMENT & SSH/CONSOLE
   // ==============================================================================
   let clientVpsLoadedOnce = false;
 
@@ -9264,7 +9264,7 @@
           <div style="text-align: center; padding: 2rem; color: #94a3b8;">
             <i class="ri-error-warning-line" style="font-size: 2.5rem; color: #f59e0b; display: block; margin-bottom: 0.75rem;"></i>
             <h4 style="color: #fff; margin-bottom: 0.5rem;">Console Session Unavailable</h4>
-            <p style="font-size: 0.88rem; max-width: 450px; margin: 0 auto 1.5rem auto;">${res.error || 'The VM is either offline or the ALPM proxy was unable to establish a ticket with the Proxmox node.'}</p>
+            <p style="font-size: 0.88rem; max-width: 450px; margin: 0 auto 1.5rem auto;">${res.error || 'The VM is either offline or the virtualization gateway was unable to establish a ticket with the Proxmox node.'}</p>
             <div style="display: flex; gap: 0.5rem; justify-content: center;">
               <button type="button" class="apparatus-btn apparatus-btn-glass" onclick="document.getElementById('apparatus-client-console-modal').remove(); openClientVpsSshModal(${JSON.stringify(server).replace(/"/g, '&quot;')});">
                 <i class="ri-key-2-line"></i> Use SSH Instead
