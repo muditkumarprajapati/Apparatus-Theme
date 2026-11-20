@@ -109,8 +109,8 @@ body:not(.apparatus-auth) div[class*="DashboardContainer"]>div {
 }
 
 /* Ensure Activity Log card spans full container width */
-div[class*="ActivityLogContainer"]>div,
-.bg-gray-700 {
+div[class*="ActivityLogContainer"] > div,
+div[class*="ActivityLogContainer"] .bg-gray-700 {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
@@ -1924,54 +1924,155 @@ body:not(.apparatus-auth) span.apparatus-user-name {
 
 .apparatus-servers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
 }
 
 .apparatus-server-item {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 1.1rem;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.35rem 1.4rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 0.85rem;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  gap: 1.15rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
 }
 
 .apparatus-server-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(236, 72, 153, 0.35);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(236, 72, 153, 0.45);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(236, 72, 153, 0.18), 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.apparatus-server-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.apparatus-server-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.apparatus-server-icon-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(236, 72, 153, 0.15);
+  border: 1px solid rgba(236, 72, 153, 0.3);
+  color: #ec4899;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  flex-shrink: 0;
 }
 
 .apparatus-server-name {
-  font-size: 0.98rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  margin: 0 0 0.25rem 0;
+  margin: 0;
   color: #fff;
+  letter-spacing: -0.01em;
 }
 
-.apparatus-server-stats {
-  display: flex;
+.apparatus-server-node-pill {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 2px;
+}
+
+.apparatus-server-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  color: #10b981;
+}
+
+.apparatus-server-status-pill .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: apparatusPulse 2s infinite;
+}
+
+.apparatus-server-specs-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.65rem;
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.65);
+  padding: 0.75rem 0.85rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.apparatus-server-spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.apparatus-server-spec-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.apparatus-server-spec-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f1f5f9;
 }
 
 .apparatus-server-btn {
+  width: 100%;
   background: linear-gradient(135deg, #ec4899, #db2777);
   color: #fff !important;
   text-decoration: none !important;
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  padding: 0.55rem 0.9rem;
-  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
   text-align: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 0.45rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.3);
+}
+
+.apparatus-server-btn:hover {
+  background: linear-gradient(135deg, #f472b6, #ec4899);
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
+  transform: translateY(-1px);
 }
 
 /* Server Item Top Status & Node */
@@ -3198,10 +3299,8 @@ body:not(.apparatus-auth) .apparatus-section-title {
   gap: 0.6rem !important;
 }
 
-body:not(.apparatus-auth) div.bg-gray-700,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.bg-gray-700,
-body:not(.apparatus-auth) div[class*="ActivityLogContainer"]>div,
-body:not(.apparatus-auth) .bg-gray-700 {
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] > div {
   display: block !important;
   width: 100% !important;
   max-width: 100% !important;
@@ -3218,9 +3317,8 @@ body:not(.apparatus-auth) .bg-gray-700 {
 }
 
 /* Activity rows: flex layout so circular avatar is side-by-side with text details */
-body:not(.apparatus-auth) div.bg-gray-700>div.grid,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid,
-body:not(.apparatus-auth) div[class*="ActivityLogEntry"] {
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div[class*="ActivityLogEntry"] {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
@@ -3233,19 +3331,16 @@ body:not(.apparatus-auth) div[class*="ActivityLogEntry"] {
   box-sizing: border-box !important;
 }
 
-body:not(.apparatus-auth) div.bg-gray-700>div.grid:hover,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid:hover,
-body:not(.apparatus-auth) div[class*="ActivityLogEntry"]:hover {
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div[class*="ActivityLogEntry"]:hover {
   background: rgba(255, 255, 255, 0.05) !important;
 }
 
-body:not(.apparatus-auth) div.bg-gray-700>div.grid:last-child,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid:last-child {
   border-bottom: none !important;
 }
 
 /* Activity Log Avatar icon container */
-body:not(.apparatus-auth) div.bg-gray-700>div.grid>div:first-child,
 body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid>div:first-child {
   display: flex !important;
   flex-shrink: 0 !important;
@@ -3254,8 +3349,8 @@ body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.grid>div:first-
   justify-content: center !important;
 }
 
-body:not(.apparatus-auth) div.bg-gray-700 .bg-gray-600,
-body:not(.apparatus-auth) .bg-gray-600 {
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.bg-gray-700 .bg-gray-600,
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] .bg-gray-600 {
   width: 44px !important;
   height: 44px !important;
   border-radius: 50% !important;
@@ -3268,7 +3363,8 @@ body:not(.apparatus-auth) .bg-gray-600 {
   box-shadow: none !important;
 }
 
-body:not(.apparatus-auth) div.bg-gray-700 .bg-gray-600 svg {
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] div.bg-gray-700 .bg-gray-600 svg,
+body:not(.apparatus-auth) div[class*="ActivityLogContainer"] .bg-gray-600 svg {
   width: 44px !important;
   height: 44px !important;
 }
@@ -6591,4 +6687,48 @@ div[class*="AccountOverviewContainer"] select.apparatus-prof-input.with-icon {
 .apparatus-vps-btn-power:hover {
   filter: brightness(1.2) !important;
   transform: translateY(-1px) !important;
+}
+
+/* ==============================================================================
+   SERVER SUBNAVIGATION SIDEBAR STYLING & CLEANUP
+   ============================================================================== */
+.apparatus-server-sublink,
+.apparatus-server-nav-link {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.apparatus-server-sublink:hover,
+.apparatus-server-nav-link:hover {
+  background: rgba(236, 72, 153, 0.1) !important;
+  color: #fff !important;
+  transform: translateX(4px) !important;
+}
+
+.apparatus-server-sublink.active,
+.apparatus-server-nav-link.active {
+  background: rgba(236, 72, 153, 0.18) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  box-shadow: inset 3px 0 0 #ec4899 !important;
+}
+
+.apparatus-server-sublink.active .apparatus-nav-icon,
+.apparatus-server-nav-link.active .apparatus-nav-icon {
+  color: #ec4899 !important;
+}
+
+/* Force hide stray native subnav / floating buttons when on server pages */
+body:not(.apparatus-auth) [class*="SubNavigation"],
+body:not(.apparatus-auth) #SubNavigation,
+body:not(.apparatus-auth) nav[aria-label="Server Navigation"],
+body:not(.apparatus-auth) div[aria-label="Server Navigation"],
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] nav,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] [role="navigation"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }

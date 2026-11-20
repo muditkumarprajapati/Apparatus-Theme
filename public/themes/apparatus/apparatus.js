@@ -436,7 +436,7 @@
       });
     }
 
-    updateActiveSidebarLinks();
+    updateSidebarMode();
     cleanPterodactylElements();
   }
 
@@ -493,10 +493,10 @@
       el.style.setProperty('max-height', '0', 'important');
       el.style.setProperty('margin', '0', 'important');
       el.style.setProperty('padding', '0', 'important');
-      el.style.setProperty('border', 'none', 'important');
-      if (el.id === 'SubNavigation' || el.matches('[class*="SubNavigation"]') || el.closest('[class*="SubNavigation"], #SubNavigation')) {
-        try { el.remove(); } catch (e) { }
-      }
+      el.style.setProperty('width', '0', 'important');
+      el.style.setProperty('opacity', '0', 'important');
+      el.style.setProperty('overflow', 'hidden', 'important');
+      el.style.setProperty('pointer-events', 'none', 'important');
     });
 
     // 2. Hide top bar inside #app if rendered without standard nav tag
@@ -528,7 +528,10 @@
           el.style.setProperty('margin', '0', 'important');
           el.style.setProperty('padding', '0', 'important');
           el.style.setProperty('border', 'none', 'important');
-          try { el.remove(); } catch (e) { }
+          el.style.setProperty('width', '0', 'important');
+          el.style.setProperty('opacity', '0', 'important');
+          el.style.setProperty('overflow', 'hidden', 'important');
+          el.style.setProperty('pointer-events', 'none', 'important');
         }
       });
     }
@@ -1650,22 +1653,38 @@
               html += `
                 <div class="apparatus-server-item">
                   <div class="apparatus-server-main">
-                    <div class="apparatus-server-top">
-                      <div class="apparatus-server-badge-online">
-                        <span class="apparatus-status-dot"></span> Active
+                    <div class="apparatus-server-header">
+                      <div class="apparatus-server-title-wrap">
+                        <div class="apparatus-server-icon-badge">
+                          <i class="ri-gamepad-line"></i>
+                        </div>
+                        <div>
+                          <h4 class="apparatus-server-name">${name}</h4>
+                          <span class="apparatus-server-node-pill"><i class="ri-router-line"></i> ${node}</span>
+                        </div>
                       </div>
-                      <span class="apparatus-server-node"><i class="ri-router-line"></i> ${node}</span>
+                      <div class="apparatus-server-status-pill">
+                        <span class="dot"></span> Active
+                      </div>
                     </div>
-                    <h4 class="apparatus-server-name">${name}</h4>
-                    <div class="apparatus-server-stats">
-                      <span><i class="ri-cpu-line"></i> ${cpu}</span>
-                      <span><i class="ri-database-2-line"></i> ${mem}</span>
-                      <span><i class="ri-hard-drive-line"></i> ${disk}</span>
+                    <div class="apparatus-server-specs-row">
+                      <div class="apparatus-server-spec-item">
+                        <span class="apparatus-server-spec-label"><i class="ri-cpu-line" style="color:#38bdf8;"></i> CPU</span>
+                        <span class="apparatus-server-spec-value">${cpu}</span>
+                      </div>
+                      <div class="apparatus-server-spec-item">
+                        <span class="apparatus-server-spec-label"><i class="ri-database-2-line" style="color:#ec4899;"></i> RAM</span>
+                        <span class="apparatus-server-spec-value">${mem}</span>
+                      </div>
+                      <div class="apparatus-server-spec-item">
+                        <span class="apparatus-server-spec-label"><i class="ri-hard-drive-3-line" style="color:#10b981;"></i> Disk</span>
+                        <span class="apparatus-server-spec-value">${disk}</span>
+                      </div>
                     </div>
                   </div>
-                  <div class="apparatus-server-action-wrap">
+                  <div class="apparatus-server-action-wrap" style="margin-top: 0.65rem;">
                     <a href="/server/${id}" class="apparatus-server-btn">
-                      Manage <i class="ri-arrow-right-s-line"></i>
+                      <span>Manage Server</span> <i class="ri-arrow-right-line"></i>
                     </a>
                   </div>
                 </div>
@@ -7139,6 +7158,607 @@
     }
   }
 
+  function buildGlobalSidebarContent(isRootAdmin) {
+    return `
+      <!-- Home -->
+      <div class="apparatus-nav-category">
+        <div class="apparatus-category-title">Home</div>
+        <ul class="apparatus-nav-list">
+          <li>
+            <a href="/" class="apparatus-nav-link" data-tab="dashboard" data-path="/">
+              <i class="ri-dashboard-3-line apparatus-nav-icon"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="/servers" class="apparatus-nav-link" data-tab="servers" data-path="/servers">
+              <i class="ri-gamepad-line apparatus-nav-icon"></i>
+              <span>Servers</span>
+            </a>
+          </li>
+          <li>
+            <a href="/vps" class="apparatus-nav-link apparatus-vps-link" data-tab="vps" data-path="/vps">
+              <i class="ri-server-line apparatus-nav-icon"></i>
+              <span>VPS</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Billing -->
+      <div class="apparatus-nav-category">
+        <div class="apparatus-category-title">Billing</div>
+        <ul class="apparatus-nav-list">
+          <li>
+            <a href="/resource" class="apparatus-nav-link apparatus-resource-link" data-tab="resource" data-path="/resource">
+              <i class="ri-cpu-line apparatus-nav-icon"></i>
+              <span>Resource</span>
+            </a>
+          </li>
+          <li>
+            <a href="/store" class="apparatus-nav-link apparatus-store-link" data-tab="store" data-path="/store">
+              <i class="ri-shopping-cart-2-line apparatus-nav-icon"></i>
+              <span>Store</span>
+            </a>
+          </li>
+          <li>
+            <a href="#earn" class="apparatus-nav-link apparatus-earn-link" data-path="/billing/earn">
+              <i class="ri-copper-coin-line apparatus-nav-icon"></i>
+              <span>Earn</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Account -->
+      <div class="apparatus-nav-category">
+        <div class="apparatus-category-title">Account</div>
+        <ul class="apparatus-nav-list">
+          <li>
+            <a href="/account" class="apparatus-nav-link" data-path="/account">
+              <i class="ri-user-settings-line apparatus-nav-icon"></i>
+              <span>Account</span>
+            </a>
+          </li>
+          <li>
+            <a href="/account/api" class="apparatus-nav-link" data-path="/account/api">
+              <i class="ri-key-2-line apparatus-nav-icon"></i>
+              <span>API Credentials</span>
+            </a>
+          </li>
+          <li>
+            <a href="/account/ssh" class="apparatus-nav-link" data-path="/account/ssh">
+              <i class="ri-terminal-window-line apparatus-nav-icon"></i>
+              <span>SSH Keys</span>
+            </a>
+          </li>
+          <li>
+            <a href="/account/activity" class="apparatus-nav-link" data-path="/account/activity">
+              <i class="ri-history-line apparatus-nav-icon"></i>
+              <span>Recent Activity</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Ticket -->
+      <div class="apparatus-nav-category">
+        <div class="apparatus-category-title">Ticket</div>
+        <ul class="apparatus-nav-list">
+          <li>
+            <a href="#ticket" class="apparatus-nav-link apparatus-ticket-link">
+              <i class="ri-customer-service-2-line apparatus-nav-icon"></i>
+              <span>Ticket</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Panel Settings -->
+      <div class="apparatus-nav-category">
+        <div class="apparatus-category-title">Panel Settings</div>
+        <ul class="apparatus-nav-list">
+          <li>
+            <a href="/panel-settings" class="apparatus-nav-link apparatus-panel-settings-link" data-tab="panel-settings" data-path="/panel-settings">
+              <i class="ri-settings-3-line apparatus-nav-icon"></i>
+              <span>Panel Settings</span>
+            </a>
+          </li>
+          ${isRootAdmin ? `
+          <li>
+            <a href="#panel-editor" class="apparatus-nav-link apparatus-panel-editor-link" data-tab="panel-editor">
+              <i class="ri-sparkling-2-line apparatus-nav-icon"></i>
+              <span>Panel Editor</span>
+            </a>
+          </li>
+          <li>
+            <a href="/apparatus-settings" class="apparatus-nav-link apparatus-settings-link" data-tab="apparatus-settings" data-path="/apparatus-settings">
+              <i class="ri-settings-4-line apparatus-nav-icon"></i>
+              <span>Apparatus Settings</span>
+            </a>
+          </li>
+          <li>
+            <a href="#addon-settings" class="apparatus-nav-link apparatus-addon-settings-link" data-tab="addon-settings">
+              <i class="ri-stack-line apparatus-nav-icon"></i>
+              <span>Addon Settings</span>
+            </a>
+          </li>
+          ` : ''}
+        </ul>
+      </div>
+
+      <!-- Socials -->
+      <div class="apparatus-nav-category">
+        <div class="apparatus-category-title">Socials</div>
+        <ul class="apparatus-nav-list">
+          <li>
+            <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-nav-link">
+              <i class="ri-global-line apparatus-nav-icon"></i>
+              <span>Website</span>
+              <i class="ri-external-link-line apparatus-external-icon"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-nav-link">
+              <i class="ri-discord-fill apparatus-nav-icon" style="color: #5865F2;"></i>
+              <span>Discord</span>
+              <i class="ri-external-link-line apparatus-external-icon"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://instagram.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-nav-link">
+              <i class="ri-instagram-line apparatus-nav-icon" style="color: #E1306C;"></i>
+              <span>Instagram</span>
+              <i class="ri-external-link-line apparatus-external-icon"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://wa.me/918218444633" target="_blank" rel="noopener noreferrer" class="apparatus-nav-link">
+              <i class="ri-whatsapp-line apparatus-nav-icon" style="color: #25D366;"></i>
+              <span>Whatsapp</span>
+              <i class="ri-external-link-line apparatus-external-icon"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Empty space after socials -->
+      <div class="apparatus-downside-spacer"></div>
+
+      <!-- Downside Options (Admin Panel & Sign Out) -->
+      <div class="apparatus-nav-category apparatus-downside-options">
+        <ul class="apparatus-nav-list">
+          ${isRootAdmin ? `
+          <li class="apparatus-admin-panel-item">
+            <a href="/admin" class="apparatus-nav-link" data-path="/admin">
+              <i class="ri-settings-4-line apparatus-nav-icon"></i>
+              <span>Admin Panel</span>
+              <span class="apparatus-tag-admin">Admin</span>
+            </a>
+          </li>
+          ` : ''}
+          <li>
+            <a href="#logout" class="apparatus-nav-link apparatus-logout-link">
+              <i class="ri-logout-box-r-line apparatus-nav-icon"></i>
+              <span>Sign Out</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    `;
+  }
+
+  function buildServerSidebarContent(serverId, isRootAdmin) {
+    return `
+      <!-- Home Category -->
+      <div class="apparatus-nav-category">
+        <div class="apparatus-category-title">Home</div>
+        <ul class="apparatus-nav-list">
+          <li>
+            <a href="/" class="apparatus-nav-link apparatus-server-home-link apparatus-server-home-dashboard" data-path="/">
+              <i class="ri-dashboard-3-line apparatus-nav-icon"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="/account" class="apparatus-nav-link apparatus-server-home-link apparatus-server-home-account" data-path="/account">
+              <i class="ri-user-settings-line apparatus-nav-icon"></i>
+              <span>Account</span>
+            </a>
+          </li>
+          <li>
+            <a href="#ticket" class="apparatus-nav-link apparatus-server-home-link apparatus-server-home-ticket">
+              <i class="ri-customer-service-2-line apparatus-nav-icon"></i>
+              <span>Ticket</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Server Category -->
+      <div class="apparatus-nav-category">
+        <div class="apparatus-category-title">Server</div>
+        <ul class="apparatus-nav-list">
+          <li>
+            <a href="/server/${serverId}" class="apparatus-nav-link apparatus-server-nav-link" data-server-route="console" data-path="/server/${serverId}">
+              <i class="ri-terminal-box-line apparatus-nav-icon"></i>
+              <span>Console</span>
+            </a>
+          </li>
+          <li>
+            <a href="/server/${serverId}/files" class="apparatus-nav-link apparatus-server-nav-link" data-server-route="files" data-path="/server/${serverId}/files">
+              <i class="ri-folder-2-line apparatus-nav-icon"></i>
+              <span>Files</span>
+            </a>
+          </li>
+          <li>
+            <a href="/server/${serverId}/databases" class="apparatus-nav-link apparatus-server-nav-link" data-server-route="databases" data-path="/server/${serverId}/databases">
+              <i class="ri-database-2-line apparatus-nav-icon"></i>
+              <span>Databases</span>
+            </a>
+          </li>
+          <li>
+            <a href="/server/${serverId}/schedules" class="apparatus-nav-link apparatus-server-nav-link" data-server-route="schedules" data-path="/server/${serverId}/schedules">
+              <i class="ri-calendar-todo-line apparatus-nav-icon"></i>
+              <span>Schedules</span>
+            </a>
+          </li>
+          <li>
+            <a href="/server/${serverId}/users" class="apparatus-nav-link apparatus-server-nav-link" data-server-route="users" data-path="/server/${serverId}/users">
+              <i class="ri-group-line apparatus-nav-icon"></i>
+              <span>Users</span>
+            </a>
+          </li>
+          <li>
+            <a href="/server/${serverId}/backups" class="apparatus-nav-link apparatus-server-nav-link" data-server-route="backups" data-path="/server/${serverId}/backups">
+              <i class="ri-archive-line apparatus-nav-icon"></i>
+              <span>Backups</span>
+            </a>
+          </li>
+          <li>
+            <a href="/server/${serverId}/network" class="apparatus-nav-link apparatus-server-nav-link" data-server-route="network" data-path="/server/${serverId}/network">
+              <i class="ri-global-line apparatus-nav-icon"></i>
+              <span>Network</span>
+            </a>
+          </li>
+          <li>
+            <a href="/server/${serverId}/startup" class="apparatus-nav-link apparatus-server-nav-link" data-server-route="startup" data-path="/server/${serverId}/startup">
+              <i class="ri-play-circle-line apparatus-nav-icon"></i>
+              <span>Startup</span>
+            </a>
+          </li>
+          <li>
+            <a href="/server/${serverId}/settings" class="apparatus-nav-link apparatus-server-nav-link" data-server-route="settings" data-path="/server/${serverId}/settings">
+              <i class="ri-settings-4-line apparatus-nav-icon"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+          <li>
+            <a href="/server/${serverId}/activity" class="apparatus-nav-link apparatus-server-nav-link" data-server-route="activity" data-path="/server/${serverId}/activity">
+              <i class="ri-radar-line apparatus-nav-icon"></i>
+              <span>Activity</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Empty space spacer -->
+      <div class="apparatus-downside-spacer"></div>
+
+      <!-- Downside Options (Admin Panel & Sign Out) -->
+      <div class="apparatus-nav-category apparatus-downside-options">
+        <ul class="apparatus-nav-list">
+          ${isRootAdmin ? `
+          <li class="apparatus-admin-panel-item">
+            <a href="/admin" class="apparatus-nav-link" data-path="/admin">
+              <i class="ri-settings-4-line apparatus-nav-icon"></i>
+              <span>Admin Panel</span>
+              <span class="apparatus-tag-admin">Admin</span>
+            </a>
+          </li>
+          ` : ''}
+          <li>
+            <a href="#logout" class="apparatus-nav-link apparatus-logout-link">
+              <i class="ri-logout-box-r-line apparatus-nav-icon"></i>
+              <span>Sign Out</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    `;
+  }
+
+  function wireGlobalSidebarEvents(sidebar) {
+    // Billing click handlers
+    const resourceBtn = sidebar.querySelector('.apparatus-resource-link');
+    if (resourceBtn) {
+      resourceBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (window.location.pathname !== '/resource' || window.location.hash) {
+          history.pushState(null, '', '/resource');
+        }
+        applyViewMode();
+        smoothScrollToTop();
+      });
+    }
+
+    const storeBtn = sidebar.querySelector('.apparatus-store-link');
+    if (storeBtn) {
+      storeBtn.addEventListener('click', function (e) {
+        navigateToStore(e);
+      });
+    }
+
+    const earnBtn = sidebar.querySelector('.apparatus-earn-link');
+    if (earnBtn) {
+      earnBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (window.location.pathname !== '/earn' || window.location.hash) {
+          history.pushState(null, '', '/earn');
+        }
+        applyViewMode();
+        smoothScrollToTop();
+      });
+    }
+
+    // Ticket placeholder click handler
+    const ticketBtn = sidebar.querySelector('.apparatus-ticket-link');
+    if (ticketBtn) {
+      ticketBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        showToast('success', 'Tickets', 'Ticket support system is coming soon!');
+      });
+    }
+
+    // Dedicated Panel Settings navigation (for all users)
+    const panelSettingsBtn = sidebar.querySelector('.apparatus-panel-settings-link');
+    if (panelSettingsBtn) {
+      panelSettingsBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (window.location.pathname !== '/panel-settings' || window.location.hash) {
+          history.pushState(null, '', '/panel-settings');
+        }
+        applyViewMode();
+        smoothScrollToTop();
+      });
+    }
+
+    // Dedicated Apparatus Settings navigation (for root admins)
+    const apparatusSettingsBtn = sidebar.querySelector('.apparatus-settings-link');
+    if (apparatusSettingsBtn) {
+      apparatusSettingsBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (window.location.pathname !== '/apparatus-settings' || window.location.hash) {
+          history.pushState(null, '', '/apparatus-settings');
+        }
+        applyViewMode();
+        smoothScrollToTop();
+      });
+    }
+
+    // Admin-only placeholder settings links
+    const adminPanelSettingsLinks = [
+      { selector: '.apparatus-panel-editor-link', title: 'Panel Editor', msg: 'Opening Panel Editor customization module...' },
+      { selector: '.apparatus-addon-settings-link', title: 'Addon Settings', msg: 'Opening Addon Settings configuration...' }
+    ];
+
+    adminPanelSettingsLinks.forEach(function (item) {
+      const btn = sidebar.querySelector(item.selector);
+      if (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          showToast('info', item.title, item.msg);
+        });
+      }
+    });
+
+    // Logout handler
+    const logoutBtn = sidebar.querySelector('.apparatus-logout-link');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async function (e) {
+        e.preventDefault();
+        showToast('info', 'Signing Out', 'Logging out of your account...');
+        try {
+          const csrf = getCsrfToken();
+          await fetch('/auth/logout', {
+            method: 'POST',
+            headers: {
+              'X-CSRF-TOKEN': csrf,
+              'Accept': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          });
+        } catch (err) { }
+        window.location.href = '/auth/login';
+      });
+    }
+
+    // Tab switcher handlers for Dashboard vs Servers vs VPS
+    sidebar.querySelectorAll('a[data-tab]').forEach(function (tabLink) {
+      tabLink.addEventListener('click', function (e) {
+        const tab = this.getAttribute('data-tab');
+        if (!tab || (tab !== 'dashboard' && tab !== 'servers' && tab !== 'vps')) return;
+
+        e.preventDefault();
+
+        const rawP = window.location.pathname || '/';
+        const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard' || rawP === '/resource' || rawP === '/store' || rawP === '/panel-settings' || rawP === '/apparatus-settings';
+
+        if (!onHome) {
+          if (tab === 'servers') {
+            window.location.href = '/servers';
+          } else if (tab === 'vps') {
+            window.location.href = '/vps';
+          } else {
+            window.location.href = '/';
+          }
+          return;
+        }
+
+        if (tab === 'servers') {
+          if (window.location.pathname !== '/servers' || window.location.hash) {
+            history.pushState(null, '', '/servers');
+          }
+        } else if (tab === 'vps') {
+          if (window.location.pathname !== '/vps' || window.location.hash) {
+            history.pushState(null, '', '/vps');
+          }
+        } else if (tab === 'dashboard') {
+          if (window.location.pathname !== '/' || window.location.hash) {
+            history.pushState(null, '', '/');
+          }
+        }
+        applyViewMode();
+        smoothScrollToTop();
+      });
+    });
+  }
+
+  function wireServerSidebarEvents(sidebar, serverId) {
+    const dashLink = sidebar.querySelector('.apparatus-server-home-dashboard');
+    if (dashLink) {
+      dashLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = '/';
+      });
+    }
+
+    const accountLink = sidebar.querySelector('.apparatus-server-home-account');
+    if (accountLink) {
+      accountLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = '/account';
+      });
+    }
+
+    const ticketLink = sidebar.querySelector('.apparatus-server-home-ticket');
+    if (ticketLink) {
+      ticketLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        showToast('success', 'Tickets', 'Ticket support system is coming soon!');
+      });
+    }
+
+    sidebar.querySelectorAll('.apparatus-server-nav-link').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const href = this.getAttribute('href');
+        if (!href) return;
+
+        let delegated = false;
+        const nativeLinks = document.querySelectorAll(`a[href="${href}"], a[href="${href}/"]`);
+        for (let i = 0; i < nativeLinks.length; i++) {
+          const nl = nativeLinks[i];
+          if (!nl.classList.contains('apparatus-server-nav-link') && !nl.closest('.apparatus-sidebar')) {
+            if (typeof nl.click === 'function') {
+              nl.click();
+              delegated = true;
+              break;
+            }
+          }
+        }
+
+        if (!delegated) {
+          history.pushState(null, '', href);
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
+
+        updateActiveServerSidebarLinks(serverId);
+        cleanPterodactylElements();
+      });
+    });
+
+    const logoutBtn = sidebar.querySelector('.apparatus-logout-link');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async function (e) {
+        e.preventDefault();
+        showToast('info', 'Signing Out', 'Logging out of your account...');
+        try {
+          const csrf = getCsrfToken();
+          await fetch('/auth/logout', {
+            method: 'POST',
+            headers: {
+              'X-CSRF-TOKEN': csrf,
+              'Accept': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          });
+        } catch (err) { }
+        window.location.href = '/auth/login';
+      });
+    }
+  }
+
+  function updateActiveServerSidebarLinks(serverId) {
+    const rawPath = window.location.pathname || '';
+    const currentPath = (rawPath.length > 1 && rawPath.endsWith('/')) ? rawPath.slice(0, -1) : rawPath;
+    const links = document.querySelectorAll('.apparatus-server-nav-link');
+
+    let matchedSubroute = false;
+    links.forEach(function (link) {
+      const route = link.getAttribute('data-server-route');
+      if (route && route !== 'console') {
+        const targetPrefix = `/server/${serverId}/${route}`;
+        if (currentPath === targetPrefix || currentPath.startsWith(targetPrefix + '/')) {
+          link.classList.add('active');
+          matchedSubroute = true;
+        } else {
+          link.classList.remove('active');
+        }
+      }
+    });
+
+    links.forEach(function (link) {
+      const route = link.getAttribute('data-server-route');
+      if (route === 'console') {
+        if (!matchedSubroute && (currentPath === `/server/${serverId}` || currentPath === `/server/${serverId}/`)) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      }
+    });
+  }
+
+  function updateSidebarMode() {
+    const sidebar = document.getElementById('apparatus-sidebar');
+    if (!sidebar) return;
+
+    const currentPath = window.location.pathname || '/';
+    const serverMatch = currentPath.match(/^\/server\/([a-zA-Z0-9]+)/);
+    const user = window.PterodactylUser || {};
+    const isRootAdmin = !!user.root_admin;
+
+    if (serverMatch) {
+      const serverId = serverMatch[1];
+      const currentMode = sidebar.getAttribute('data-sidebar-mode');
+      const currentServerId = sidebar.getAttribute('data-server-id');
+
+      if (currentMode !== 'server' || currentServerId !== serverId) {
+        const scrollEl = sidebar.querySelector('.apparatus-sidebar-scroll');
+        if (scrollEl) {
+          scrollEl.innerHTML = buildServerSidebarContent(serverId, isRootAdmin);
+          sidebar.setAttribute('data-sidebar-mode', 'server');
+          sidebar.setAttribute('data-server-id', serverId);
+          wireServerSidebarEvents(sidebar, serverId);
+        }
+      }
+      updateActiveServerSidebarLinks(serverId);
+    } else {
+      const currentMode = sidebar.getAttribute('data-sidebar-mode');
+      if (currentMode !== 'global') {
+        const scrollEl = sidebar.querySelector('.apparatus-sidebar-scroll');
+        if (scrollEl) {
+          scrollEl.innerHTML = buildGlobalSidebarContent(isRootAdmin);
+          sidebar.setAttribute('data-sidebar-mode', 'global');
+          sidebar.removeAttribute('data-server-id');
+          wireGlobalSidebarEvents(sidebar);
+        }
+      }
+      updateActiveSidebarLinks();
+    }
+  }
+
   function initSidebar() {
     if (isAuthPage() || isUnauthorizedAdminAttempt()) {
       const existing = document.getElementById('apparatus-sidebar');
@@ -7182,193 +7802,7 @@
           </div>
         </div>
 
-        <div class="apparatus-sidebar-scroll" data-lenis-prevent="true" data-lenis-prevent-wheel="true">
-          <!-- Home -->
-          <div class="apparatus-nav-category">
-            <div class="apparatus-category-title">Home</div>
-            <ul class="apparatus-nav-list">
-              <li>
-                <a href="/" class="apparatus-nav-link" data-tab="dashboard" data-path="/">
-                  <i class="ri-dashboard-3-line apparatus-nav-icon"></i>
-                  <span>Dashboard</span>
-                </a>
-              </li>
-              <li>
-                <a href="/servers" class="apparatus-nav-link" data-tab="servers" data-path="/servers">
-                  <i class="ri-gamepad-line apparatus-nav-icon"></i>
-                  <span>Servers</span>
-                </a>
-              </li>
-              <li>
-                <a href="/vps" class="apparatus-nav-link apparatus-vps-link" data-tab="vps" data-path="/vps">
-                  <i class="ri-server-line apparatus-nav-icon"></i>
-                  <span>VPS</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Billing -->
-          <div class="apparatus-nav-category">
-            <div class="apparatus-category-title">Billing</div>
-            <ul class="apparatus-nav-list">
-              <li>
-                <a href="/resource" class="apparatus-nav-link apparatus-resource-link" data-tab="resource" data-path="/resource">
-                  <i class="ri-cpu-line apparatus-nav-icon"></i>
-                  <span>Resource</span>
-                </a>
-              </li>
-              <li>
-                <a href="/store" class="apparatus-nav-link apparatus-store-link" data-tab="store" data-path="/store">
-                  <i class="ri-shopping-cart-2-line apparatus-nav-icon"></i>
-                  <span>Store</span>
-                </a>
-              </li>
-              <li>
-                <a href="#earn" class="apparatus-nav-link apparatus-earn-link" data-path="/billing/earn">
-                  <i class="ri-copper-coin-line apparatus-nav-icon"></i>
-                  <span>Earn</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Account -->
-          <div class="apparatus-nav-category">
-            <div class="apparatus-category-title">Account</div>
-            <ul class="apparatus-nav-list">
-              <li>
-                <a href="/account" class="apparatus-nav-link" data-path="/account">
-                  <i class="ri-user-settings-line apparatus-nav-icon"></i>
-                  <span>Account</span>
-                </a>
-              </li>
-              <li>
-                <a href="/account/api" class="apparatus-nav-link" data-path="/account/api">
-                  <i class="ri-key-2-line apparatus-nav-icon"></i>
-                  <span>API Credentials</span>
-                </a>
-              </li>
-              <li>
-                <a href="/account/ssh" class="apparatus-nav-link" data-path="/account/ssh">
-                  <i class="ri-terminal-window-line apparatus-nav-icon"></i>
-                  <span>SSH Keys</span>
-                </a>
-              </li>
-              <li>
-                <a href="/account/activity" class="apparatus-nav-link" data-path="/account/activity">
-                  <i class="ri-history-line apparatus-nav-icon"></i>
-                  <span>Recent Activity</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Ticket -->
-          <div class="apparatus-nav-category">
-            <div class="apparatus-category-title">Ticket</div>
-            <ul class="apparatus-nav-list">
-              <li>
-                <a href="#ticket" class="apparatus-nav-link apparatus-ticket-link">
-                  <i class="ri-customer-service-2-line apparatus-nav-icon"></i>
-                  <span>Ticket</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Panel Settings -->
-          <div class="apparatus-nav-category">
-            <div class="apparatus-category-title">Panel Settings</div>
-            <ul class="apparatus-nav-list">
-              <li>
-                <a href="/panel-settings" class="apparatus-nav-link apparatus-panel-settings-link" data-tab="panel-settings" data-path="/panel-settings">
-                  <i class="ri-settings-3-line apparatus-nav-icon"></i>
-                  <span>Panel Settings</span>
-                </a>
-              </li>
-              ${isRootAdmin ? `
-              <li>
-                <a href="#panel-editor" class="apparatus-nav-link apparatus-panel-editor-link" data-tab="panel-editor">
-                  <i class="ri-sparkling-2-line apparatus-nav-icon"></i>
-                  <span>Panel Editor</span>
-                </a>
-              </li>
-              <li>
-                <a href="/apparatus-settings" class="apparatus-nav-link apparatus-settings-link" data-tab="apparatus-settings" data-path="/apparatus-settings">
-                  <i class="ri-settings-4-line apparatus-nav-icon"></i>
-                  <span>Apparatus Settings</span>
-                </a>
-              </li>
-              <li>
-                <a href="#addon-settings" class="apparatus-nav-link apparatus-addon-settings-link" data-tab="addon-settings">
-                  <i class="ri-stack-line apparatus-nav-icon"></i>
-                  <span>Addon Settings</span>
-                </a>
-              </li>
-              ` : ''}
-            </ul>
-          </div>
-
-          <!-- Socials -->
-          <div class="apparatus-nav-category">
-            <div class="apparatus-category-title">Socials</div>
-            <ul class="apparatus-nav-list">
-              <li>
-                <a href="https://arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-nav-link">
-                  <i class="ri-global-line apparatus-nav-icon"></i>
-                  <span>Website</span>
-                  <i class="ri-external-link-line apparatus-external-icon"></i>
-                </a>
-              </li>
-              <li>
-                <a href="https://discord.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-nav-link">
-                  <i class="ri-discord-fill apparatus-nav-icon" style="color: #5865F2;"></i>
-                  <span>Discord</span>
-                  <i class="ri-external-link-line apparatus-external-icon"></i>
-                </a>
-              </li>
-              <li>
-                <a href="https://instagram.arixbyte.com" target="_blank" rel="noopener noreferrer" class="apparatus-nav-link">
-                  <i class="ri-instagram-line apparatus-nav-icon" style="color: #E1306C;"></i>
-                  <span>Instagram</span>
-                  <i class="ri-external-link-line apparatus-external-icon"></i>
-                </a>
-              </li>
-              <li>
-                <a href="https://wa.me/918218444633" target="_blank" rel="noopener noreferrer" class="apparatus-nav-link">
-                  <i class="ri-whatsapp-line apparatus-nav-icon" style="color: #25D366;"></i>
-                  <span>Whatsapp</span>
-                  <i class="ri-external-link-line apparatus-external-icon"></i>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Empty space after socials -->
-          <div class="apparatus-downside-spacer"></div>
-
-          <!-- Downside Options (Admin Panel & Sign Out) -->
-          <div class="apparatus-nav-category apparatus-downside-options">
-            <ul class="apparatus-nav-list">
-              ${isRootAdmin ? `
-              <li class="apparatus-admin-panel-item">
-                <a href="/admin" class="apparatus-nav-link" data-path="/admin">
-                  <i class="ri-settings-4-line apparatus-nav-icon"></i>
-                  <span>Admin Panel</span>
-                  <span class="apparatus-tag-admin">Admin</span>
-                </a>
-              </li>
-              ` : ''}
-              <li>
-                <a href="#logout" class="apparatus-nav-link apparatus-logout-link">
-                  <i class="ri-logout-box-r-line apparatus-nav-icon"></i>
-                  <span>Sign Out</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <div class="apparatus-sidebar-scroll" data-lenis-prevent="true" data-lenis-prevent-wheel="true"></div>
       `;
 
       document.body.appendChild(sidebar);
@@ -7377,164 +7811,22 @@
         e.stopPropagation();
       }, { passive: true });
 
-      // Billing click handlers
-      const resourceBtn = sidebar.querySelector('.apparatus-resource-link');
-      if (resourceBtn) {
-        resourceBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          if (window.location.pathname !== '/resource' || window.location.hash) {
-            history.pushState(null, '', '/resource');
-          }
-          applyViewMode();
-          smoothScrollToTop();
-        });
-      }
-
-      const storeBtn = sidebar.querySelector('.apparatus-store-link');
-      if (storeBtn) {
-        storeBtn.addEventListener('click', function (e) {
-          navigateToStore(e);
-        });
-      }
-
-      const earnBtn = sidebar.querySelector('.apparatus-earn-link');
-      if (earnBtn) {
-        earnBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          if (window.location.pathname !== '/earn' || window.location.hash) {
-            history.pushState(null, '', '/earn');
-          }
-          applyViewMode();
-          smoothScrollToTop();
-        });
-      }
-
-      // Ticket placeholder click handler
-      const ticketBtn = sidebar.querySelector('.apparatus-ticket-link');
-      if (ticketBtn) {
-        ticketBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          showToast('success', 'Tickets', 'Ticket support system is coming soon!');
-        });
-      }
-
-      // Dedicated Panel Settings navigation (for all users)
-      const panelSettingsBtn = sidebar.querySelector('.apparatus-panel-settings-link');
-      if (panelSettingsBtn) {
-        panelSettingsBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          if (window.location.pathname !== '/panel-settings' || window.location.hash) {
-            history.pushState(null, '', '/panel-settings');
-          }
-          applyViewMode();
-          smoothScrollToTop();
-        });
-      }
-
-      // Dedicated Apparatus Settings navigation (for root admins)
-      const apparatusSettingsBtn = sidebar.querySelector('.apparatus-settings-link');
-      if (apparatusSettingsBtn) {
-        apparatusSettingsBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          if (window.location.pathname !== '/apparatus-settings' || window.location.hash) {
-            history.pushState(null, '', '/apparatus-settings');
-          }
-          applyViewMode();
-          smoothScrollToTop();
-        });
-      }
-
-      // Admin-only placeholder settings links
-      const adminPanelSettingsLinks = [
-        { selector: '.apparatus-panel-editor-link', title: 'Panel Editor', msg: 'Opening Panel Editor customization module...' },
-        // apparatus-settings handled dedicatedly above
-        { selector: '.apparatus-addon-settings-link', title: 'Addon Settings', msg: 'Opening Addon Settings configuration...' }
-      ];
-
-      adminPanelSettingsLinks.forEach(function (item) {
-        const btn = sidebar.querySelector(item.selector);
-        if (btn) {
-          btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            showToast('info', item.title, item.msg);
-          });
-        }
-      });
-
-      // Logout handler
-      const logoutBtn = sidebar.querySelector('.apparatus-logout-link');
-      if (logoutBtn) {
-        logoutBtn.addEventListener('click', async function (e) {
-          e.preventDefault();
-          showToast('info', 'Signing Out', 'Logging out of your account...');
-          try {
-            const csrf = getCsrfToken();
-            await fetch('/auth/logout', {
-              method: 'POST',
-              headers: {
-                'X-CSRF-TOKEN': csrf,
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-              }
-            });
-          } catch (err) { }
-          window.location.href = '/auth/login';
-        });
-      }
-
-      // Tab switcher handlers for Dashboard vs Servers vs VPS
-      sidebar.querySelectorAll('a[data-tab]').forEach(function (tabLink) {
-        tabLink.addEventListener('click', function (e) {
-          const tab = this.getAttribute('data-tab');
-          if (!tab || (tab !== 'dashboard' && tab !== 'servers' && tab !== 'vps')) return;
-
-          e.preventDefault();
-
-          const rawP = window.location.pathname || '/';
-          const onHome = rawP === '/' || rawP === '/servers' || rawP === '/vps' || rawP === '/dashboard' || rawP === '/resource' || rawP === '/store' || rawP === '/panel-settings' || rawP === '/apparatus-settings';
-
-          if (!onHome) {
-            // If navigating from an account subpage, navigate cleanly so React Router unmounts the account page!
-            if (tab === 'servers') {
-              window.location.href = '/servers';
-            } else if (tab === 'vps') {
-              window.location.href = '/vps';
-            } else {
-              window.location.href = '/';
-            }
-            return;
-          }
-
-          // If already on home (between /, /servers, /vps, /resource, /panel-settings, /apparatus-settings), switch smoothly and clear hash
-          if (tab === 'servers') {
-            if (window.location.pathname !== '/servers' || window.location.hash) {
-              history.pushState(null, '', '/servers');
-            }
-          } else if (tab === 'vps') {
-            if (window.location.pathname !== '/vps' || window.location.hash) {
-              history.pushState(null, '', '/vps');
-            }
-          } else if (tab === 'dashboard') {
-            if (window.location.pathname !== '/' || window.location.hash) {
-              history.pushState(null, '', '/');
-            }
-          }
-          applyViewMode();
-          smoothScrollToTop();
-        });
-      });
-
       // Sidebar brand click to navigate to dashboard
       const brand = sidebar.querySelector('.apparatus-sidebar-brand');
       if (brand) {
         brand.style.cursor = 'pointer';
         brand.addEventListener('click', function (e) {
           e.preventDefault();
-          if (window.location.pathname !== '/' || window.location.hash) {
-            history.pushState(null, '', '/');
+          const rawP = window.location.pathname || '/';
+          if (rawP.startsWith('/server/')) {
+            window.location.href = '/';
+          } else {
+            if (window.location.pathname !== '/' || window.location.hash) {
+              history.pushState(null, '', '/');
+            }
+            applyViewMode();
+            smoothScrollToTop();
           }
-          applyViewMode();
-          smoothScrollToTop();
         });
       }
 
@@ -7557,6 +7849,7 @@
       if (toggle) toggle.style.display = '';
     }
 
+    updateSidebarMode();
     applyViewMode();
   }
 
