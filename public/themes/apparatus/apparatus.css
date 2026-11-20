@@ -5357,24 +5357,18 @@ body.apparatus-page-account div[class*="PageContentBlock"] > div {
   box-sizing: border-box !important;
 }
 
-div.grid-cols-2,
-div[class*="grid-cols-2"],
-div.md\:grid,
-div[class*="md:grid"],
-div:has(> form input[type="password"]),
-div:has(> div input[type="password"]),
-.sc-12to0iy-1,
-body:not(.apparatus-auth) .sc-12to0iy-1,
-div[class*="AccountOverviewContainer"]>div:not(.apparatus-user-profile-section),
-div[class*="AccountOverviewContainer"] div.md\:grid,
-div[class*="AccountOverviewContainer"] div[class*="md:grid"],
-div[class*="AccountOverviewContainer"] div[class*="grid-cols-2"],
-div[class*="AccountOverviewContainer"] div[class*="grid"],
-body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="grid"],
+body.apparatus-page-account div.grid-cols-2,
+body.apparatus-page-account div[class*="grid-cols-2"],
 body.apparatus-page-account div.md\:grid,
 body.apparatus-page-account div[class*="md:grid"],
-body.apparatus-page-account div[class*="grid-cols-2"],
+body.apparatus-page-account div:has(> form input[type="password"]),
+body.apparatus-page-account div:has(> div input[type="password"]),
 body.apparatus-page-account .sc-12to0iy-1,
+body.apparatus-page-account div[class*="AccountOverviewContainer"]>div:not(.apparatus-user-profile-section),
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div.md\:grid,
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="md:grid"],
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="grid-cols-2"],
+body.apparatus-page-account div[class*="AccountOverviewContainer"] div[class*="grid"],
 body.apparatus-page-account div[class*="PageContentBlock"] > div {
   display: flex !important;
   flex-direction: column !important;
@@ -6841,10 +6835,41 @@ body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.bg-gray-700 >
 }
 
 /* Server Console Charts */
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.md\:grid-cols-3,
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="md:grid-cols-3"],
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div:has(> div[class*="ChartBlock"]),
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div:has(> div[class*="ChartBlock___StyledDiv"]),
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div.md\:grid-cols-3,
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="md:grid-cols-3"],
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div:has(> div[class*="ChartBlock"]),
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div:has(> div[class*="ChartBlock___StyledDiv"]) {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 1rem !important;
+  width: 100% !important;
+  margin-top: 1rem !important;
+  flex-direction: row !important;
+}
+
+@media (max-width: 900px) {
+  body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div.md\:grid-cols-3,
+  body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="md:grid-cols-3"],
+  body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div:has(> div[class*="ChartBlock"]),
+  body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div:has(> div[class*="ChartBlock___StyledDiv"]),
+  body:not(.apparatus-auth) div[class*="ServerViewContainer"] div.md\:grid-cols-3,
+  body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="md:grid-cols-3"],
+  body:not(.apparatus-auth) div[class*="ServerViewContainer"] div:has(> div[class*="ChartBlock"]),
+  body:not(.apparatus-auth) div[class*="ServerViewContainer"] div:has(> div[class*="ChartBlock___StyledDiv"]) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="ChartBlock"],
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="ChartBlock___StyledDiv"],
+body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div:has(> div[class*="ChartBlock"]) > *,
 body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="ChartBlock"],
-body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="ChartBlock___StyledDiv"] {
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="ChartBlock___StyledDiv"],
+body:not(.apparatus-auth) div[class*="ServerViewContainer"] div:has(> div[class*="ChartBlock"]) > * {
   background: rgba(255, 255, 255, 0.04) !important;
   backdrop-filter: blur(14px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
@@ -6852,6 +6877,12 @@ body:not(.apparatus-auth) div[class*="ServerViewContainer"] div[class*="ChartBlo
   border-radius: 16px !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22) !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  grid-column: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 body:not(.apparatus-auth) div[class*="ServerConsoleContainer"] div[class*="ChartBlock"]:hover,

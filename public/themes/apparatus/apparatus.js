@@ -676,6 +676,18 @@
           }
         }
       });
+
+      // Ensure 3-column side-by-side grid layout for CPU, Memory, Network graphs
+      const chartParents = document.querySelectorAll('div[class*="ServerConsoleContainer"] div:has(> div[class*="ChartBlock"]), div[class*="ServerConsoleContainer"] div.md\\:grid-cols-3, div[class*="ServerConsoleContainer"] div[class*="md:grid-cols-3"], div[class*="ServerViewContainer"] div:has(> div[class*="ChartBlock"])');
+      chartParents.forEach(function (parent) {
+        if (window.innerWidth > 900) {
+          parent.style.setProperty('display', 'grid', 'important');
+          parent.style.setProperty('grid-template-columns', 'repeat(3, minmax(0, 1fr))', 'important');
+          parent.style.setProperty('gap', '1rem', 'important');
+          parent.style.setProperty('width', '100%', 'important');
+          parent.style.removeProperty('flex-direction');
+        }
+      });
     }
 
     // 4b. Hide native Pterodactyl empty server messages and dashboard leaks on Dashboard and custom tabs
