@@ -833,6 +833,14 @@ table.table,
   border-spacing: 0 !important;
   width: 100% !important;
   margin: 0 !important;
+  table-layout: auto !important;
+  white-space: normal !important;
+}
+
+.apparatus-users-table th,
+.apparatus-users-table td {
+  white-space: normal !important;
+  word-break: normal !important;
 }
 
 table.table > thead > tr > th,
@@ -870,12 +878,19 @@ table.table-hover > tbody > tr:hover > td,
 }
 
 .apparatus-users-table-container {
-  overflow-x: auto !important;
+  width: 100% !important;
   border-radius: 14px !important;
   border: 1px solid var(--admin-card-border) !important;
   background: var(--admin-card-bg) !important;
   box-shadow: var(--admin-card-shadow) !important;
   margin-top: 1.25rem !important;
+  overflow: hidden !important;
+}
+
+@media (max-width: 900px) {
+  .apparatus-users-table-container {
+    overflow-x: auto !important;
+  }
 }
 
 /* User Profile Avatar Thumbnail */

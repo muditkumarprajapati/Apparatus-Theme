@@ -4585,27 +4585,17 @@ php artisan view:clear</pre>
             </div>
           </div>
 
-          <!-- 15-Column Luxury Frosted Glass Table Container -->
+          <!-- Clean Responsive Users Table (Zero Horizontal Scroller, Multi-Line Layout) -->
           <div class="apparatus-users-table-container">
             <table class="apparatus-users-table" id="apparatus-users-data-table">
               <thead>
                 <tr>
-                  <th style="width: 70px;">ID</th>
-                  <th>EMAIL</th>
-                  <th>CLIENT NAME</th>
-                  <th>USERNAME</th>
-                  <th style="text-align: center;">2FA</th>
-                  <th style="text-align: center;">SERVERS OWNED</th>
-                  <th style="text-align: center;">VPS OWNED</th>
-                  <th>CAN ACCESS</th>
-                  <th style="text-align: center;">VERIFIED</th>
-                  <th>CASH BALANCE</th>
-                  <th>LAST LOGIN</th>
-                  <th>ACCOUNT CREATED</th>
-                  <th>REFERRAL CODE</th>
-                  <th style="text-align: center;">TOTAL REFERRALS</th>
-                  <th style="width: 60px; text-align: center;">PROFILE ICON</th>
-                  <th style="text-align: center;">ACTIONS</th>
+                  <th style="width: 27%;">USER &amp; IDENTITY</th>
+                  <th style="width: 18%;">ROLE &amp; SECURITY</th>
+                  <th style="width: 14%;">RESOURCES</th>
+                  <th style="width: 17%;">BILLING &amp; REFERRAL</th>
+                  <th style="width: 14%;">ACTIVITY</th>
+                  <th style="width: 10%; text-align: right;">ACTIONS</th>
                 </tr>
               </thead>
               <tbody id="apparatus-users-tbody">
@@ -4655,88 +4645,103 @@ php artisan view:clear</pre>
 
       tbody.innerHTML = filtered.map(function (u) {
         const twoFaHtml = u.twoFactor
-          ? `<span style="color: #34d399; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;"><i class="ri-shield-check-fill"></i> Enabled</span>`
-          : `<span style="color: #fb7185; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;"><i class="ri-shield-cross-line"></i> Inactive</span>`;
+          ? `<span style="color: var(--admin-accent-green-text, #10b981); font-weight: 600; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.25rem;"><i class="ri-shield-check-fill"></i> 2FA Enabled</span>`
+          : `<span style="color: var(--admin-accent-rose-text, #f43f5e); font-weight: 600; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.25rem;"><i class="ri-shield-cross-line"></i> 2FA Inactive</span>`;
 
         const verifiedBtnHtml = u.verified
-          ? `<button class="apparatus-verify-toggle-btn verified" data-user-id="${u.id}" title="Click to toggle verified status"><i class="ri-checkbox-circle-fill"></i> Yes</button>`
-          : `<button class="apparatus-verify-toggle-btn unverified" data-user-id="${u.id}" title="Click to toggle verified status"><i class="ri-close-circle-line"></i> No</button>`;
+          ? `<button class="apparatus-verify-toggle-btn verified" data-user-id="${u.id}" title="Toggle verified status"><i class="ri-checkbox-circle-fill"></i> Verified</button>`
+          : `<button class="apparatus-verify-toggle-btn unverified" data-user-id="${u.id}" title="Toggle verified status"><i class="ri-close-circle-line"></i> Unverified</button>`;
+
+        const isAdmin = (u.canAccess && u.canAccess.toLowerCase().includes('admin')) || u.rootAdmin;
 
         return `
           <tr data-user-id="${u.id}">
-            <!-- 1. ID -->
+            <!-- 1. USER & IDENTITY -->
             <td>
-              <span class="apparatus-user-id">#${u.id}</span>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <img src="${u.avatar}" alt="${u.username}" class="apparatus-user-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                <div style="display: flex; flex-direction: column; gap: 0.2rem; min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
+                    <strong style="color: var(--admin-text-primary, #0f172a); font-size: 0.92rem; font-weight: 700;">${u.name}</strong>
+                    <span class="apparatus-user-id">#${u.id}</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--admin-text-muted, #64748b); flex-wrap: wrap;">
+                    <a href="mailto:${u.email}" style="color: var(--admin-text-muted, #64748b); text-decoration: none;" title="${u.email}">
+                      ${u.email}
+                    </a>
+                    <span>&bull;</span>
+                    <span style="color: var(--admin-accent-primary, #2563eb); font-weight: 600;">@${u.username}</span>
+                  </div>
+                </div>
+              </div>
             </td>
-            <!-- 2. Email -->
+
+            <!-- 2. ROLE & SECURITY -->
             <td>
-              <a href="mailto:${u.email}" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem;" title="Send email to ${u.email}">
-                ${u.email}
-              </a>
+              <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                <div>
+                  <span class="label ${isAdmin ? 'label-primary' : 'label-default'}" style="font-size: 0.74rem; font-weight: 600;">
+                    <i class="${isAdmin ? 'ri-shield-star-line' : 'ri-user-line'}"></i> ${u.canAccess || 'Client Area'}
+                  </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
+                  ${twoFaHtml}
+                  ${verifiedBtnHtml}
+                </div>
+              </div>
             </td>
-            <!-- 3. Client Name -->
+
+            <!-- 3. RESOURCES -->
             <td>
-              <strong style="color: #ffffff; font-size: 0.94rem;">${u.name}</strong>
+              <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--admin-text-secondary, #334155);">
+                  <i class="ri-hard-drive-2-line" style="color: var(--admin-accent-primary, #2563eb);"></i>
+                  <span><strong>${u.serversOwned || 0}</strong> Servers</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--admin-text-secondary, #334155);">
+                  <i class="ri-server-line" style="color: #a855f7;"></i>
+                  <span><strong>${u.vpsOwned || 0}</strong> Cloud VPS</span>
+                </div>
+              </div>
             </td>
-            <!-- 4. Username -->
+
+            <!-- 4. BILLING & REFERRAL -->
             <td>
-              <span style="color: #f472b6; font-weight: 600;">@${u.username}</span>
+              <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+                <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.84rem;">
+                  <span style="color: var(--admin-text-muted, #64748b);">Balance:</span>
+                  <strong style="color: var(--admin-accent-green-text, #059669); font-family: var(--admin-mono, monospace); font-size: 0.9rem;">${u.balance || '₹0.00'}</strong>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
+                  <button type="button" class="apparatus-ref-code" data-code="${u.referralCode}" title="Click to copy referral code">
+                    <i class="ri-file-copy-line"></i> ${u.referralCode}
+                  </button>
+                  <span style="font-size: 0.74rem; color: var(--admin-text-muted, #64748b);">(${u.totalReferrals || 0} refs)</span>
+                </div>
+              </div>
             </td>
-            <!-- 5. 2FA -->
-            <td style="text-align: center;">
-              ${twoFaHtml}
-            </td>
-            <!-- 6. Servers Owned -->
-            <td style="text-align: center;">
-              <span class="apparatus-counter-num" style="border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;">${u.serversOwned || 0}</span>
-            </td>
-            <!-- 7. VPS Owned -->
-            <td style="text-align: center;">
-              <span class="apparatus-counter-num" style="border-color: rgba(192, 132, 252, 0.35); color: #c084fc;">${u.vpsOwned || 0}</span>
-            </td>
-            <!-- 8. Can Access -->
+
+            <!-- 5. ACTIVITY -->
             <td>
-              <span style="color: #e2e8f0; font-size: 0.88rem; font-weight: 600;">${u.canAccess || 'Client Area'}</span>
+              <div style="display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.8rem; color: var(--admin-text-muted, #64748b);">
+                <div style="display: flex; align-items: center; gap: 0.35rem;">
+                  <i class="ri-time-line"></i>
+                  <span>Active: <strong style="color: var(--admin-text-secondary, #334155);">${u.lastLogin || 'Recently'}</strong></span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.35rem;">
+                  <i class="ri-calendar-line"></i>
+                  <span>Joined: ${u.created || '2026-01-15'}</span>
+                </div>
+              </div>
             </td>
-            <!-- 9. Verified (Interactive Toggle Button) -->
-            <td style="text-align: center;">
-              ${verifiedBtnHtml}
-            </td>
-            <!-- 10. Cash Balance -->
-            <td>
-              <strong style="color: #34d399; font-size: 0.94rem; font-family: monospace;">${u.balance || '₹0.00'}</strong>
-            </td>
-            <!-- 11. Last Login -->
-            <td>
-              <span style="color: #94a3b8; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem;">
-                <i class="ri-time-line"></i> ${u.lastLogin || 'Recently'}
-              </span>
-            </td>
-            <!-- 12. Account Created -->
-            <td>
-              <span style="color: #94a3b8; font-size: 0.85rem;">${u.created || '2026-01-15'}</span>
-            </td>
-            <!-- 13. Referral Code (Click to Copy) -->
-            <td>
-              <button class="apparatus-ref-code" data-code="${u.referralCode}" title="Click to copy referral code">
-                <i class="ri-file-copy-line"></i> ${u.referralCode}
-              </button>
-            </td>
-            <!-- 14. Total Referrals -->
-            <td style="text-align: center;">
-              <span class="apparatus-counter-num" style="border-color: rgba(236, 72, 153, 0.35); color: #f472b6;">${u.totalReferrals || 0}</span>
-            </td>
-            <!-- 15. Profile Icon -->
-            <td style="text-align: center;">
-              <img src="${u.avatar}" alt="${u.username}" class="apparatus-user-avatar">
-            </td>
-            <!-- Actions -->
-            <td style="text-align: center;">
-              <div style="display: flex; align-items: center; justify-content: center; gap: 0.45rem;">
-                <button type="button" class="btn btn-xs btn-default apparatus-user-edit-btn" data-user-id="${u.id}" style="border-radius: 8px; padding: 0.35rem 0.65rem; color: #fff; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); cursor: pointer;" title="Edit Account">
-                  <i class="ri-edit-2-line"></i>
+
+            <!-- 6. ACTIONS -->
+            <td style="text-align: right;">
+              <div style="display: inline-flex; align-items: center; justify-content: flex-end; gap: 0.4rem;">
+                <button type="button" class="btn btn-xs btn-default apparatus-user-edit-btn" data-user-id="${u.id}" title="Edit Account">
+                  <i class="ri-edit-2-line"></i> <span>Edit</span>
                 </button>
-                <button class="btn btn-xs btn-danger apparatus-user-delete-btn" data-user-id="${u.id}" data-username="${u.username}" style="border-radius: 8px; padding: 0.35rem 0.65rem;" title="Delete User">
+                <button type="button" class="btn btn-xs btn-danger apparatus-user-delete-btn" data-user-id="${u.id}" data-username="${u.username}" title="Delete User">
                   <i class="ri-delete-bin-line"></i>
                 </button>
               </div>
