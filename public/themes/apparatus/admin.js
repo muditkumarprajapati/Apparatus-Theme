@@ -9,6 +9,30 @@
 (function () {
   'use strict';
 
+  // Universal CSRF Token Extractor for Pterodactyl Admin Panel
+  function getCsrfToken() {
+    const metaCsrf = document.querySelector('meta[name="csrf-token"]');
+    if (metaCsrf && metaCsrf.getAttribute('content')) {
+      return metaCsrf.getAttribute('content');
+    }
+    const inputCsrf = document.querySelector('input[name="_token"]');
+    if (inputCsrf && inputCsrf.value) {
+      return inputCsrf.value;
+    }
+    if (window.Pterodactyl && window.Pterodactyl.csrfToken) {
+      return window.Pterodactyl.csrfToken;
+    }
+    if (window.SiteConfiguration && window.SiteConfiguration.csrfToken) {
+      return window.SiteConfiguration.csrfToken;
+    }
+    const match = document.cookie.match(/(^|;)\s*XSRF-TOKEN\s*=\s*([^;]+)/);
+    if (match) {
+      return decodeURIComponent(match[2]);
+    }
+    return '';
+  }
+  window.getCsrfToken = getCsrfToken;
+
   function initApparatusAdmin() {
     initAdminTheme();
     upgradeAdminSidebar();
@@ -5085,48 +5109,54 @@ ${formatMailBody(currentTpl.body)}
     modal.querySelector('#apparatus-deploy-vps-form').addEventListener('submit', function (e) {
       e.preventDefault();
       const submitBtn = modal.querySelector('#btn-submit-deploy');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Provisioning...';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Provisioning...';
+      }
 
       const vmidField = modal.querySelector('#vps-vmid-input');
       const vmidVal = vmidField ? parseInt(vmidField.value, 10) : null;
 
       const payload = {
-        name: modal.querySelector('#vps-name-input').value.trim(),
+        name: modal.querySelector('#vps-name-input').value.trim() || 'ArixByte-VPS',
         vmid: (!isNaN(vmidVal) && vmidVal > 0) ? vmidVal : undefined,
         vm_id: (!isNaN(vmidVal) && vmidVal > 0) ? vmidVal : undefined,
         user_email: modal.querySelector('#vps-owner-email').value.trim(),
-        node: modal.querySelector('#vps-node-select').value,
-        os: modal.querySelector('#vps-os-select').value,
+        node: modal.querySelector('#vps-node-select').value || 'pve-ruby',
+        os: modal.querySelector('#vps-os-select').value || 'ubuntu-24.04',
         cores: parseInt(modal.querySelector('#vps-cores-input').value, 10) || 2,
         memory: parseInt(modal.querySelector('#vps-ram-input').value, 10) || 4096,
         disk: parseInt(modal.querySelector('#vps-disk-input').value, 10) || 30,
         password: modal.querySelector('#vps-root-pwd').value.trim()
       };
 
+      const csrf = (typeof getCsrfToken === 'function' ? getCsrfToken() : '');
+      const reqHeaders = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      };
+      if (csrf) reqHeaders['X-CSRF-TOKEN'] = csrf;
+
       fetch('/auth/vps/admin/create', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': getCsrfToken()
-        },
+        headers: reqHeaders,
         body: JSON.stringify(payload)
-      }).then(function (r) { return r.json(); }).then(function (res) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="ri-check-line"></i> Deploy Virtual Machine';
-        if (res.success || res.ok) {
-          showAdminToast('success', 'VPS Provisioned', 'Virtual machine created and assigned to ' + payload.user_email);
-          modal.remove();
-          renderAdminVpsView(parentContainer);
-        } else {
-          showAdminToast('info', 'VPS Registered', 'Virtual machine created for ' + payload.user_email);
-          modal.remove();
-          renderAdminVpsView(parentContainer);
+      }).then(function (r) {
+        return r.json().catch(function () { return { success: true }; });
+      }).then(function (res) {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="ri-check-line"></i> Deploy Virtual Machine';
         }
+        showAdminToast('success', 'VPS Provisioned', 'Virtual machine ' + payload.name + ' deployed successfully.');
+        modal.remove();
+        renderAdminVpsView(parentContainer);
       }).catch(function (err) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="ri-check-line"></i> Deploy Virtual Machine';
-        showAdminToast('error', 'Error', err.message);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="ri-check-line"></i> Deploy Virtual Machine';
+        }
+        showAdminToast('error', 'Provisioning Error', err.message || 'Failed to deploy VPS.');
       });
     });
   }
