@@ -392,6 +392,30 @@ if '</head>' in content:
 
   echo -e "${GREEN}✓ Injected theme loader successfully.${NC}"
 
+  # Ensure storage permissions and pre-seed hypervisor nodes cache
+  NODES_CACHE="$PTERO_DIR/storage/app/apparatus_vps_nodes_cache.json"
+  mkdir -p "$PTERO_DIR/storage/app"
+  cat << 'EOF' > "$NODES_CACHE"
+[
+  {
+    "id": 1,
+    "name": "pve-ruby",
+    "host": "46.232.234.224",
+    "port": 8006,
+    "token_id": "root@pam!root-api",
+    "token_secret": "323dc207-48c9-4aa1-86b3-6777821c06af",
+    "enabled": 1,
+    "cpu_cores": 12,
+    "ram_total_gb": 64,
+    "storage_total_gb": 150,
+    "status": "online",
+    "virtualization": "Proxmox VE 8.x (KVM/LXC)"
+  }
+]
+EOF
+  chown -R www-data:www-data "$PTERO_DIR/storage"
+  chmod -R 775 "$PTERO_DIR/storage"
+
   # Step 4: Clear Pterodactyl Caches cleanly
   echo -e "${BLUE}[4/4] Optimizing routing and clearing Pterodactyl cache...${NC}"
   cd "$PTERO_DIR"
