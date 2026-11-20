@@ -216,6 +216,7 @@ Route::post('/auth/vps/admin/users/{id}/update', [\Pterodactyl\Http\Controllers\
 Route::delete('/auth/vps/admin/users/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUserDelete']);
 Route::post('/auth/vps/admin/users/{id}/delete', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUserDelete']);
 
+Route::get('/auth/vps/admin/nodes/telemetry', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeTelemetry']);
 Route::get('/auth/vps/admin/nodes', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodes']);
 Route::get('/auth/vps/admin/nodes/test/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeTest']);
 Route::post('/auth/vps/admin/nodes/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeCreate']);
@@ -286,6 +287,7 @@ Route::post('/auth/vps/admin/users/{id}/update', [\Pterodactyl\Http\Controllers\
 Route::delete('/auth/vps/admin/users/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUserDelete']);
 Route::post('/auth/vps/admin/users/{id}/delete', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUserDelete']);
 
+Route::get('/auth/vps/admin/nodes/telemetry', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeTelemetry']);
 Route::get('/auth/vps/admin/nodes', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodes']);
 Route::get('/auth/vps/admin/nodes/test/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeTest']);
 Route::post('/auth/vps/admin/nodes/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeCreate']);

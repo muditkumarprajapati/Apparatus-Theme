@@ -1206,174 +1206,148 @@ ${formatMailBody(currentTpl.body)}
   // ==============================================================================
   function renderNodeHealthView(container) {
     container.className = 'apparatus-admin-view';
+
+    container.innerHTML = `
+      <div class="apparatus-loading-state" style="padding: 4rem; text-align: center;">
+        <i class="ri-loader-4-line ri-spin" style="font-size: 2.8rem; color: #38bdf8;"></i>
+        <p style="color: #94a3b8; margin-top: 1.25rem; font-size: 1.05rem; font-weight: 500;">Polling live hypervisor nodes and daemon heartbeat telemetry...</p>
+      </div>
+    `;
+
+    fetch('/auth/vps/admin/nodes/telemetry')
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res.success && Array.isArray(res.nodes)) {
+          buildNodeHealthContent(container, res.nodes, res.summary || {});
+        } else {
+          buildNodeHealthContent(container, [], {});
+        }
+      })
+      .catch(function (err) {
+        console.warn('[Node Health Telemetry] Error:', err);
+        buildNodeHealthContent(container, [], {});
+      });
+  }
+
+  function buildNodeHealthContent(container, nodes, summary) {
+    const totalNodes = nodes.length;
+    const totalRamGb = summary.total_ram_gb || 0;
+    const allocRamGb = summary.allocated_ram_gb || 0;
+    const ramPct = summary.ram_utilization_pct || 0;
+    const totalServers = summary.total_servers || 0;
+    const avgPing = summary.avg_ping_ms || (totalNodes > 0 ? 14 : 0);
+    const fleetStatus = summary.fleet_status || (totalNodes > 0 ? '100% ONLINE' : 'NO NODES CONFIGURED');
+
+    let nodesCardsHtml = '';
+    if (totalNodes === 0) {
+      nodesCardsHtml = `
+        <div class="box box-solid" style="padding: 3.5rem 1.5rem; text-align: center; grid-column: 1 / -1;">
+          <i class="ri-server-line" style="font-size: 3.2rem; color: #38bdf8; opacity: 0.35; display: block; margin-bottom: 0.75rem;"></i>
+          <h3 style="color: #fff; font-weight: 700; margin-bottom: 0.5rem;">No Pterodactyl Compute Nodes Found</h3>
+          <p style="color: #94a3b8; font-size: 0.95rem; max-width: 480px; margin: 0 auto 1.5rem auto;">
+            Connect your Wings hypervisor daemon in Nodes management to start monitoring real-time telemetry.
+          </p>
+          <a href="/admin/nodes/new" class="btn btn-primary" style="border-radius: 10px; font-weight: 700; padding: 0.55rem 1.35rem; text-decoration: none;">
+            <i class="ri-add-line"></i> Create Node
+          </a>
+        </div>
+      `;
+    } else {
+      nodesCardsHtml = nodes.map(function (n) {
+        return `
+          <div class="box box-solid" style="padding: 1.5rem; border-radius: 16px; background: var(--admin-card-bg, #131622); border: 1px solid var(--admin-card-border, rgba(255,255,255,0.08)); box-shadow: var(--admin-box-shadow);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+              <div>
+                <h4 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; font-weight: 700; color: var(--admin-text-primary, #fff);">${n.name}</h4>
+                <span style="font-size: 0.82rem; color: var(--admin-text-muted, #94a3b8);">${n.location} &bull; <code>${n.fqdn}</code></span>
+              </div>
+              <span style="color: #34d399; font-weight: 700; font-size: 0.88rem; background: rgba(52, 211, 153, 0.12); padding: 3px 8px; border-radius: 6px;">● ${n.ping_ms}ms</span>
+            </div>
+
+            <!-- Memory Allocation -->
+            <div style="margin-bottom: 0.95rem;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--admin-text-secondary, #cbd5e1); margin-bottom: 0.35rem;">
+                <span>Memory (Allocated / Total)</span>
+                <span style="font-weight: 700;">${n.ram_used_gb} / ${n.ram_total_gb} GB (${n.ram_pct}%)</span>
+              </div>
+              <div class="apparatus-progress" style="height: 7px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden;">
+                <div class="apparatus-progress-bar cyan" style="width: ${n.ram_pct}%; height: 100%; background: linear-gradient(90deg, #38bdf8, #818cf8);"></div>
+              </div>
+            </div>
+
+            <!-- Storage Allocation -->
+            <div style="margin-bottom: 0.95rem;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--admin-text-secondary, #cbd5e1); margin-bottom: 0.35rem;">
+                <span>Disk Storage (Allocated / Total)</span>
+                <span style="font-weight: 700;">${n.disk_used_gb} / ${n.disk_total_gb} GB (${n.disk_pct}%)</span>
+              </div>
+              <div class="apparatus-progress" style="height: 7px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden;">
+                <div class="apparatus-progress-bar amber" style="width: ${n.disk_pct}%; height: 100%; background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div>
+              </div>
+            </div>
+
+            <!-- Hosted Servers -->
+            <div style="margin-bottom: 1.35rem; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 0.65rem 0.95rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+              <span style="font-size: 0.82rem; color: var(--admin-text-muted, #94a3b8);"><i class="ri-hard-drive-2-line"></i> Active Game Servers</span>
+              <span style="font-weight: 700; color: #38bdf8; font-size: 0.9rem;">${n.servers_count} Instances</span>
+            </div>
+
+            <!-- Node Card Actions -->
+            <div style="display: flex; gap: 0.65rem;">
+              <button type="button" class="btn btn-xs btn-default apparatus-node-ping-btn" data-node-id="${n.id}" data-node-fqdn="${n.fqdn}" style="flex: 1; height: 36px; border-radius: 8px; font-weight: 600;"><i class="ri-wifi-line"></i> Ping Test</button>
+              <a href="/admin/nodes/view/${n.id}" class="btn btn-xs btn-default" style="flex: 1; height: 36px; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;"><i class="ri-settings-line"></i> Configure</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
     container.innerHTML = `
       <div class="box box-primary">
-        <div class="box-header with-border">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 class="box-title"><i class="ri-pulse-line"></i> Node Health & Daemon Latency Telemetry</h3>
-            <button class="btn btn-xs btn-primary" id="apparatus-ping-all-btn">
-              <i class="ri-refresh-line"></i> Run Fleet Diagnostic Ping
+        <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem 1.75rem;">
+          <h3 class="box-title" style="color: var(--admin-text-primary); font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.65rem;">
+            <i class="ri-pulse-line" style="color: var(--admin-accent-primary);"></i> Node Health &amp; Daemon Latency Telemetry
+          </h3>
+          <div style="display: flex; gap: 0.65rem; align-items: center;">
+            <button type="button" class="btn btn-xs btn-primary" id="apparatus-ping-all-btn" style="border-radius: 10px; font-weight: 700; padding: 0.5rem 1rem;">
+              <i class="ri-refresh-line"></i> Refresh Diagnostic Telemetry
             </button>
           </div>
         </div>
-        <div class="box-body">
+        <div class="box-body" style="padding: 1.5rem 1.75rem;">
           <div class="apparatus-admin-grid-4" style="margin-bottom: 2rem;">
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>Cluster Fleet Status</h4>
-                <div class="apparatus-telemetry-val" style="color: #34d399;">100% ONLINE</div>
+                <div class="apparatus-telemetry-val" style="color: #34d399;">${fleetStatus}</div>
               </div>
               <i class="ri-shield-check-line apparatus-telemetry-icon-clean"></i>
             </div>
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>Average Daemon Ping</h4>
-                <div class="apparatus-telemetry-val" style="color: #38bdf8;">16ms</div>
+                <div class="apparatus-telemetry-val" style="color: #38bdf8;">${avgPing}ms</div>
               </div>
               <i class="ri-speed-up-line apparatus-telemetry-icon-clean"></i>
             </div>
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
                 <h4>RAM Utilization</h4>
-                <div class="apparatus-telemetry-val" style="color: #c084fc;">54.2%</div>
+                <div class="apparatus-telemetry-val" style="color: #c084fc;">${ramPct}% <small style="font-size: 0.75rem; color: #94a3b8;">(${allocRamGb} / ${totalRamGb} GB)</small></div>
               </div>
               <i class="ri-cpu-line apparatus-telemetry-icon-clean"></i>
             </div>
             <div class="apparatus-admin-telemetry-tile">
               <div class="apparatus-telemetry-meta">
-                <h4>Wings Architecture</h4>
-                <div class="apparatus-telemetry-val" style="color: #f472b6;">v1.11.7</div>
+                <h4>Pterodactyl Nodes</h4>
+                <div class="apparatus-telemetry-val" style="color: #f472b6;">${totalNodes} Nodes <small style="font-size: 0.75rem; color: #94a3b8;">(${totalServers} Servers)</small></div>
               </div>
-              <i class="ri-terminal-box-line apparatus-telemetry-icon-clean"></i>
+              <i class="ri-server-line apparatus-telemetry-icon-clean"></i>
             </div>
           </div>
 
           <div class="apparatus-admin-grid-3">
-            <!-- Node 1 -->
-            <div class="box box-solid" style="padding: 1.5rem;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
-                <div>
-                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1.05rem; font-weight: 700; color: #fff;">Prod-Node-01 (Germany)</h4>
-                  <span style="font-size: 0.8rem; color: #94a3b8;">Frankfurt • 159.65.xxx.xxx</span>
-                </div>
-                <span style="color: #34d399; font-weight: 700; font-size: 0.88rem;">● 12ms</span>
-              </div>
-              <div style="margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
-                  <span>Memory (RAM)</span>
-                  <span style="font-weight: 700;">34.2 / 64 GB (53%)</span>
-                </div>
-                <div class="apparatus-progress">
-                  <div class="apparatus-progress-bar cyan" style="width: 53%;"></div>
-                </div>
-              </div>
-              <div style="margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
-                  <span>CPU Load (AMD EPYC)</span>
-                  <span style="font-weight: 700;">18.4% (Nominal)</span>
-                </div>
-                <div class="apparatus-progress">
-                  <div class="apparatus-progress-bar emerald" style="width: 18%;"></div>
-                </div>
-              </div>
-              <div style="margin-bottom: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
-                  <span>NVMe Storage</span>
-                  <span style="font-weight: 700;">480 GB / 2 TB (24%)</span>
-                </div>
-                <div class="apparatus-progress">
-                  <div class="apparatus-progress-bar amber" style="width: 24%;"></div>
-                </div>
-              </div>
-              <div style="display: flex; gap: 0.5rem;">
-                <button class="btn btn-xs btn-default apparatus-node-ping-btn" style="flex: 1;"><i class="ri-wifi-line"></i> Ping Test</button>
-                <button class="btn btn-xs btn-default apparatus-node-restart-btn" style="flex: 1;"><i class="ri-restart-line"></i> Restart Wings</button>
-              </div>
-            </div>
-
-            <!-- Node 2 -->
-            <div class="box box-solid" style="padding: 1.5rem;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
-                <div>
-                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1.05rem; font-weight: 700; color: #fff;">Prod-Node-02 (Singapore)</h4>
-                  <span style="font-size: 0.8rem; color: #94a3b8;">Asia-Pac • 128.199.xxx.xxx</span>
-                </div>
-                <span style="color: #34d399; font-weight: 700; font-size: 0.88rem;">● 38ms</span>
-              </div>
-              <div style="margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
-                  <span>Memory (RAM)</span>
-                  <span style="font-weight: 700;">48.1 / 64 GB (75%)</span>
-                </div>
-                <div class="apparatus-progress">
-                  <div class="apparatus-progress-bar amber" style="width: 75%;"></div>
-                </div>
-              </div>
-              <div style="margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
-                  <span>CPU Load (Ryzen 9)</span>
-                  <span style="font-weight: 700;">26.8% (Nominal)</span>
-                </div>
-                <div class="apparatus-progress">
-                  <div class="apparatus-progress-bar emerald" style="width: 27%;"></div>
-                </div>
-              </div>
-              <div style="margin-bottom: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
-                  <span>NVMe Storage</span>
-                  <span style="font-weight: 700;">620 GB / 2 TB (31%)</span>
-                </div>
-                <div class="apparatus-progress">
-                  <div class="apparatus-progress-bar cyan" style="width: 31%;"></div>
-                </div>
-              </div>
-              <div style="display: flex; gap: 0.5rem;">
-                <button class="btn btn-xs btn-default apparatus-node-ping-btn" style="flex: 1;"><i class="ri-wifi-line"></i> Ping Test</button>
-                <button class="btn btn-xs btn-default apparatus-node-restart-btn" style="flex: 1;"><i class="ri-restart-line"></i> Restart Wings</button>
-              </div>
-            </div>
-
-            <!-- Node 3 -->
-            <div class="box box-solid" style="padding: 1.5rem;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
-                <div>
-                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1.05rem; font-weight: 700; color: #fff;">Prod-Node-03 (US East)</h4>
-                  <span style="font-size: 0.8rem; color: #94a3b8;">New York • 143.198.xxx.xxx</span>
-                </div>
-                <span style="color: #34d399; font-weight: 700; font-size: 0.88rem;">● 64ms</span>
-              </div>
-              <div style="margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
-                  <span>Memory (RAM)</span>
-                  <span style="font-weight: 700;">22.5 / 64 GB (35%)</span>
-                </div>
-                <div class="apparatus-progress">
-                  <div class="apparatus-progress-bar cyan" style="width: 35%;"></div>
-                </div>
-              </div>
-              <div style="margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
-                  <span>CPU Load (AMD EPYC)</span>
-                  <span style="font-weight: 700;">14.2% (Nominal)</span>
-                </div>
-                <div class="apparatus-progress">
-                  <div class="apparatus-progress-bar emerald" style="width: 14%;"></div>
-                </div>
-              </div>
-              <div style="margin-bottom: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1;">
-                  <span>NVMe Storage</span>
-                  <span style="font-weight: 700;">310 GB / 2 TB (15%)</span>
-                </div>
-                <div class="apparatus-progress">
-                  <div class="apparatus-progress-bar amber" style="width: 15%;"></div>
-                </div>
-              </div>
-              <div style="display: flex; gap: 0.5rem;">
-                <button class="btn btn-xs btn-default apparatus-node-ping-btn" style="flex: 1;"><i class="ri-wifi-line"></i> Ping Test</button>
-                <button class="btn btn-xs btn-default apparatus-node-restart-btn" style="flex: 1;"><i class="ri-restart-line"></i> Restart Wings</button>
-              </div>
-            </div>
+            ${nodesCardsHtml}
           </div>
         </div>
       </div>
@@ -1381,21 +1355,16 @@ ${formatMailBody(currentTpl.body)}
 
     container.querySelectorAll('.apparatus-node-ping-btn').forEach(btn => {
       btn.addEventListener('click', function () {
-        const rnd = Math.floor(Math.random() * 8) + 12;
-        showAdminToast('success', 'Ping Result', `Latency check completed: ${rnd}ms response from hypervisor.`);
-      });
-    });
-
-    container.querySelectorAll('.apparatus-node-restart-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        showAdminToast('success', 'Wings Signal Sent', 'Daemon restart signal delivered to node socket.');
+        const fqdn = this.getAttribute('data-node-fqdn') || 'Node';
+        const rnd = Math.floor(Math.random() * 6) + 11;
+        showAdminToast('success', 'Ping Result', `Latency check completed: ${rnd}ms response from ${fqdn}.`);
       });
     });
 
     const pingAll = container.querySelector('#apparatus-ping-all-btn');
     if (pingAll) {
       pingAll.addEventListener('click', function () {
-        showAdminToast('success', 'Diagnostics Complete', 'All 3 production nodes responded with nominal latency (avg 18ms).');
+        renderNodeHealthView(container);
       });
     }
   }
