@@ -200,7 +200,7 @@ Route::get('/auth/promo/codes', [\Pterodactyl\Http\Controllers\Auth\RegisterCont
 Route::post('/auth/promo/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'createPromoCode']);
 Route::post('/auth/promo/delete', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'deletePromoCode']);
 Route::delete('/auth/promo/{code}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'deletePromoCode']);
-// ALPM VPS Management Integration Routes
+// Cloud VPS & Hypervisor Cluster Integration Routes
 Route::get('/auth/vps/config', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsGetConfig']);
 Route::post('/auth/vps/config', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsSaveConfig']);
 Route::get('/auth/vps/ping', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsPing']);
@@ -265,7 +265,7 @@ Route::get('/auth/promo/codes', [\Pterodactyl\Http\Controllers\Auth\RegisterCont
 Route::post('/auth/promo/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'createPromoCode']);
 Route::post('/auth/promo/delete', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'deletePromoCode']);
 Route::delete('/auth/promo/{code}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'deletePromoCode']);
-// ALPM VPS Management Integration Routes (Base Web)
+// Cloud VPS & Hypervisor Cluster Integration Routes (Base Web)
 Route::get('/auth/vps/config', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsGetConfig']);
 Route::post('/auth/vps/config', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsSaveConfig']);
 Route::get('/auth/vps/ping', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsPing']);

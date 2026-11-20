@@ -10,10 +10,159 @@
   'use strict';
 
   function initApparatusAdmin() {
+    initAdminTheme();
     upgradeAdminSidebar();
     upgradeAdminNavbar();
+    renderAdminSubnavPills();
     handleAdminViews();
     enhanceAdminOverview();
+  }
+
+  // ==============================================================================
+  // DUAL THEME ENGINE (BLACK OBSIDIAN & WHITE CAREOPS SAAS)
+  // ==============================================================================
+  function initAdminTheme() {
+    const savedTheme = localStorage.getItem('apparatus_admin_theme') || 'dark';
+    applyAdminTheme(savedTheme, false);
+  }
+
+  function applyAdminTheme(theme, showNotice) {
+    if (theme === 'light') {
+      document.body.classList.add('apparatus-admin-light');
+      document.body.classList.remove('apparatus-admin-dark');
+      localStorage.setItem('apparatus_admin_theme', 'light');
+    } else {
+      document.body.classList.add('apparatus-admin-dark');
+      document.body.classList.remove('apparatus-admin-light');
+      localStorage.setItem('apparatus_admin_theme', 'dark');
+    }
+    updateThemeToggleButtons(theme);
+    if (showNotice) {
+      showAdminToast('info', 'Theme Switched', 'Active UI Mode: ' + (theme === 'light' ? 'CareOps Clean White' : 'Cyber Obsidian Black'));
+    }
+  }
+
+  function toggleAdminTheme() {
+    const isLight = document.body.classList.contains('apparatus-admin-light');
+    const newTheme = isLight ? 'dark' : 'light';
+    applyAdminTheme(newTheme, true);
+  }
+
+  function updateThemeToggleButtons(theme) {
+    const isLight = theme === 'light';
+    document.querySelectorAll('.apparatus-theme-toggle-btn').forEach(function (btn) {
+      btn.innerHTML = isLight 
+        ? '<i class="ri-moon-line"></i> <span>Dark Theme</span>' 
+        : '<i class="ri-sun-line"></i> <span>White Theme</span>';
+      btn.setAttribute('data-theme', theme);
+      btn.title = isLight ? 'Switch to Obsidian Black Mode' : 'Switch to CareOps White Mode';
+    });
+  }
+
+  // ==============================================================================
+  // CAREOPS SAAS HORIZONTAL SUBNAV PILL BAR
+  // ==============================================================================
+  function renderAdminSubnavPills() {
+    const content = document.querySelector('.content-wrapper .content');
+    if (!content) return;
+
+    let subnav = document.getElementById('apparatus-saas-subnav');
+    const path = window.location.pathname || '';
+    const hash = window.location.hash || '';
+
+    const isOverview = (path === '/admin' || path === '/admin/' || hash === '#overview') && !hash;
+    const isNodes = path.startsWith('/admin/nodes');
+    const isVpsNodes = hash === '#vps-nodes';
+    const isServers = path.startsWith('/admin/servers');
+    const isVps = hash === '#vps';
+    const isDatabases = path.startsWith('/admin/databases');
+    const isUsers = hash === '#users' || path.startsWith('/admin/users');
+    const isStorePricing = hash === '#store-pricing' || path.startsWith('/admin/store-pricing');
+    const isEarn = hash === '#earn';
+    const isAuditLogs = hash === '#audit-logs' || path.startsWith('/admin/audit-logs');
+
+    if (!subnav) {
+      subnav = document.createElement('div');
+      subnav.id = 'apparatus-saas-subnav';
+      subnav.className = 'apparatus-saas-subnav';
+      content.prepend(subnav);
+    }
+
+    const currentTheme = localStorage.getItem('apparatus_admin_theme') || 'dark';
+    const isLight = currentTheme === 'light';
+
+    subnav.innerHTML = `
+      <div class="apparatus-saas-tabs-scroll">
+        <div class="apparatus-saas-tabs">
+          <a href="/admin" class="apparatus-saas-tab ${isOverview ? 'active' : ''}">
+            <i class="ri-dashboard-2-line"></i> <span>Dashboard</span>
+          </a>
+          <a href="/admin/nodes" class="apparatus-saas-tab ${isNodes ? 'active' : ''}">
+            <i class="ri-server-line"></i> <span>Nodes</span>
+          </a>
+          <a href="#vps-nodes" class="apparatus-saas-tab ${isVpsNodes ? 'active' : ''}" data-tab="vps-nodes">
+            <i class="ri-hard-drive-3-line"></i> <span>VPS Nodes</span>
+          </a>
+          <a href="/admin/servers" class="apparatus-saas-tab ${isServers ? 'active' : ''}">
+            <i class="ri-hard-drive-2-line"></i> <span>Servers</span>
+          </a>
+          <a href="#vps" class="apparatus-saas-tab ${isVps ? 'active' : ''}" data-tab="vps">
+            <i class="ri-server-line"></i> <span>Cloud VPS</span>
+          </a>
+          <a href="/admin/databases" class="apparatus-saas-tab ${isDatabases ? 'active' : ''}">
+            <i class="ri-database-2-line"></i> <span>Databases</span>
+          </a>
+          <a href="#users" class="apparatus-saas-tab ${isUsers ? 'active' : ''}" data-tab="users">
+            <i class="ri-user-settings-line"></i> <span>Users</span>
+          </a>
+          <a href="#store-pricing" class="apparatus-saas-tab ${isStorePricing ? 'active' : ''}" data-tab="store-pricing">
+            <i class="ri-price-tag-3-line"></i> <span>Store</span>
+          </a>
+          <a href="#earn" class="apparatus-saas-tab ${isEarn ? 'active' : ''}" data-tab="earn">
+            <i class="ri-copper-coin-line"></i> <span>Promos</span>
+          </a>
+          <a href="#audit-logs" class="apparatus-saas-tab ${isAuditLogs ? 'active' : ''}" data-tab="audit-logs">
+            <i class="ri-shield-check-line"></i> <span>Sentinel Logs</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="apparatus-saas-actions">
+        <!-- Dual Theme Toggle Button -->
+        <button type="button" class="apparatus-theme-toggle-btn" id="apparatus-subnav-theme-toggle" title="${isLight ? 'Switch to Obsidian Black' : 'Switch to CareOps White'}">
+          ${isLight ? '<i class="ri-moon-line"></i> <span>Dark Theme</span>' : '<i class="ri-sun-line"></i> <span>White Theme</span>'}
+        </button>
+
+        <!-- Primary Deploy Action -->
+        <button type="button" class="apparatus-saas-cta-btn" id="apparatus-subnav-deploy-btn">
+          <i class="ri-add-line"></i> <span>Deploy VPS</span>
+        </button>
+      </div>
+    `;
+
+    // Wire up events
+    const themeBtn = subnav.querySelector('#apparatus-subnav-theme-toggle');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', toggleAdminTheme);
+    }
+
+    const deployCta = subnav.querySelector('#apparatus-subnav-deploy-btn');
+    if (deployCta) {
+      deployCta.addEventListener('click', function () {
+        openAdminDeployVpsModal(content);
+      });
+    }
+
+    subnav.querySelectorAll('.apparatus-saas-tab[data-tab]').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const tab = this.getAttribute('data-tab');
+        window.location.hash = tab;
+        renderAdminSubnavPills();
+        upgradeAdminSidebar();
+        handleAdminViews();
+      });
+    });
   }
 
   // Toast Notification Helper (Clean Glass Toast)
@@ -295,18 +444,32 @@
       }
     }
 
-    // Add Return to Client Area Link in Top Right Navbar
+    // Add Return to Client Area Link & Theme Toggle in Top Right Navbar
     let customMenu = navbar.querySelector('.navbar-custom-menu');
-    if (customMenu && !document.getElementById('apparatus-admin-client-btn')) {
-      const clientBtn = document.createElement('a');
-      clientBtn.id = 'apparatus-admin-client-btn';
-      clientBtn.href = '/';
-      clientBtn.className = 'apparatus-admin-client-btn';
-      clientBtn.innerHTML = `
-        <i class="ri-arrow-go-back-line"></i>
-        <span>Client Area</span>
-      `;
-      customMenu.prepend(clientBtn);
+    if (customMenu) {
+      if (!document.getElementById('apparatus-admin-theme-toggle-header')) {
+        const themeBtn = document.createElement('button');
+        themeBtn.id = 'apparatus-admin-theme-toggle-header';
+        themeBtn.type = 'button';
+        themeBtn.className = 'apparatus-theme-toggle-btn';
+        themeBtn.style.marginRight = '0.75rem';
+        const isLight = document.body.classList.contains('apparatus-admin-light');
+        themeBtn.innerHTML = isLight ? '<i class="ri-moon-line"></i> <span>Dark</span>' : '<i class="ri-sun-line"></i> <span>White</span>';
+        themeBtn.addEventListener('click', toggleAdminTheme);
+        customMenu.prepend(themeBtn);
+      }
+
+      if (!document.getElementById('apparatus-admin-client-btn')) {
+        const clientBtn = document.createElement('a');
+        clientBtn.id = 'apparatus-admin-client-btn';
+        clientBtn.href = '/';
+        clientBtn.className = 'apparatus-admin-client-btn';
+        clientBtn.innerHTML = `
+          <i class="ri-arrow-go-back-line"></i>
+          <span>Client Area</span>
+        `;
+        customMenu.prepend(clientBtn);
+      }
     }
 
     // Polish Top Right User Identity (Capitalized Name & Frosted Glass)
@@ -2116,136 +2279,167 @@ ${formatMailBody(currentTpl.body)}
     const totalRamGb = (totalMemMb / 1024).toFixed(1);
 
     container.innerHTML = `
-      <!-- ULTRA-PREMIUM CYBER METRIC TILES -->
-      <div class="row apparatus-admin-tiles-row" style="margin-bottom: 1.75rem;">
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="apparatus-cyber-tile">
-            <div class="apparatus-tile-top">
-              <span class="apparatus-tile-label">Total Cloud VPS</span>
-              <div class="apparatus-tile-icon pink"><i class="ri-server-line"></i></div>
-            </div>
-            <div class="apparatus-tile-number">${totalCount}</div>
-            <div class="apparatus-tile-subtext"><span class="badge-online">${runningCount} active</span> running in cluster</div>
+      <div class="apparatus-saas-dashboard-canvas">
+        <!-- TOP OPERATIONS HEADER -->
+        <div class="apparatus-saas-header-card">
+          <div class="apparatus-saas-title-group">
+            <h1 class="apparatus-saas-page-title">Operations dashboard</h1>
+            <div class="apparatus-saas-title-sub">Cloud VPS Fleet &bull; Proxmox VE hypervisor cluster &bull; KVM virtual machines</div>
           </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="apparatus-cyber-tile">
-            <div class="apparatus-tile-top">
-              <span class="apparatus-tile-label">Running Instances</span>
-              <div class="apparatus-tile-icon green"><i class="ri-checkbox-circle-line"></i></div>
+          <div class="apparatus-saas-header-controls">
+            <div class="apparatus-saas-filter-pill">
+              <i class="ri-pulse-line" style="color: var(--admin-accent-green);"></i>
+              <span>Live Cluster Telemetry</span>
             </div>
-            <div class="apparatus-tile-number" style="color: #34d399;">${runningCount}</div>
-            <div class="apparatus-tile-subtext"><i class="ri-pulse-line"></i> Hypervisor active &amp; healthy</div>
-          </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="apparatus-cyber-tile">
-            <div class="apparatus-tile-top">
-              <span class="apparatus-tile-label">Stopped / Inactive</span>
-              <div class="apparatus-tile-icon red"><i class="ri-stop-circle-line"></i></div>
-            </div>
-            <div class="apparatus-tile-number" style="color: #f87171;">${stoppedCount}</div>
-            <div class="apparatus-tile-subtext">Standby or gracefully shut down</div>
-          </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="apparatus-cyber-tile">
-            <div class="apparatus-tile-top">
-              <span class="apparatus-tile-label">Allocated Memory</span>
-              <div class="apparatus-tile-icon purple"><i class="ri-cpu-line"></i></div>
-            </div>
-            <div class="apparatus-tile-number">${totalRamGb} <span style="font-size: 1rem; color: #94a3b8; font-weight: 500;">GB</span></div>
-            <div class="apparatus-tile-subtext">${totalCores} total vCPU cores assigned</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PROXMOX CLUSTER GATEWAY MODULE -->
-      <div class="box apparatus-gateway-box" style="margin-bottom: 2rem;">
-        <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem;">
-          <h3 class="box-title" style="color: #fff; font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.65rem;">
-            <i class="ri-shield-keyhole-line" style="color: #ec4899; font-size: 1.35rem;"></i> Proxmox Cluster Gateway &amp; Engine
-          </h3>
-          <span id="apparatus-alpm-status-pill" class="apparatus-status-badge">
-            <span class="dot"></span> <span class="txt">Checking Gateway...</span>
-          </span>
-        </div>
-        <div class="box-body" style="padding: 1.5rem 1.75rem;">
-          <div class="row">
-            <div class="col-md-5 col-sm-12">
-              <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.4rem; display: block;">Cluster Engine Gateway URL</label>
-                <div class="input-group">
-                  <span class="input-group-addon" style="background: rgba(255,255,255,0.06); color: #94a3b8; border-color: rgba(255,255,255,0.12);"><i class="ri-global-line"></i></span>
-                  <input type="text" id="alpm-cfg-url" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 42px;" value="${cfg.url || 'http://127.0.0.1:3000'}" placeholder="http://127.0.0.1:3000">
-                </div>
-                <small style="color: #64748b; margin-top: 0.35rem; display: block;">Internal virtualization engine endpoint (e.g. http://127.0.0.1:3000)</small>
-              </div>
-            </div>
-            <div class="col-md-5 col-sm-12">
-              <div class="form-group">
-                <label style="color: #cbd5e1; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.4rem; display: block;">Cluster Admin API Token</label>
-                <div class="input-group">
-                  <span class="input-group-addon" style="background: rgba(255,255,255,0.06); color: #94a3b8; border-color: rgba(255,255,255,0.12);"><i class="ri-key-2-line"></i></span>
-                  <input type="password" id="alpm-cfg-key" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; height: 42px;" value="${cfg.has_key ? '••••••••••••••••' : ''}" placeholder="API Key configured in cluster engine">
-                </div>
-                <small style="color: #64748b; margin-top: 0.35rem; display: block;">Bearer API key with administrative cluster scopes</small>
-              </div>
-            </div>
-            <div class="col-md-2 col-sm-12" style="display: flex; gap: 0.65rem; align-items: flex-end; padding-bottom: 15px;">
-              <button type="button" id="btn-save-alpm-cfg" class="btn btn-primary" style="flex: 1; height: 42px; background: linear-gradient(135deg, #ec4899, #db2777); border: none; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 15px rgba(236,72,153,0.35);">
-                <i class="ri-save-line"></i> Save
-              </button>
-              <button type="button" id="btn-test-alpm-ping" class="btn btn-default" style="height: 42px; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff; border-radius: 8px; font-weight: 600;" title="Test Connection Ping">
-                <i class="ri-wifi-line"></i> Ping
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- MANAGED CLOUD VPS FLEET TABLE BOX -->
-      <div class="box apparatus-gateway-box">
-        <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem 1.5rem;">
-          <h3 class="box-title" style="color: #fff; font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.65rem;">
-            <i class="ri-server-line" style="color: #38bdf8;"></i> Managed Cloud VPS Instances (${totalCount})
-          </h3>
-          <div style="display: flex; gap: 0.65rem; align-items: center;">
-            <div class="input-group" style="width: 250px;">
-              <input type="text" id="alpm-vps-search" class="form-control" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12); color: #fff; border-radius: 8px 0 0 8px; height: 38px;" placeholder="Search VPS, IP, Owner...">
-              <span class="input-group-addon" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); color: #94a3b8; border-radius: 0 8px 8px 0;"><i class="ri-search-line"></i></span>
-            </div>
-            <button type="button" id="btn-deploy-vps-modal" class="btn btn-success" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-weight: 700; border-radius: 8px; padding: 8px 18px; box-shadow: 0 4px 15px rgba(16,185,129,0.3);">
-              <i class="ri-add-line"></i> Deploy VPS
-            </button>
-            <button type="button" id="btn-refresh-vps-fleet" class="btn btn-default" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff; border-radius: 8px; height: 38px;" title="Refresh Fleet">
+            <button type="button" class="apparatus-saas-round-btn" id="btn-refresh-vps-fleet" title="Refresh Live Data">
               <i class="ri-refresh-line"></i>
             </button>
+            <button type="button" class="apparatus-saas-cta-btn" id="btn-top-deploy-vps" style="padding: 7px 16px;">
+              <i class="ri-add-line"></i> <span>Deploy VPS</span>
+            </button>
           </div>
         </div>
-        <div class="box-body table-responsive" style="padding: 0;">
-          <table class="table table-hover apparatus-cyber-table" style="margin-bottom: 0;">
-            <thead>
-              <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); color: #94a3b8; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                <th style="padding: 1.1rem 1.4rem;">VMID / Hostname</th>
-                <th>Owner (Pterodactyl User)</th>
-                <th>Node &amp; Type</th>
-                <th>Primary IP</th>
-                <th>Allocated Specs</th>
-                <th>Status</th>
-                <th style="text-align: right; padding-right: 1.4rem;">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="alpm-vps-tbody">
-              ${renderAdminVpsRows(servers)}
-            </tbody>
-          </table>
+
+        <!-- MINIMALIST CAREOPS KPI METRICS ROW -->
+        <div class="apparatus-saas-kpi-row">
+          <div class="apparatus-saas-kpi-col">
+            <div class="apparatus-saas-kpi-card">
+              <span class="apparatus-saas-kpi-label">Total Cloud VPS</span>
+              <div class="apparatus-saas-kpi-value">${totalCount}</div>
+              <div class="apparatus-saas-kpi-trend positive">
+                <i class="ri-arrow-right-up-line"></i> ${runningCount} active in cluster
+              </div>
+            </div>
+          </div>
+          <div class="apparatus-saas-kpi-col">
+            <div class="apparatus-saas-kpi-card">
+              <span class="apparatus-saas-kpi-label">Running Instances</span>
+              <div class="apparatus-saas-kpi-value" style="color: var(--admin-accent-green);">${runningCount}</div>
+              <div class="apparatus-saas-kpi-trend positive">
+                <i class="ri-checkbox-circle-fill"></i> 100% healthy telemetry
+              </div>
+            </div>
+          </div>
+          <div class="apparatus-saas-kpi-col">
+            <div class="apparatus-saas-kpi-card">
+              <span class="apparatus-saas-kpi-label">Stopped / Inactive</span>
+              <div class="apparatus-saas-kpi-value" style="color: var(--admin-text-muted);">${stoppedCount}</div>
+              <div class="apparatus-saas-kpi-trend neutral">
+                <i class="ri-pause-circle-line"></i> Standby virtual machines
+              </div>
+            </div>
+          </div>
+          <div class="apparatus-saas-kpi-col">
+            <div class="apparatus-saas-kpi-card">
+              <span class="apparatus-saas-kpi-label">Allocated Memory</span>
+              <div class="apparatus-saas-kpi-value">${totalRamGb} <span class="unit">GB</span></div>
+              <div class="apparatus-saas-kpi-trend neutral">
+                <i class="ri-cpu-line"></i> ${totalCores} total vCPU cores
+              </div>
+            </div>
+          </div>
+          <div class="apparatus-saas-kpi-col">
+            <div class="apparatus-saas-kpi-card">
+              <span class="apparatus-saas-kpi-label">Hypervisor Nodes</span>
+              <div class="apparatus-saas-kpi-value">1 <span class="unit">Node</span></div>
+              <div class="apparatus-saas-kpi-trend positive">
+                <i class="ri-shield-check-line"></i> Proxmox VE 8.x Active
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROXMOX CLUSTER GATEWAY MODULE -->
+        <div class="box apparatus-gateway-box" style="margin-bottom: 2rem;">
+          <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.75rem;">
+            <h3 class="box-title" style="color: var(--admin-text-primary); font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.65rem;">
+              <i class="ri-shield-keyhole-line" style="color: var(--admin-accent-primary); font-size: 1.35rem;"></i> Cluster Gateway &amp; Virtualization Engine
+            </h3>
+            <span id="apparatus-alpm-status-pill" class="apparatus-status-badge">
+              <span class="dot"></span> <span class="txt">Checking Gateway...</span>
+            </span>
+          </div>
+          <div class="box-body" style="padding: 1.5rem 1.75rem;">
+            <div class="row">
+              <div class="col-md-5 col-sm-12">
+                <div class="form-group">
+                  <label style="color: var(--admin-text-secondary); font-weight: 600; font-size: 0.88rem; margin-bottom: 0.45rem; display: block;">Cluster Engine Gateway URL</label>
+                  <div class="input-group">
+                    <span class="input-group-addon" style="background: var(--admin-pill-bg); color: var(--admin-text-muted); border-color: var(--admin-input-border);"><i class="ri-global-line"></i></span>
+                    <input type="text" id="alpm-cfg-url" class="form-control" style="background: var(--admin-input-bg); border-color: var(--admin-input-border); color: var(--admin-input-text); height: 42px;" value="${cfg.url || 'http://127.0.0.1:3000'}" placeholder="http://127.0.0.1:3000">
+                  </div>
+                  <small style="color: var(--admin-text-muted); margin-top: 0.4rem; display: block;">Internal virtualization engine endpoint (e.g. http://127.0.0.1:3000)</small>
+                </div>
+              </div>
+              <div class="col-md-5 col-sm-12">
+                <div class="form-group">
+                  <label style="color: var(--admin-text-secondary); font-weight: 600; font-size: 0.88rem; margin-bottom: 0.45rem; display: block;">Cluster Admin API Token</label>
+                  <div class="input-group">
+                    <span class="input-group-addon" style="background: var(--admin-pill-bg); color: var(--admin-text-muted); border-color: var(--admin-input-border);"><i class="ri-key-2-line"></i></span>
+                    <input type="password" id="alpm-cfg-key" class="form-control" style="background: var(--admin-input-bg); border-color: var(--admin-input-border); color: var(--admin-input-text); height: 42px;" value="${cfg.has_key ? '••••••••••••••••' : ''}" placeholder="API Key configured in cluster engine">
+                  </div>
+                  <small style="color: var(--admin-text-muted); margin-top: 0.4rem; display: block;">Bearer API key with administrative cluster scopes</small>
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-12" style="display: flex; gap: 0.65rem; align-items: flex-end; padding-bottom: 15px;">
+                <button type="button" id="btn-save-alpm-cfg" class="btn btn-primary" style="flex: 1; height: 42px; background: var(--admin-accent-gradient); border: none; font-weight: 700; border-radius: 10px;">
+                  <i class="ri-save-line"></i> Save
+                </button>
+                <button type="button" id="btn-test-alpm-ping" class="btn btn-default" style="height: 42px; background: var(--admin-pill-bg); border-color: var(--admin-input-border); color: var(--admin-text-primary); border-radius: 10px; font-weight: 600;" title="Test Connection Ping">
+                  <i class="ri-wifi-line"></i> Ping
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MANAGED CLOUD VPS FLEET TABLE BOX -->
+        <div class="box apparatus-gateway-box">
+          <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem 1.75rem;">
+            <h3 class="box-title" style="color: var(--admin-text-primary); font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.65rem;">
+              <i class="ri-server-line" style="color: var(--admin-accent-primary);"></i> Managed Cloud VPS Instances (${totalCount})
+            </h3>
+            <div style="display: flex; gap: 0.65rem; align-items: center;">
+              <div class="input-group" style="width: 250px;">
+                <input type="text" id="alpm-vps-search" class="form-control" style="background: var(--admin-input-bg); border-color: var(--admin-input-border); color: var(--admin-input-text); border-radius: 10px 0 0 10px; height: 40px;" placeholder="Search VPS, IP, Owner...">
+                <span class="input-group-addon" style="background: var(--admin-pill-bg); border-color: var(--admin-input-border); color: var(--admin-text-muted); border-radius: 0 10px 10px 0;"><i class="ri-search-line"></i></span>
+              </div>
+              <button type="button" id="btn-deploy-vps-modal" class="apparatus-saas-cta-btn" style="height: 40px; padding: 0 18px;">
+                <i class="ri-add-line"></i> <span>Deploy VPS</span>
+              </button>
+            </div>
+          </div>
+          <div class="box-body table-responsive" style="padding: 0;">
+            <table class="table table-hover apparatus-cyber-table" style="margin-bottom: 0;">
+              <thead>
+                <tr style="border-bottom: 1px solid var(--admin-table-border); color: var(--admin-text-muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                  <th style="padding: 1.1rem 1.4rem;">VMID / Hostname</th>
+                  <th>Owner (Pterodactyl User)</th>
+                  <th>Node &amp; Type</th>
+                  <th>Primary IP</th>
+                  <th>Allocated Specs</th>
+                  <th>Status</th>
+                  <th style="text-align: right; padding-right: 1.4rem;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="alpm-vps-tbody">
+                ${renderAdminVpsRows(servers)}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     `;
 
     wireAdminVpsEvents(container, cfg, servers);
     testAlpmPing(false);
+
+    const topDeployBtn = container.querySelector('#btn-top-deploy-vps');
+    if (topDeployBtn) {
+      topDeployBtn.addEventListener('click', function () {
+        openAdminDeployVpsModal(container);
+      });
+    }
   }
 
   function renderAdminVpsRows(servers) {
@@ -2617,89 +2811,120 @@ ${formatMailBody(currentTpl.body)}
     const clusterStorageTb = (clusterStorageGb / 1024).toFixed(1);
 
     container.innerHTML = `
-      <!-- CLUSTER COMPUTE POOL TILES -->
-      <div class="row apparatus-admin-tiles-row" style="margin-bottom: 1.75rem;">
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="apparatus-cyber-tile">
-            <div class="apparatus-tile-top">
-              <span class="apparatus-tile-label">Hypervisor Nodes</span>
-              <div class="apparatus-tile-icon blue"><i class="ri-hard-drive-3-line"></i></div>
-            </div>
-            <div class="apparatus-tile-number">${totalNodes}</div>
-            <div class="apparatus-tile-subtext"><span class="badge-online">${onlineNodes} Active</span> Proxmox VE nodes</div>
+      <div class="apparatus-saas-dashboard-canvas">
+        <!-- TOP OPERATIONS HEADER -->
+        <div class="apparatus-saas-header-card">
+          <div class="apparatus-saas-title-group">
+            <h1 class="apparatus-saas-page-title">Hypervisor VPS Nodes</h1>
+            <div class="apparatus-saas-title-sub">Proxmox VE cluster compute nodes &bull; CPU pools &bull; Memory &amp; NVMe Storage pools</div>
           </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="apparatus-cyber-tile">
-            <div class="apparatus-tile-top">
-              <span class="apparatus-tile-label">Cluster Status</span>
-              <div class="apparatus-tile-icon green"><i class="ri-shield-check-line"></i></div>
+          <div class="apparatus-saas-header-controls">
+            <div class="apparatus-saas-filter-pill">
+              <i class="ri-shield-check-line" style="color: var(--admin-accent-green);"></i>
+              <span>Cluster Active &bull; Proxmox VE</span>
             </div>
-            <div class="apparatus-tile-number" style="color: #34d399;">100%</div>
-            <div class="apparatus-tile-subtext">All virtualization daemons online</div>
-          </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="apparatus-cyber-tile">
-            <div class="apparatus-tile-top">
-              <span class="apparatus-tile-label">Cluster CPU Pool</span>
-              <div class="apparatus-tile-icon pink"><i class="ri-cpu-line"></i></div>
-            </div>
-            <div class="apparatus-tile-number">${clusterCores} <span style="font-size: 1rem; color: #94a3b8; font-weight: 500;">Cores</span></div>
-            <div class="apparatus-tile-subtext">Compute cores for KVM VMs</div>
-          </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="apparatus-cyber-tile">
-            <div class="apparatus-tile-top">
-              <span class="apparatus-tile-label">Cluster Memory Pool</span>
-              <div class="apparatus-tile-icon purple"><i class="ri-ram-line"></i></div>
-            </div>
-            <div class="apparatus-tile-number">${clusterRamGb} <span style="font-size: 1rem; color: #94a3b8; font-weight: 500;">GB</span></div>
-            <div class="apparatus-tile-subtext">${clusterStorageTb} TB NVMe ZFS Storage Pool</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- HYPERVISOR NODES MANAGEMENT CARD -->
-      <div class="box apparatus-gateway-box">
-        <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem 1.5rem;">
-          <h3 class="box-title" style="color: #fff; font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.65rem;">
-            <i class="ri-hard-drive-3-line" style="color: #38bdf8;"></i> Connected Proxmox Hypervisor Nodes (${totalNodes})
-          </h3>
-          <div style="display: flex; gap: 0.65rem; align-items: center;">
-            <button type="button" id="btn-add-vps-node-modal" class="btn btn-primary" style="background: linear-gradient(135deg, #38bdf8, #0284c7); border: none; font-weight: 700; border-radius: 8px; padding: 8px 18px; box-shadow: 0 4px 15px rgba(56,189,248,0.3);">
-              <i class="ri-add-line"></i> Connect Proxmox Node
-            </button>
-            <button type="button" id="btn-refresh-vps-nodes" class="btn btn-default" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff; border-radius: 8px; height: 38px;" title="Refresh Nodes">
+            <button type="button" class="apparatus-saas-round-btn" id="btn-refresh-vps-nodes" title="Refresh Nodes">
               <i class="ri-refresh-line"></i>
             </button>
+            <button type="button" class="apparatus-saas-cta-btn" id="btn-top-add-node" style="padding: 7px 16px;">
+              <i class="ri-add-line"></i> <span>Connect Node</span>
+            </button>
           </div>
         </div>
 
-        <div class="box-body table-responsive" style="padding: 0;">
-          <table class="table table-hover apparatus-cyber-table" style="margin-bottom: 0;">
-            <thead>
-              <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); color: #94a3b8; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                <th style="padding: 1.1rem 1.4rem;">Hypervisor Node</th>
-                <th>Host Endpoint</th>
-                <th>Virtualization Type</th>
-                <th>CPU Utilization</th>
-                <th>RAM Allocation</th>
-                <th>Storage Pool</th>
-                <th>Status</th>
-                <th style="text-align: right; padding-right: 1.4rem;">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${renderAdminVpsNodeRows(nodes)}
-            </tbody>
-          </table>
+        <!-- MINIMALIST CAREOPS KPI METRICS ROW -->
+        <div class="apparatus-saas-kpi-row">
+          <div class="apparatus-saas-kpi-col">
+            <div class="apparatus-saas-kpi-card">
+              <span class="apparatus-saas-kpi-label">Hypervisor Nodes</span>
+              <div class="apparatus-saas-kpi-value">${totalNodes}</div>
+              <div class="apparatus-saas-kpi-trend positive">
+                <i class="ri-arrow-right-up-line"></i> ${onlineNodes} Active Proxmox VE nodes
+              </div>
+            </div>
+          </div>
+          <div class="apparatus-saas-kpi-col">
+            <div class="apparatus-saas-kpi-card">
+              <span class="apparatus-saas-kpi-label">Cluster Status</span>
+              <div class="apparatus-saas-kpi-value" style="color: var(--admin-accent-green);">100%</div>
+              <div class="apparatus-saas-kpi-trend positive">
+                <i class="ri-checkbox-circle-fill"></i> All virtualization daemons online
+              </div>
+            </div>
+          </div>
+          <div class="apparatus-saas-kpi-col">
+            <div class="apparatus-saas-kpi-card">
+              <span class="apparatus-saas-kpi-label">Cluster CPU Pool</span>
+              <div class="apparatus-saas-kpi-value">${clusterCores} <span class="unit">Cores</span></div>
+              <div class="apparatus-saas-kpi-trend neutral">
+                <i class="ri-cpu-line"></i> Compute cores for KVM VMs
+              </div>
+            </div>
+          </div>
+          <div class="apparatus-saas-kpi-col">
+            <div class="apparatus-saas-kpi-card">
+              <span class="apparatus-saas-kpi-label">Cluster Memory Pool</span>
+              <div class="apparatus-saas-kpi-value">${clusterRamGb} <span class="unit">GB</span></div>
+              <div class="apparatus-saas-kpi-trend neutral">
+                <i class="ri-ram-line"></i> Total cluster RAM capacity
+              </div>
+            </div>
+          </div>
+          <div class="apparatus-saas-kpi-col">
+            <div class="apparatus-saas-kpi-card">
+              <span class="apparatus-saas-kpi-label">NVMe Storage Pool</span>
+              <div class="apparatus-saas-kpi-value">${clusterStorageTb} <span class="unit">TB</span></div>
+              <div class="apparatus-saas-kpi-trend positive">
+                <i class="ri-hard-drive-2-line"></i> ZFS mirrored storage pool
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HYPERVISOR NODES MANAGEMENT CARD -->
+        <div class="box apparatus-gateway-box">
+          <div class="box-header with-border" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem 1.75rem;">
+            <h3 class="box-title" style="color: var(--admin-text-primary); font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.65rem;">
+              <i class="ri-hard-drive-3-line" style="color: var(--admin-accent-primary);"></i> Connected Proxmox Hypervisor Nodes (${totalNodes})
+            </h3>
+            <div style="display: flex; gap: 0.65rem; align-items: center;">
+              <button type="button" id="btn-add-vps-node-modal" class="apparatus-saas-cta-btn" style="height: 40px; padding: 0 18px;">
+                <i class="ri-add-line"></i> <span>Connect Proxmox Node</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="box-body table-responsive" style="padding: 0;">
+            <table class="table table-hover apparatus-cyber-table" style="margin-bottom: 0;">
+              <thead>
+                <tr style="border-bottom: 1px solid var(--admin-table-border); color: var(--admin-text-muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                  <th style="padding: 1.1rem 1.4rem;">Hypervisor Node</th>
+                  <th>Host Endpoint</th>
+                  <th>Virtualization Type</th>
+                  <th>CPU Utilization</th>
+                  <th>RAM Allocation</th>
+                  <th>Storage Pool</th>
+                  <th>Status</th>
+                  <th style="text-align: right; padding-right: 1.4rem;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${renderAdminVpsNodeRows(nodes)}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     `;
 
     wireAdminVpsNodesEvents(container, nodes);
+
+    const topAddBtn = container.querySelector('#btn-top-add-node');
+    if (topAddBtn) {
+      topAddBtn.addEventListener('click', function () {
+        openAdminAddNodeModal(container);
+      });
+    }
   }
 
   function renderAdminVpsNodeRows(nodes) {
@@ -4312,6 +4537,7 @@ php artisan view:clear</pre>
   // Listen to hashchange for instant tab switching without full reload
   window.addEventListener('hashchange', function () {
     upgradeAdminSidebar();
+    renderAdminSubnavPills();
     handleAdminViews();
   });
 

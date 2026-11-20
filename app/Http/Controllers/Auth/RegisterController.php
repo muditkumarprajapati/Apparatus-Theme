@@ -1038,7 +1038,7 @@ class RegisterController extends Controller
 
     /**
      * ==============================================================================
-     * ALPM (AtyroLabs Proxmox Manager) VPS Integration Methods
+     * Cloud VPS & Hypervisor Cluster Integration Methods
      * ==============================================================================
      */
     private function getAlpmConfig(): array
@@ -1102,12 +1102,12 @@ class RegisterController extends Controller
         curl_close($ch);
 
         if ($err) {
-            return ['status' => 500, 'error' => 'Connection to ALPM failed: ' . $err, 'ok' => false];
+            return ['status' => 500, 'error' => 'Connection to Virtualization Cluster failed: ' . $err, 'ok' => false];
         }
 
         $json = json_decode($res, true);
         if ($json === null && $status >= 400) {
-            return ['status' => $status, 'error' => 'ALPM returned status ' . $status, 'raw' => $res, 'ok' => false];
+            return ['status' => $status, 'error' => 'Cluster engine returned status ' . $status, 'raw' => $res, 'ok' => false];
         }
 
         return ['status' => $status, 'data' => $json ?? $res, 'ok' => ($status >= 200 && $status < 300)];
@@ -1137,7 +1137,7 @@ class RegisterController extends Controller
         $cfg['enabled'] = (bool) $request->input('enabled', true);
 
         $this->saveAlpmConfig($cfg);
-        return response()->json(['success' => true, 'message' => 'ALPM VPS Configuration saved.']);
+        return response()->json(['success' => true, 'message' => 'VPS Infrastructure Configuration saved.']);
     }
 
     public function vpsPing(): JsonResponse
@@ -1162,7 +1162,7 @@ class RegisterController extends Controller
             return response()->json(['success' => false, 'servers' => [], 'error' => 'No user email specified.']);
         }
 
-        // Query ALPM by user email
+        // Query cluster engine by user email
         $res = $this->callAlpm('/api/users/email/' . urlencode($email));
         if ($res['ok']) {
             $servers = [];
@@ -1180,7 +1180,7 @@ class RegisterController extends Controller
             ]);
         }
 
-        // Fallback: check stored local cache if ALPM is offline or not yet initialized
+        // Fallback: check stored local cache if cluster engine is offline or not yet initialized
         $cachePath = storage_path('app/apparatus_vps_cache.json');
         if (file_exists($cachePath)) {
             $cache = json_decode(@file_get_contents($cachePath), true);
@@ -1193,7 +1193,7 @@ class RegisterController extends Controller
         return response()->json([
             'success' => true,
             'servers' => [],
-            'notice' => $res['error'] ?? 'No servers returned from ALPM'
+            'notice' => $res['error'] ?? 'No servers returned from virtualization cluster'
         ]);
     }
 
@@ -1220,7 +1220,7 @@ class RegisterController extends Controller
         return response()->json([
             'success' => false,
             'servers' => [],
-            'error' => $res['error'] ?? 'Could not fetch servers from ALPM'
+            'error' => $res['error'] ?? 'Could not fetch servers from cluster engine'
         ]);
     }
 
