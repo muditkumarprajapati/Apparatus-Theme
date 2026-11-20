@@ -1838,6 +1838,7 @@ class RegisterController extends Controller
 
     public function vpsAdminUsersSearch(Request $request): JsonResponse
     {
+        @session_write_close();
         $q = trim($request->input('q', $request->input('search', '')));
 
         try {
@@ -1898,34 +1899,78 @@ class RegisterController extends Controller
 
     public function vpsAdminUserUpdate(Request $request, $id): JsonResponse
     {
+        @session_write_close();
         try {
-            $user = User::findOrFail($id);
+            $user = User::find($id);
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "User #{$id} not found."
+                ], 404);
+            }
+
+            $updateData = [];
 
             if ($request->has('email') && !empty($request->input('email'))) {
-                $user->email = trim(strtolower($request->input('email')));
-            }
-            if ($request->has('username') && !empty($request->input('username'))) {
-                $user->username = trim($request->input('username'));
-            }
-            if ($request->has('name_first')) {
-                $user->name_first = trim($request->input('name_first'));
-            }
-            if ($request->has('name_last')) {
-                $user->name_last = trim($request->input('name_last'));
-            }
-            if ($request->filled('password')) {
-                $user->password = Hash::make($request->input('password'));
-            }
-            if ($request->has('root_admin')) {
-                $user->root_admin = (bool) $request->input('root_admin');
-            }
-            if ($request->has('reset_2fa') && (bool) $request->input('reset_2fa')) {
-                $user->{"2fa"} = 0;
-                $user->totp_secret = null;
-                $user->totp_authenticated = 0;
+                $email = trim(strtolower($request->input('email')));
+                $exists = DB::table('users')->where('email', $email)->where('id', '!=', $id)->exists();
+                if ($exists) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => "The email '{$email}' is already in use by another account."
+                    ], 422);
+                }
+                $updateData['email'] = $email;
+                $user->email = $email;
             }
 
-            $user->save();
+            if ($request->has('username') && !empty($request->input('username'))) {
+                $username = trim($request->input('username'));
+                $exists = DB::table('users')->where('username', $username)->where('id', '!=', $id)->exists();
+                if ($exists) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => "The username '@{$username}' is already taken."
+                    ], 422);
+                }
+                $updateData['username'] = $username;
+                $user->username = $username;
+            }
+
+            if ($request->has('name_first')) {
+                $updateData['name_first'] = trim($request->input('name_first'));
+                $user->name_first = $updateData['name_first'];
+            }
+            if ($request->has('name_last')) {
+                $updateData['name_last'] = trim($request->input('name_last'));
+                $user->name_last = $updateData['name_last'];
+            }
+            if ($request->filled('password')) {
+                $pwd = $request->input('password');
+                if (strlen($pwd) >= 8) {
+                    $updateData['password'] = Hash::make($pwd);
+                }
+            }
+            if ($request->has('root_admin')) {
+                $isRoot = (bool) $request->input('root_admin');
+                $updateData['root_admin'] = $isRoot ? 1 : 0;
+                $user->root_admin = $isRoot;
+            }
+            if ($request->has('reset_2fa') && (bool) $request->input('reset_2fa')) {
+                $updateData['2fa'] = 0;
+                if (Schema::hasColumn('users', 'totp_secret')) {
+                    $updateData['totp_secret'] = null;
+                }
+                if (Schema::hasColumn('users', 'totp_authenticated')) {
+                    $updateData['totp_authenticated'] = 0;
+                }
+                $user->{"2fa"} = 0;
+            }
+
+            $updateData['updated_at'] = now();
+
+            DB::table('users')->where('id', $id)->update($updateData);
+
             $this->recordAuditLog('Updated client account @' . $user->username, 'User #' . $user->id, 'ELEVATED', $request);
 
             $fullName = trim(($user->name_first ?? '') . ' ' . ($user->name_last ?? '')) ?: $user->username;
@@ -1938,9 +1983,9 @@ class RegisterController extends Controller
                     'username' => $user->username,
                     'email' => $user->email,
                     'name' => $fullName,
-                    'root_admin' => (bool) $user->root_admin,
+                    'root_admin' => (bool) ($user->root_admin ?? false),
                     'twoFactor' => (bool) ($user->{"2fa"} ?? false),
-                    'canAccess' => $user->root_admin ? 'Administrator (Full Access)' : 'Client Area + API'
+                    'canAccess' => !empty($user->root_admin) ? 'Administrator (Full Access)' : 'Client Area + API'
                 ]
             ]);
         } catch (\Throwable $e) {
@@ -1953,6 +1998,7 @@ class RegisterController extends Controller
 
     public function vpsAdminUserDelete($id): JsonResponse
     {
+        @session_write_close();
         try {
             $user = User::findOrFail($id);
             if ($user->root_admin && User::where('root_admin', true)->count() <= 1) {
@@ -1961,7 +2007,7 @@ class RegisterController extends Controller
                     'error' => 'Cannot delete the primary root administrator account.'
                 ], 400);
             }
-            $user->delete();
+            DB::table('users')->where('id', $id)->delete();
             $this->recordAuditLog('Deleted user account #' . $id, 'User #' . $id, 'HIGH RISK');
             return response()->json([
                 'success' => true,

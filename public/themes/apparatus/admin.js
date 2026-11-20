@@ -676,6 +676,11 @@
   }
 
   function isolateStudioView(content, studioView, renderFn) {
+    if (window._apparatusVpsTelemetryTimer) {
+      clearInterval(window._apparatusVpsTelemetryTimer);
+      window._apparatusVpsTelemetryTimer = null;
+    }
+
     Array.from(content.children).forEach(function (c) {
       if (c.id !== 'apparatus-admin-studio-view' && c.id !== 'apparatus-saas-subnav') c.style.display = 'none';
     });
@@ -5886,6 +5891,12 @@ php artisan view:clear</pre>
         payload.password = password.trim();
       }
 
+      // Safety timeout controller (max 8 seconds) so button never freezes
+      const controller = window.AbortController ? new AbortController() : null;
+      const timeoutTimer = setTimeout(function () {
+        if (controller) controller.abort();
+      }, 8000);
+
       fetch('/auth/vps/admin/users/' + user.id + '/update', {
         method: 'POST',
         headers: {
@@ -5893,10 +5904,17 @@ php artisan view:clear</pre>
           'X-CSRF-TOKEN': getCsrfToken(),
           'Accept': 'application/json'
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        signal: controller ? controller.signal : undefined
       })
-      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        clearTimeout(timeoutTimer);
+        return r.json().catch(function () {
+          return { success: r.ok };
+        });
+      })
       .then(function (res) {
+        clearTimeout(timeoutTimer);
         if (res.success) {
           showAdminToast('success', 'User Updated', 'Account @' + username + ' updated successfully in database.');
           modal.remove();
@@ -5918,7 +5936,10 @@ php artisan view:clear</pre>
         }
       })
       .catch(function (err) {
-        console.warn('[Edit User] Local fallback save:', err);
+        clearTimeout(timeoutTimer);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="ri-save-line"></i> Save Changes';
+        console.warn('[Edit User] Notice:', err);
         showAdminToast('info', 'Saved Locally', 'User updated in view.');
         modal.remove();
         if (onSaved) {
@@ -5928,7 +5949,8 @@ php artisan view:clear</pre>
             email: email,
             root_admin: isRootAdmin,
             balance: balance,
-            twoFactor: reset2fa ? false : user.twoFactor
+            twoFactor: reset2fa ? false : user.twoFactor,
+            canAccess: isRootAdmin ? 'Administrator (Full Access)' : 'Client Area + API'
           });
         }
       });
