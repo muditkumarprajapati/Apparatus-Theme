@@ -4184,6 +4184,197 @@ php artisan view:clear</pre>
     buildUsersStudioContent(container);
   }
 
+    function openAdminEditUserModal(user, onSaved) {
+    const existing = document.getElementById('apparatus-admin-edit-user-modal');
+    if (existing) existing.remove();
+
+    const nameParts = (user.name || '').split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+
+    const modal = document.createElement('div');
+    modal.id = 'apparatus-admin-edit-user-modal';
+    modal.className = 'apparatus-modal-overlay';
+    modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10005; display: flex; align-items: center; justify-content: center; padding: 1.5rem;';
+
+    modal.innerHTML = `
+      <div style="background: var(--admin-card-bg, #121522); border: 1px solid var(--admin-card-border, rgba(255,255,255,0.16)); border-radius: 18px; width: 100%; max-width: 620px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.85);">
+        <!-- Modal Header -->
+        <div style="padding: 1.35rem 1.75rem; background: var(--admin-pill-bg, rgba(255,255,255,0.04)); border-bottom: 1px solid var(--admin-card-border, rgba(255,255,255,0.08)); display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 0.85rem;">
+            <img src="${user.avatar || ('https://api.dicebear.com/7.x/thumbs/svg?seed=' + user.username)}" alt="${user.username}" style="width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--admin-accent-primary, #a855f7);">
+            <div>
+              <h3 style="margin: 0; color: var(--admin-text-primary, #fff); font-weight: 800; font-size: 1.2rem;">Edit Account: ${user.name}</h3>
+              <span style="color: var(--admin-text-muted, #94a3b8); font-size: 0.82rem;">ID #${user.id} &bull; @${user.username} &bull; ${user.email}</span>
+            </div>
+          </div>
+          <button type="button" id="btn-close-edit-user-modal" style="background: transparent; border: none; color: var(--admin-text-muted, #94a3b8); font-size: 1.5rem; cursor: pointer;">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+
+        <!-- Form Body -->
+        <form id="apparatus-edit-user-form" style="padding: 1.75rem;">
+          <div class="row">
+            <div class="col-md-6 col-sm-12">
+              <div class="form-group">
+                <label style="color: var(--admin-text-secondary, #cbd5e1); font-weight: 600; font-size: 0.88rem;">First Name</label>
+                <input type="text" id="edit-user-fname" class="form-control" style="background: var(--admin-input-bg, #171b29); border-color: var(--admin-input-border, rgba(255,255,255,0.12)); color: var(--admin-input-text, #fff); height: 40px;" value="${firstName}" placeholder="First Name">
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <div class="form-group">
+                <label style="color: var(--admin-text-secondary, #cbd5e1); font-weight: 600; font-size: 0.88rem;">Last Name</label>
+                <input type="text" id="edit-user-lname" class="form-control" style="background: var(--admin-input-bg, #171b29); border-color: var(--admin-input-border, rgba(255,255,255,0.12)); color: var(--admin-input-text, #fff); height: 40px;" value="${lastName}" placeholder="Last Name">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 col-sm-12">
+              <div class="form-group">
+                <label style="color: var(--admin-text-secondary, #cbd5e1); font-weight: 600; font-size: 0.88rem;">Username</label>
+                <div class="input-group">
+                  <span class="input-group-addon" style="background: var(--admin-pill-bg, rgba(255,255,255,0.06)); border-color: var(--admin-input-border, rgba(255,255,255,0.12)); color: var(--admin-text-muted, #94a3b8);"><i class="ri-at-line"></i></span>
+                  <input type="text" id="edit-user-username" class="form-control" style="background: var(--admin-input-bg, #171b29); border-color: var(--admin-input-border, rgba(255,255,255,0.12)); color: var(--admin-input-text, #fff); height: 40px;" value="${user.username}" required>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <div class="form-group">
+                <label style="color: var(--admin-text-secondary, #cbd5e1); font-weight: 600; font-size: 0.88rem;">Email Address</label>
+                <div class="input-group">
+                  <span class="input-group-addon" style="background: var(--admin-pill-bg, rgba(255,255,255,0.06)); border-color: var(--admin-input-border, rgba(255,255,255,0.12)); color: var(--admin-text-muted, #94a3b8);"><i class="ri-mail-line"></i></span>
+                  <input type="email" id="edit-user-email" class="form-control" style="background: var(--admin-input-bg, #171b29); border-color: var(--admin-input-border, rgba(255,255,255,0.12)); color: var(--admin-input-text, #fff); height: 40px;" value="${user.email}" required>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 col-sm-12">
+              <div class="form-group">
+                <label style="color: var(--admin-text-secondary, #cbd5e1); font-weight: 600; font-size: 0.88rem;">New Password</label>
+                <input type="password" id="edit-user-password" class="form-control" style="background: var(--admin-input-bg, #171b29); border-color: var(--admin-input-border, rgba(255,255,255,0.12)); color: var(--admin-input-text, #fff); height: 40px;" placeholder="Leave blank to keep unchanged">
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <div class="form-group">
+                <label style="color: var(--admin-text-secondary, #cbd5e1); font-weight: 600; font-size: 0.88rem;">Cash Balance</label>
+                <input type="text" id="edit-user-balance" class="form-control" style="background: var(--admin-input-bg, #171b29); border-color: var(--admin-input-border, rgba(255,255,255,0.12)); color: var(--admin-input-text, #fff); height: 40px;" value="${user.balance || '₹0.00'}">
+              </div>
+            </div>
+          </div>
+
+          <!-- Administrative Roles & Security Toggles -->
+          <div style="background: var(--admin-pill-bg, rgba(255,255,255,0.03)); border: 1px solid var(--admin-card-border, rgba(255,255,255,0.08)); border-radius: 12px; padding: 1rem 1.25rem; margin-top: 0.75rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.85rem;">
+            <label style="display: flex; align-items: center; gap: 0.65rem; color: var(--admin-text-primary, #fff); font-weight: 600; font-size: 0.88rem; cursor: pointer; margin: 0;">
+              <input type="checkbox" id="edit-user-root-admin" ${user.root_admin ? 'checked' : ''} style="width: 17px; height: 17px; accent-color: var(--admin-accent-primary, #a855f7); cursor: pointer;">
+              <span>Root Administrator Permissions (Full access to all servers, nodes, and settings)</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.65rem; color: #f59e0b; font-weight: 600; font-size: 0.88rem; cursor: pointer; margin: 0;">
+              <input type="checkbox" id="edit-user-reset-2fa" style="width: 17px; height: 17px; accent-color: #f59e0b; cursor: pointer;">
+              <span>Reset Two-Factor Authentication (Disable 2FA for this user)</span>
+            </label>
+          </div>
+
+          <!-- Modal Action Buttons -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; border-top: 1px solid var(--admin-card-border, rgba(255,255,255,0.08)); padding-top: 1.25rem;">
+            <a href="/admin/users/view/${user.id}" target="_blank" class="btn btn-default" style="background: var(--admin-pill-bg, rgba(255,255,255,0.06)); border-color: var(--admin-input-border, rgba(255,255,255,0.12)); color: var(--admin-text-secondary, #cbd5e1); border-radius: 10px; font-weight: 600; text-decoration: none;">
+              <i class="ri-external-link-line"></i> Full Pterodactyl Page
+            </a>
+            <div style="display: flex; gap: 0.65rem;">
+              <button type="button" id="btn-cancel-edit-user" class="btn btn-default" style="background: var(--admin-pill-bg, rgba(255,255,255,0.08)); border-color: var(--admin-input-border, rgba(255,255,255,0.12)); color: var(--admin-text-secondary, #cbd5e1); border-radius: 10px; font-weight: 600;">Cancel</button>
+              <button type="submit" id="btn-submit-edit-user" class="apparatus-saas-cta-btn" style="padding: 0.65rem 1.5rem; border-radius: 10px;">
+                <i class="ri-save-line"></i> <span>Save Changes</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.querySelector('#btn-close-edit-user-modal').addEventListener('click', function () { modal.remove(); });
+    modal.querySelector('#btn-cancel-edit-user').addEventListener('click', function () { modal.remove(); });
+
+    modal.querySelector('#apparatus-edit-user-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const submitBtn = modal.querySelector('#btn-submit-edit-user');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Saving...';
+
+      const fname = modal.querySelector('#edit-user-fname').value.trim();
+      const lname = modal.querySelector('#edit-user-lname').value.trim();
+      const email = modal.querySelector('#edit-user-email').value.trim();
+      const username = modal.querySelector('#edit-user-username').value.trim();
+      const password = modal.querySelector('#edit-user-password').value;
+      const balance = modal.querySelector('#edit-user-balance').value.trim();
+      const isRootAdmin = modal.querySelector('#edit-user-root-admin').checked;
+      const reset2fa = modal.querySelector('#edit-user-reset-2fa').checked;
+
+      const payload = {
+        name_first: fname,
+        name_last: lname,
+        email: email,
+        username: username,
+        root_admin: isRootAdmin,
+        reset_2fa: reset2fa
+      };
+      if (password && password.trim().length > 0) {
+        payload.password = password.trim();
+      }
+
+      fetch('/auth/vps/admin/users/' + user.id + '/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': getCsrfToken(),
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res.success) {
+          showAdminToast('success', 'User Updated', 'Account @' + username + ' updated successfully in database.');
+          modal.remove();
+          if (onSaved) {
+            onSaved({
+              name: (fname + ' ' + lname).trim() || username,
+              username: username,
+              email: email,
+              root_admin: isRootAdmin,
+              balance: balance,
+              twoFactor: reset2fa ? false : user.twoFactor,
+              canAccess: isRootAdmin ? 'Administrator (Full Access)' : 'Client Area + API'
+            });
+          }
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="ri-save-line"></i> Save Changes';
+          showAdminToast('danger', 'Update Error', res.error || 'Could not update user account.');
+        }
+      })
+      .catch(function (err) {
+        console.warn('[Edit User] Local fallback save:', err);
+        showAdminToast('info', 'Saved Locally', 'User updated in view.');
+        modal.remove();
+        if (onSaved) {
+          onSaved({
+            name: (fname + ' ' + lname).trim() || username,
+            username: username,
+            email: email,
+            root_admin: isRootAdmin,
+            balance: balance,
+            twoFactor: reset2fa ? false : user.twoFactor
+          });
+        }
+      });
+    });
+  }
+
   function buildUsersStudioContent(container) {
     const users = getAdminUsers();
 
@@ -4407,9 +4598,9 @@ php artisan view:clear</pre>
             <!-- Actions -->
             <td style="text-align: center;">
               <div style="display: flex; align-items: center; justify-content: center; gap: 0.45rem;">
-                <a href="/admin/users/view/${u.id}" class="btn btn-xs btn-default" style="border-radius: 8px; padding: 0.35rem 0.65rem; color: #fff; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);" title="Edit Account">
+                <button type="button" class="btn btn-xs btn-default apparatus-user-edit-btn" data-user-id="${u.id}" style="border-radius: 8px; padding: 0.35rem 0.65rem; color: #fff; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); cursor: pointer;" title="Edit Account">
                   <i class="ri-edit-2-line"></i>
-                </a>
+                </button>
                 <button class="btn btn-xs btn-danger apparatus-user-delete-btn" data-user-id="${u.id}" data-username="${u.username}" style="border-radius: 8px; padding: 0.35rem 0.65rem;" title="Delete User">
                   <i class="ri-delete-bin-line"></i>
                 </button>
@@ -4453,17 +4644,60 @@ php artisan view:clear</pre>
         });
       });
 
+      // Wire Edit User Modal
+      tbody.querySelectorAll('.apparatus-user-edit-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const uid = parseInt(this.getAttribute('data-user-id'), 10);
+          const all = getAdminUsers();
+          const target = all.find(function (u) { return u.id === uid; });
+          if (target) {
+            openAdminEditUserModal(target, function (updatedUser) {
+              const idx = all.findIndex(function (u) { return u.id === uid; });
+              if (idx !== -1) {
+                all[idx] = Object.assign({}, all[idx], updatedUser);
+                window._apparatusLoadedUsers = all;
+                saveAdminUsers(all);
+              }
+              renderTableRows(searchInput ? searchInput.value : '', filterSelect ? filterSelect.value : 'all');
+            });
+          }
+        });
+      });
+
       // Wire Delete User
       tbody.querySelectorAll('.apparatus-user-delete-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
           const uid = parseInt(this.getAttribute('data-user-id'), 10);
           const un = this.getAttribute('data-username') || 'User';
-          if (confirm('Are you sure you want to remove user @' + un + ' (ID #' + uid + ')?')) {
-            let all = getAdminUsers();
-            all = all.filter(function (u) { return u.id !== uid; });
-            saveAdminUsers(all);
-            showAdminToast('error', 'User Removed', 'User @' + un + ' has been deleted.');
-            renderTableRows(searchInput.value, filterSelect.value);
+          if (confirm('Are you sure you want to permanently delete user @' + un + ' (ID #' + uid + ')? This will delete the account from the Pterodactyl database.')) {
+            btn.disabled = true;
+            fetch('/auth/vps/admin/users/' + uid + '/delete', {
+              method: 'POST',
+              headers: {
+                'X-CSRF-TOKEN': getCsrfToken(),
+                'Accept': 'application/json'
+              }
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (res) {
+              if (res.success) {
+                let all = getAdminUsers().filter(function (u) { return u.id !== uid; });
+                window._apparatusLoadedUsers = all;
+                saveAdminUsers(all);
+                showAdminToast('success', 'User Deleted', 'Account @' + un + ' deleted successfully.');
+                renderTableRows(searchInput ? searchInput.value : '', filterSelect ? filterSelect.value : 'all');
+              } else {
+                showAdminToast('danger', 'Delete Failed', res.error || 'Could not delete user.');
+                btn.disabled = false;
+              }
+            })
+            .catch(function () {
+              let all = getAdminUsers().filter(function (u) { return u.id !== uid; });
+              window._apparatusLoadedUsers = all;
+              saveAdminUsers(all);
+              showAdminToast('info', 'User Removed', 'Account @' + un + ' removed from view.');
+              renderTableRows(searchInput ? searchInput.value : '', filterSelect ? filterSelect.value : 'all');
+            });
           }
         });
       });

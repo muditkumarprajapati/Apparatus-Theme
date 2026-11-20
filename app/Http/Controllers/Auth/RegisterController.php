@@ -1442,4 +1442,81 @@ class RegisterController extends Controller
         }
     }
 
+    public function vpsAdminUserUpdate(Request $request, $id): JsonResponse
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            if ($request->has('email') && !empty($request->input('email'))) {
+                $user->email = trim(strtolower($request->input('email')));
+            }
+            if ($request->has('username') && !empty($request->input('username'))) {
+                $user->username = trim($request->input('username'));
+            }
+            if ($request->has('name_first')) {
+                $user->name_first = trim($request->input('name_first'));
+            }
+            if ($request->has('name_last')) {
+                $user->name_last = trim($request->input('name_last'));
+            }
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->input('password'));
+            }
+            if ($request->has('root_admin')) {
+                $user->root_admin = (bool) $request->input('root_admin');
+            }
+            if ($request->has('reset_2fa') && (bool) $request->input('reset_2fa')) {
+                $user->{"2fa"} = 0;
+                $user->totp_secret = null;
+                $user->totp_authenticated = 0;
+            }
+
+            $user->save();
+
+            $fullName = trim(($user->name_first ?? '') . ' ' . ($user->name_last ?? '')) ?: $user->username;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User account updated successfully.',
+                'user' => [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'name' => $fullName,
+                    'root_admin' => (bool) $user->root_admin,
+                    'twoFactor' => (bool) ($user->{"2fa"} ?? false),
+                    'canAccess' => $user->root_admin ? 'Administrator (Full Access)' : 'Client Area + API'
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function vpsAdminUserDelete($id): JsonResponse
+    {
+        try {
+            $user = User::findOrFail($id);
+            if ($user->root_admin && User::where('root_admin', true)->count() <= 1) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Cannot delete the primary root administrator account.'
+                ], 400);
+            }
+            $user->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'User deleted successfully from database.'
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

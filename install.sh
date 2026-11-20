@@ -212,6 +212,10 @@ Route::post('/auth/vps/{id}/termproxy', [\Pterodactyl\Http\Controllers\Auth\Regi
 Route::post('/auth/vps/admin/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminCreate']);
 Route::delete('/auth/vps/admin/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminDelete']);
 Route::get('/auth/vps/admin/users/search', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUsersSearch']);
+Route::post('/auth/vps/admin/users/{id}/update', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUserUpdate']);
+Route::delete('/auth/vps/admin/users/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUserDelete']);
+Route::post('/auth/vps/admin/users/{id}/delete', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUserDelete']);
+
 Route::get('/auth/vps/admin/nodes', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodes']);
 Route::get('/auth/vps/admin/nodes/test/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeTest']);
 Route::post('/auth/vps/admin/nodes/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeCreate']);
@@ -278,6 +282,10 @@ Route::post('/auth/vps/{id}/termproxy', [\Pterodactyl\Http\Controllers\Auth\Regi
 Route::post('/auth/vps/admin/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminCreate']);
 Route::delete('/auth/vps/admin/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminDelete']);
 Route::get('/auth/vps/admin/users/search', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUsersSearch']);
+Route::post('/auth/vps/admin/users/{id}/update', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUserUpdate']);
+Route::delete('/auth/vps/admin/users/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUserDelete']);
+Route::post('/auth/vps/admin/users/{id}/delete', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminUserDelete']);
+
 Route::get('/auth/vps/admin/nodes', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodes']);
 Route::get('/auth/vps/admin/nodes/test/{id}', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeTest']);
 Route::post('/auth/vps/admin/nodes/create', [\Pterodactyl\Http\Controllers\Auth\RegisterController::class, 'vpsAdminNodeCreate']);
